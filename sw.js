@@ -1,5 +1,5 @@
 // Naikkan angka VERSI setiap kali Anda mengganti file aplikasi, agar HP memuat versi baru
-const VERSI = 'v5';
+const VERSI = 'v6';
 const FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './logo.png', './bg.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(VERSI).then(c => c.addAll(FILES))); self.skipWaiting(); });
 self.addEventListener('activate', e => {

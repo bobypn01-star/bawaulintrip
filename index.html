@@ -130,7 +130,7 @@ const KEYS = Object.keys(CFG);
 
 /* ===== Penyimpanan lokal (IndexedDB) ===== */
 let DB, cur = 'dashboard', editId = null;
-const blank = () => ({ set: { destinasi: '', realisasi: 0 }, tamu: [], pemasukan: [], pengeluaran: [], itinerary: [], perlengkapan: [], checklist: [], arsip: [], sim: [], simAktif: null, pin: null, seq: 1 });
+const blank = () => ({ set: { destinasi: '', realisasi: 0 }, tamu: [], pemasukan: [], pengeluaran: [], itinerary: [], perlengkapan: [], checklist: [], arsip: [], sim: [], simAktif: null, pin: null, ganti: {}, kat: {}, ulang: [], seq: 1 });
 function idb() { return new Promise((ok, no) => { const r = indexedDB.open('budgeting', 1); r.onupgradeneeded = () => r.result.createObjectStore('kv'); r.onsuccess = () => ok(r.result); r.onerror = () => no(r.error); }); }
 async function load() { const d = await idb(); return new Promise(ok => { const q = d.transaction('kv').objectStore('kv').get('db'); q.onsuccess = () => ok(q.result || null); q.onerror = () => ok(null); }); }
 async function save() { const d = await idb(); return new Promise(ok => { const t = d.transaction('kv', 'readwrite'); t.objectStore('kv').put(DB, 'db'); t.oncomplete = ok; t.onerror = ok; }); }
@@ -140,7 +140,7 @@ const $ = id => document.getElementById(id);
 const rp = n => 'Rp ' + Math.round(Number(n) || 0).toLocaleString('id-ID');
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const fmtDate = v => { const m = String(v || '').match(/^(\d{4})-(\d\d)-(\d\d)(?:T(\d\d:\d\d))?/); return m ? m[3] + '/' + m[2] + '/' + m[1] + (m[4] ? ' ' + m[4] : '') : (v || ''); };
-const today = () => new Date().toISOString().slice(0, 10);
+const today = () => new Date(Date.now() - new Date().getTimezoneOffset() * 6e4).toISOString().slice(0, 10);
 function badge(v) {
   const s = String(v).toLowerCase(), c = ['lunas', 'diterima'].includes(s) ? 'g' : ['dp', 'menunggu respons'].includes(s) ? 'y' : ['belum lunas', 'ditolak'].includes(s) ? 'r' : '';
   return c ? `<span class="badge ${c}">${esc(v)}</span>` : esc(v);
@@ -152,7 +152,7 @@ function download(name, text, type) {
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: type || 'application/json' })); a.download = name;
   document.body.appendChild(a); a.click(); a.remove();
 }
-function openWA(t) { const a = document.createElement('a'); a.href = 'https://wa.me/?text=' + encodeURIComponent(t); a.target = '_blank'; document.body.appendChild(a); a.click(); a.remove(); }
+function openWA(t, no) { const a = document.createElement('a'); a.href = 'https://wa.me/' + (no || '') + '?text=' + encodeURIComponent(t); a.target = '_blank'; document.body.appendChild(a); a.click(); a.remove(); }
 function setMsg(id, text, ok) { const e = $(id); if (e) { e.textContent = text; e.className = 'msg ' + (ok ? 'ok' : 'err'); } }
 
 /* ===== Hitungan dashboard ===== */
@@ -173,11 +173,11 @@ const hbar = (l, v, mx, c, t) => `<div class="hrow"><div>${esc(l)}</div><div cla
 const stat = (l, v) => `<div class="stat"><small>${esc(l)}</small><b>${esc(v)}</b></div>`;
 
 /* ===== Navigasi ===== */
-const TABS = [['dashboard', 'Dashboard']].concat(KEYS.map(k => [k, CFG[k].label])).concat([['checklist', 'Checklist'], ['simulasi', 'Simulasi'], ['bayar', 'Pembayaran'], ['rekap', 'Rekap'], ['trip', 'Trip & Arsip']]);
+const TABS = [['dashboard', 'Dashboard']].concat(KEYS.map(k => [k, CFG[k].label])).concat([['checklist', 'Checklist'], ['simulasi', 'Simulasi'], ['bayar', 'Pembayaran'], ['rekap', 'Rekap'], ['trip', 'Trip & Arsip'], ['talangan', 'Talangan'], ['kategori', 'Kategori']]);
 function show(k) {
   cur = k; editId = null;
   document.querySelectorAll('nav button').forEach(b => b.classList.toggle('active', b.dataset.k === (MAIN.includes(k) ? k : 'more')));
-  if (k === 'dashboard') renderDash(); else if (k === 'more') renderMore(); else if (k === 'checklist') renderCl(); else if (k === 'trip') renderTrip(); else if (k === 'simulasi') renderSim(); else if (k === 'bayar') renderBayar(); else if (k === 'rekap') renderRekap(); else renderSheet(k);
+  if (k === 'dashboard') renderDash(); else if (k === 'more') renderMore(); else if (k === 'checklist') renderCl(); else if (k === 'trip') renderTrip(); else if (k === 'simulasi') renderSim(); else if (k === 'bayar') renderBayar(); else if (k === 'rekap') renderRekap(); else if (k === 'talangan') renderTalangan(); else if (k === 'kategori') renderKat(); else renderSheet(k);
   if (k !== 'dashboard' && k !== 'more') { const lb = (TABS.find(t => t[0] === k) || ['', ''])[1]; $('main').insertAdjacentHTML('afterbegin', `<div class="pgh">${MAIN.includes(k) ? '' : '<button class="back" onclick="show(\'more\')">‹ Menu</button>'}<h2>${lb}</h2></div>`); }
   window.scrollTo(0, 0);
 }
@@ -212,12 +212,12 @@ function renderSheet(key) {
     let inp;
     if (f.type === 'select') inp = `<select id="f${i}"><option value="">-- Pilih --</option>${f.options.map(o => `<option>${esc(o)}</option>`).join('')}</select>`;
     else if (f.type === 'textarea') inp = `<textarea id="f${i}" rows="2"></textarea>`;
-    else inp = `<input id="f${i}" type="${f.type}" ${f.type === 'number' ? 'step="any" inputmode="decimal"' : ''} value="${f.def !== undefined ? f.def : ''}">`;
+    else inp = `<input id="f${i}" type="${f.rp ? 'text' : f.type}" ${f.rp ? 'inputmode="numeric" oninput="fmtNum(this)"' : f.type === 'number' ? 'step="any" inputmode="decimal"' : ''} value="${f.def !== undefined ? f.def : ''}">`;
     return `<label>${esc(f.h)}${f.req ? ' *' : ''}</label>${inp}`;
   }).join('');
   const filters = c.fields.map((f, i) => f.type === 'select' ? `<select id="flt${i}" onchange="drawList('${key}')"><option value="">Semua ${esc(f.h)}</option>${f.options.map(o => `<option>${esc(o)}</option>`).join('')}</select>` : '').join('');
   const hasDate = c.fields.some(f => f.type === 'date');
-  const bukti = (key === 'pemasukan' || key === 'pengeluaran') ? `<label>Bukti nota</label><div class="flt"><button class="btn alt" style="margin:0" onclick="$('bcam').click()">📷 Kamera</button><button class="btn alt" style="margin:0" onclick="$('bfile').click()">📎 Unggah file</button></div><input type="file" id="bcam" accept="image/*" capture="environment" hidden onchange="pickBukti(this)"><input type="file" id="bfile" accept="image/*,application/pdf" hidden onchange="pickBukti(this)"><div id="bprev"></div>` : '';
+  const bukti = (key === 'pemasukan' || key === 'pengeluaran') ? `<label>Bukti nota</label><div class="flt"><button class="btn alt" style="margin:0" onclick="$('bcam').click()">📷 Kamera</button><button class="btn alt" style="margin:0" onclick="$('bfile').click()">📎 Unggah file</button></div><input type="file" id="bcam" accept="image/*" capture="environment" hidden onchange="pickBukti(this)"><input type="file" id="bfile" accept="image/*,application/pdf" hidden onchange="pickBukti(this)"><div id="bprev"></div><label>Ulangi otomatis</label><select id="frep"><option value="">Tidak berulang</option><option value="7">Tiap 7 hari</option><option value="30">Tiap 30 hari</option></select>` : '';
   let extra = '';
   if (key === 'perlengkapan') extra = `<div class="card"><h3>Ringkasan Sewa</h3><div id="sewa"></div><button class="btn" onclick="pushSewa()">➡️ Masukkan Total Sewa ke Pengeluaran</button><div id="sewaMsg" class="msg"></div></div>`;
   $('main').innerHTML = `${extra}
@@ -244,23 +244,24 @@ async function pushSewa() {
   await save(); setMsg('sewaMsg', ex ? 'Baris diperbarui menjadi ' + rp(total) : 'Ditambahkan ke Pengeluaran: ' + rp(total), 1);
 }
 function resetForm(key) {
-  editId = null; BUKTI = null; showPrev(''); CFG[key].fields.forEach((f, i) => { const e = $('f' + i); if (e) e.value = f.def !== undefined ? f.def : ''; });
+  editId = null; BUKTI = null; showPrev(''); if ($('frep')) $('frep').value = ''; CFG[key].fields.forEach((f, i) => { const e = $('f' + i); if (e) e.value = f.def !== undefined ? f.def : ''; });
   $('ftitle').textContent = 'Tambah ' + CFG[key].label; $('fbtn').textContent = 'Simpan'; $('fcancel').style.display = 'none';
 }
 async function submitRow(key) {
   const c = CFG[key], data = {};
   c.fields.forEach((f, i) => { if (!f.ro) data[f.h] = $('f' + i).value; });
   if (!String(data[c.fields[0].h]).trim()) return setMsg('fmsg', c.fields[0].h + ' wajib diisi', 0);
-  c.fields.forEach(f => { if (f.type === 'number' && data[f.h] !== '') data[f.h] = Number(data[f.h]); });
+  c.fields.forEach(f => { if (f.type === 'number' && data[f.h] !== '') data[f.h] = Number(f.rp ? String(data[f.h]).replace(/\./g, '') : data[f.h]); });
   if (BUKTI !== null) data['Bukti'] = BUKTI;
   if (editId) { const r = DB[key].find(x => x.id === editId); Object.assign(r, data); }
   else DB[key].push(Object.assign({ id: DB.seq++ }, data));
+  if (!editId && $('frep') && $('frep').value) { const t = JSON.parse(JSON.stringify(data)); delete t.Bukti; const n = +$('frep').value; DB.ulang.push({ id: DB.seq++, key, data: t, tiap: n, next: addDays(String(data['Tanggal transaksi'] || today()).slice(0, 10), n) }); }
   const wasEdit = !!editId; await save(); resetForm(key); drawList(key); if (key === 'perlengkapan') drawSewa();
   closeSheet(); toast(wasEdit ? 'Data diperbarui' : 'Data tersimpan');
 }
 function editRow(key, id) {
   const r = DB[key].find(x => x.id === id); editId = id; BUKTI = null; showPrev(r.Bukti);
-  CFG[key].fields.forEach((f, i) => { const e = $('f' + i); if (e) e.value = r[f.h] == null ? '' : r[f.h]; });
+  CFG[key].fields.forEach((f, i) => { const e = $('f' + i); if (e) e.value = r[f.h] == null ? '' : (f.rp ? fmtN(r[f.h]) : r[f.h]); });
   $('ftitle').textContent = 'Edit ' + CFG[key].label; $('fbtn').textContent = 'Update'; $('fcancel').style.display = 'block'; openSheet();
 }
 async function delRow(key, id) {
@@ -338,7 +339,7 @@ function impor(file) {
     try {
       const d = JSON.parse(r.result); if (!d || !d.set || !d.pengeluaran) throw 0;
       if (!confirm('Data saat ini akan DITIMPA oleh isi cadangan. Lanjut?')) return;
-      DB = Object.assign(blank(), d); await save(); renderTrip(); setMsg('bmsg', 'Cadangan berhasil dipulihkan.', 1);
+      DB = Object.assign(blank(), d); applyKat(); await save(); renderTrip(); setMsg('bmsg', 'Cadangan berhasil dipulihkan.', 1);
     } catch (e) { setMsg('bmsg', 'File cadangan tidak valid.', 0); }
   };
   r.readAsText(file);
@@ -465,24 +466,20 @@ function bayarData() {
   const n = x => String(x || '').trim().toLowerCase(), paid = {};
   DB.pemasukan.forEach(r => { if (r['Kategori'] !== 'Peserta') return; const w = n(r['Dibayar oleh']) || n(r['Detail pemasukan']); paid[w] = (paid[w] || 0) + (+r['Biaya'] || 0); });
   const pr = rowsOf('pengeluaran'), ang = sum(pr, r => r['Total Anggaran']), bi = sum(pr, r => r['Total Biaya']);
-  const ps = DB.tamu.filter(t => t['Status'] === 'Diterima').map(t => ({ nama: t['Nama'], tagihan: t['Tagihan'] || '', dibayar: paid[n(t['Nama'])] || 0 })), k = ps.length;
+  const ps = DB.tamu.filter(t => t['Status'] === 'Diterima').map(t => ({ nama: t['Nama'], tagihan: t['Tagihan'] || '', dibayar: paid[n(t['Nama'])] || 0, ponsel: t['Ponsel'] })), k = ps.length;
   const tg = { 'Lunas': 0, 'DP': 0, 'Belum Lunas': 0, 'Belum diisi': 0 }; ps.forEach(p => tg[tg[p.tagihan] !== undefined ? p.tagihan : 'Belum diisi']++);
   return { k, ang, bi, perA: k ? Math.ceil(ang / k) : 0, perB: k ? Math.ceil(bi / k) : 0, harga: DB.simAktif ? +DB.simAktif.harga || 0 : 0, tg, ps, iuran: Object.values(paid).reduce((a, b) => a + b, 0) };
 }
 const sisaTxt = s => s > 0 ? rp(s) : (s < 0 ? 'Lebih ' + rp(-s) : 'Lunas');
 function renderBayar() {
   const b = bayarData(), per = {}; if (b.harga > 0) per['Harga jual simulasi'] = b.harga; per['Realisasi (total biaya)'] = b.perB; per['Anggaran'] = b.perA;
-  $('main').innerHTML = `<div class="card"><h3>Patungan Otomatis</h3><small class="mut">${b.harga > 0 ? 'Tagihan memakai harga jual dari simulasi yang diterapkan.' : 'Dihitung dari total pengeluaran dibagi peserta berstatus Diterima.'}</small>
+  $('main').innerHTML = `${rekCard()}<div class="card"><h3>Patungan Otomatis</h3><small class="mut">${b.harga > 0 ? 'Tagihan memakai harga jual dari simulasi yang diterapkan.' : 'Dihitung dari total pengeluaran dibagi peserta berstatus Diterima.'}</small>
   <div class="grid" style="margin-top:10px">${stat('Peserta Diterima', b.k + ' orang')}${stat('Total Pengeluaran', rp(b.bi))}${stat('Total Anggaran', rp(b.ang))}${stat('Iuran terkumpul', rp(b.iuran))}${stat('Per orang (realisasi)', rp(b.perB))}${stat('Per orang (anggaran)', rp(b.perA))}</div>
   <div style="margin-top:10px"><span class="badge g">Lunas ${b.tg['Lunas']}</span> <span class="badge y">DP ${b.tg['DP']}</span> <span class="badge r">Belum lunas ${b.tg['Belum Lunas']}</span> ${b.tg['Belum diisi'] ? `<span class="badge">Belum diisi ${b.tg['Belum diisi']}</span>` : ''}</div></div>
   <div class="card"><h3>Status Pembayaran Peserta</h3><label>Dasar hitung tagihan</label><select id="bsel" onchange="drawBayar()">${Object.keys(per).map(k => `<option>${k}</option>`).join('')}</select>
   <small class="mut">Sudah bayar = jumlah Pemasukan kategori Peserta yang "Dibayar oleh" (atau Detail) sama dengan nama tamu.</small><div id="bbox"></div></div>
   <button class="btn" style="background:#25d366" onclick="waBayar()">💬 Bagikan status pembayaran ke WhatsApp</button>`;
   window._per = per; drawBayar();
-}
-function drawBayar() {
-  const b = bayarData(), base = window._per[$('bsel').value];
-  $('bbox').innerHTML = b.ps.length ? `<div class="tbl"><table><tr><th>Nama</th><th>Tagihan</th><th>Sudah bayar</th><th>Sisa</th></tr>${b.ps.map(p => `<tr><td>${esc(p.nama)}</td><td>${badge(p.tagihan) || '-'}</td><td>${rp(p.dibayar)}</td><td style="color:${base - p.dibayar > 0 ? '#f87171' : '#4ade80'}">${sisaTxt(base - p.dibayar)}</td></tr>`).join('')}</table></div>` : '<div>Belum ada peserta berstatus Diterima.</div>';
 }
 function waBayar() {
   const b = bayarData(), base = window._per[$('bsel').value]; let t = '*STATUS PEMBAYARAN*\nPatungan/orang: ' + rp(base) + '\n\n';
@@ -638,7 +635,7 @@ async function arsipkan(baru) {
   if (!confirm('Trip saat ini diarsipkan, lalu semua data dikosongkan. Lanjut?')) return;
   if (hasData()) DB.arsip.push(snapshot());
   KEYS.forEach(k => DB[k] = []); DB.checklist = []; DB.simAktif = null; SIM = null;
-  DB.set = { destinasi: $('nd').value.trim(), realisasi: Number($('nr').value) || 0 };
+  DB.set = Object.assign({}, DB.set, { destinasi: $('nd').value.trim(), realisasi: Number($('nr').value) || 0, tenggat: '' }); DB.ganti = {}; DB.ulang = [];
   await save(); renderTrip(); setMsg('t2msg', 'Trip baru siap. Semua data sudah kosong; trip lama ada di arsip.', 1);
 }
 async function arsipBuka(id) {
@@ -646,7 +643,7 @@ async function arsipBuka(id) {
   if (hasData()) DB.arsip.push(Object.assign(snapshot(), { auto: true }));
   const d = JSON.parse(JSON.stringify(a.data));
   KEYS.concat(['checklist']).forEach(k => DB[k] = d[k] || []);
-  DB.set = d.set || { destinasi: '', realisasi: 0 }; DB.simAktif = d.simAktif || null; SIM = null;
+  DB.set = d.set || { destinasi: '', realisasi: 0 }; DB.simAktif = d.simAktif || null; SIM = null; DB.ganti = d.ganti || {}; DB.ulang = d.ulang || [];
   DB.seq = Math.max(DB.seq, d.seq || 0); await save(); renderTrip(); setMsg('tmsg', 'Arsip dibuka. Seluruh isinya sekarang menjadi data aktif.', 1);
 }
 
@@ -657,7 +654,7 @@ function buildNav() {
   $('nav').innerHTML = [['dashboard', 'Beranda'], ['pemasukan', 'Masuk'], ['pengeluaran', 'Keluar'], ['rekap', 'Rekap'], ['more', 'Menu']].map(([k, l]) => `<button data-k="${k}" onclick="show('${k}')"><svg viewBox="0 0 24 24">${ICO[k]}</svg>${l}</button>`).join('');
 }
 function renderMore() {
-  const T = [['tamu', '👥', 'Tamu', 'Daftar peserta'], ['itinerary', '🗺️', 'Itinerary', 'Rundown perjalanan'], ['perlengkapan', '🎒', 'Perlengkapan', 'Kebutuhan & sewa'], ['checklist', '✅', 'Checklist', 'Barang bawaan'], ['simulasi', '🧮', 'Simulasi', 'Harga & keuntungan'], ['bayar', '💳', 'Pembayaran', 'Patungan peserta'], ['trip', '🗂️', 'Trip & Arsip', 'Arsip & cadangan']];
+  const T = [['tamu', '👥', 'Tamu', 'Daftar peserta'], ['itinerary', '🗺️', 'Itinerary', 'Rundown perjalanan'], ['perlengkapan', '🎒', 'Perlengkapan', 'Kebutuhan & sewa'], ['checklist', '✅', 'Checklist', 'Barang bawaan'], ['simulasi', '🧮', 'Simulasi', 'Harga & keuntungan'], ['bayar', '💳', 'Pembayaran', 'Patungan peserta'], ['trip', '🗂️', 'Trip & Arsip', 'Arsip & cadangan'], ['talangan', '🤝', 'Talangan', 'Ganti uang panitia'], ['kategori', '🏷️', 'Kategori', 'Kategori & berulang']];
   $('main').innerHTML = `<div class="pgh"><h2>Menu</h2></div><div class="tiles">${T.map(t => `<button class="tile" onclick="show('${t[0]}')"><span>${t[1]}</span>${t[2]}<small>${t[3]}</small></button>`).join('')}</div>`;
 }
 function toggleTheme() {
@@ -683,11 +680,109 @@ function txRow(key, r) {
 async function resetTotal() {
   if ($('rst').value.trim().toUpperCase() !== 'HAPUS') return setMsg('rmsg', 'Ketik HAPUS dulu.', 0);
   if (!confirm('Yakin hapus SEMUA data di aplikasi ini?')) return;
-  const pin = DB.pin; DB = blank(); DB.pin = pin; SIM = null; await save(); show('dashboard'); toast('Aplikasi dikosongkan');
+  const pin = DB.pin; DB = blank(); DB.pin = pin; SIM = null; applyKat(); await save(); show('dashboard'); toast('Aplikasi dikosongkan');
 }
+/* ===== Kategori kustom, transaksi berulang, format nominal ===== */
+const DEFKAT = { pemasukan: CFG.pemasukan.fields[1].options.slice(), pengeluaran: CFG.pengeluaran.fields[1].options.slice() };
+const katList = k => DB.kat[k] || DEFKAT[k];
+function applyKat() { ['pemasukan', 'pengeluaran'].forEach(k => { const a = CFG[k].fields[1].options; a.length = 0; a.push(...katList(k)); }); }
+const addDays = (d, n) => { const x = new Date(d + 'T00:00:00Z'); x.setUTCDate(x.getUTCDate() + n); return x.toISOString().slice(0, 10); };
+function jalankanUlang() {
+  let n = 0; const td = today();
+  DB.ulang.forEach(t => { let g = 0; while (t.next <= td && g++ < 60) { DB[t.key].push(Object.assign({ id: DB.seq++ }, t.data, { 'Tanggal transaksi': t.next })); t.next = addDays(t.next, t.tiap); n++; } });
+  return n;
+}
+const fmtN = n => Math.round(Number(n) || 0).toLocaleString('id-ID');
+function fmtNum(el) { const d = el.value.replace(/\D/g, ''); el.value = d ? Number(d).toLocaleString('id-ID') : ''; }
+function renderKat() {
+  const box = (key, l) => `<div class="card"><h3>${l}</h3><div>${katList(key).map((x, i) => `<span class="badge y" style="margin:3px;padding:6px 10px">${esc(x)} ${x === 'Peserta' && key === 'pemasukan' ? '🔒' : `<a onclick="katDel('${key}',${i})" style="color:#f87171;margin-left:6px">✕</a>`}</span>`).join('')}</div>
+    <label>Tambah kategori</label><input id="kn_${key}"><button class="btn" onclick="katAdd('${key}')">Tambah</button></div>`;
+  $('main').innerHTML = box('pemasukan', 'Kategori Pemasukan') + box('pengeluaran', 'Kategori Pengeluaran') + `<div class="card"><h3>🔁 Transaksi Berulang</h3><small class="mut">Dibuat lewat pilihan "Ulangi otomatis" di form Pemasukan / Pengeluaran. Ditambahkan otomatis saat aplikasi dibuka.</small>
+    ${DB.ulang.length ? DB.ulang.map(t => `<div class="txw"><div class="tx"><div class="tm"><b>${esc(t.data[CFG[t.key].fields[0].h])}</b><small>${t.key === 'pemasukan' ? 'Pemasukan' : 'Pengeluaran'} | ${rp(t.data['Biaya'])} | tiap ${t.tiap} hari | berikutnya ${esc(fmtDate(t.next))}</small></div><button class="del" onclick="ulangDel(${t.id})">Hapus</button></div></div>`).join('') : '<div style="margin-top:8px">Belum ada.</div>'}</div>`;
+}
+async function katAdd(key) {
+  const v = $('kn_' + key).value.trim(); if (!v) return; const a = katList(key).slice();
+  if (a.some(x => x.toLowerCase() === v.toLowerCase())) return toast('Kategori sudah ada');
+  a.push(v); DB.kat[key] = a; applyKat(); await save(); renderKat();
+}
+async function katDel(key, i) {
+  const a = katList(key).slice(); if (a.length < 2 || !confirm('Hapus kategori "' + a[i] + '"? Data lama tetap menyimpan nama kategorinya.')) return;
+  a.splice(i, 1); DB.kat[key] = a; applyKat(); await save(); renderKat();
+}
+async function ulangDel(id) { DB.ulang = DB.ulang.filter(t => t.id !== id); await save(); renderKat(); }
+
+/* ===== Rekening, QRIS, tenggat, tagihan WA, kwitansi ===== */
+function rekCard() {
+  const d = DB.set;
+  return `<div class="card"><h3>🏦 Rekening, QRIS & Tenggat</h3><small class="mut">Tampil di kwitansi dan pesan tagihan WhatsApp.</small>
+  <label>Info rekening</label><textarea id="rk" rows="2" placeholder="BCA 1234567890 a.n. Nama">${esc(d.rek || '')}</textarea>
+  <label>Tenggat pembayaran</label><input type="date" id="tg2" value="${d.tenggat || ''}">
+  <label>QRIS</label><div class="flt"><button class="btn alt" style="margin:0" onclick="$('qf').click()">Unggah QRIS</button><button class="btn alt" style="margin:0" onclick="DB.set.qris='';simpanRek()">Hapus QRIS</button></div>
+  <input type="file" id="qf" accept="image/*" hidden onchange="pickQris(this)">${d.qris ? `<img src="${d.qris}" style="max-width:160px;border-radius:10px;margin-top:8px;background:#fff">` : ''}
+  <button class="btn" onclick="simpanRek()">Simpan</button></div>`;
+}
+async function simpanRek() { if ($('rk')) { DB.set.rek = $('rk').value.trim(); DB.set.tenggat = $('tg2').value; } await save(); renderBayar(); toast('Tersimpan'); }
+function pickQris(inp) {
+  const f = inp.files[0]; inp.value = ''; if (!f) return; const im = new Image(), u = URL.createObjectURL(f);
+  im.onload = async () => { const k = Math.min(1, 700 / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = im.width * k; c.height = im.height * k;
+    const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.drawImage(im, 0, 0, c.width, c.height);
+    DB.set.qris = c.toDataURL('image/jpeg', .88); URL.revokeObjectURL(u); await save(); renderBayar(); toast('QRIS tersimpan'); };
+  im.src = u;
+}
+const normN = x => String(x || '').trim().toLowerCase();
+function pesertaInfo(i) { const b = bayarData(), base = window._per[$('bsel').value], p = b.ps[i]; return { base, p, s: base - p.dibayar }; }
+function tagihWA(i) {
+  const { base, p, s } = pesertaInfo(i), d = DB.set, late = s > 0 && d.tenggat && today() > d.tenggat;
+  const t = 'Halo ' + p.nama + ', tagihan trip' + (d.destinasi ? ' ' + d.destinasi : '') + ':\nTotal tagihan: ' + rp(base) + '\nSudah dibayar: ' + rp(p.dibayar) + '\n*Sisa: ' + rp(s) + '*' + (d.tenggat ? '\nTenggat: ' + fmtDate(d.tenggat) + (late ? ' (sudah lewat)' : '') : '') + (d.rek ? '\n\nTransfer ke:\n' + d.rek : '') + (d.qris ? '\n(atau scan QRIS yang dikirim terpisah)' : '') + '\n\nMohon kirim bukti transfer. Terima kasih 🙏';
+  let no = String(p.ponsel || '').replace(/\D/g, ''); if (no.indexOf('0') === 0) no = '62' + no.slice(1); openWA(t, no);
+}
+function kwitansi(i) {
+  const { base, p, s } = pesertaInfo(i), d = DB.set, no = 'KW-' + today().replace(/-/g, '') + '-' + String(i + 1).padStart(3, '0');
+  const pay = rowsOf('pemasukan').filter(r => r['Kategori'] === 'Peserta' && (normN(r['Dibayar oleh']) || normN(r['Detail pemasukan'])) === normN(p.nama));
+  const body = `<div class="sum"><div>No. Kwitansi<b>${no}</b></div><div>Telah terima dari<b>${esc(p.nama)}</b></div><div>Status<b>${s <= 0 ? 'LUNAS' : 'BELUM LUNAS'}</b></div></div>
+  <h2>Rincian Pembayaran</h2><table><tr><th>No</th><th>Tanggal</th><th>Keterangan</th><th>Jumlah</th></tr>${pay.map((r, k) => `<tr><td>${k + 1}</td><td>${esc(fmtDate(r['Tanggal transaksi']))}</td><td>${esc(r['Detail pemasukan'])}</td><td>${rp(r['Biaya'])}</td></tr>`).join('') || '<tr><td colspan="4">Belum ada pembayaran tercatat</td></tr>'}
+  <tr class="tot"><td colspan="3">Total dibayar</td><td>${rp(p.dibayar)}</td></tr><tr><td colspan="3">Total tagihan</td><td>${rp(base)}</td></tr><tr class="tot"><td colspan="3">${s > 0 ? 'Sisa yang harus dibayar' : 'Status'}</td><td>${s > 0 ? rp(s) : s < 0 ? 'Lebih ' + rp(-s) : 'Lunas'}</td></tr></table>
+  ${s > 0 && (d.rek || d.qris) ? `<h2>Cara Pembayaran</h2>${d.rek ? `<div style="white-space:pre-line;margin-bottom:6px">${esc(d.rek)}</div>` : ''}${d.qris ? `<img src="${d.qris}" style="width:150px">` : ''}${d.tenggat ? `<div>Tenggat: ${esc(fmtDate(d.tenggat))}</div>` : ''}` : ''}
+  <div class="ttd"><div>Peserta</div><div>Bendahara</div></div>`;
+  printDoc(docWrap('KWITANSI PEMBAYARAN', 'Trip: ' + (d.destinasi || '-'), body));
+}
+function drawBayar() {
+  const b = bayarData(), base = window._per[$('bsel').value], td = today(), tg = DB.set.tenggat;
+  const telat = b.ps.filter(p => base - p.dibayar > 0 && tg && td > tg).length;
+  $('bbox').innerHTML = (tg ? `<div class="warn ${telat ? 'red' : 'note'}">Tenggat ${esc(fmtDate(tg))}${telat ? ' - ' + telat + ' peserta telat bayar' : ''}</div>` : '') + (b.ps.length ? b.ps.map((p, i) => {
+    const s = base - p.dibayar, late = s > 0 && tg && td > tg;
+    return `<div class="txw"><div class="tx"><div class="av ${s <= 0 ? 'in' : late ? 'out' : ''}">${esc(String(p.nama).charAt(0).toUpperCase())}</div><div class="tm"><b>${esc(p.nama)}</b><small>Bayar ${rp(p.dibayar)} dari ${rp(base)}</small><div style="margin-top:4px">${badge(p.tagihan)}${late ? '<span class="badge r">Telat</span>' : ''}</div></div><div class="ta ${s <= 0 ? 'in' : 'out'}">${sisaTxt(s)}</div></div>
+    <div class="acts"><button class="edt" onclick="kwitansi(${i})">🧾 Kwitansi</button>${s > 0 ? `<button class="edt" onclick="tagihWA(${i})">💬 Tagih</button>` : ''}</div></div>`;
+  }).join('') : '<div>Belum ada peserta berstatus Diterima.</div>');
+}
+
+/* ===== Talangan panitia ===== */
+function talanganData() {
+  const m = {};
+  rowsOf('pengeluaran').forEach(r => { const w = String(r['Dibayar oleh'] || '').trim(), k = normN(w); if (!k || ['kas', 'bendahara', 'kas trip'].includes(k)) return; const o = m[k] || (m[k] = { nama: w, tot: 0, items: [] }); o.tot += r['Total Biaya']; o.items.push(r['Detail pengeluaran']); });
+  return Object.keys(m).map(k => Object.assign(m[k], { k, ganti: +DB.ganti[k] || 0 }));
+}
+function renderTalangan() {
+  const L = talanganData();
+  $('main').innerHTML = `<div class="card"><h3>Talangan Panitia</h3><small class="mut">Dihitung dari kolom "Dibayar oleh" di Pengeluaran. Nama "Kas" atau "Bendahara" dianggap dari kas, bukan talangan.</small>
+  <div class="grid" style="margin-top:10px">${stat('Total talangan', rp(sum(L, x => x.tot)))}${stat('Belum diganti', rp(sum(L, x => Math.max(0, x.tot - x.ganti))))}</div></div>` +
+  (L.length ? L.map((x, i) => { const s = x.tot - x.ganti; return `<div class="card"><div class="tx" style="padding:0"><div class="av ${s <= 0 ? 'in' : 'out'}">${esc(x.nama.charAt(0).toUpperCase())}</div><div class="tm"><b>${esc(x.nama)}</b><small>Menalangi ${rp(x.tot)} | sudah diganti ${rp(x.ganti)}</small></div><div class="ta ${s <= 0 ? 'in' : 'out'}">${s > 0 ? rp(s) : 'Lunas'}</div></div>
+    <small class="mut">${esc(x.items.slice(0, 6).join(', '))}</small><div class="acts" style="padding:8px 0 0"><button class="edt" onclick="catatGanti(${i})">+ Catat penggantian</button><button class="del" onclick="catatGanti(${i},1)">Reset</button></div></div>`; }).join('') + '<button class="btn" style="background:#25d366" onclick="openWA(talanganText())">💬 Bagikan ke WhatsApp</button>' : '<div class="card">Belum ada pengeluaran dengan penalang. Isi kolom "Dibayar oleh" di Pengeluaran.</div>');
+}
+async function catatGanti(i, reset) {
+  const x = talanganData()[i]; if (!x) return;
+  if (reset) { if (!confirm('Reset catatan penggantian ' + x.nama + '?')) return; delete DB.ganti[x.k]; }
+  else { const n = Number(String(prompt('Jumlah yang diganti ke ' + x.nama + ' (Rp)', '') || '').replace(/\D/g, '')); if (!n) return; DB.ganti[x.k] = (+DB.ganti[x.k] || 0) + n; }
+  await save(); renderTalangan();
+}
+function talanganText() {
+  let t = '*TALANGAN PANITIA*' + (DB.set.destinasi ? ' - ' + DB.set.destinasi : '') + '\n\n';
+  talanganData().forEach(x => { const s = x.tot - x.ganti; t += '- ' + x.nama + ': menalangi ' + rp(x.tot) + ', ' + (s > 0 ? 'harus diganti ' + rp(s) : 'sudah lunas') + '\n'; }); return t;
+}
+
 /* ===== Mulai ===== */
 (async function () {
-  DB = Object.assign(blank(), await load() || {});
+  DB = Object.assign(blank(), await load() || {}); applyKat(); if (jalankanUlang()) { await save(); setTimeout(() => toast('Transaksi berulang ditambahkan'), 700); }
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
   if (DB.pin) lock(); else { buildNav(); show('dashboard'); }
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
