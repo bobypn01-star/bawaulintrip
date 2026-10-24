@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#166534">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<title>Budgeting Pendakian</title>
+<style>
+*{box-sizing:border-box}
+body{font-family:system-ui,Arial,sans-serif;background:#f3f4f6;margin:0;color:#111}
+header{background:#166534;color:#fff;padding:14px 16px}header h1{margin:0;font-size:18px}
+nav{display:flex;gap:6px;overflow-x:auto;padding:10px 12px;background:#fff;position:sticky;top:0;z-index:5;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+nav button{flex:none;border:0;background:#e5e7eb;padding:8px 14px;border-radius:20px;font-size:14px}
+nav button.active{background:#166534;color:#fff}
+main{max-width:680px;margin:0 auto;padding:14px}
+.card{background:#fff;border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:#f0fdf4;border-radius:10px;padding:12px}.stat small{color:#555;display:block}.stat b{font-size:16px}
+.bar{height:10px;background:#e5e7eb;border-radius:6px;overflow:hidden;margin-top:6px}.bar div{height:100%;background:#16a34a}
+label{display:block;margin:12px 0 4px;font-weight:600;font-size:14px}
+input,textarea,select{width:100%;padding:10px;border:1px solid #d1d5db;border-radius:8px;font-size:15px;background:#fff}
+input[type=checkbox]{width:auto;transform:scale(1.3)}
+.btn{margin-top:14px;width:100%;padding:12px;border:0;border-radius:8px;background:#166534;color:#fff;font-size:16px}
+.btn.alt{background:#e5e7eb;color:#111}.btn.red{background:#b91c1c}
+.msg{margin-top:10px;font-size:14px}.ok{color:#15803d}.err{color:#b91c1c}
+.tbl{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{border:1px solid #e5e7eb;padding:6px 8px;white-space:nowrap;text-align:left}th{background:#f9fafb}
+.del{border:0;background:#fee2e2;color:#b91c1c;border-radius:6px;padding:4px 8px}
+.edt{border:0;background:#dbeafe;color:#1d4ed8;border-radius:6px;padding:4px 8px;margin-right:4px}
+h3{margin:0 0 4px}small.mut{color:#666}
+.warn{padding:10px 12px;border-radius:8px;margin-top:8px;font-size:14px}
+.warn.red{background:#fee2e2;color:#991b1b}.warn.yellow{background:#fef3c7;color:#92400e}.warn.green{background:#dcfce7;color:#166534}.warn.note{background:#eff6ff;color:#1e3a8a}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:12px}
+.badge.g{background:#dcfce7;color:#166534}.badge.y{background:#fef3c7;color:#92400e}.badge.r{background:#fee2e2;color:#991b1b}
+.hrow{display:grid;grid-template-columns:84px 1fr 96px;gap:6px;align-items:center;margin:5px 0;font-size:12px}
+.htrack{height:12px;background:#e5e7eb;border-radius:6px;overflow:hidden}.htrack div{height:100%}.hv{text-align:right}
+.flt{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}.flt .full{grid-column:1/3}
+.cl{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #eee}
+.cl .t{flex:1}.cl .t b{display:block}.cl .t small{color:#666}.cl.done .t b{text-decoration:line-through;color:#888}
+</style>
+</head>
+<body>
+<header><h1>🏔️ Budgeting Pendakian</h1></header>
+<nav id="nav"></nav>
+<main id="main">Memuat...</main>
+<script>
+/* ===== Struktur data (sama dengan sheet di Spreadsheet lama) ===== */
+const CFG = {
+  tamu: { label: 'Tamu', fields: [
+    { h: 'Nama', type: 'text', req: 1 }, { h: 'Meeting Point', type: 'text' }, { h: 'Ponsel', type: 'tel' },
+    { h: 'Status', type: 'select', options: ['Diterima', 'Menunggu respons', 'Ditolak'] },
+    { h: 'Tagihan', type: 'select', options: ['Lunas', 'DP', 'Belum Lunas'] }, { h: 'Catatan', type: 'textarea' }] },
+  pemasukan: { label: 'Pemasukan', fields: [
+    { h: 'Detail pemasukan', type: 'text', req: 1 }, { h: 'Kategori', type: 'select', options: ['Peserta', 'Panitia', 'Sponsor'] },
+    { h: 'Biaya', type: 'number', rp: 1 }, { h: 'Tanggal transaksi', type: 'date' }, { h: 'Dibayar oleh', type: 'text' }, { h: 'Catatan', type: 'textarea' }] },
+  pengeluaran: { label: 'Pengeluaran', fields: [
+    { h: 'Detail pengeluaran', type: 'text', req: 1 },
+    { h: 'Kategori', type: 'select', options: ['Transportasi', 'Konsumsi', 'Peralatan', 'Darurat', 'Simaksi', 'Ojeg BC', 'P3K', 'Lainnya'] },
+    { h: 'Anggaran', type: 'number', rp: 1 }, { h: 'Biaya', type: 'number', rp: 1 }, { h: 'Quantity', type: 'number', def: 1 },
+    { h: 'Total Anggaran', ro: 1, rp: 1, f: r => (+r['Anggaran'] || 0) * (+r['Quantity'] || 0) },
+    { h: 'Total Biaya', ro: 1, rp: 1, f: r => (+r['Biaya'] || 0) * (+r['Quantity'] || 0) },
+    { h: 'Tanggal transaksi', type: 'date' }, { h: 'Dibayar oleh', type: 'text' }, { h: 'Catatan', type: 'textarea' }] },
+  itinerary: { label: 'Itinerary', fields: [
+    { h: 'Aktivitas', type: 'text', req: 1 },
+    { h: 'Jenis aktivitas', type: 'select', options: ['Mepo - BC', 'BC - POS 1', 'POS 1 - POS 2', 'POS 2 - POS 3', 'POS 3 - POS 4', 'POS 4 - POS 5', 'POS 5 - POS 6', 'ISHOMA', 'CAMP GROUND', 'CAMP - BC', 'BC - MEPO', 'SUMMIT'] },
+    { h: 'Waktu mulai', type: 'datetime-local' }, { h: 'Waktu berakhir', type: 'datetime-local' }, { h: 'Lokasi', type: 'text' }, { h: 'Catatan', type: 'textarea' }] },
+  perlengkapan: { label: 'Perlengkapan', fields: [
+    { h: 'Perlengkapan', type: 'text', req: 1 }, { h: 'Kebutuhan', type: 'number' }, { h: 'Kesediaan', type: 'number' },
+    { h: 'Sewa', ro: 1, f: r => Math.max(0, (+r['Kebutuhan'] || 0) - (+r['Kesediaan'] || 0)) },
+    { h: 'Harga/Unit', type: 'number', rp: 1 },
+    { h: 'Total Sewa', ro: 1, rp: 1, f: r => Math.max(0, (+r['Kebutuhan'] || 0) - (+r['Kesediaan'] || 0)) * (+r['Harga/Unit'] || 0) }] }
+};
+const KEYS = Object.keys(CFG);
+
+/* ===== Penyimpanan lokal (IndexedDB) ===== */
+let DB, cur = 'dashboard', editId = null;
+const blank = () => ({ set: { destinasi: '', realisasi: 0 }, tamu: [], pemasukan: [], pengeluaran: [], itinerary: [], perlengkapan: [], checklist: [], arsip: [], seq: 1 });
+function idb() { return new Promise((ok, no) => { const r = indexedDB.open('budgeting', 1); r.onupgradeneeded = () => r.result.createObjectStore('kv'); r.onsuccess = () => ok(r.result); r.onerror = () => no(r.error); }); }
+async function load() { const d = await idb(); return new Promise(ok => { const q = d.transaction('kv').objectStore('kv').get('db'); q.onsuccess = () => ok(q.result || null); q.onerror = () => ok(null); }); }
+async function save() { const d = await idb(); return new Promise(ok => { const t = d.transaction('kv', 'readwrite'); t.objectStore('kv').put(DB, 'db'); t.oncomplete = ok; t.onerror = ok; }); }
+
+/* ===== Helper ===== */
+const $ = id => document.getElementById(id);
+const rp = n => 'Rp ' + Math.round(Number(n) || 0).toLocaleString('id-ID');
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmtDate = v => { const m = String(v || '').match(/^(\d{4})-(\d\d)-(\d\d)(?:T(\d\d:\d\d))?/); return m ? m[3] + '/' + m[2] + '/' + m[1] + (m[4] ? ' ' + m[4] : '') : (v || ''); };
+const today = () => new Date().toISOString().slice(0, 10);
+function badge(v) {
+  const s = String(v).toLowerCase(), c = ['lunas', 'diterima'].includes(s) ? 'g' : ['dp', 'menunggu respons'].includes(s) ? 'y' : ['belum lunas', 'ditolak'].includes(s) ? 'r' : '';
+  return c ? `<span class="badge ${c}">${esc(v)}</span>` : esc(v);
+}
+function calc(key, r) { const o = Object.assign({}, r); CFG[key].fields.forEach(f => { if (f.ro) o[f.h] = f.f(o); }); return o; }
+const rowsOf = key => DB[key].map(r => calc(key, r));
+const sum = (a, f) => a.reduce((s, x) => s + (+f(x) || 0), 0);
+function download(name, text, type) {
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: type || 'application/json' })); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+}
+function openWA(t) { const a = document.createElement('a'); a.href = 'https://wa.me/?text=' + encodeURIComponent(t); a.target = '_blank'; document.body.appendChild(a); a.click(); a.remove(); }
+function setMsg(id, text, ok) { const e = $(id); if (e) { e.textContent = text; e.className = 'msg ' + (ok ? 'ok' : 'err'); } }
+
+/* ===== Hitungan dashboard ===== */
+function dash() {
+  const masuk = sum(DB.pemasukan, r => r['Biaya']), pr = rowsOf('pengeluaran');
+  const anggaran = sum(pr, r => r['Total Anggaran']), keluar = sum(pr, r => r['Total Biaya']), real = +DB.set.realisasi || 0;
+  const persen = real ? keluar / real : 0, kat = {};
+  pr.forEach(r => { const k = String(r['Kategori'] || '').trim() || '(Tanpa kategori)'; const o = kat[k] || (kat[k] = { k, anggaran: 0, biaya: 0 }); o.anggaran += r['Total Anggaran']; o.biaya += r['Total Biaya']; });
+  const kategori = Object.values(kat), warnings = [];
+  kategori.forEach(x => { if (x.biaya > x.anggaran) warnings.push({ level: 'red', text: x.k + ' lewat ' + rp(x.biaya - x.anggaran) + ' dari anggaran' }); });
+  if (real > 0) {
+    if (persen > 1) warnings.push({ level: 'red', text: 'Total pengeluaran melebihi Total Realisasi sebesar ' + rp(keluar - real) });
+    else if (persen >= 0.8) warnings.push({ level: 'yellow', text: 'Pemakaian sudah ' + (persen * 100).toFixed(0) + '% dari Total Realisasi' });
+  }
+  return { destinasi: DB.set.destinasi, real, anggaran, masuk, keluar, saldo: masuk - keluar, persen, kategori, warnings };
+}
+const hbar = (l, v, mx, c, t) => `<div class="hrow"><div>${esc(l)}</div><div class="htrack"><div style="width:${mx > 0 ? Math.min(100, v / mx * 100) : 0}%;background:${c}"></div></div><div class="hv">${t}</div></div>`;
+const stat = (l, v) => `<div class="stat"><small>${esc(l)}</small><b>${esc(v)}</b></div>`;
+
+/* ===== Navigasi ===== */
+const TABS = [['dashboard', 'Dashboard']].concat(KEYS.map(k => [k, CFG[k].label])).concat([['checklist', 'Checklist'], ['trip', 'Trip & Cadangan']]);
+function buildNav() {
+  $('nav').innerHTML = TABS.map(([k, l]) => `<button data-k="${k}" onclick="show('${k}')">${l}</button>`).join('');
+}
+function show(k) {
+  cur = k; editId = null;
+  document.querySelectorAll('nav button').forEach(b => b.classList.toggle('active', b.dataset.k === k));
+  if (k === 'dashboard') renderDash(); else if (k === 'checklist') renderCl(); else if (k === 'trip') renderTrip(); else renderSheet(k);
+  window.scrollTo(0, 0);
+}
+
+/* ===== Dashboard ===== */
+function renderDash() {
+  const d = dash();
+  $('main').innerHTML = `
+  <div class="card"><h3>Destinasi: ${esc(d.destinasi || '-')}</h3>
+    <div class="grid" style="margin-top:8px">${stat('Total Realisasi', rp(d.real))}${stat('Total Anggaran', rp(d.anggaran))}${stat('Total Pemasukan', rp(d.masuk))}${stat('Total Pengeluaran', rp(d.keluar))}${stat('Sisa Saldo', rp(d.saldo))}
+    <div class="stat"><small>Persentase Pemakaian</small><b>${(d.persen * 100).toFixed(1)}%</b><div class="bar"><div style="width:${Math.min(100, d.persen * 100)}%;${d.persen > 1 ? 'background:#dc2626' : ''}"></div></div></div></div></div>
+  <div class="card"><h3>Peringatan Anggaran</h3>${d.warnings.length ? d.warnings.map(w => `<div class="warn ${w.level}">${w.level === 'red' ? '⚠️' : '🔔'} ${esc(w.text)}</div>`).join('') : '<div class="warn green">✅ Semua kategori masih sesuai anggaran.</div>'}</div>
+  <div class="card"><h3>Pemasukan vs Pengeluaran</h3>${(() => { const mx = Math.max(d.masuk, d.keluar, 1); return hbar('Pemasukan', d.masuk, mx, '#16a34a', rp(d.masuk)) + hbar('Pengeluaran', d.keluar, mx, d.keluar > d.masuk ? '#dc2626' : '#f59e0b', rp(d.keluar)); })()}</div>
+  <div class="card"><h3>Pengeluaran per Kategori</h3><small class="mut">Abu-abu = anggaran, hijau/merah = biaya</small>
+    ${d.kategori.length ? (() => { const mx = Math.max(1, ...d.kategori.map(x => Math.max(x.anggaran, x.biaya))); return d.kategori.map(x => `<div style="margin-top:10px"><b>${esc(x.k)}</b>${hbar('Anggaran', x.anggaran, mx, '#9ca3af', rp(x.anggaran))}${hbar('Biaya', x.biaya, mx, x.biaya > x.anggaran ? '#dc2626' : '#16a34a', rp(x.biaya))}</div>`).join(''); })() : '<div>Belum ada data pengeluaran.</div>'}</div>
+  <div class="card"><h3>Pengaturan</h3>
+    <label>Destinasi</label><input id="sDest" value="${esc(d.destinasi)}">
+    <label>Total Realisasi (Rp)</label><input id="sReal" type="number" inputmode="decimal" value="${d.real}">
+    <button class="btn" onclick="saveSet()">Simpan Pengaturan</button><div id="sMsg" class="msg"></div></div>`;
+}
+async function saveSet() { DB.set.destinasi = $('sDest').value.trim(); DB.set.realisasi = Number($('sReal').value) || 0; await save(); renderDash(); setMsg('sMsg', 'Pengaturan disimpan.', 1); }
+
+/* ===== Tab data (Tamu, Pemasukan, Pengeluaran, Itinerary, Perlengkapan) ===== */
+function renderSheet(key) {
+  const c = CFG[key];
+  const inputs = c.fields.map((f, i) => {
+    if (f.ro) return '';
+    let inp;
+    if (f.type === 'select') inp = `<select id="f${i}"><option value="">-- Pilih --</option>${f.options.map(o => `<option>${esc(o)}</option>`).join('')}</select>`;
+    else if (f.type === 'textarea') inp = `<textarea id="f${i}" rows="2"></textarea>`;
+    else inp = `<input id="f${i}" type="${f.type}" ${f.type === 'number' ? 'step="any" inputmode="decimal"' : ''} value="${f.def !== undefined ? f.def : ''}">`;
+    return `<label>${esc(f.h)}${f.req ? ' *' : ''}</label>${inp}`;
+  }).join('');
+  const filters = c.fields.map((f, i) => f.type === 'select' ? `<select id="flt${i}" onchange="drawList('${key}')"><option value="">Semua ${esc(f.h)}</option>${f.options.map(o => `<option>${esc(o)}</option>`).join('')}</select>` : '').join('');
+  const hasDate = c.fields.some(f => f.type === 'date');
+  let extra = '';
+  if (key === 'perlengkapan') extra = `<div class="card"><h3>Ringkasan Sewa</h3><div id="sewa"></div><button class="btn" onclick="pushSewa()">➡️ Masukkan Total Sewa ke Pengeluaran</button><div id="sewaMsg" class="msg"></div></div>`;
+  $('main').innerHTML = `${extra}
+  <div class="card"><h3 id="ftitle">Tambah ${c.label}</h3>${inputs}
+    <button class="btn" id="fbtn" onclick="submitRow('${key}')">Simpan</button>
+    <button class="btn alt" id="fcancel" style="display:none" onclick="resetForm('${key}')">Batal edit</button><div id="fmsg" class="msg"></div></div>
+  <div class="card"><h3>Data ${c.label}</h3>
+    <div class="flt"><input id="q" class="full" placeholder="🔎 Cari kata kunci" oninput="drawList('${key}')">${filters}
+    ${hasDate ? '<input type="date" id="d1" onchange="drawList(\'' + key + '\')"><input type="date" id="d2" onchange="drawList(\'' + key + '\')">' : ''}</div>
+    <div id="tblbox"></div></div>`;
+  drawList(key); if (key === 'perlengkapan') drawSewa();
+}
+function drawSewa() {
+  const rows = rowsOf('perlengkapan'), sw = rows.filter(r => r['Sewa'] > 0);
+  $('sewa').innerHTML = `<div>${sw.length} jenis barang perlu disewa (${sum(sw, r => r['Sewa'])} unit)</div><b>Total biaya sewa: ${rp(sum(rows, r => r['Total Sewa']))}</b>`;
+}
+async function pushSewa() {
+  const total = sum(rowsOf('perlengkapan'), r => r['Total Sewa']);
+  if (total <= 0) return setMsg('sewaMsg', 'Belum ada biaya sewa (Total Sewa = 0).', 0);
+  if (!confirm('Masukkan total sewa ke Pengeluaran (kategori Peralatan)? Jika baris "Sewa perlengkapan" sudah ada, nilainya diperbarui.')) return;
+  const label = 'Sewa perlengkapan', ex = DB.pengeluaran.find(r => r['Detail pengeluaran'] === label);
+  if (ex) { ex['Anggaran'] = total; ex['Biaya'] = total; ex['Quantity'] = 1; }
+  else DB.pengeluaran.push({ id: DB.seq++, 'Detail pengeluaran': label, 'Kategori': 'Peralatan', 'Anggaran': total, 'Biaya': total, 'Quantity': 1, 'Tanggal transaksi': today(), 'Dibayar oleh': '', 'Catatan': 'Otomatis dari tab Perlengkapan' });
+  await save(); setMsg('sewaMsg', ex ? 'Baris diperbarui menjadi ' + rp(total) : 'Ditambahkan ke Pengeluaran: ' + rp(total), 1);
+}
+function resetForm(key) {
+  editId = null; CFG[key].fields.forEach((f, i) => { const e = $('f' + i); if (e) e.value = f.def !== undefined ? f.def : ''; });
+  $('ftitle').textContent = 'Tambah ' + CFG[key].label; $('fbtn').textContent = 'Simpan'; $('fcancel').style.display = 'none';
+}
+async function submitRow(key) {
+  const c = CFG[key], data = {};
+  c.fields.forEach((f, i) => { if (!f.ro) data[f.h] = $('f' + i).value; });
+  if (!String(data[c.fields[0].h]).trim()) return setMsg('fmsg', c.fields[0].h + ' wajib diisi', 0);
+  c.fields.forEach(f => { if (f.type === 'number' && data[f.h] !== '') data[f.h] = Number(data[f.h]); });
+  if (editId) { const r = DB[key].find(x => x.id === editId); Object.assign(r, data); }
+  else DB[key].push(Object.assign({ id: DB.seq++ }, data));
+  const wasEdit = !!editId; await save(); resetForm(key); drawList(key); if (key === 'perlengkapan') drawSewa();
+  setMsg('fmsg', wasEdit ? 'Data berhasil diperbarui.' : 'Data berhasil disimpan.', 1);
+}
+function editRow(key, id) {
+  const r = DB[key].find(x => x.id === id); editId = id;
+  CFG[key].fields.forEach((f, i) => { const e = $('f' + i); if (e) e.value = r[f.h] == null ? '' : r[f.h]; });
+  $('ftitle').textContent = 'Edit ' + CFG[key].label; $('fbtn').textContent = 'Update'; $('fcancel').style.display = 'block'; window.scrollTo(0, 0);
+}
+async function delRow(key, id) {
+  if (!confirm('Hapus data ini?')) return;
+  DB[key] = DB[key].filter(x => x.id !== id); await save(); drawList(key); if (key === 'perlengkapan') drawSewa();
+}
+function drawList(key) {
+  const c = CFG[key], box = $('tblbox'); if (!box) return;
+  const q = ($('q').value || '').toLowerCase().trim(), d1 = $('d1') ? $('d1').value : '', d2 = $('d2') ? $('d2').value : '';
+  const di = c.fields.find(f => f.type === 'date');
+  const all = rowsOf(key).reverse();
+  const rows = all.filter(r => {
+    if (q && c.fields.map(f => r[f.h]).join(' ').toLowerCase().indexOf(q) < 0) return false;
+    for (let i = 0; i < c.fields.length; i++) { const s = $('flt' + i); if (s && s.value && r[c.fields[i].h] !== s.value) return false; }
+    if (di && (d1 || d2)) { const v = String(r[di.h] || '').slice(0, 10); if (!v || (d1 && v < d1) || (d2 && v > d2)) return false; }
+    return true;
+  });
+  let h = `<small class="mut">Menampilkan ${rows.length} dari ${all.length} data</small>`;
+  if (!rows.length) { box.innerHTML = h + '<div>Belum ada data.</div>'; return; }
+  h += '<div class="tbl"><table><tr>' + c.fields.map(f => `<th>${esc(f.h)}</th>`).join('') + '<th></th></tr>';
+  rows.forEach(r => {
+    h += '<tr>' + c.fields.map(f => {
+      const v = r[f.h];
+      if (f.type === 'select') return `<td>${badge(v || '')}</td>`;
+      if (f.rp) return `<td>${v === '' || v == null ? '' : rp(v)}</td>`;
+      if (f.type === 'date' || f.type === 'datetime-local') return `<td>${esc(fmtDate(v))}</td>`;
+      return `<td>${esc(v)}</td>`;
+    }).join('') + `<td><button class="edt" onclick="editRow('${key}',${r.id})">Edit</button><button class="del" onclick="delRow('${key}',${r.id})">Hapus</button></td></tr>`;
+  });
+  box.innerHTML = h + '</table></div>';
+}
+
+/* ===== Checklist ===== */
+function renderCl() {
+  $('main').innerHTML = `
+  <div class="card"><h3 id="ctitle">Tambah Barang</h3>
+    <label>Barang *</label><input id="cb"><label>Dibawa oleh</label><input id="co"><label>Catatan</label><input id="cn">
+    <button class="btn" id="cbtn" onclick="clSubmit()">Simpan</button><button class="btn alt" id="ccancel" style="display:none" onclick="clReset()">Batal edit</button><div id="cmsg" class="msg"></div></div>
+  <div class="card"><h3>Checklist Perlengkapan</h3><div id="clprog"></div>
+    <div style="margin:8px 0"><input type="checkbox" id="clonly" onchange="drawCl()"> Tampilkan yang belum siap saja</div>
+    <input id="clq" placeholder="🔎 Cari barang / pembawa" oninput="drawCl()"><div id="clbox"></div>
+    <button class="btn alt" onclick="clImport()">📥 Impor barang dari tab Perlengkapan</button><div id="imsg" class="msg"></div></div>`;
+  drawCl();
+}
+function clReset() { editId = null; $('cb').value = $('co').value = $('cn').value = ''; $('ctitle').textContent = 'Tambah Barang'; $('cbtn').textContent = 'Simpan'; $('ccancel').style.display = 'none'; }
+async function clSubmit() {
+  const b = $('cb').value.trim(); if (!b) return setMsg('cmsg', 'Nama barang wajib diisi', 0);
+  if (editId) Object.assign(DB.checklist.find(x => x.id === editId), { barang: b, oleh: $('co').value, catatan: $('cn').value });
+  else DB.checklist.push({ id: DB.seq++, barang: b, oleh: $('co').value, catatan: $('cn').value, siap: false });
+  await save(); clReset(); drawCl(); setMsg('cmsg', 'Barang disimpan.', 1);
+}
+function clEdit(id) { const x = DB.checklist.find(r => r.id === id); editId = id; $('cb').value = x.barang; $('co').value = x.oleh; $('cn').value = x.catatan; $('ctitle').textContent = 'Edit Barang'; $('cbtn').textContent = 'Update'; $('ccancel').style.display = 'block'; window.scrollTo(0, 0); }
+async function clToggle(id, v) { DB.checklist.find(r => r.id === id).siap = v; await save(); drawCl(); }
+async function clDel(id) { if (!confirm('Hapus barang ini?')) return; DB.checklist = DB.checklist.filter(r => r.id !== id); await save(); drawCl(); }
+async function clImport() {
+  const have = new Set(DB.checklist.map(x => x.barang.trim().toLowerCase())); let n = 0;
+  DB.perlengkapan.forEach(r => { const nm = String(r['Perlengkapan']).trim(); if (nm && !have.has(nm.toLowerCase())) { DB.checklist.push({ id: DB.seq++, barang: nm, oleh: '', catatan: '', siap: false }); n++; } });
+  await save(); drawCl(); setMsg('imsg', n + ' barang diimpor dari Perlengkapan.', 1);
+}
+function drawCl() {
+  const L = DB.checklist, only = $('clonly').checked, q = ($('clq').value || '').toLowerCase().trim();
+  $('clprog').textContent = L.filter(x => x.siap).length + ' dari ' + L.length + ' barang sudah siap';
+  const rows = L.filter(x => (!only || !x.siap) && (!q || (x.barang + ' ' + x.oleh).toLowerCase().indexOf(q) >= 0));
+  $('clbox').innerHTML = rows.length ? rows.map(x => `<div class="cl${x.siap ? ' done' : ''}"><input type="checkbox" ${x.siap ? 'checked' : ''} onchange="clToggle(${x.id},this.checked)">
+    <div class="t"><b>${esc(x.barang)}</b><small>${x.oleh ? 'Dibawa: ' + esc(x.oleh) : 'Belum ada pembawa'}${x.catatan ? ' - ' + esc(x.catatan) : ''}</small></div>
+    <button class="edt" onclick="clEdit(${x.id})">Edit</button><button class="del" onclick="clDel(${x.id})">Hapus</button></div>`).join('') : '<div>Belum ada barang.</div>';
+}
+
+/* ===== Trip baru, arsip & cadangan ===== */
+function snapshot() {
+  const d = dash(), s = JSON.parse(JSON.stringify(DB)); delete s.arsip;
+  return { id: DB.seq++, tanggal: new Date().toLocaleString('id-ID'), destinasi: d.destinasi,
+    ringkasan: 'Pemasukan ' + rp(d.masuk) + '; Pengeluaran ' + rp(d.keluar) + '; Saldo ' + rp(d.saldo) + '; Tamu diterima ' + DB.tamu.filter(t => t['Status'] === 'Diterima').length, data: s };
+}
+function renderTrip() {
+  $('main').innerHTML = `
+  <div class="card"><h3>Arsipkan Trip Ini</h3><small class="mut">Menyimpan salinan seluruh data ke daftar arsip di HP. Data yang berjalan tidak berubah.</small>
+    <button class="btn" onclick="arsipkan(false)">🗂️ Arsipkan sekarang</button><div id="tmsg" class="msg"></div></div>
+  <div class="card"><h3>Mulai Trip Baru</h3><div class="warn yellow">Arsip dibuat otomatis lebih dulu, baru data dikosongkan.</div>
+    <label>Destinasi baru (kosongkan jika tidak diubah)</label><input id="nd">
+    <label>Total Realisasi baru (Rp, kosongkan jika tidak diubah)</label><input id="nr" type="number" inputmode="decimal">
+    <h3 style="margin-top:14px">Data yang dikosongkan</h3>
+    ${[['tamu', 1], ['pemasukan', 1], ['pengeluaran', 1], ['itinerary', 1], ['perlengkapan', 0]].map(([k, on]) => `<div style="margin-top:6px"><input type="checkbox" id="k_${k}" ${on ? 'checked' : ''}> ${CFG[k].label}</div>`).join('')}
+    <div style="margin-top:6px"><input type="checkbox" id="k_cl" checked> Reset centang Checklist</div>
+    <label>Ketik BARU untuk konfirmasi</label><input id="kf" placeholder="BARU">
+    <button class="btn red" onclick="arsipkan(true)">🚀 Arsipkan & mulai trip baru</button><div id="t2msg" class="msg"></div></div>
+  <div class="card"><h3>Daftar Arsip (${DB.arsip.length})</h3>
+    ${DB.arsip.length ? DB.arsip.slice().reverse().map(a => `<div style="padding:8px 0;border-bottom:1px solid #eee"><b>${esc(a.destinasi || '(tanpa nama)')} - ${esc(a.tanggal)}</b><div>${esc(a.ringkasan)}</div>
+      <button class="edt" onclick="arsipUnduh(${a.id})">Unduh</button><button class="del" onclick="arsipHapus(${a.id})">Hapus</button></div>`).join('') : '<div>Belum ada arsip.</div>'}</div>
+  <div class="card"><h3>💾 Cadangan Data</h3><small class="mut">Data tersimpan di HP ini. Unduh cadangan secara berkala (atau sebelum uninstall / ganti HP), simpan ke Google Drive atau WhatsApp.</small>
+    <button class="btn" onclick="ekspor()">⬇️ Unduh cadangan (JSON)</button>
+    <button class="btn alt" onclick="$('imp').click()">⬆️ Pulihkan dari cadangan</button>
+    <input type="file" id="imp" accept=".json,application/json" style="display:none" onchange="impor(this.files[0])"><div id="bmsg" class="msg"></div></div>`;
+}
+async function arsipkan(baru) {
+  if (!baru) { DB.arsip.push(snapshot()); await save(); renderTrip(); return setMsg('tmsg', 'Arsip dibuat.', 1); }
+  if ($('kf').value.trim().toUpperCase() !== 'BARU') return setMsg('t2msg', 'Ketik BARU dulu untuk konfirmasi.', 0);
+  if (!confirm('Data yang dipilih akan dikosongkan setelah arsip dibuat. Lanjut?')) return;
+  DB.arsip.push(snapshot());
+  KEYS.forEach(k => { if ($('k_' + k).checked) DB[k] = []; });
+  if ($('k_cl').checked) DB.checklist.forEach(x => x.siap = false);
+  if ($('nd').value.trim()) DB.set.destinasi = $('nd').value.trim();
+  if ($('nr').value !== '') DB.set.realisasi = Number($('nr').value) || 0;
+  await save(); renderTrip(); setMsg('t2msg', 'Trip baru siap. Data lama sudah diarsipkan.', 1);
+}
+function arsipUnduh(id) { const a = DB.arsip.find(x => x.id === id); download('arsip-' + (a.destinasi || 'trip').replace(/\W+/g, '-') + '.json', JSON.stringify(a, null, 1)); }
+async function arsipHapus(id) { if (!confirm('Hapus arsip ini?')) return; DB.arsip = DB.arsip.filter(x => x.id !== id); await save(); renderTrip(); }
+function ekspor() { download('cadangan-budgeting-' + today() + '.json', JSON.stringify(DB)); setMsg('bmsg', 'Cadangan diunduh.', 1); }
+function impor(file) {
+  if (!file) return;
+  const r = new FileReader();
+  r.onload = async () => {
+    try {
+      const d = JSON.parse(r.result); if (!d || !d.set || !d.pengeluaran) throw 0;
+      if (!confirm('Data saat ini akan DITIMPA oleh isi cadangan. Lanjut?')) return;
+      DB = Object.assign(blank(), d); await save(); renderTrip(); setMsg('bmsg', 'Cadangan berhasil dipulihkan.', 1);
+    } catch (e) { setMsg('bmsg', 'File cadangan tidak valid.', 0); }
+  };
+  r.readAsText(file);
+}
+
+/* ===== Mulai ===== */
+(async function () {
+  DB = Object.assign(blank(), await load() || {});
+  if (!DB.set.destinasi && !DB.tamu.length && !DB.pengeluaran.length) { DB.set.destinasi = 'Gunung Gede'; }
+  if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
+  buildNav(); show('dashboard');
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+})();
+</script>
+</body>
+</html>
