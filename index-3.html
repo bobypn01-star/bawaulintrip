@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b0b0d">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<script>try{document.documentElement.dataset.t=localStorage.getItem("t")||"dark"}catch(e){document.documentElement.dataset.t="dark"}</script>
+<title>bawaulin.cash</title>
+<style>:root{--bg:#0b0b0d;--card:rgba(23,23,27,.86);--card2:rgba(255,255,255,.08);--tx:#fff7ed;--mut:#e0cfb0;--bd:rgba(251,191,36,.18);--h:#fbbf24;--pri:#f97316;--pri2:#fbbf24;--grn:#22c55e;--red:#ef4444;color-scheme:dark}
+html[data-t=light]{--bg:#f3f4f6;--card:rgba(255,255,255,.9);--card2:rgba(0,0,0,.05);--tx:#1c1917;--mut:#57534e;--bd:#e7e5e4;--h:#c2410c;color-scheme:light}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);margin:0;padding-bottom:90px}
+header{position:sticky;top:0;z-index:20;background:var(--bg);display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--bd)}
+header img{width:36px;height:36px}header h1{margin:0;font-size:19px;font-weight:800;background:linear-gradient(90deg,var(--pri),var(--pri2));-webkit-background-clip:text;background-clip:text;color:transparent}
+#tg{margin-left:auto;border:1px solid var(--bd);background:var(--card);color:var(--tx);width:38px;height:38px;border-radius:50%;font-size:16px}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;background:var(--bg);border-top:1px solid var(--bd);padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
+nav button{flex:1;border:0;background:none;color:var(--mut);display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;font-weight:600;padding:6px 0}
+nav button svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+nav button.active{color:var(--pri)}
+main{max-width:680px;margin:0 auto;padding:16px}
+.pgh{display:flex;align-items:center;gap:10px;margin-bottom:14px}.pgh h2{margin:0;font-size:24px;font-weight:800;color:var(--h)}
+.back{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:20px;padding:6px 12px;font-size:14px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:16px;margin-bottom:14px}
+.hero{background:linear-gradient(135deg,#f97316,#fbbf24);color:#1a1000;border-radius:26px;padding:20px;margin-bottom:14px;box-shadow:0 12px 32px rgba(249,115,22,.28)}
+.hero small{opacity:.75;font-weight:600}.hero .big{font-size:34px;font-weight:800;margin:4px 0 2px;letter-spacing:-.5px}
+.chips{display:flex;gap:10px}.chip{flex:1;background:rgba(0,0,0,.14);border-radius:16px;padding:10px}.chip b{display:block;font-size:15px}
+.ringw{display:flex;align-items:center;gap:16px}.ringw div{line-height:1.7}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:var(--card2);border-radius:14px;padding:12px}.stat small{color:var(--mut);display:block}.stat b{font-size:16px}
+.bar{height:10px;background:var(--card2);border-radius:6px;overflow:hidden;margin-top:6px}.bar div{height:100%;background:linear-gradient(90deg,var(--pri),var(--pri2))}
+label{display:block;margin:14px 0 5px;font-weight:600;font-size:13px;color:var(--mut)}
+input,textarea,select{width:100%;padding:12px;border:1px solid var(--bd);border-radius:12px;font-size:16px;background:var(--card2);color:var(--tx)}
+input[type=checkbox]{width:auto;transform:scale(1.3);accent-color:var(--pri)}
+.btn{margin-top:14px;width:100%;padding:14px;border:0;border-radius:14px;background:linear-gradient(135deg,#f97316,#fbbf24);color:#1a1000;font-size:16px;font-weight:700}
+.btn.alt{background:var(--card2);color:var(--tx)}.btn.red{background:#dc2626;color:#fff}.btn:disabled{opacity:.6}
+.msg{margin-top:10px;font-size:14px}.ok{color:#4ade80}.err{color:#f87171}
+.tbl{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{border-bottom:1px solid var(--bd);padding:8px;white-space:nowrap;text-align:left}th{color:var(--mut);font-weight:600}
+.del,.edt{border:0;border-radius:8px;padding:7px 11px;font-size:13px;font-weight:600}
+.del{background:rgba(239,68,68,.16);color:#f87171}.edt{background:rgba(96,165,250,.16);color:#60a5fa;margin-right:2px}
+h3{margin:0 0 6px;font-size:17px;color:var(--h)}small.mut{color:var(--mut)}
+.warn{padding:11px 13px;border-radius:12px;margin-top:8px;font-size:14px}
+.warn.red{background:rgba(239,68,68,.15);color:#f87171}.warn.yellow{background:rgba(251,191,36,.15);color:#fbbf24}.warn.green{background:rgba(34,197,94,.15);color:#4ade80}.warn.note{background:rgba(96,165,250,.15);color:#93c5fd}
+html[data-t=light] .warn.red{color:#b91c1c}html[data-t=light] .warn.yellow{color:#92400e}html[data-t=light] .warn.green{color:#166534}html[data-t=light] .warn.note{color:#1e40af}
+.badge{display:inline-block;padding:2px 9px;border-radius:10px;font-size:12px;font-weight:600;margin-right:4px}
+.badge.g{background:rgba(34,197,94,.18);color:#4ade80}.badge.y{background:rgba(251,191,36,.18);color:#fbbf24}.badge.r{background:rgba(239,68,68,.18);color:#f87171}
+.hrow{display:grid;grid-template-columns:84px 1fr 96px;gap:6px;align-items:center;margin:5px 0;font-size:12px}
+.htrack{height:12px;background:var(--card2);border-radius:6px;overflow:hidden}.htrack div{height:100%}.hv{text-align:right}
+.flt{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}.flt .full{grid-column:1/3}.flt input,.flt select{padding:10px;font-size:14px}
+.tx{display:flex;gap:12px;align-items:center;padding:12px 0 8px}.av{width:44px;height:44px;border-radius:14px;background:var(--card2);display:grid;place-items:center;font-weight:800;font-size:18px;color:var(--pri);flex:none}
+.av.in{color:var(--grn)}.av.out{color:var(--red)}.tm{flex:1;min-width:0}.tm b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tm small{color:var(--mut);display:block;font-size:12px}
+.ta{font-weight:800;white-space:nowrap}.ta.in{color:var(--grn)}.ta.out{color:var(--red)}
+.txw{border-bottom:1px solid var(--bd)}.txw:last-child{border:0}.acts{display:flex;gap:6px;padding:0 0 12px 56px}
+.fab{position:fixed;right:18px;bottom:94px;z-index:25;width:58px;height:58px;border-radius:50%;border:0;background:linear-gradient(135deg,#f97316,#fbbf24);color:#1a1000;font-size:32px;font-weight:700;box-shadow:0 8px 24px rgba(249,115,22,.45)}
+.sheet{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:40;display:none;align-items:flex-end;justify-content:center}.sheet.on{display:flex}
+.sheetin{position:relative;background:var(--bg);width:100%;max-width:680px;max-height:90vh;overflow:auto;border-radius:26px 26px 0 0;padding:20px 18px 30px;animation:up .25s ease}
+@keyframes up{from{transform:translateY(60px);opacity:0}}
+.sheetin .x{position:absolute;right:14px;top:14px;border:0;background:var(--card2);color:var(--tx);width:34px;height:34px;border-radius:50%}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}.tile{background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:18px 14px;text-align:left;color:var(--tx);font-size:16px;font-weight:700}
+.tile span{display:block;font-size:28px;margin-bottom:8px}.tile small{display:block;color:var(--mut);font-weight:400;font-size:12px;margin-top:2px}
+#toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:10px 18px;border-radius:20px;z-index:60;font-weight:600;display:none}
+.cl{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bd)}.cl .t{flex:1}.cl .t b{display:block}.cl .t small{color:var(--mut)}.cl.done .t b{text-decoration:line-through;color:var(--mut)}
+.rdday{background:linear-gradient(90deg,#166534,#22c55e);color:#fff;padding:7px 12px;border-radius:10px;margin:12px 0 6px;font-weight:700}
+.rdi{display:flex;gap:10px;padding:8px 0 8px 12px;border-left:3px solid #f97316;margin-left:8px;position:relative}.rdi:before{content:'';position:absolute;left:-8px;top:12px;width:11px;height:11px;border-radius:50%;background:#fbbf24;border:2px solid #f97316}
+.rdt{min-width:78px;font-weight:700;color:var(--pri2)}.rdx b{display:block}.rdx small{color:var(--mut)}
+.cgh{display:flex;justify-content:space-between;background:var(--card2);padding:8px 12px;border-radius:10px;margin-top:10px;font-weight:700}
+@media print{html,html[data-t=light]{--bg:#fff;--card:#fff;--card2:#f3f4f6;--tx:#111;--mut:#555;--bd:#ddd;--h:#166534}}
+#pdoc{display:none}
+@media print{@page{margin:10mm}body{background:#fff}body.printing>*:not(#pdoc){display:none!important}body.printing #pdoc{display:block}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+#pdoc{font-family:Arial,sans-serif;color:#111;font-size:11px}
+.dh{background:#000;color:#fff;display:flex;align-items:center;gap:14px;padding:12px 16px;border-bottom:5px solid #f97316}.dh img{width:70px;height:70px}.dt{font-size:24px;font-weight:800;color:#fbbf24;letter-spacing:1px}.ds{color:#22c55e;font-weight:700;letter-spacing:2px}.dr{margin-left:auto;text-align:right;font-size:10px;color:#d1d5db}
+.dsub{font-size:13px;font-weight:700;margin:10px 0}.db h2{font-size:13px;color:#fff;background:#166534;padding:5px 8px;margin:14px 0 6px;border-left:5px solid #f97316}
+#pdoc table{width:100%;border-collapse:collapse;margin-bottom:6px}#pdoc th{background:#fef3c7;border:1px solid #bbb;padding:4px;text-align:left}#pdoc td{border:1px solid #ccc;padding:4px;white-space:normal}#pdoc tr.tot td{font-weight:800;background:#f0fdf4}
+.sum{display:flex;flex-wrap:wrap;gap:6px}.sum div{flex:1 1 30%;border:1px solid #bbb;border-radius:6px;padding:6px}.sum b{display:block;font-size:14px}
+.ttd{display:flex;justify-content:space-around;margin-top:46px;text-align:center}.ttd div{width:28%;border-top:1px solid #000;padding-top:4px}
+.df{margin-top:16px;text-align:center;font-size:9px;color:#666;border-top:1px solid #ccc;padding-top:6px}
+.lamp{display:flex;flex-wrap:wrap;gap:8px}.lamp div{width:31%;border:1px solid #ccc;padding:4px;page-break-inside:avoid;font-size:9px}.lamp img{width:100%}}
+
+:root{--tx:#f7f1e8;--mut:#b8ada0;--hd:#fbbf24;--card:rgba(24,22,20,.8);--card2:rgba(255,255,255,.07);--bd:rgba(255,255,255,.1);--solid:#1a1816}
+html[data-t=light]{--tx:#1c1917;--mut:#6b625a;--hd:#c2410c;--card:rgba(255,255,255,.84);--card2:rgba(0,0,0,.05);--bd:rgba(0,0,0,.1);--solid:#fff}
+body{background:radial-gradient(120% 70% at 50% 0%,#2a1707 0%,var(--bg) 62%) fixed,var(--bg)}
+html[data-t=light] body{background:radial-gradient(120% 70% at 50% 0%,#ffe6cc 0%,var(--bg) 62%) fixed,var(--bg)}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:url(bg.png) center 52%/min(94vw,640px) no-repeat;opacity:.22}
+html[data-t=light] body::before{opacity:.16}
+main{position:relative;z-index:1}
+header{display:grid;grid-template-columns:56px 1fr 56px;background:var(--card);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+header img{width:auto;height:46px}.ht{text-align:center}.ht h1{font-size:19px}.ht small{display:block;color:var(--mut);font-size:11px;letter-spacing:1.6px;margin-top:1px}#tg{justify-self:end}
+.card,.tile{-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+nav{background:var(--card);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.sheetin{background:var(--solid)}
+h3{color:var(--hd)}.stat b,.tm b,.tile{color:var(--tx)}
+input,textarea,select{color:var(--tx)}select option{background:var(--solid);color:var(--tx)}
+
+</style>
+</head>
+<body>
+<header><img src="logo.png" alt="Bawaulin Trip"><div class="ht"><h1>Budgeting Pendakian</h1><small>bawaulin.trip</small></div><button id="tg" onclick="toggleTheme()"></button></header>
+<nav id="nav"></nav>
+<main id="main">Memuat...</main>
+<script>
+/* ===== Struktur data (sama dengan sheet di Spreadsheet lama) ===== */
+const CFG = {
+  tamu: { label: 'Tamu', fields: [
+    { h: 'Nama', type: 'text', req: 1 }, { h: 'Meeting Point', type: 'text' }, { h: 'Ponsel', type: 'tel' },
+    { h: 'Status', type: 'select', options: ['Diterima', 'Menunggu respons', 'Ditolak'] },
+    { h: 'Tagihan', type: 'select', options: ['Lunas', 'DP', 'Belum Lunas'] }, { h: 'Catatan', type: 'textarea' }] },
+  pemasukan: { label: 'Pemasukan', fields: [
+    { h: 'Detail pemasukan', type: 'text', req: 1 }, { h: 'Kategori', type: 'select', options: ['Peserta', 'Panitia', 'Sponsor'] },
+    { h: 'Biaya', type: 'number', rp: 1 }, { h: 'Tanggal transaksi', type: 'date' }, { h: 'Dibayar oleh', type: 'text' }, { h: 'Catatan', type: 'textarea' }] },
+  pengeluaran: { label: 'Pengeluaran', fields: [
+    { h: 'Detail pengeluaran', type: 'text', req: 1 },
+    { h: 'Kategori', type: 'select', options: ['Transportasi', 'Konsumsi', 'Peralatan', 'Darurat', 'Simaksi', 'Ojeg BC', 'P3K', 'Lainnya'] },
+    { h: 'Anggaran', type: 'number', rp: 1 }, { h: 'Biaya', type: 'number', rp: 1 }, { h: 'Quantity', type: 'number', def: 1 },
+    { h: 'Total Anggaran', ro: 1, rp: 1, f: r => (+r['Anggaran'] || 0) * (+r['Quantity'] || 0) },
+    { h: 'Total Biaya', ro: 1, rp: 1, f: r => (+r['Biaya'] || 0) * (+r['Quantity'] || 0) },
+    { h: 'Tanggal transaksi', type: 'date' }, { h: 'Dibayar oleh', type: 'text' }, { h: 'Catatan', type: 'textarea' }] },
+  itinerary: { label: 'Itinerary', fields: [
+    { h: 'Aktivitas', type: 'text', req: 1 },
+    { h: 'Jenis aktivitas', type: 'select', options: ['Mepo - BC', 'BC - POS 1', 'POS 1 - POS 2', 'POS 2 - POS 3', 'POS 3 - POS 4', 'POS 4 - POS 5', 'POS 5 - POS 6', 'ISHOMA', 'CAMP GROUND', 'CAMP - BC', 'BC - MEPO', 'SUMMIT'] },
+    { h: 'Waktu mulai', type: 'datetime-local' }, { h: 'Waktu berakhir', type: 'datetime-local' }, { h: 'Lokasi', type: 'text' }, { h: 'Catatan', type: 'textarea' }] },
+  perlengkapan: { label: 'Perlengkapan', fields: [
+    { h: 'Perlengkapan', type: 'text', req: 1 }, { h: 'Kebutuhan', type: 'number' }, { h: 'Kesediaan', type: 'number' },
+    { h: 'Sewa', ro: 1, f: r => Math.max(0, (+r['Kebutuhan'] || 0) - (+r['Kesediaan'] || 0)) },
+    { h: 'Harga/Unit', type: 'number', rp: 1 },
+    { h: 'Total Sewa', ro: 1, rp: 1, f: r => Math.max(0, (+r['Kebutuhan'] || 0) - (+r['Kesediaan'] || 0)) * (+r['Harga/Unit'] || 0) }] }
+};
+const KEYS = Object.keys(CFG);
+
+/* ===== Penyimpanan lokal (IndexedDB) ===== */
+let DB, cur = 'dashboard', editId = null;
+const blank = () => ({ set: { destinasi: '', realisasi: 0 }, tamu: [], pemasukan: [], pengeluaran: [], itinerary: [], perlengkapan: [], checklist: [], arsip: [], sim: [], simAktif: null, pin: null, seq: 1 });
+function idb() { return new Promise((ok, no) => { const r = indexedDB.open('budgeting', 1); r.onupgradeneeded = () => r.result.createObjectStore('kv'); r.onsuccess = () => ok(r.result); r.onerror = () => no(r.error); }); }
+async function load() { const d = await idb(); return new Promise(ok => { const q = d.transaction('kv').objectStore('kv').get('db'); q.onsuccess = () => ok(q.result || null); q.onerror = () => ok(null); }); }
+async function save() { const d = await idb(); return new Promise(ok => { const t = d.transaction('kv', 'readwrite'); t.objectStore('kv').put(DB, 'db'); t.oncomplete = ok; t.onerror = ok; }); }
+
+/* ===== Helper ===== */
+const $ = id => document.getElementById(id);
+const rp = n => 'Rp ' + Math.round(Number(n) || 0).toLocaleString('id-ID');
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmtDate = v => { const m = String(v || '').match(/^(\d{4})-(\d\d)-(\d\d)(?:T(\d\d:\d\d))?/); return m ? m[3] + '/' + m[2] + '/' + m[1] + (m[4] ? ' ' + m[4] : '') : (v || ''); };
+const today = () => new Date().toISOString().slice(0, 10);
+function badge(v) {
+  const s = String(v).toLowerCase(), c = ['lunas', 'diterima'].includes(s) ? 'g' : ['dp', 'menunggu respons'].includes(s) ? 'y' : ['belum lunas', 'ditolak'].includes(s) ? 'r' : '';
+  return c ? `<span class="badge ${c}">${esc(v)}</span>` : esc(v);
+}
+function calc(key, r) { const o = Object.assign({}, r); CFG[key].fields.forEach(f => { if (f.ro) o[f.h] = f.f(o); }); return o; }
+const rowsOf = key => DB[key].map(r => calc(key, r));
+const sum = (a, f) => a.reduce((s, x) => s + (+f(x) || 0), 0);
+function download(name, text, type) {
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: type || 'application/json' })); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+}
+function openWA(t) { const a = document.createElement('a'); a.href = 'https://wa.me/?text=' + encodeURIComponent(t); a.target = '_blank'; document.body.appendChild(a); a.click(); a.remove(); }
+function setMsg(id, text, ok) { const e = $(id); if (e) { e.textContent = text; e.className = 'msg ' + (ok ? 'ok' : 'err'); } }
+
+/* ===== Hitungan dashboard ===== */
+function dash() {
+  const masuk = sum(DB.pemasukan, r => r['Biaya']), pr = rowsOf('pengeluaran');
+  const anggaran = sum(pr, r => r['Total Anggaran']), keluar = sum(pr, r => r['Total Biaya']), real = +DB.set.realisasi || 0;
+  const persen = real ? keluar / real : 0, kat = {};
+  pr.forEach(r => { const k = String(r['Kategori'] || '').trim() || '(Tanpa kategori)'; const o = kat[k] || (kat[k] = { k, anggaran: 0, biaya: 0 }); o.anggaran += r['Total Anggaran']; o.biaya += r['Total Biaya']; });
+  const kategori = Object.values(kat), warnings = [];
+  kategori.forEach(x => { if (x.biaya > x.anggaran) warnings.push({ level: 'red', text: x.k + ' lewat ' + rp(x.biaya - x.anggaran) + ' dari anggaran' }); });
+  if (real > 0) {
+    if (persen > 1) warnings.push({ level: 'red', text: 'Total pengeluaran melebihi Total Realisasi sebesar ' + rp(keluar - real) });
+    else if (persen >= 0.8) warnings.push({ level: 'yellow', text: 'Pemakaian sudah ' + (persen * 100).toFixed(0) + '% dari Total Realisasi' });
+  }
+  return { destinasi: DB.set.destinasi, real, anggaran, masuk, keluar, saldo: masuk - keluar, persen, kategori, warnings };
+}
+const hbar = (l, v, mx, c, t) => `<div class="hrow"><div>${esc(l)}</div><div class="htrack"><div style="width:${mx > 0 ? Math.min(100, v / mx * 100) : 0}%;background:${c}"></div></div><div class="hv">${t}</div></div>`;
+const stat = (l, v) => `<div class="stat"><small>${esc(l)}</small><b>${esc(v)}</b></div>`;
+
+/* ===== Navigasi ===== */
+const TABS = [['dashboard', 'Dashboard']].concat(KEYS.map(k => [k, CFG[k].label])).concat([['checklist', 'Checklist'], ['simulasi', 'Simulasi'], ['bayar', 'Pembayaran'], ['rekap', 'Rekap'], ['trip', 'Trip & Arsip']]);
+function show(k) {
+  cur = k; editId = null;
+  document.querySelectorAll('nav button').forEach(b => b.classList.toggle('active', b.dataset.k === (MAIN.includes(k) ? k : 'more')));
+  if (k === 'dashboard') renderDash(); else if (k === 'more') renderMore(); else if (k === 'checklist') renderCl(); else if (k === 'trip') renderTrip(); else if (k === 'simulasi') renderSim(); else if (k === 'bayar') renderBayar(); else if (k === 'rekap') renderRekap(); else renderSheet(k);
+  if (k !== 'dashboard' && k !== 'more') { const lb = (TABS.find(t => t[0] === k) || ['', ''])[1]; $('main').insertAdjacentHTML('afterbegin', `<div class="pgh">${MAIN.includes(k) ? '' : '<button class="back" onclick="show(\'more\')">‹ Menu</button>'}<h2>${lb}</h2></div>`); }
+  window.scrollTo(0, 0);
+}
+
+/* ===== Dashboard ===== */
+function renderDash() {
+  const d = dash();
+  $('main').innerHTML = `
+  <div class="hero"><small>${esc(d.destinasi || 'Belum ada destinasi')}</small><div class="big">${rp(d.saldo)}</div><small>Sisa saldo</small>
+    <div class="chips" style="margin-top:12px"><div class="chip"><small>Pemasukan</small><b>${rp(d.masuk)}</b></div><div class="chip"><small>Pengeluaran</small><b>${rp(d.keluar)}</b></div></div></div>
+  <div class="card ringw"><svg width="96" height="96" viewBox="0 0 80 80"><circle cx="40" cy="40" r="34" fill="none" style="stroke:var(--card2)" stroke-width="9"/><circle cx="40" cy="40" r="34" fill="none" stroke="${d.persen > 1 ? '#ef4444' : '#f97316'}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${Math.min(1, d.persen) * 213.6} 213.6" transform="rotate(-90 40 40)"/><text x="40" y="45" text-anchor="middle" style="fill:var(--tx)" font-size="15" font-weight="800">${(d.persen * 100).toFixed(0)}%</text></svg>
+    <div><b>Pemakaian anggaran</b><br><small class="mut">Realisasi</small> ${rp(d.real)}<br><small class="mut">Anggaran</small> ${rp(d.anggaran)}</div></div>
+  <div class="card"><h3>Peringatan Anggaran</h3>${d.warnings.length ? d.warnings.map(w => `<div class="warn ${w.level}">${w.level === 'red' ? '⚠️' : '🔔'} ${esc(w.text)}</div>`).join('') : '<div class="warn green">✅ Semua kategori masih sesuai anggaran.</div>'}</div>
+  <div class="card"><h3>Pemasukan vs Pengeluaran</h3>${(() => { const mx = Math.max(d.masuk, d.keluar, 1); return hbar('Pemasukan', d.masuk, mx, '#16a34a', rp(d.masuk)) + hbar('Pengeluaran', d.keluar, mx, d.keluar > d.masuk ? '#dc2626' : '#f59e0b', rp(d.keluar)); })()}</div>
+  <div class="card"><h3>Pengeluaran per Kategori</h3><small class="mut">Abu-abu = anggaran, hijau/merah = biaya</small>
+    ${d.kategori.length ? (() => { const mx = Math.max(1, ...d.kategori.map(x => Math.max(x.anggaran, x.biaya))); return d.kategori.map(x => `<div style="margin-top:10px"><b>${esc(x.k)}</b>${hbar('Anggaran', x.anggaran, mx, '#9ca3af', rp(x.anggaran))}${hbar('Biaya', x.biaya, mx, x.biaya > x.anggaran ? '#dc2626' : '#16a34a', rp(x.biaya))}</div>`).join(''); })() : '<div>Belum ada data pengeluaran.</div>'}</div>
+  <div class="card"><h3>Pengaturan</h3>
+    <label>Destinasi</label><input id="sDest" value="${esc(d.destinasi)}">
+    <label>Total Realisasi (Rp)</label><input id="sReal" type="number" inputmode="decimal" value="${d.real}">
+    <button class="btn" onclick="saveSet()">Simpan Pengaturan</button><div id="sMsg" class="msg"></div></div>
+  <div class="card"><h3>🔒 PIN Pengaman</h3><small class="mut">${DB.pin ? 'PIN aktif. Isi PIN baru untuk mengganti, atau kosongkan untuk mematikan.' : 'PIN belum aktif. Isi 4-8 angka untuk mengaktifkan. Jika lupa PIN, pulihkan lewat file cadangan.'}</small>
+    ${DB.pin ? '<label>PIN lama</label><input id="po" type="password" inputmode="numeric">' : ''}<label>PIN baru</label><input id="pn" type="password" inputmode="numeric" maxlength="8">
+    <button class="btn alt" onclick="setPin()">Simpan PIN</button><div id="pmsg" class="msg"></div></div>`;
+}
+async function saveSet() { DB.set.destinasi = $('sDest').value.trim(); DB.set.realisasi = Number($('sReal').value) || 0; await save(); renderDash(); setMsg('sMsg', 'Pengaturan disimpan.', 1); }
+
+/* ===== Tab data (Tamu, Pemasukan, Pengeluaran, Itinerary, Perlengkapan) ===== */
+function renderSheet(key) {
+  const c = CFG[key];
+  const inputs = c.fields.map((f, i) => {
+    if (f.ro) return '';
+    let inp;
+    if (f.type === 'select') inp = `<select id="f${i}"><option value="">-- Pilih --</option>${f.options.map(o => `<option>${esc(o)}</option>`).join('')}</select>`;
+    else if (f.type === 'textarea') inp = `<textarea id="f${i}" rows="2"></textarea>`;
+    else inp = `<input id="f${i}" type="${f.type}" ${f.type === 'number' ? 'step="any" inputmode="decimal"' : ''} value="${f.def !== undefined ? f.def : ''}">`;
+    return `<label>${esc(f.h)}${f.req ? ' *' : ''}</label>${inp}`;
+  }).join('');
+  const filters = c.fields.map((f, i) => f.type === 'select' ? `<select id="flt${i}" onchange="drawList('${key}')"><option value="">Semua ${esc(f.h)}</option>${f.options.map(o => `<option>${esc(o)}</option>`).join('')}</select>` : '').join('');
+  const hasDate = c.fields.some(f => f.type === 'date');
+  const bukti = (key === 'pemasukan' || key === 'pengeluaran') ? `<label>Bukti nota</label><div class="flt"><button class="btn alt" style="margin:0" onclick="$('bcam').click()">📷 Kamera</button><button class="btn alt" style="margin:0" onclick="$('bfile').click()">📎 Unggah file</button></div><input type="file" id="bcam" accept="image/*" capture="environment" hidden onchange="pickBukti(this)"><input type="file" id="bfile" accept="image/*,application/pdf" hidden onchange="pickBukti(this)"><div id="bprev"></div>` : '';
+  let extra = '';
+  if (key === 'perlengkapan') extra = `<div class="card"><h3>Ringkasan Sewa</h3><div id="sewa"></div><button class="btn" onclick="pushSewa()">➡️ Masukkan Total Sewa ke Pengeluaran</button><div id="sewaMsg" class="msg"></div></div>`;
+  $('main').innerHTML = `${extra}
+  <button class="fab" onclick="openSheet()">+</button><div class="sheet" id="sheet" onclick="if(event.target===this)closeSheet()"><div class="sheetin"><button class="x" onclick="closeSheet()">✕</button><h3 id="ftitle">Tambah ${c.label}</h3>${inputs}${bukti}
+    <button class="btn" id="fbtn" onclick="submitRow('${key}')">Simpan</button>
+    <button class="btn alt" id="fcancel" style="display:none" onclick="resetForm('${key}');closeSheet()">Batal edit</button><div id="fmsg" class="msg"></div></div></div>
+  <div class="card"><h3>Data ${c.label}</h3>
+    <div class="flt"><input id="q" class="full" placeholder="🔎 Cari kata kunci" oninput="drawList('${key}')">${filters}
+    ${hasDate ? '<input type="date" id="d1" onchange="drawList(\'' + key + '\')"><input type="date" id="d2" onchange="drawList(\'' + key + '\')">' : ''}</div>
+    <div id="tblbox"></div></div><div id="rkp"></div>`;
+  drawList(key); if (key === 'perlengkapan') drawSewa();
+}
+function drawSewa() {
+  const rows = rowsOf('perlengkapan'), sw = rows.filter(r => r['Sewa'] > 0);
+  $('sewa').innerHTML = `<div>${sw.length} jenis barang perlu disewa (${sum(sw, r => r['Sewa'])} unit)</div><b>Total biaya sewa: ${rp(sum(rows, r => r['Total Sewa']))}</b>`;
+}
+async function pushSewa() {
+  const total = sum(rowsOf('perlengkapan'), r => r['Total Sewa']);
+  if (total <= 0) return setMsg('sewaMsg', 'Belum ada biaya sewa (Total Sewa = 0).', 0);
+  if (!confirm('Masukkan total sewa ke Pengeluaran (kategori Peralatan)? Jika baris "Sewa perlengkapan" sudah ada, nilainya diperbarui.')) return;
+  const label = 'Sewa perlengkapan', ex = DB.pengeluaran.find(r => r['Detail pengeluaran'] === label);
+  if (ex) { ex['Anggaran'] = total; ex['Biaya'] = total; ex['Quantity'] = 1; }
+  else DB.pengeluaran.push({ id: DB.seq++, 'Detail pengeluaran': label, 'Kategori': 'Peralatan', 'Anggaran': total, 'Biaya': total, 'Quantity': 1, 'Tanggal transaksi': today(), 'Dibayar oleh': '', 'Catatan': 'Otomatis dari tab Perlengkapan' });
+  await save(); setMsg('sewaMsg', ex ? 'Baris diperbarui menjadi ' + rp(total) : 'Ditambahkan ke Pengeluaran: ' + rp(total), 1);
+}
+function resetForm(key) {
+  editId = null; BUKTI = null; showPrev(''); CFG[key].fields.forEach((f, i) => { const e = $('f' + i); if (e) e.value = f.def !== undefined ? f.def : ''; });
+  $('ftitle').textContent = 'Tambah ' + CFG[key].label; $('fbtn').textContent = 'Simpan'; $('fcancel').style.display = 'none';
+}
+async function submitRow(key) {
+  const c = CFG[key], data = {};
+  c.fields.forEach((f, i) => { if (!f.ro) data[f.h] = $('f' + i).value; });
+  if (!String(data[c.fields[0].h]).trim()) return setMsg('fmsg', c.fields[0].h + ' wajib diisi', 0);
+  c.fields.forEach(f => { if (f.type === 'number' && data[f.h] !== '') data[f.h] = Number(data[f.h]); });
+  if (BUKTI !== null) data['Bukti'] = BUKTI;
+  if (editId) { const r = DB[key].find(x => x.id === editId); Object.assign(r, data); }
+  else DB[key].push(Object.assign({ id: DB.seq++ }, data));
+  const wasEdit = !!editId; await save(); resetForm(key); drawList(key); if (key === 'perlengkapan') drawSewa();
+  closeSheet(); toast(wasEdit ? 'Data diperbarui' : 'Data tersimpan');
+}
+function editRow(key, id) {
+  const r = DB[key].find(x => x.id === id); editId = id; BUKTI = null; showPrev(r.Bukti);
+  CFG[key].fields.forEach((f, i) => { const e = $('f' + i); if (e) e.value = r[f.h] == null ? '' : r[f.h]; });
+  $('ftitle').textContent = 'Edit ' + CFG[key].label; $('fbtn').textContent = 'Update'; $('fcancel').style.display = 'block'; openSheet();
+}
+async function delRow(key, id) {
+  if (!confirm('Hapus data ini?')) return;
+  DB[key] = DB[key].filter(x => x.id !== id); await save(); drawList(key); if (key === 'perlengkapan') drawSewa();
+}
+function drawList(key) {
+  const c = CFG[key], box = $('tblbox'); if (!box) return;
+  const HB = key === 'pemasukan' || key === 'pengeluaran'; if (key === 'itinerary') drawRundown();
+  const q = ($('q').value || '').toLowerCase().trim(), d1 = $('d1') ? $('d1').value : '', d2 = $('d2') ? $('d2').value : '';
+  const di = c.fields.find(f => f.type === 'date');
+  const all = rowsOf(key).reverse();
+  const rows = all.filter(r => {
+    if (q && c.fields.map(f => r[f.h]).join(' ').toLowerCase().indexOf(q) < 0) return false;
+    for (let i = 0; i < c.fields.length; i++) { const s = $('flt' + i); if (s && s.value && r[c.fields[i].h] !== s.value) return false; }
+    if (di && (d1 || d2)) { const v = String(r[di.h] || '').slice(0, 10); if (!v || (d1 && v < d1) || (d2 && v > d2)) return false; }
+    return true;
+  });
+  let h = `<small class="mut">Menampilkan ${rows.length} dari ${all.length} data</small>`;
+  if (!rows.length) { box.innerHTML = h + '<div>Belum ada data.</div>'; return; }
+  box.innerHTML = h + rows.map(r => txRow(key, r)).join('');
+}
+
+/* ===== Checklist ===== */
+function renderCl() {
+  $('main').innerHTML = `
+  <div class="card"><h3 id="ctitle">Tambah Barang</h3>
+    <label>Barang *</label><input id="cb"><label>Dibawa oleh</label><input id="co"><label>Catatan</label><input id="cn">
+    <button class="btn" id="cbtn" onclick="clSubmit()">Simpan</button><button class="btn alt" id="ccancel" style="display:none" onclick="clReset()">Batal edit</button><div id="cmsg" class="msg"></div></div>
+  <div class="card"><h3>Checklist Perlengkapan</h3><div id="clprog"></div>
+    <div style="margin:8px 0"><input type="checkbox" id="clonly" onchange="drawCl()"> Tampilkan yang belum siap saja</div>
+    <input id="clq" placeholder="🔎 Cari barang / pembawa" oninput="drawCl()"><div id="clbox"></div>
+    <button class="btn alt" onclick="clImport()">📥 Impor barang dari tab Perlengkapan</button><div id="imsg" class="msg"></div></div>
+  <div class="card"><h3>📋 Rekap Checklist</h3><div id="clrk"></div><button class="btn" onclick="printDoc(docWrap('CHECKLIST PERLENGKAPAN','Destinasi: '+(DB.set.destinasi||'-'),clRekapHtml()))">📄 Unduh PDF checklist</button><button class="btn" style="background:#25d366" onclick="openWA(clText())">💬 Bagikan ke WhatsApp</button></div>`;
+  drawCl();
+}
+function clReset() { editId = null; $('cb').value = $('co').value = $('cn').value = ''; $('ctitle').textContent = 'Tambah Barang'; $('cbtn').textContent = 'Simpan'; $('ccancel').style.display = 'none'; }
+async function clSubmit() {
+  const b = $('cb').value.trim(); if (!b) return setMsg('cmsg', 'Nama barang wajib diisi', 0);
+  if (editId) Object.assign(DB.checklist.find(x => x.id === editId), { barang: b, oleh: $('co').value, catatan: $('cn').value });
+  else DB.checklist.push({ id: DB.seq++, barang: b, oleh: $('co').value, catatan: $('cn').value, siap: false });
+  await save(); clReset(); drawCl(); setMsg('cmsg', 'Barang disimpan.', 1);
+}
+function clEdit(id) { const x = DB.checklist.find(r => r.id === id); editId = id; $('cb').value = x.barang; $('co').value = x.oleh; $('cn').value = x.catatan; $('ctitle').textContent = 'Edit Barang'; $('cbtn').textContent = 'Update'; $('ccancel').style.display = 'block'; window.scrollTo(0, 0); }
+async function clToggle(id, v) { DB.checklist.find(r => r.id === id).siap = v; await save(); drawCl(); }
+async function clDel(id) { if (!confirm('Hapus barang ini?')) return; DB.checklist = DB.checklist.filter(r => r.id !== id); await save(); drawCl(); }
+async function clImport() {
+  const have = new Set(DB.checklist.map(x => x.barang.trim().toLowerCase())); let n = 0;
+  DB.perlengkapan.forEach(r => { const nm = String(r['Perlengkapan']).trim(); if (nm && !have.has(nm.toLowerCase())) { DB.checklist.push({ id: DB.seq++, barang: nm, oleh: '', catatan: '', siap: false }); n++; } });
+  await save(); drawCl(); setMsg('imsg', n + ' barang diimpor dari Perlengkapan.', 1);
+}
+function drawCl() {
+  if ($('clrk')) $('clrk').innerHTML = clRekapHtml();
+  const L = DB.checklist, only = $('clonly').checked, q = ($('clq').value || '').toLowerCase().trim();
+  $('clprog').textContent = L.filter(x => x.siap).length + ' dari ' + L.length + ' barang sudah siap';
+  const rows = L.filter(x => (!only || !x.siap) && (!q || (x.barang + ' ' + x.oleh).toLowerCase().indexOf(q) >= 0));
+  $('clbox').innerHTML = rows.length ? rows.map(x => `<div class="cl${x.siap ? ' done' : ''}"><input type="checkbox" ${x.siap ? 'checked' : ''} onchange="clToggle(${x.id},this.checked)">
+    <div class="t"><b>${esc(x.barang)}</b><small>${x.oleh ? 'Dibawa: ' + esc(x.oleh) : 'Belum ada pembawa'}${x.catatan ? ' - ' + esc(x.catatan) : ''}</small></div>
+    <button class="edt" onclick="clEdit(${x.id})">Edit</button><button class="del" onclick="clDel(${x.id})">Hapus</button></div>`).join('') : '<div>Belum ada barang.</div>';
+}
+
+/* ===== Trip baru, arsip & cadangan ===== */
+function snapshot() {
+  const d = dash(), s = JSON.parse(JSON.stringify(DB)); delete s.arsip; delete s.pin; delete s.sim;
+  return { id: DB.seq++, tanggal: new Date().toLocaleString('id-ID'), destinasi: d.destinasi,
+    ringkasan: 'Pemasukan ' + rp(d.masuk) + '; Pengeluaran ' + rp(d.keluar) + '; Saldo ' + rp(d.saldo) + '; Tamu diterima ' + DB.tamu.filter(t => t['Status'] === 'Diterima').length, data: s };
+}
+function arsipUnduh(id) { const a = DB.arsip.find(x => x.id === id); download('arsip-' + (a.destinasi || 'trip').replace(/\W+/g, '-') + '.json', JSON.stringify(a, null, 1)); }
+async function arsipHapus(id) { if (!confirm('Hapus arsip ini?')) return; DB.arsip = DB.arsip.filter(x => x.id !== id); await save(); renderTrip(); }
+function ekspor() { download('cadangan-budgeting-' + today() + '.json', JSON.stringify(DB)); setMsg('bmsg', 'Cadangan diunduh.', 1); }
+function impor(file) {
+  if (!file) return;
+  const r = new FileReader();
+  r.onload = async () => {
+    try {
+      const d = JSON.parse(r.result); if (!d || !d.set || !d.pengeluaran) throw 0;
+      if (!confirm('Data saat ini akan DITIMPA oleh isi cadangan. Lanjut?')) return;
+      DB = Object.assign(blank(), d); await save(); renderTrip(); setMsg('bmsg', 'Cadangan berhasil dipulihkan.', 1);
+    } catch (e) { setMsg('bmsg', 'File cadangan tidak valid.', 0); }
+  };
+  r.readAsText(file);
+}
+
+/* ===== Simulasi ===== */
+const SIM_T = { orang: 'Per orang', grup: 'Sekali per trip', tenda: 'Tenda (sewa jika stok kurang)' };
+const KATS = CFG.pengeluaran.fields[1].options, up5 = x => Math.ceil(x / 5000) * 5000;
+const simDef = () => ({ nama: '', peserta: 0, official: 0, ikut: true, harga: 0, target: 0, items: [] });
+let SIM = null;
+function simCalc(s, p) {
+  const orang = p + (s.ikut ? +s.official || 0 : 0); let total = 0, tendaSewa = 0; const rows = [];
+  s.items.forEach(it => {
+    const std = +it.std || 0, sim = +it.sim || 0; let cost, qty, sewa = 0, unitStd = std;
+    if (it.t === 'orang') { cost = sim * orang; qty = orang; }
+    else if (it.t === 'grup') { cost = sim; qty = 1; unitStd = std * p; }
+    else { const need = Math.ceil(orang / Math.max(1, +it.kap || 1)); sewa = Math.max(0, need - (+it.stok || 0)); cost = sewa * sim; qty = sewa; tendaSewa += sewa; }
+    total += cost; rows.push({ n: String(it.n || ''), t: it.t, kat: it.kat || 'Lainnya', cost, rev: std * p, qty, unitSim: sim, unitStd, sewa });
+  });
+  const off = +s.official || 0, pend = (+s.harga || 0) * p, profit = pend - total;
+  return { orang, total, rows, tendaSewa, pend, profit, perOff: off ? profit / off : 0, margin: pend ? profit / pend * 100 : 0,
+    be: p ? up5(total / p) : 0, hTarget: p ? up5((total + (+s.target || 0) * off) / p) : 0 };
+}
+function renderSim() {
+  SIM = SIM || simDef();
+  $('main').innerHTML = `<div class="card"><h3>Skenario Simulasi</h3><select id="ssel"><option value="">-- Pilih skenario tersimpan --</option>${DB.sim.map(x => `<option value="${x.id}">${esc(x.nama)} (${esc(x.diubah)})</option>`).join('')}</select>
+  <div class="flt"><button class="btn alt" onclick="simLoad()">Muat</button><button class="btn" onclick="simSave()">Simpan</button><button class="btn alt" onclick="simDel()">Hapus</button><button class="btn alt" onclick="SIM=simDef();renderSim()">Form baru</button></div><div id="smsg" class="msg"></div></div>
+  <div class="card"><h3>Parameter</h3><label>Nama simulasi / destinasi</label><input value="${esc(SIM.nama)}" oninput="SIM.nama=this.value">
+  ${[['Jumlah peserta', 'peserta'], ['Jumlah official', 'official'], ['Harga jual per peserta (Rp)', 'harga'], ['Target keuntungan per official (Rp)', 'target']].map(([l, k]) => `<label>${l}</label><input type="number" inputmode="decimal" value="${SIM[k]}" oninput="SIM.${k}=+this.value||0;drawSim()">`).join('')}
+  <div style="margin-top:10px"><input type="checkbox" ${SIM.ikut ? 'checked' : ''} onchange="SIM.ikut=this.checked;drawSim()"> Official ikut berangkat (biaya ikut ditanggung)</div></div>
+  <div class="card"><h3>Komponen Biaya</h3><small class="mut">Harga standar = bagian dari harga jual per peserta. Biaya simulasi = yang benar-benar Anda keluarkan.</small><div id="sitems"></div>
+  <button class="btn alt" onclick="SIM.items.push({n:'Komponen baru',t:'orang',std:0,sim:0,kap:4,stok:0,kat:'Lainnya'});drawItems();drawSim()">+ Tambah komponen</button></div>
+  <div class="card"><h3>Terapkan ke Anggaran Pengeluaran</h3><small class="mut">Mengisi tab Pengeluaran dari komponen simulasi. Simulasi yang diterapkan menjadi acuan perbandingan dengan kenyataan.</small>
+  <label>Kolom Anggaran diisi dengan</label><select id="ap_d"><option value="sim">Biaya simulasi (anggaran ditekan)</option><option value="std">Harga standar komponen</option></select>
+  <div style="margin-top:10px"><input type="checkbox" id="ap_b"> Isi juga kolom Biaya sesuai biaya simulasi</div>
+  <div style="margin-top:10px"><input type="checkbox" id="ap_r" checked> Atur Total Realisasi = pendapatan simulasi</div>
+  <button class="btn" onclick="simApply()">Terapkan ke Anggaran Pengeluaran</button><div id="amsg" class="msg"></div></div>
+  <div id="simres"></div><div id="vsbox"></div>`;
+  drawItems(); drawSim(); drawVs();
+}
+function drawItems() {
+  $('sitems').innerHTML = SIM.items.map((it, i) => {
+    const num = (l, k) => `<label>${l}</label><input type="number" inputmode="decimal" value="${it[k]}" oninput="SIM.items[${i}].${k}=+this.value||0;drawSim()">`;
+    return `<div style="border:1px solid var(--bd);border-radius:10px;padding:10px;margin-top:10px"><label>Nama komponen</label><input value="${esc(it.n)}" oninput="SIM.items[${i}].n=this.value;drawSim()">
+    <label>Jenis biaya</label><select onchange="SIM.items[${i}].t=this.value;drawItems();drawSim()">${Object.keys(SIM_T).map(k => `<option value="${k}" ${it.t === k ? 'selected' : ''}>${SIM_T[k]}</option>`).join('')}</select>
+    <label>Kategori di Pengeluaran</label><select onchange="SIM.items[${i}].kat=this.value">${KATS.map(k => `<option ${(it.kat || 'Lainnya') === k ? 'selected' : ''}>${k}</option>`).join('')}</select>
+    ${num('Harga standar per peserta (Rp)', 'std')}${num(it.t === 'orang' ? 'Biaya simulasi per orang (Rp)' : it.t === 'grup' ? 'Biaya simulasi total per trip (Rp)' : 'Sewa per tenda (Rp)', 'sim')}${it.t === 'tenda' ? num('Kapasitas per tenda (orang)', 'kap') + num('Tenda milik sendiri (stok)', 'stok') : ''}
+    <button class="del" style="margin-top:10px" onclick="SIM.items.splice(${i},1);drawItems();drawSim()">Hapus komponen</button></div>`;
+  }).join('');
+}
+function drawSim() {
+  const p = +SIM.peserta || 0, r = simCalc(SIM, p), cnt = [5, 8, 10, 12, 15, 20, 25, 30]; if (p > 0 && cnt.indexOf(p) < 0) cnt.push(p); cnt.sort((a, b) => a - b);
+  const kes = r.profit >= 0 ? `Keuntungan ${rp(r.profit)} (${r.margin.toFixed(1)}%). Tiap official mendapat ${rp(r.perOff)}.` : `Rugi ${rp(-r.profit)}. Agar balik modal, harga minimal ${rp(r.be)} per peserta.`;
+  const al = []; if (r.profit < 0) al.push(['red', 'Simulasi ini rugi. Naikkan harga atau tekan biaya.']); if (r.tendaSewa > 0) al.push(['yellow', 'Perlu menyewa ' + r.tendaSewa + ' tenda tambahan.']);
+  $('simres').innerHTML = `<div class="card"><h3>Hasil Simulasi</h3><div class="warn note">${esc(kes)}</div>${al.map(a => `<div class="warn ${a[0]}">${esc(a[1])}</div>`).join('')}
+  <div class="grid" style="margin-top:10px">${stat('Orang berangkat', r.orang)}${stat('Total biaya', rp(r.total))}${stat('Pendapatan', rp(r.pend))}${stat('Keuntungan', rp(r.profit))}${stat('Per official', rp(r.perOff))}${stat('Harga min. balik modal', rp(r.be))}${SIM.target > 0 ? stat('Harga min. capai target', rp(r.hTarget)) : ''}</div>
+  <h3 style="margin-top:14px">Per komponen</h3>${tab(['Komponen', 'Dari harga', 'Biaya', 'Selisih'], r.rows.map(x => [x.n, rp(x.rev), rp(x.cost), rp(x.rev - x.cost)]))}
+  <h3 style="margin-top:14px">Jika jumlah peserta berubah</h3>${tab(['Peserta', 'Total biaya', 'Keuntungan', 'Per official'], cnt.map(n => { const x = simCalc(SIM, n); return [(n === p ? '► ' : '') + n, rp(x.total), rp(x.profit), rp(x.perOff)]; }))}</div>`;
+}
+const tab = (h, rows) => rows.length ? `<div class="tbl"><table><tr>${h.map(x => `<th>${esc(x)}</th>`).join('')}</tr>${rows.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</table></div>` : '<div>Belum ada data.</div>';
+async function simSave() {
+  const nm = String(SIM.nama || '').trim(); if (!nm) return setMsg('smsg', 'Isi nama simulasi dulu', 0);
+  const ex = DB.sim.find(x => x.nama.toLowerCase() === nm.toLowerCase()), o = { nama: nm, data: JSON.parse(JSON.stringify(SIM)), diubah: new Date().toLocaleString('id-ID') };
+  if (ex) Object.assign(ex, o); else DB.sim.push(Object.assign({ id: DB.seq++ }, o));
+  await save(); renderSim(); setMsg('smsg', 'Simulasi "' + nm + '" disimpan.', 1);
+}
+function simLoad() { const x = DB.sim.find(s => String(s.id) === $('ssel').value); if (!x) return setMsg('smsg', 'Pilih skenario dulu', 0); SIM = JSON.parse(JSON.stringify(x.data)); renderSim(); }
+async function simDel() { const id = $('ssel').value; if (!id) return setMsg('smsg', 'Pilih skenario dulu', 0); if (!confirm('Hapus skenario ini?')) return; DB.sim = DB.sim.filter(s => String(s.id) !== id); await save(); renderSim(); }
+async function simApply() {
+  const std = $('ap_d').value === 'std', p = +SIM.peserta || 0, plan = simCalc(SIM, p), marker = 'Simulasi: ' + SIM.nama; let n = 0;
+  if (!SIM.items.length) return setMsg('amsg', 'Data simulasi kosong', 0);
+  if (!confirm('Terapkan simulasi ini ke tab Pengeluaran? Baris dari simulasi dengan nama sama akan diperbarui.')) return;
+  plan.rows.forEach(x => {
+    let a, q;
+    if (x.t === 'tenda') { if (std) { a = x.unitStd; q = p; } else if (x.sewa <= 0) return; else { a = x.unitSim; q = x.sewa; } }
+    else if (x.t === 'grup') { a = std ? x.unitStd : x.unitSim; q = 1; } else { a = std ? x.unitStd : x.unitSim; q = x.qty; }
+    const b = $('ap_b').checked ? Math.round(q > 0 ? x.cost / q : 0) : '';
+    const f = DB.pengeluaran.find(r => String(r['Detail pengeluaran']).trim().toLowerCase() === x.n.trim().toLowerCase() && String(r['Catatan'] || '').indexOf('Simulasi:') === 0);
+    if (f) { Object.assign(f, { 'Kategori': x.kat, 'Anggaran': a, 'Quantity': q, 'Catatan': marker }); if (b !== '') f['Biaya'] = b; }
+    else DB.pengeluaran.push({ id: DB.seq++, 'Detail pengeluaran': x.n, 'Kategori': x.kat, 'Anggaran': a, 'Biaya': b, 'Quantity': q, 'Tanggal transaksi': today(), 'Dibayar oleh': '', 'Catatan': marker });
+    n++;
+  });
+  DB.simAktif = Object.assign(JSON.parse(JSON.stringify(SIM)), { applied: new Date().toLocaleString('id-ID') });
+  if ($('ap_r').checked) DB.set.realisasi = plan.pend;
+  await save(); setMsg('amsg', n + ' baris pengeluaran diterapkan dari simulasi "' + SIM.nama + '".', 1); drawVs();
+}
+/* Simulasi vs kenyataan */
+function vsReal() {
+  const s = DB.simAktif; if (!s) return null;
+  const plan = simCalc(s, +s.peserta || 0), masuk = sum(DB.pemasukan, r => r['Biaya']), pr = rowsOf('pengeluaran'), biaya = sum(pr, r => r['Total Biaya']), used = {};
+  const komp = plan.rows.map(x => {
+    let bi = 0, ada = false;
+    pr.forEach((r, i) => { if (String(r['Detail pengeluaran']).trim().toLowerCase() === x.n.trim().toLowerCase()) { bi += r['Total Biaya']; ada = true; used[i] = 1; } });
+    return { n: x.n, rencana: x.cost, nyata: bi, ada, selisih: ada ? x.cost - bi : null };
+  });
+  let luar = 0; pr.forEach((r, i) => { if (!used[i]) luar += r['Total Biaya']; });
+  const off = +s.official || 0, saldo = masuk - biaya, sebab = [];
+  if (masuk < plan.pend) sebab.push('Pemasukan baru ' + rp(masuk) + ' dari target ' + rp(plan.pend) + ' (kurang ' + rp(plan.pend - masuk) + ').');
+  else if (masuk > plan.pend) sebab.push('Pemasukan melebihi target sebesar ' + rp(masuk - plan.pend) + '.');
+  komp.forEach(k => {
+    if (!k.ada) sebab.push(k.n + ' belum dicatat di Pengeluaran.');
+    else if (k.selisih < 0) sebab.push(k.n + ' lebih mahal ' + rp(-k.selisih) + ' dari rencana.');
+    else if (k.selisih > 0) sebab.push(k.n + ' lebih hemat ' + rp(k.selisih) + ' dari rencana.');
+  });
+  if (luar > 0) sebab.push('Ada biaya di luar komponen simulasi sebesar ' + rp(luar) + '.');
+  return { nama: s.nama, off, target: +s.target || 0, diterapkan: s.applied || '', rencana: { pend: plan.pend, biaya: plan.total, profit: plan.profit, perOff: plan.perOff },
+    nyata: { masuk, biaya, profit: saldo, perOff: off ? saldo / off : 0 }, komp, sebab: sebab.slice(0, 12) };
+}
+function vsHtml(v) {
+  const dp = v.nyata.profit - v.rencana.profit, txt = x => x === null ? '-' : (x >= 0 ? 'Hemat ' + rp(x) : 'Lebih ' + rp(-x));
+  return `<div class="warn note">Keuntungan rencana ${rp(v.rencana.profit)}, nyata saat ini ${rp(v.nyata.profit)} (${dp >= 0 ? 'lebih tinggi ' : 'lebih rendah '}${rp(Math.abs(dp))}). Per official: rencana ${rp(v.rencana.perOff)}, nyata ${rp(v.nyata.perOff)} (${v.off} official).</div>
+  ${v.nyata.profit < 0 ? `<div class="warn red">Sisa saldo saat ini negatif (${rp(v.nyata.profit)}).</div>` : ''}
+  <div class="grid" style="margin-top:10px">${stat('Pendapatan rencana', rp(v.rencana.pend))}${stat('Pemasukan nyata', rp(v.nyata.masuk))}${stat('Biaya rencana', rp(v.rencana.biaya))}${stat('Biaya nyata', rp(v.nyata.biaya))}${stat('Keuntungan rencana', rp(v.rencana.profit))}${stat('Keuntungan nyata', rp(v.nyata.profit))}</div>
+  <h3 style="margin-top:14px">Per komponen</h3>${tab(['Komponen', 'Rencana', 'Nyata', 'Selisih'], v.komp.map(k => [k.n, rp(k.rencana), k.ada ? rp(k.nyata) : 'Belum dicatat', txt(k.selisih)]))}
+  <h3 style="margin-top:14px">Penyebab selisih</h3>${v.sebab.length ? v.sebab.map(s => `<div class="warn yellow">${esc(s)}</div>`).join('') : '<div>Tidak ada selisih berarti.</div>'}`;
+}
+function drawVs() {
+  const v = vsReal(), b = $('vsbox'); if (!b) return;
+  b.innerHTML = `<div class="card"><h3>📋 Simulasi vs Kenyataan</h3>${v ? `<small class="mut">Acuan: simulasi "${esc(v.nama)}" (diterapkan ${esc(v.diterapkan)})</small>${vsHtml(v)}` : '<div>Belum ada simulasi yang diterapkan. Gunakan tombol "Terapkan ke Anggaran Pengeluaran" di atas.</div>'}</div>`;
+}
+
+/* ===== Pembayaran ===== */
+function bayarData() {
+  const n = x => String(x || '').trim().toLowerCase(), paid = {};
+  DB.pemasukan.forEach(r => { if (r['Kategori'] !== 'Peserta') return; const w = n(r['Dibayar oleh']) || n(r['Detail pemasukan']); paid[w] = (paid[w] || 0) + (+r['Biaya'] || 0); });
+  const pr = rowsOf('pengeluaran'), ang = sum(pr, r => r['Total Anggaran']), bi = sum(pr, r => r['Total Biaya']);
+  const ps = DB.tamu.filter(t => t['Status'] === 'Diterima').map(t => ({ nama: t['Nama'], tagihan: t['Tagihan'] || '', dibayar: paid[n(t['Nama'])] || 0 })), k = ps.length;
+  const tg = { 'Lunas': 0, 'DP': 0, 'Belum Lunas': 0, 'Belum diisi': 0 }; ps.forEach(p => tg[tg[p.tagihan] !== undefined ? p.tagihan : 'Belum diisi']++);
+  return { k, ang, bi, perA: k ? Math.ceil(ang / k) : 0, perB: k ? Math.ceil(bi / k) : 0, harga: DB.simAktif ? +DB.simAktif.harga || 0 : 0, tg, ps, iuran: Object.values(paid).reduce((a, b) => a + b, 0) };
+}
+const sisaTxt = s => s > 0 ? rp(s) : (s < 0 ? 'Lebih ' + rp(-s) : 'Lunas');
+function renderBayar() {
+  const b = bayarData(), per = {}; if (b.harga > 0) per['Harga jual simulasi'] = b.harga; per['Realisasi (total biaya)'] = b.perB; per['Anggaran'] = b.perA;
+  $('main').innerHTML = `<div class="card"><h3>Patungan Otomatis</h3><small class="mut">${b.harga > 0 ? 'Tagihan memakai harga jual dari simulasi yang diterapkan.' : 'Dihitung dari total pengeluaran dibagi peserta berstatus Diterima.'}</small>
+  <div class="grid" style="margin-top:10px">${stat('Peserta Diterima', b.k + ' orang')}${stat('Total Pengeluaran', rp(b.bi))}${stat('Total Anggaran', rp(b.ang))}${stat('Iuran terkumpul', rp(b.iuran))}${stat('Per orang (realisasi)', rp(b.perB))}${stat('Per orang (anggaran)', rp(b.perA))}</div>
+  <div style="margin-top:10px"><span class="badge g">Lunas ${b.tg['Lunas']}</span> <span class="badge y">DP ${b.tg['DP']}</span> <span class="badge r">Belum lunas ${b.tg['Belum Lunas']}</span> ${b.tg['Belum diisi'] ? `<span class="badge">Belum diisi ${b.tg['Belum diisi']}</span>` : ''}</div></div>
+  <div class="card"><h3>Status Pembayaran Peserta</h3><label>Dasar hitung tagihan</label><select id="bsel" onchange="drawBayar()">${Object.keys(per).map(k => `<option>${k}</option>`).join('')}</select>
+  <small class="mut">Sudah bayar = jumlah Pemasukan kategori Peserta yang "Dibayar oleh" (atau Detail) sama dengan nama tamu.</small><div id="bbox"></div></div>
+  <button class="btn" style="background:#25d366" onclick="waBayar()">💬 Bagikan status pembayaran ke WhatsApp</button>`;
+  window._per = per; drawBayar();
+}
+function drawBayar() {
+  const b = bayarData(), base = window._per[$('bsel').value];
+  $('bbox').innerHTML = b.ps.length ? `<div class="tbl"><table><tr><th>Nama</th><th>Tagihan</th><th>Sudah bayar</th><th>Sisa</th></tr>${b.ps.map(p => `<tr><td>${esc(p.nama)}</td><td>${badge(p.tagihan) || '-'}</td><td>${rp(p.dibayar)}</td><td style="color:${base - p.dibayar > 0 ? '#f87171' : '#4ade80'}">${sisaTxt(base - p.dibayar)}</td></tr>`).join('')}</table></div>` : '<div>Belum ada peserta berstatus Diterima.</div>';
+}
+function waBayar() {
+  const b = bayarData(), base = window._per[$('bsel').value]; let t = '*STATUS PEMBAYARAN*\nPatungan/orang: ' + rp(base) + '\n\n';
+  b.ps.forEach(p => { const s = base - p.dibayar; t += '- ' + p.nama + ': ' + (p.tagihan || '-') + ', ' + (s > 0 ? 'kurang ' + rp(s) : 'aman') + '\n'; }); openWA(t);
+}
+
+/* ===== Rekap ===== */
+function renderRekap() {
+  const d = dash(), b = bayarData(), v = vsReal(), base = b.harga > 0 ? b.harga : b.perB, tam = DB.tamu, rs = s => tam.filter(t => t['Status'] === s).length;
+  const grp = (a, f) => { const m = {}; a.forEach(r => { const k = r['Kategori'] || '(Tanpa kategori)'; m[k] = (m[k] || 0) + f(r); }); return m; };
+  const mk = grp(DB.pemasukan, r => +r['Biaya'] || 0), pr = rowsOf('pengeluaran'), ak = grp(pr, r => r['Total Anggaran']), bk = grp(pr, r => r['Total Biaya']), ks = Object.keys(ak);
+  const sw = rowsOf('perlengkapan').filter(r => r['Sewa'] > 0);
+  window._rekapWA = () => '*REKAP PENDAKIAN*' + (d.destinasi ? ' - ' + d.destinasi : '') + '\nPer ' + new Date().toLocaleString('id-ID') + '\n\n*Keuangan*\nPemasukan: ' + rp(d.masuk) + '\nPengeluaran: ' + rp(d.keluar) + '\nSisa saldo: ' + rp(d.saldo) + '\nPemakaian: ' + (d.persen * 100).toFixed(1) + '%\n\n*Tamu*\nTotal ' + tam.length + ' | Diterima ' + rs('Diterima') + ' | Menunggu ' + rs('Menunggu respons') + ' | Ditolak ' + rs('Ditolak') + '\n\n' + (v ? '*Bagi hasil official*\nPer official (' + v.off + '): ' + rp(v.nyata.perOff) + ' (rencana ' + rp(v.rencana.perOff) + ')\n\n' : '') + '*Tagihan*\nPer orang: ' + rp(base) + '\nLunas ' + b.tg['Lunas'] + ' | DP ' + b.tg['DP'] + ' | Belum lunas ' + b.tg['Belum Lunas'] + (d.warnings.length ? '\n\n*Peringatan*\n' + d.warnings.map(w => '- ' + w.text).join('\n') : '');
+  $('main').innerHTML = `<div class="card"><h3>Rekapitulasi${d.destinasi ? ' - ' + esc(d.destinasi) : ''}</h3><small class="mut">Per ${new Date().toLocaleString('id-ID')}</small>
+  <div class="grid" style="margin-top:10px">${stat('Total Pemasukan', rp(d.masuk))}${stat('Total Pengeluaran', rp(d.keluar))}${stat('Sisa Saldo', rp(d.saldo))}${stat('Pemakaian', (d.persen * 100).toFixed(1) + '%')}${stat('Tamu Diterima', rs('Diterima') + ' / ' + tam.length)}${stat(b.harga > 0 ? 'Tagihan / peserta' : 'Patungan / orang', rp(base))}</div>
+  ${d.warnings.length ? d.warnings.map(w => `<div class="warn ${w.level}">${esc(w.text)}</div>`).join('') : '<div class="warn green">✅ Semua kategori masih sesuai anggaran.</div>'}
+  <button class="btn" onclick="printDoc(invoiceHtml())">📄 Unduh PDF (invoice)</button><button class="btn" style="background:#25d366" onclick="openWA(_rekapWA())">💬 Bagikan ringkasan ke WhatsApp</button></div>
+  <div class="card"><h3>Sisa Saldo & Bagi Hasil Official</h3>${v ? `<div class="grid">${stat('Sisa saldo saat ini', rp(d.saldo))}${stat('Jumlah official', v.off + ' orang')}${stat('Per official (nyata)', rp(v.nyata.perOff))}${stat('Per official (rencana)', rp(v.rencana.perOff))}${stat('Target per official', v.target ? rp(v.target) : '-')}${stat('Selisih vs rencana', rp(v.nyata.perOff - v.rencana.perOff))}</div>` : '<div class="warn note">Terapkan simulasi ke anggaran (tab Simulasi) untuk melihat bagi hasil official.</div>'}</div>
+  ${v ? `<div class="card"><h3>Simulasi vs Kenyataan</h3>${vsHtml(v)}</div>` : ''}
+  <div class="card"><h3>Pemasukan: ${rp(d.masuk)}</h3>${tab(['Kategori', 'Total'], Object.keys(mk).map(k => [k, rp(mk[k])]))}</div>
+  <div class="card"><h3>Pengeluaran: ${rp(d.keluar)}</h3>${tab(['Kategori', 'Anggaran', 'Biaya', 'Selisih'], ks.map(k => [k, rp(ak[k]), rp(bk[k]), rp(ak[k] - bk[k])]))}</div>
+  <div class="card"><h3>Perlengkapan Disewa: ${rp(sum(sw, r => r['Total Sewa']))}</h3>${sw.length ? tab(['Barang', 'Butuh', 'Punya', 'Sewa', 'Total'], sw.map(r => [r['Perlengkapan'], r['Kebutuhan'], r['Kesediaan'], r['Sewa'], rp(r['Total Sewa'])])) : '<div>Tidak ada barang yang disewa.</div>'}</div>`;
+}
+
+/* ===== PIN ===== */
+const sha = async t => [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)))].map(b => b.toString(16).padStart(2, '0')).join('');
+function lock(note) {
+  $('nav').innerHTML = ''; $('main').innerHTML = `<div class="card"><h3>🔒 Masukkan PIN</h3><div class="msg err">${note || ''}</div><input id="pin" type="password" inputmode="numeric" onkeydown="if(event.key==='Enter')unlock()"><button class="btn" onclick="unlock()">Buka</button></div>`;
+}
+async function unlock() { if (await sha(DB.pin.salt + ':' + $('pin').value) === DB.pin.hash) { buildNav(); show('dashboard'); } else lock('PIN salah'); }
+async function setPin() {
+  const o = $('po') ? $('po').value : '', n = $('pn').value;
+  if (DB.pin && await sha(DB.pin.salt + ':' + o) !== DB.pin.hash) return setMsg('pmsg', 'PIN lama salah.', 0);
+  if (n === '') DB.pin = null; else if (!/^\d{4,8}$/.test(n)) return setMsg('pmsg', 'PIN harus 4-8 angka.', 0);
+  else { const salt = String(Math.random()).slice(2) + Date.now(); DB.pin = { salt, hash: await sha(salt + ':' + n) }; }
+  await save(); setMsg('pmsg', DB.pin ? 'PIN disimpan.' : 'PIN dinonaktifkan.', 1);
+}
+
+/* ===== Trip baru (salin) & arsip ===== */
+/* ===== Bukti nota ===== */
+let BUKTI = null;
+function showPrev(v) {
+  const e = $('bprev'); if (!e) return;
+  e.innerHTML = v ? `<div style="margin-top:8px">${v.indexOf('data:image') === 0 ? `<img src="${v}" style="max-height:120px;border-radius:8px;display:block;margin-bottom:6px">` : '📄 File PDF terlampir '}<button class="del" onclick="BUKTI='';showPrev('')">Hapus bukti</button></div>` : '';
+}
+function pickBukti(inp) {
+  const f = inp.files[0]; inp.value = ''; if (!f) return;
+  if (f.type.indexOf('image/') === 0) {
+    const im = new Image(), u = URL.createObjectURL(f);
+    im.onload = () => { const k = Math.min(1, 1000 / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = im.width * k; c.height = im.height * k;
+      c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); BUKTI = c.toDataURL('image/jpeg', .72); URL.revokeObjectURL(u); showPrev(BUKTI); };
+    im.src = u;
+  } else if (f.size > 2e6) alert('Ukuran file maksimal 2 MB.');
+  else { const r = new FileReader(); r.onload = () => { BUKTI = r.result; showPrev(BUKTI); }; r.readAsDataURL(f); }
+}
+function viewBukti(id, key) {
+  const v = DB[key].find(x => x.id === id).Bukti, o = document.createElement('div');
+  o.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:99;display:flex;flex-direction:column;align-items:center;padding:14px;overflow:auto';
+  o.innerHTML = (v.indexOf('data:image') === 0 ? `<img src="${v}" style="max-width:100%">` : `<embed src="${v}" type="application/pdf" style="width:100%;height:80vh">`) + '<button class="btn" style="max-width:300px" onclick="this.parentNode.remove()">Tutup</button>';
+  document.body.appendChild(o);
+}
+
+/* ===== Dokumen PDF (gaya invoice) ===== */
+function printDoc(html) {
+  let d = $('pdoc'); if (!d) { d = document.createElement('div'); d.id = 'pdoc'; document.body.appendChild(d); }
+  d.innerHTML = html; document.body.classList.add('printing'); setTimeout(() => window.print(), 300);
+}
+function docWrap(judul, sub, body) {
+  return `<div class="dh"><img src="logo.png" alt=""><div><div class="dt">BAWAULIN TRIP</div><div class="ds">${esc(judul)}</div></div><div class="dr">No. BWL-${today().replace(/-/g, '')}<br>${new Date().toLocaleString('id-ID')}</div></div>
+  <div class="db"><div class="dsub">${esc(sub || '')}</div>${body}<div class="df">Dokumen dibuat otomatis oleh bawaulin.cash</div></div>`;
+}
+function invoiceHtml() {
+  const d = dash(), b = bayarData(), v = vsReal(), pm = rowsOf('pemasukan'), pg = rowsOf('pengeluaran'), base = b.harga > 0 ? b.harga : b.perB;
+  const T = (h, rows, tot) => `<table><tr>${h.map(x => `<th>${esc(x)}</th>`).join('')}</tr>${rows.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}${tot ? `<tr class="tot">${tot.map(c => `<td>${esc(c)}</td>`).join('')}</tr>` : ''}</table>`;
+  const lamp = pm.map(r => ({ t: 'Pemasukan', n: r['Detail pemasukan'], a: r['Biaya'], v: r.Bukti })).concat(pg.map(r => ({ t: 'Pengeluaran', n: r['Detail pengeluaran'], a: r['Total Biaya'], v: r.Bukti }))).filter(x => x.v && x.v.indexOf('data:image') === 0);
+  const body = `<h2>Ringkasan Keuangan</h2><div class="sum">${[['Total Realisasi', rp(d.real)], ['Total Pemasukan', rp(d.masuk)], ['Total Pengeluaran', rp(d.keluar)], ['Sisa Saldo', rp(d.saldo)], ['Pemakaian', (d.persen * 100).toFixed(1) + '%'], ['Peserta diterima', b.k + ' orang']].map(x => `<div>${x[0]}<b>${x[1]}</b></div>`).join('')}</div>
+  <h2>Rincian Pemasukan</h2>${T(['No', 'Tanggal', 'Detail', 'Kategori', 'Dibayar oleh', 'Jumlah'], pm.map((r, i) => [i + 1, fmtDate(r['Tanggal transaksi']), r['Detail pemasukan'], r['Kategori'], r['Dibayar oleh'], rp(r['Biaya'])]), ['', '', '', '', 'TOTAL', rp(d.masuk)])}
+  <h2>Rincian Pengeluaran</h2>${T(['No', 'Tanggal', 'Detail', 'Kategori', 'Qty', 'Anggaran', 'Biaya'], pg.map((r, i) => [i + 1, fmtDate(r['Tanggal transaksi']), r['Detail pengeluaran'], r['Kategori'], r['Quantity'], rp(r['Total Anggaran']), rp(r['Total Biaya'])]), ['', '', '', '', 'TOTAL', rp(d.anggaran), rp(d.keluar)])}
+  <h2>Status Pembayaran Peserta (tagihan ${rp(base)} / orang)</h2>${T(['Nama', 'Tagihan', 'Sudah bayar', 'Sisa'], b.ps.map(p => [p.nama, p.tagihan || '-', rp(p.dibayar), sisaTxt(base - p.dibayar)]))}
+  ${v ? `<h2>Bagi Hasil Official</h2>${T(['Keterangan', 'Rencana', 'Nyata'], [['Pendapatan / pemasukan', rp(v.rencana.pend), rp(v.nyata.masuk)], ['Total biaya', rp(v.rencana.biaya), rp(v.nyata.biaya)], ['Keuntungan', rp(v.rencana.profit), rp(v.nyata.profit)], ['Per official (' + v.off + ' orang)', rp(v.rencana.perOff), rp(v.nyata.perOff)]])}` : ''}
+  <div class="ttd"><div>Bendahara</div><div>Ketua Trip</div><div>Mengetahui</div></div>
+  ${lamp.length ? `<h2 style="page-break-before:always">Lampiran Bukti Nota</h2><div class="lamp">${lamp.map(x => `<div><img src="${x.v}"><b>${esc(x.t)}</b>: ${esc(x.n)}<br>${rp(x.a)}</div>`).join('')}</div>` : ''}`;
+  return docWrap('REKAPITULASI KEUANGAN', 'Destinasi: ' + (d.destinasi || '-'), body);
+}
+
+/* ===== Rundown (Itinerary) ===== */
+function rundownRows() { return DB.itinerary.slice().sort((a, b) => String(a['Waktu mulai'] || '9').localeCompare(String(b['Waktu mulai'] || '9'))); }
+function rundownHtml() {
+  const rows = rundownRows(); if (!rows.length) return '<div>Belum ada jadwal.</div>';
+  const days = {}; rows.forEach(r => { const k = String(r['Waktu mulai'] || '').slice(0, 10) || 'Tanpa tanggal'; (days[k] = days[k] || []).push(r); });
+  return Object.keys(days).map((k, i) => {
+    const dn = k.length === 10 ? new Date(k + 'T00:00').toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : k;
+    return `<div class="rdday">Hari ${i + 1} - ${esc(dn)}</div>` + days[k].map(r => {
+      const s = String(r['Waktu mulai'] || '').slice(11, 16), e = String(r['Waktu berakhir'] || '').slice(11, 16);
+      return `<div class="rdi"><div class="rdt">${s || '--:--'}${e ? '<br>s/d ' + e : ''}</div><div class="rdx"><b>${esc(r['Aktivitas'])}</b><small>${[r['Jenis aktivitas'], r['Lokasi'] && '📍 ' + r['Lokasi'], r['Catatan']].filter(Boolean).map(esc).join(' | ')}</small></div></div>`;
+    }).join('');
+  }).join('');
+}
+function rundownText() {
+  let t = '*RUNDOWN PERJALANAN*' + (DB.set.destinasi ? ' - ' + DB.set.destinasi : '') + '\n', last = '';
+  rundownRows().forEach(r => {
+    const k = String(r['Waktu mulai'] || '').slice(0, 10); if (k !== last) { t += '\n*' + fmtDate(k) + '*\n'; last = k; }
+    t += String(r['Waktu mulai'] || '').slice(11, 16) + (r['Waktu berakhir'] ? '-' + String(r['Waktu berakhir']).slice(11, 16) : '') + ' ' + r['Aktivitas'] + (r['Lokasi'] ? ' (' + r['Lokasi'] + ')' : '') + '\n';
+  });
+  return t;
+}
+function drawRundown() {
+  const e = $('rkp'); if (!e) return;
+  e.innerHTML = `<div class="card"><h3>📋 Rekap Rundown Perjalanan</h3><small class="mut">Jadwal berurutan per hari</small>${rundownHtml()}
+  <button class="btn" onclick="printDoc(docWrap('RUNDOWN PERJALANAN','Destinasi: '+(DB.set.destinasi||'-'),rundownHtml()))">📄 Unduh PDF rundown</button><button class="btn" style="background:#25d366" onclick="openWA(rundownText())">💬 Bagikan ke WhatsApp</button></div>`;
+}
+
+/* ===== Rekap Checklist ===== */
+function clRekapHtml() {
+  const L = DB.checklist; if (!L.length) return '<div>Belum ada barang.</div>';
+  const done = L.filter(x => x.siap).length, pct = Math.round(done / L.length * 100), by = {}, belum = L.filter(x => !x.siap);
+  L.forEach(x => { const k = x.oleh.trim() || '(Belum ada pembawa)'; (by[k] = by[k] || []).push(x); });
+  return `<div class="grid">${stat('Barang siap', done + ' / ' + L.length)}${stat('Progres', pct + '%')}</div><div class="bar"><div style="width:${pct}%"></div></div>
+  ${belum.length ? `<div class="warn yellow"><b>Belum siap (${belum.length}):</b> ${belum.map(x => esc(x.barang)).join(', ')}</div>` : '<div class="warn green">✅ Semua barang sudah siap.</div>'}
+  ${Object.keys(by).sort().map(k => { const a = by[k], s = a.filter(x => x.siap).length;
+    return `<div class="cgh"><span>👤 ${esc(k)}</span><span>${s}/${a.length} siap</span></div>` + a.map(x => `<div style="padding:5px 4px;border-bottom:1px solid var(--bd)">${x.siap ? '✅' : '⬜'} <span style="${x.siap ? 'color:#888;text-decoration:line-through' : ''}">${esc(x.barang)}</span>${x.catatan ? ` <small class="mut">(${esc(x.catatan)})</small>` : ''}</div>`).join(''); }).join('')}`;
+}
+function clText() {
+  const by = {}; DB.checklist.forEach(x => { const k = x.oleh.trim() || '(Belum ada pembawa)'; (by[k] = by[k] || []).push(x); });
+  let t = '*CHECKLIST PERLENGKAPAN*' + (DB.set.destinasi ? ' - ' + DB.set.destinasi : '') + '\n' + DB.checklist.filter(x => x.siap).length + ' dari ' + DB.checklist.length + ' barang siap\n';
+  Object.keys(by).sort().forEach(k => { t += '\n*' + k + '*\n'; by[k].forEach(x => t += (x.siap ? '✅ ' : '⬜ ') + x.barang + '\n'); }); return t;
+}
+
+/* ===== Trip baru (reset total) & arsip ===== */
+const hasData = () => KEYS.some(k => DB[k].length) || DB.checklist.length;
+function renderTrip() {
+  $('main').innerHTML = `
+  <div class="card"><h3>Arsipkan Trip yang Sudah Selesai</h3><small class="mut">Menyimpan salinan seluruh data trip ini ke daftar arsip. Data yang berjalan tidak berubah.</small>
+    <button class="btn" onclick="arsipkan(false)">🗂️ Arsipkan sekarang</button><div id="tmsg" class="msg"></div></div>
+  <div class="card"><h3>Mulai Trip Baru</h3><div class="warn yellow">Trip yang sedang berjalan diarsipkan otomatis, lalu SEMUA data (tamu, pemasukan, pengeluaran, itinerary, perlengkapan, checklist, simulasi) dikosongkan.</div>
+    <label>Destinasi trip baru (opsional)</label><input id="nd">
+    <label>Total Realisasi trip baru (Rp, opsional)</label><input id="nr" type="number" inputmode="decimal">
+    <label>Ketik BARU untuk konfirmasi</label><input id="kf" placeholder="BARU">
+    <button class="btn red" onclick="arsipkan(true)">🚀 Arsipkan & mulai trip baru</button><div id="t2msg" class="msg"></div></div>
+  <div class="card"><h3>Daftar Arsip (${DB.arsip.length})</h3>
+    ${DB.arsip.length ? DB.arsip.slice().reverse().map(a => `<div style="padding:8px 0;border-bottom:1px solid var(--bd)"><b>${esc(a.destinasi || '(tanpa nama)')} - ${esc(a.tanggal)}</b>${a.auto ? ' <span class="badge y">backup otomatis</span>' : ''}<div>${esc(a.ringkasan)}</div>
+      <button class="edt" onclick="arsipBuka(${a.id})">Buka</button><button class="edt" onclick="arsipUnduh(${a.id})">Unduh</button><button class="del" onclick="arsipHapus(${a.id})">Hapus</button></div>`).join('') : '<div>Belum ada arsip.</div>'}
+    <small class="mut">"Buka" memuat seluruh isi arsip ke aplikasi. Jika trip yang sedang berjalan berisi data, ia disimpan otomatis sebagai backup di daftar arsip.</small></div>
+  <div class="card"><h3>🧹 Reset Total</h3><div class="warn red">Menghapus SEMUA data di aplikasi ini (data aktif, arsip, simulasi tersimpan, bukti nota). Tidak bisa dibatalkan. Unduh cadangan dulu jika perlu.</div><label>Ketik HAPUS untuk konfirmasi</label><input id="rst" placeholder="HAPUS"><button class="btn red" onclick="resetTotal()">Kosongkan semua data</button><div id="rmsg" class="msg"></div></div>
+  <div class="card"><h3>💾 Cadangan Data</h3><small class="mut">Data tersimpan di HP ini. Unduh cadangan berkala (atau sebelum uninstall / ganti HP), simpan ke Google Drive atau WhatsApp.</small>
+    <button class="btn" onclick="ekspor()">⬇️ Unduh cadangan (JSON)</button>
+    <button class="btn alt" onclick="$('imp').click()">⬆️ Pulihkan dari cadangan</button>
+    <input type="file" id="imp" accept=".json,application/json" style="display:none" onchange="impor(this.files[0])"><div id="bmsg" class="msg"></div></div>`;
+}
+async function arsipkan(baru) {
+  if (!baru) { DB.arsip.push(snapshot()); await save(); renderTrip(); return setMsg('tmsg', 'Arsip dibuat.', 1); }
+  if ($('kf').value.trim().toUpperCase() !== 'BARU') return setMsg('t2msg', 'Ketik BARU dulu untuk konfirmasi.', 0);
+  if (!confirm('Trip saat ini diarsipkan, lalu semua data dikosongkan. Lanjut?')) return;
+  if (hasData()) DB.arsip.push(snapshot());
+  KEYS.forEach(k => DB[k] = []); DB.checklist = []; DB.simAktif = null; SIM = null;
+  DB.set = { destinasi: $('nd').value.trim(), realisasi: Number($('nr').value) || 0 };
+  await save(); renderTrip(); setMsg('t2msg', 'Trip baru siap. Semua data sudah kosong; trip lama ada di arsip.', 1);
+}
+async function arsipBuka(id) {
+  const a = DB.arsip.find(x => x.id === id); if (!a || !confirm('Buka arsip ini? Trip yang sedang berjalan (jika berisi data) disimpan otomatis ke daftar arsip.')) return;
+  if (hasData()) DB.arsip.push(Object.assign(snapshot(), { auto: true }));
+  const d = JSON.parse(JSON.stringify(a.data));
+  KEYS.concat(['checklist']).forEach(k => DB[k] = d[k] || []);
+  DB.set = d.set || { destinasi: '', realisasi: 0 }; DB.simAktif = d.simAktif || null; SIM = null;
+  DB.seq = Math.max(DB.seq, d.seq || 0); await save(); renderTrip(); setMsg('tmsg', 'Arsip dibuka. Seluruh isinya sekarang menjadi data aktif.', 1);
+}
+
+/* ===== Tampilan modern: tema, menu bawah, lembar form ===== */
+const MAIN = ['dashboard', 'pemasukan', 'pengeluaran', 'rekap'];
+const ICO = { dashboard: '<path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>', pemasukan: '<circle cx="12" cy="12" r="9"/><path d="M12 7v10M8 13l4 4 4-4"/>', pengeluaran: '<circle cx="12" cy="12" r="9"/><path d="M12 17V7M8 11l4-4 4 4"/>', rekap: '<path d="M5 3h10l4 4v14H5z"/><path d="M9 9h2M9 13h6M9 17h6"/>', more: '<rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/>' };
+function buildNav() {
+  $('nav').innerHTML = [['dashboard', 'Beranda'], ['pemasukan', 'Masuk'], ['pengeluaran', 'Keluar'], ['rekap', 'Rekap'], ['more', 'Menu']].map(([k, l]) => `<button data-k="${k}" onclick="show('${k}')"><svg viewBox="0 0 24 24">${ICO[k]}</svg>${l}</button>`).join('');
+}
+function renderMore() {
+  const T = [['tamu', '👥', 'Tamu', 'Daftar peserta'], ['itinerary', '🗺️', 'Itinerary', 'Rundown perjalanan'], ['perlengkapan', '🎒', 'Perlengkapan', 'Kebutuhan & sewa'], ['checklist', '✅', 'Checklist', 'Barang bawaan'], ['simulasi', '🧮', 'Simulasi', 'Harga & keuntungan'], ['bayar', '💳', 'Pembayaran', 'Patungan peserta'], ['trip', '🗂️', 'Trip & Arsip', 'Arsip & cadangan']];
+  $('main').innerHTML = `<div class="pgh"><h2>Menu</h2></div><div class="tiles">${T.map(t => `<button class="tile" onclick="show('${t[0]}')"><span>${t[1]}</span>${t[2]}<small>${t[3]}</small></button>`).join('')}</div>`;
+}
+function toggleTheme() {
+  const t = document.documentElement.dataset.t === 'light' ? 'dark' : 'light'; document.documentElement.dataset.t = t;
+  try { localStorage.setItem('t', t); } catch (e) {} $('tg').textContent = t === 'light' ? '🌙' : '☀️';
+}
+$('tg').textContent = document.documentElement.dataset.t === 'light' ? '🌙' : '☀️';
+function openSheet() { $('sheet').classList.add('on'); }
+function closeSheet() { const s = $('sheet'); if (s) s.classList.remove('on'); }
+function toast(t) { let e = $('toast'); if (!e) { e = document.createElement('div'); e.id = 'toast'; document.body.appendChild(e); } e.textContent = t; e.style.display = 'block'; clearTimeout(e._t); e._t = setTimeout(() => e.style.display = 'none', 1800); }
+function txRow(key, r) {
+  const c = CFG[key], title = r[c.fields[0].h] || '?'; let amt = '', cls = '', sub = [], badges = '';
+  if (key === 'pemasukan') { amt = '+ ' + rp(r['Biaya']); cls = 'in'; sub = [r['Kategori'], fmtDate(r['Tanggal transaksi']), r['Dibayar oleh']]; }
+  else if (key === 'pengeluaran') { amt = '- ' + rp(r['Total Biaya']); cls = 'out'; sub = [r['Kategori'], r['Quantity'] + ' x ' + rp(r['Biaya']), fmtDate(r['Tanggal transaksi']), r['Dibayar oleh']]; }
+  else if (key === 'tamu') { sub = [r['Meeting Point'], r['Ponsel']]; badges = badge(r['Status'] || '') + badge(r['Tagihan'] || ''); }
+  else if (key === 'itinerary') sub = [r['Jenis aktivitas'], fmtDate(r['Waktu mulai']) + (r['Waktu berakhir'] ? ' - ' + fmtDate(r['Waktu berakhir']).slice(-5) : ''), r['Lokasi']];
+  else { sub = ['Butuh ' + r['Kebutuhan'] + ', punya ' + r['Kesediaan'] + ', sewa ' + r['Sewa']]; amt = rp(r['Total Sewa']); }
+  const bk = (key === 'pemasukan' || key === 'pengeluaran') && r.Bukti ? `<button class="edt" onclick="viewBukti(${r.id},'${key}')">📎 Bukti</button>` : '';
+  return `<div class="txw"><div class="tx"><div class="av ${cls}">${esc(String(title).charAt(0).toUpperCase())}</div><div class="tm"><b>${esc(title)}</b><small>${sub.filter(Boolean).map(esc).join(' | ')}</small>${badges ? `<div style="margin-top:4px">${badges}</div>` : ''}</div><div class="ta ${cls}">${amt}</div></div>
+  <div class="acts">${bk}<button class="edt" onclick="editRow('${key}',${r.id})">Edit</button><button class="del" onclick="delRow('${key}',${r.id})">Hapus</button></div></div>`;
+}
+
+async function resetTotal() {
+  if ($('rst').value.trim().toUpperCase() !== 'HAPUS') return setMsg('rmsg', 'Ketik HAPUS dulu.', 0);
+  if (!confirm('Yakin hapus SEMUA data di aplikasi ini?')) return;
+  const pin = DB.pin; DB = blank(); DB.pin = pin; SIM = null; await save(); show('dashboard'); toast('Aplikasi dikosongkan');
+}
+/* ===== Mulai ===== */
+(async function () {
+  DB = Object.assign(blank(), await load() || {});
+  if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
+  if (DB.pin) lock(); else { buildNav(); show('dashboard'); }
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+})();
+</script>
+</body>
+</html>
