@@ -11,7 +11,20 @@
 *{box-sizing:border-box}
 body{font-family:system-ui,Arial,sans-serif;background:#f3f4f6;margin:0;color:#111}
 header{background:#000;color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;border-bottom:3px solid #f97316}header h1{margin:0;font-size:20px;color:#fbbf24}
-@media print{header,nav,button,.btn{display:none!important}body{background:#fff}}
+.rdday{background:#166534;color:#fff;padding:6px 10px;border-radius:8px;margin:12px 0 6px;font-weight:700}
+.rdi{display:flex;gap:10px;padding:8px 0 8px 12px;border-left:3px solid #f97316;margin-left:8px;position:relative}.rdi:before{content:'';position:absolute;left:-8px;top:12px;width:11px;height:11px;border-radius:50%;background:#fbbf24;border:2px solid #f97316}
+.rdt{min-width:78px;font-weight:700;color:#166534}.rdx b{display:block}.rdx small{color:#555}
+.cgh{display:flex;justify-content:space-between;background:#fef3c7;padding:6px 10px;border-radius:8px;margin-top:10px;font-weight:700}
+#pdoc{display:none}
+@media print{@page{margin:10mm}body{background:#fff}body.printing>*:not(#pdoc){display:none!important}body.printing #pdoc{display:block}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+#pdoc{font-family:Arial,sans-serif;color:#111;font-size:11px}
+.dh{background:#000;color:#fff;display:flex;align-items:center;gap:14px;padding:12px 16px;border-bottom:5px solid #f97316}.dh img{width:70px;height:70px}.dt{font-size:24px;font-weight:800;color:#fbbf24;letter-spacing:1px}.ds{color:#22c55e;font-weight:700;letter-spacing:2px}.dr{margin-left:auto;text-align:right;font-size:10px;color:#d1d5db}
+.dsub{font-size:13px;font-weight:700;margin:10px 0}.db h2{font-size:13px;color:#fff;background:#166534;padding:5px 8px;margin:14px 0 6px;border-left:5px solid #f97316}
+#pdoc table{width:100%;border-collapse:collapse;margin-bottom:6px}#pdoc th{background:#fef3c7;border:1px solid #bbb;padding:4px;text-align:left}#pdoc td{border:1px solid #ccc;padding:4px;white-space:normal}#pdoc tr.tot td{font-weight:800;background:#f0fdf4}
+.sum{display:flex;flex-wrap:wrap;gap:6px}.sum div{flex:1 1 30%;border:1px solid #bbb;border-radius:6px;padding:6px}.sum b{display:block;font-size:14px}
+.ttd{display:flex;justify-content:space-around;margin-top:46px;text-align:center}.ttd div{width:28%;border-top:1px solid #000;padding-top:4px}
+.df{margin-top:16px;text-align:center;font-size:9px;color:#666;border-top:1px solid #ccc;padding-top:6px}
+.lamp{display:flex;flex-wrap:wrap;gap:8px}.lamp div{width:31%;border:1px solid #ccc;padding:4px;page-break-inside:avoid;font-size:9px}.lamp img{width:100%}}
 nav{display:flex;gap:6px;overflow-x:auto;padding:10px 12px;background:#fff;position:sticky;top:0;z-index:5;box-shadow:0 1px 4px rgba(0,0,0,.1)}
 nav button{flex:none;border:0;background:#e5e7eb;padding:8px 14px;border-radius:20px;font-size:14px}
 nav button.active{background:#166534;color:#fff}
@@ -165,16 +178,17 @@ function renderSheet(key) {
   }).join('');
   const filters = c.fields.map((f, i) => f.type === 'select' ? `<select id="flt${i}" onchange="drawList('${key}')"><option value="">Semua ${esc(f.h)}</option>${f.options.map(o => `<option>${esc(o)}</option>`).join('')}</select>` : '').join('');
   const hasDate = c.fields.some(f => f.type === 'date');
+  const bukti = (key === 'pemasukan' || key === 'pengeluaran') ? `<label>Bukti nota</label><div class="flt"><button class="btn alt" style="margin:0" onclick="$('bcam').click()">📷 Kamera</button><button class="btn alt" style="margin:0" onclick="$('bfile').click()">📎 Unggah file</button></div><input type="file" id="bcam" accept="image/*" capture="environment" hidden onchange="pickBukti(this)"><input type="file" id="bfile" accept="image/*,application/pdf" hidden onchange="pickBukti(this)"><div id="bprev"></div>` : '';
   let extra = '';
   if (key === 'perlengkapan') extra = `<div class="card"><h3>Ringkasan Sewa</h3><div id="sewa"></div><button class="btn" onclick="pushSewa()">➡️ Masukkan Total Sewa ke Pengeluaran</button><div id="sewaMsg" class="msg"></div></div>`;
   $('main').innerHTML = `${extra}
-  <div class="card"><h3 id="ftitle">Tambah ${c.label}</h3>${inputs}
+  <div class="card"><h3 id="ftitle">Tambah ${c.label}</h3>${inputs}${bukti}
     <button class="btn" id="fbtn" onclick="submitRow('${key}')">Simpan</button>
     <button class="btn alt" id="fcancel" style="display:none" onclick="resetForm('${key}')">Batal edit</button><div id="fmsg" class="msg"></div></div>
   <div class="card"><h3>Data ${c.label}</h3>
     <div class="flt"><input id="q" class="full" placeholder="🔎 Cari kata kunci" oninput="drawList('${key}')">${filters}
     ${hasDate ? '<input type="date" id="d1" onchange="drawList(\'' + key + '\')"><input type="date" id="d2" onchange="drawList(\'' + key + '\')">' : ''}</div>
-    <div id="tblbox"></div></div>`;
+    <div id="tblbox"></div></div><div id="rkp"></div>`;
   drawList(key); if (key === 'perlengkapan') drawSewa();
 }
 function drawSewa() {
@@ -191,7 +205,7 @@ async function pushSewa() {
   await save(); setMsg('sewaMsg', ex ? 'Baris diperbarui menjadi ' + rp(total) : 'Ditambahkan ke Pengeluaran: ' + rp(total), 1);
 }
 function resetForm(key) {
-  editId = null; CFG[key].fields.forEach((f, i) => { const e = $('f' + i); if (e) e.value = f.def !== undefined ? f.def : ''; });
+  editId = null; BUKTI = null; showPrev(''); CFG[key].fields.forEach((f, i) => { const e = $('f' + i); if (e) e.value = f.def !== undefined ? f.def : ''; });
   $('ftitle').textContent = 'Tambah ' + CFG[key].label; $('fbtn').textContent = 'Simpan'; $('fcancel').style.display = 'none';
 }
 async function submitRow(key) {
@@ -199,13 +213,14 @@ async function submitRow(key) {
   c.fields.forEach((f, i) => { if (!f.ro) data[f.h] = $('f' + i).value; });
   if (!String(data[c.fields[0].h]).trim()) return setMsg('fmsg', c.fields[0].h + ' wajib diisi', 0);
   c.fields.forEach(f => { if (f.type === 'number' && data[f.h] !== '') data[f.h] = Number(data[f.h]); });
+  if (BUKTI !== null) data['Bukti'] = BUKTI;
   if (editId) { const r = DB[key].find(x => x.id === editId); Object.assign(r, data); }
   else DB[key].push(Object.assign({ id: DB.seq++ }, data));
   const wasEdit = !!editId; await save(); resetForm(key); drawList(key); if (key === 'perlengkapan') drawSewa();
   setMsg('fmsg', wasEdit ? 'Data berhasil diperbarui.' : 'Data berhasil disimpan.', 1);
 }
 function editRow(key, id) {
-  const r = DB[key].find(x => x.id === id); editId = id;
+  const r = DB[key].find(x => x.id === id); editId = id; BUKTI = null; showPrev(r.Bukti);
   CFG[key].fields.forEach((f, i) => { const e = $('f' + i); if (e) e.value = r[f.h] == null ? '' : r[f.h]; });
   $('ftitle').textContent = 'Edit ' + CFG[key].label; $('fbtn').textContent = 'Update'; $('fcancel').style.display = 'block'; window.scrollTo(0, 0);
 }
@@ -215,6 +230,7 @@ async function delRow(key, id) {
 }
 function drawList(key) {
   const c = CFG[key], box = $('tblbox'); if (!box) return;
+  const HB = key === 'pemasukan' || key === 'pengeluaran'; if (key === 'itinerary') drawRundown();
   const q = ($('q').value || '').toLowerCase().trim(), d1 = $('d1') ? $('d1').value : '', d2 = $('d2') ? $('d2').value : '';
   const di = c.fields.find(f => f.type === 'date');
   const all = rowsOf(key).reverse();
@@ -226,7 +242,7 @@ function drawList(key) {
   });
   let h = `<small class="mut">Menampilkan ${rows.length} dari ${all.length} data</small>`;
   if (!rows.length) { box.innerHTML = h + '<div>Belum ada data.</div>'; return; }
-  h += '<div class="tbl"><table><tr>' + c.fields.map(f => `<th>${esc(f.h)}</th>`).join('') + '<th></th></tr>';
+  h += '<div class="tbl"><table><tr>' + c.fields.map(f => `<th>${esc(f.h)}</th>`).join('') + (HB ? '<th>Bukti</th>' : '') + '<th></th></tr>';
   rows.forEach(r => {
     h += '<tr>' + c.fields.map(f => {
       const v = r[f.h];
@@ -234,7 +250,7 @@ function drawList(key) {
       if (f.rp) return `<td>${v === '' || v == null ? '' : rp(v)}</td>`;
       if (f.type === 'date' || f.type === 'datetime-local') return `<td>${esc(fmtDate(v))}</td>`;
       return `<td>${esc(v)}</td>`;
-    }).join('') + `<td><button class="edt" onclick="editRow('${key}',${r.id})">Edit</button><button class="del" onclick="delRow('${key}',${r.id})">Hapus</button></td></tr>`;
+    }).join('') + (HB ? `<td>${r.Bukti ? `<button class="edt" onclick="viewBukti(${r.id},'${key}')">Lihat</button>` : '-'}</td>` : '') + `<td><button class="edt" onclick="editRow('${key}',${r.id})">Edit</button><button class="del" onclick="delRow('${key}',${r.id})">Hapus</button></td></tr>`;
   });
   box.innerHTML = h + '</table></div>';
 }
@@ -248,7 +264,8 @@ function renderCl() {
   <div class="card"><h3>Checklist Perlengkapan</h3><div id="clprog"></div>
     <div style="margin:8px 0"><input type="checkbox" id="clonly" onchange="drawCl()"> Tampilkan yang belum siap saja</div>
     <input id="clq" placeholder="🔎 Cari barang / pembawa" oninput="drawCl()"><div id="clbox"></div>
-    <button class="btn alt" onclick="clImport()">📥 Impor barang dari tab Perlengkapan</button><div id="imsg" class="msg"></div></div>`;
+    <button class="btn alt" onclick="clImport()">📥 Impor barang dari tab Perlengkapan</button><div id="imsg" class="msg"></div></div>
+  <div class="card"><h3>📋 Rekap Checklist</h3><div id="clrk"></div><button class="btn" onclick="printDoc(docWrap('CHECKLIST PERLENGKAPAN','Destinasi: '+(DB.set.destinasi||'-'),clRekapHtml()))">📄 Unduh PDF checklist</button><button class="btn" style="background:#25d366" onclick="openWA(clText())">💬 Bagikan ke WhatsApp</button></div>`;
   drawCl();
 }
 function clReset() { editId = null; $('cb').value = $('co').value = $('cn').value = ''; $('ctitle').textContent = 'Tambah Barang'; $('cbtn').textContent = 'Simpan'; $('ccancel').style.display = 'none'; }
@@ -267,6 +284,7 @@ async function clImport() {
   await save(); drawCl(); setMsg('imsg', n + ' barang diimpor dari Perlengkapan.', 1);
 }
 function drawCl() {
+  if ($('clrk')) $('clrk').innerHTML = clRekapHtml();
   const L = DB.checklist, only = $('clonly').checked, q = ($('clq').value || '').toLowerCase().trim();
   $('clprog').textContent = L.filter(x => x.siap).length + ' dari ' + L.length + ' barang sudah siap';
   const rows = L.filter(x => (!only || !x.siap) && (!q || (x.barang + ' ' + x.oleh).toLowerCase().indexOf(q) >= 0));
@@ -457,7 +475,7 @@ function renderRekap() {
   $('main').innerHTML = `<div class="card"><h3>Rekapitulasi${d.destinasi ? ' - ' + esc(d.destinasi) : ''}</h3><small class="mut">Per ${new Date().toLocaleString('id-ID')}</small>
   <div class="grid" style="margin-top:10px">${stat('Total Pemasukan', rp(d.masuk))}${stat('Total Pengeluaran', rp(d.keluar))}${stat('Sisa Saldo', rp(d.saldo))}${stat('Pemakaian', (d.persen * 100).toFixed(1) + '%')}${stat('Tamu Diterima', rs('Diterima') + ' / ' + tam.length)}${stat(b.harga > 0 ? 'Tagihan / peserta' : 'Patungan / orang', rp(base))}</div>
   ${d.warnings.length ? d.warnings.map(w => `<div class="warn ${w.level}">${esc(w.text)}</div>`).join('') : '<div class="warn green">✅ Semua kategori masih sesuai anggaran.</div>'}
-  <button class="btn" onclick="window.print()">📄 Cetak / simpan sebagai PDF</button><button class="btn" style="background:#25d366" onclick="openWA(_rekapWA())">💬 Bagikan ringkasan ke WhatsApp</button></div>
+  <button class="btn" onclick="printDoc(invoiceHtml())">📄 Unduh PDF (invoice)</button><button class="btn" style="background:#25d366" onclick="openWA(_rekapWA())">💬 Bagikan ringkasan ke WhatsApp</button></div>
   <div class="card"><h3>Sisa Saldo & Bagi Hasil Official</h3>${v ? `<div class="grid">${stat('Sisa saldo saat ini', rp(d.saldo))}${stat('Jumlah official', v.off + ' orang')}${stat('Per official (nyata)', rp(v.nyata.perOff))}${stat('Per official (rencana)', rp(v.rencana.perOff))}${stat('Target per official', v.target ? rp(v.target) : '-')}${stat('Selisih vs rencana', rp(v.nyata.perOff - v.rencana.perOff))}</div>` : '<div class="warn note">Terapkan simulasi ke anggaran (tab Simulasi) untuk melihat bagi hasil official.</div>'}</div>
   ${v ? `<div class="card"><h3>Simulasi vs Kenyataan</h3>${vsHtml(v)}</div>` : ''}
   <div class="card"><h3>Pemasukan: ${rp(d.masuk)}</h3>${tab(['Kategori', 'Total'], Object.keys(mk).map(k => [k, rp(mk[k])]))}</div>
@@ -480,24 +498,110 @@ async function setPin() {
 }
 
 /* ===== Trip baru (salin) & arsip ===== */
-const CARRY = [['tamu', 'Tamu', 0], ['pemasukan', 'Pemasukan', 0], ['pengeluaran', 'Pengeluaran', 0], ['itinerary', 'Itinerary', 1], ['perlengkapan', 'Perlengkapan', 1]];
+/* ===== Bukti nota ===== */
+let BUKTI = null;
+function showPrev(v) {
+  const e = $('bprev'); if (!e) return;
+  e.innerHTML = v ? `<div style="margin-top:8px">${v.indexOf('data:image') === 0 ? `<img src="${v}" style="max-height:120px;border-radius:8px;display:block;margin-bottom:6px">` : '📄 File PDF terlampir '}<button class="del" onclick="BUKTI='';showPrev('')">Hapus bukti</button></div>` : '';
+}
+function pickBukti(inp) {
+  const f = inp.files[0]; inp.value = ''; if (!f) return;
+  if (f.type.indexOf('image/') === 0) {
+    const im = new Image(), u = URL.createObjectURL(f);
+    im.onload = () => { const k = Math.min(1, 1000 / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = im.width * k; c.height = im.height * k;
+      c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); BUKTI = c.toDataURL('image/jpeg', .72); URL.revokeObjectURL(u); showPrev(BUKTI); };
+    im.src = u;
+  } else if (f.size > 2e6) alert('Ukuran file maksimal 2 MB.');
+  else { const r = new FileReader(); r.onload = () => { BUKTI = r.result; showPrev(BUKTI); }; r.readAsDataURL(f); }
+}
+function viewBukti(id, key) {
+  const v = DB[key].find(x => x.id === id).Bukti, o = document.createElement('div');
+  o.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:99;display:flex;flex-direction:column;align-items:center;padding:14px;overflow:auto';
+  o.innerHTML = (v.indexOf('data:image') === 0 ? `<img src="${v}" style="max-width:100%">` : `<embed src="${v}" type="application/pdf" style="width:100%;height:80vh">`) + '<button class="btn" style="max-width:300px" onclick="this.parentNode.remove()">Tutup</button>';
+  document.body.appendChild(o);
+}
+
+/* ===== Dokumen PDF (gaya invoice) ===== */
+function printDoc(html) {
+  let d = $('pdoc'); if (!d) { d = document.createElement('div'); d.id = 'pdoc'; document.body.appendChild(d); }
+  d.innerHTML = html; document.body.classList.add('printing'); setTimeout(() => window.print(), 300);
+}
+function docWrap(judul, sub, body) {
+  return `<div class="dh"><img src="logo.png" alt=""><div><div class="dt">BAWAULIN TRIP</div><div class="ds">${esc(judul)}</div></div><div class="dr">No. BWL-${today().replace(/-/g, '')}<br>${new Date().toLocaleString('id-ID')}</div></div>
+  <div class="db"><div class="dsub">${esc(sub || '')}</div>${body}<div class="df">Dokumen dibuat otomatis oleh bawaulin.cash</div></div>`;
+}
+function invoiceHtml() {
+  const d = dash(), b = bayarData(), v = vsReal(), pm = rowsOf('pemasukan'), pg = rowsOf('pengeluaran'), base = b.harga > 0 ? b.harga : b.perB;
+  const T = (h, rows, tot) => `<table><tr>${h.map(x => `<th>${esc(x)}</th>`).join('')}</tr>${rows.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}${tot ? `<tr class="tot">${tot.map(c => `<td>${esc(c)}</td>`).join('')}</tr>` : ''}</table>`;
+  const lamp = pm.map(r => ({ t: 'Pemasukan', n: r['Detail pemasukan'], a: r['Biaya'], v: r.Bukti })).concat(pg.map(r => ({ t: 'Pengeluaran', n: r['Detail pengeluaran'], a: r['Total Biaya'], v: r.Bukti }))).filter(x => x.v && x.v.indexOf('data:image') === 0);
+  const body = `<h2>Ringkasan Keuangan</h2><div class="sum">${[['Total Realisasi', rp(d.real)], ['Total Pemasukan', rp(d.masuk)], ['Total Pengeluaran', rp(d.keluar)], ['Sisa Saldo', rp(d.saldo)], ['Pemakaian', (d.persen * 100).toFixed(1) + '%'], ['Peserta diterima', b.k + ' orang']].map(x => `<div>${x[0]}<b>${x[1]}</b></div>`).join('')}</div>
+  <h2>Rincian Pemasukan</h2>${T(['No', 'Tanggal', 'Detail', 'Kategori', 'Dibayar oleh', 'Jumlah'], pm.map((r, i) => [i + 1, fmtDate(r['Tanggal transaksi']), r['Detail pemasukan'], r['Kategori'], r['Dibayar oleh'], rp(r['Biaya'])]), ['', '', '', '', 'TOTAL', rp(d.masuk)])}
+  <h2>Rincian Pengeluaran</h2>${T(['No', 'Tanggal', 'Detail', 'Kategori', 'Qty', 'Anggaran', 'Biaya'], pg.map((r, i) => [i + 1, fmtDate(r['Tanggal transaksi']), r['Detail pengeluaran'], r['Kategori'], r['Quantity'], rp(r['Total Anggaran']), rp(r['Total Biaya'])]), ['', '', '', '', 'TOTAL', rp(d.anggaran), rp(d.keluar)])}
+  <h2>Status Pembayaran Peserta (tagihan ${rp(base)} / orang)</h2>${T(['Nama', 'Tagihan', 'Sudah bayar', 'Sisa'], b.ps.map(p => [p.nama, p.tagihan || '-', rp(p.dibayar), sisaTxt(base - p.dibayar)]))}
+  ${v ? `<h2>Bagi Hasil Official</h2>${T(['Keterangan', 'Rencana', 'Nyata'], [['Pendapatan / pemasukan', rp(v.rencana.pend), rp(v.nyata.masuk)], ['Total biaya', rp(v.rencana.biaya), rp(v.nyata.biaya)], ['Keuntungan', rp(v.rencana.profit), rp(v.nyata.profit)], ['Per official (' + v.off + ' orang)', rp(v.rencana.perOff), rp(v.nyata.perOff)]])}` : ''}
+  <div class="ttd"><div>Bendahara</div><div>Ketua Trip</div><div>Mengetahui</div></div>
+  ${lamp.length ? `<h2 style="page-break-before:always">Lampiran Bukti Nota</h2><div class="lamp">${lamp.map(x => `<div><img src="${x.v}"><b>${esc(x.t)}</b>: ${esc(x.n)}<br>${rp(x.a)}</div>`).join('')}</div>` : ''}`;
+  return docWrap('REKAPITULASI KEUANGAN', 'Destinasi: ' + (d.destinasi || '-'), body);
+}
+
+/* ===== Rundown (Itinerary) ===== */
+function rundownRows() { return DB.itinerary.slice().sort((a, b) => String(a['Waktu mulai'] || '9').localeCompare(String(b['Waktu mulai'] || '9'))); }
+function rundownHtml() {
+  const rows = rundownRows(); if (!rows.length) return '<div>Belum ada jadwal.</div>';
+  const days = {}; rows.forEach(r => { const k = String(r['Waktu mulai'] || '').slice(0, 10) || 'Tanpa tanggal'; (days[k] = days[k] || []).push(r); });
+  return Object.keys(days).map((k, i) => {
+    const dn = k.length === 10 ? new Date(k + 'T00:00').toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : k;
+    return `<div class="rdday">Hari ${i + 1} - ${esc(dn)}</div>` + days[k].map(r => {
+      const s = String(r['Waktu mulai'] || '').slice(11, 16), e = String(r['Waktu berakhir'] || '').slice(11, 16);
+      return `<div class="rdi"><div class="rdt">${s || '--:--'}${e ? '<br>s/d ' + e : ''}</div><div class="rdx"><b>${esc(r['Aktivitas'])}</b><small>${[r['Jenis aktivitas'], r['Lokasi'] && '📍 ' + r['Lokasi'], r['Catatan']].filter(Boolean).map(esc).join(' | ')}</small></div></div>`;
+    }).join('');
+  }).join('');
+}
+function rundownText() {
+  let t = '*RUNDOWN PERJALANAN*' + (DB.set.destinasi ? ' - ' + DB.set.destinasi : '') + '\n', last = '';
+  rundownRows().forEach(r => {
+    const k = String(r['Waktu mulai'] || '').slice(0, 10); if (k !== last) { t += '\n*' + fmtDate(k) + '*\n'; last = k; }
+    t += String(r['Waktu mulai'] || '').slice(11, 16) + (r['Waktu berakhir'] ? '-' + String(r['Waktu berakhir']).slice(11, 16) : '') + ' ' + r['Aktivitas'] + (r['Lokasi'] ? ' (' + r['Lokasi'] + ')' : '') + '\n';
+  });
+  return t;
+}
+function drawRundown() {
+  const e = $('rkp'); if (!e) return;
+  e.innerHTML = `<div class="card"><h3>📋 Rekap Rundown Perjalanan</h3><small class="mut">Jadwal berurutan per hari</small>${rundownHtml()}
+  <button class="btn" onclick="printDoc(docWrap('RUNDOWN PERJALANAN','Destinasi: '+(DB.set.destinasi||'-'),rundownHtml()))">📄 Unduh PDF rundown</button><button class="btn" style="background:#25d366" onclick="openWA(rundownText())">💬 Bagikan ke WhatsApp</button></div>`;
+}
+
+/* ===== Rekap Checklist ===== */
+function clRekapHtml() {
+  const L = DB.checklist; if (!L.length) return '<div>Belum ada barang.</div>';
+  const done = L.filter(x => x.siap).length, pct = Math.round(done / L.length * 100), by = {}, belum = L.filter(x => !x.siap);
+  L.forEach(x => { const k = x.oleh.trim() || '(Belum ada pembawa)'; (by[k] = by[k] || []).push(x); });
+  return `<div class="grid">${stat('Barang siap', done + ' / ' + L.length)}${stat('Progres', pct + '%')}</div><div class="bar"><div style="width:${pct}%"></div></div>
+  ${belum.length ? `<div class="warn yellow"><b>Belum siap (${belum.length}):</b> ${belum.map(x => esc(x.barang)).join(', ')}</div>` : '<div class="warn green">✅ Semua barang sudah siap.</div>'}
+  ${Object.keys(by).sort().map(k => { const a = by[k], s = a.filter(x => x.siap).length;
+    return `<div class="cgh"><span>👤 ${esc(k)}</span><span>${s}/${a.length} siap</span></div>` + a.map(x => `<div style="padding:5px 4px;border-bottom:1px solid #eee">${x.siap ? '✅' : '⬜'} <span style="${x.siap ? 'color:#888;text-decoration:line-through' : ''}">${esc(x.barang)}</span>${x.catatan ? ` <small class="mut">(${esc(x.catatan)})</small>` : ''}</div>`).join(''); }).join('')}`;
+}
+function clText() {
+  const by = {}; DB.checklist.forEach(x => { const k = x.oleh.trim() || '(Belum ada pembawa)'; (by[k] = by[k] || []).push(x); });
+  let t = '*CHECKLIST PERLENGKAPAN*' + (DB.set.destinasi ? ' - ' + DB.set.destinasi : '') + '\n' + DB.checklist.filter(x => x.siap).length + ' dari ' + DB.checklist.length + ' barang siap\n';
+  Object.keys(by).sort().forEach(k => { t += '\n*' + k + '*\n'; by[k].forEach(x => t += (x.siap ? '✅ ' : '⬜ ') + x.barang + '\n'); }); return t;
+}
+
+/* ===== Trip baru (reset total) & arsip ===== */
+const hasData = () => KEYS.some(k => DB[k].length) || DB.checklist.length;
 function renderTrip() {
   $('main').innerHTML = `
   <div class="card"><h3>Arsipkan Trip yang Sudah Selesai</h3><small class="mut">Menyimpan salinan seluruh data trip ini ke daftar arsip. Data yang berjalan tidak berubah.</small>
     <button class="btn" onclick="arsipkan(false)">🗂️ Arsipkan sekarang</button><div id="tmsg" class="msg"></div></div>
-  <div class="card"><h3>Trip Berikutnya (Salin Data)</h3><div class="warn yellow">Data trip lama diarsipkan lebih dulu (tidak hilang). Lalu data yang TIDAK dicentang dikosongkan, yang dicentang dibawa ke trip baru.</div>
-    <label>Destinasi baru (kosongkan jika tidak diubah)</label><input id="nd">
-    <label>Total Realisasi baru (Rp, kosongkan jika tidak diubah)</label><input id="nr" type="number" inputmode="decimal">
-    <h3 style="margin-top:14px">Bawa ke trip baru</h3>
-    ${CARRY.map(([k, l, on]) => `<div style="margin-top:6px"><input type="checkbox" id="k_${k}" ${on ? 'checked' : ''}> ${l}</div>`).join('')}
-    <div style="margin-top:6px"><input type="checkbox" id="k_cl" checked> Checklist (centang direset)</div>
-    <div style="margin-top:6px"><input type="checkbox" id="k_sim" checked> Simulasi aktif (acuan perbandingan)</div>
+  <div class="card"><h3>Mulai Trip Baru</h3><div class="warn yellow">Trip yang sedang berjalan diarsipkan otomatis, lalu SEMUA data (tamu, pemasukan, pengeluaran, itinerary, perlengkapan, checklist, simulasi) dikosongkan.</div>
+    <label>Destinasi trip baru (opsional)</label><input id="nd">
+    <label>Total Realisasi trip baru (Rp, opsional)</label><input id="nr" type="number" inputmode="decimal">
     <label>Ketik BARU untuk konfirmasi</label><input id="kf" placeholder="BARU">
     <button class="btn red" onclick="arsipkan(true)">🚀 Arsipkan & mulai trip baru</button><div id="t2msg" class="msg"></div></div>
   <div class="card"><h3>Daftar Arsip (${DB.arsip.length})</h3>
-    ${DB.arsip.length ? DB.arsip.slice().reverse().map(a => `<div style="padding:8px 0;border-bottom:1px solid #eee"><b>${esc(a.destinasi || '(tanpa nama)')} - ${esc(a.tanggal)}</b><div>${esc(a.ringkasan)}</div>
+    ${DB.arsip.length ? DB.arsip.slice().reverse().map(a => `<div style="padding:8px 0;border-bottom:1px solid #eee"><b>${esc(a.destinasi || '(tanpa nama)')} - ${esc(a.tanggal)}</b>${a.auto ? ' <span class="badge y">backup otomatis</span>' : ''}<div>${esc(a.ringkasan)}</div>
       <button class="edt" onclick="arsipBuka(${a.id})">Buka</button><button class="edt" onclick="arsipUnduh(${a.id})">Unduh</button><button class="del" onclick="arsipHapus(${a.id})">Hapus</button></div>`).join('') : '<div>Belum ada arsip.</div>'}
-    <small class="mut">"Buka" menjadikan arsip sebagai data aktif. Trip yang sedang berjalan diarsipkan otomatis lebih dulu.</small></div>
+    <small class="mut">"Buka" memuat seluruh isi arsip ke aplikasi. Jika trip yang sedang berjalan berisi data, ia disimpan otomatis sebagai backup di daftar arsip.</small></div>
   <div class="card"><h3>💾 Cadangan Data</h3><small class="mut">Data tersimpan di HP ini. Unduh cadangan berkala (atau sebelum uninstall / ganti HP), simpan ke Google Drive atau WhatsApp.</small>
     <button class="btn" onclick="ekspor()">⬇️ Unduh cadangan (JSON)</button>
     <button class="btn alt" onclick="$('imp').click()">⬆️ Pulihkan dari cadangan</button>
@@ -506,20 +610,19 @@ function renderTrip() {
 async function arsipkan(baru) {
   if (!baru) { DB.arsip.push(snapshot()); await save(); renderTrip(); return setMsg('tmsg', 'Arsip dibuat.', 1); }
   if ($('kf').value.trim().toUpperCase() !== 'BARU') return setMsg('t2msg', 'Ketik BARU dulu untuk konfirmasi.', 0);
-  if (!confirm('Trip lama diarsipkan, lalu data yang tidak dicentang dikosongkan. Lanjut?')) return;
-  DB.arsip.push(snapshot());
-  KEYS.forEach(k => { if (!$('k_' + k).checked) DB[k] = []; });
-  if ($('k_cl').checked) DB.checklist.forEach(x => x.siap = false); else DB.checklist = [];
-  if (!$('k_sim').checked) DB.simAktif = null;
-  if ($('nd').value.trim()) DB.set.destinasi = $('nd').value.trim();
-  if ($('nr').value !== '') DB.set.realisasi = Number($('nr').value) || 0;
-  await save(); renderTrip(); setMsg('t2msg', 'Trip baru siap. Trip lama tersimpan di arsip.', 1);
+  if (!confirm('Trip saat ini diarsipkan, lalu semua data dikosongkan. Lanjut?')) return;
+  if (hasData()) DB.arsip.push(snapshot());
+  KEYS.forEach(k => DB[k] = []); DB.checklist = []; DB.simAktif = null; SIM = null;
+  DB.set = { destinasi: $('nd').value.trim(), realisasi: Number($('nr').value) || 0 };
+  await save(); renderTrip(); setMsg('t2msg', 'Trip baru siap. Semua data sudah kosong; trip lama ada di arsip.', 1);
 }
 async function arsipBuka(id) {
-  const a = DB.arsip.find(x => x.id === id); if (!a || !confirm('Jadikan arsip ini data aktif? Trip yang sedang berjalan diarsipkan otomatis.')) return;
-  DB.arsip.push(snapshot()); const d = JSON.parse(JSON.stringify(a.data));
-  KEYS.concat(['checklist', 'set', 'simAktif']).forEach(k => DB[k] = d[k] === undefined ? (k === 'set' ? { destinasi: '', realisasi: 0 } : k === 'simAktif' ? null : []) : d[k]);
-  DB.seq = Math.max(DB.seq, d.seq || 0); await save(); renderTrip(); setMsg('tmsg', 'Arsip dibuka sebagai data aktif.', 1);
+  const a = DB.arsip.find(x => x.id === id); if (!a || !confirm('Buka arsip ini? Trip yang sedang berjalan (jika berisi data) disimpan otomatis ke daftar arsip.')) return;
+  if (hasData()) DB.arsip.push(Object.assign(snapshot(), { auto: true }));
+  const d = JSON.parse(JSON.stringify(a.data));
+  KEYS.concat(['checklist']).forEach(k => DB[k] = d[k] || []);
+  DB.set = d.set || { destinasi: '', realisasi: 0 }; DB.simAktif = d.simAktif || null; SIM = null;
+  DB.seq = Math.max(DB.seq, d.seq || 0); await save(); renderTrip(); setMsg('tmsg', 'Arsip dibuka. Seluruh isinya sekarang menjadi data aktif.', 1);
 }
 
 /* ===== Mulai ===== */
