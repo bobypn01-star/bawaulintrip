@@ -1,6 +1,6 @@
 // Naikkan angka VERSI setiap kali Anda mengganti file aplikasi, agar HP memuat versi baru
-const VERSI = 'v1';
-const FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
+const VERSI = 'v2';
+const FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './logo.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(VERSI).then(c => c.addAll(FILES))); self.skipWaiting(); });
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== VERSI).map(k => caches.delete(k)))).then(() => self.clients.claim()));

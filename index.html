@@ -3,14 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#166534">
+<meta name="theme-color" content="#000000">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
-<title>Budgeting Pendakian</title>
+<title>bawaulin.cash</title>
 <style>
 *{box-sizing:border-box}
 body{font-family:system-ui,Arial,sans-serif;background:#f3f4f6;margin:0;color:#111}
-header{background:#166534;color:#fff;padding:14px 16px}header h1{margin:0;font-size:18px}
+header{background:#000;color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;border-bottom:3px solid #f97316}header h1{margin:0;font-size:20px;color:#fbbf24}
+@media print{header,nav,button,.btn{display:none!important}body{background:#fff}}
 nav{display:flex;gap:6px;overflow-x:auto;padding:10px 12px;background:#fff;position:sticky;top:0;z-index:5;box-shadow:0 1px 4px rgba(0,0,0,.1)}
 nav button{flex:none;border:0;background:#e5e7eb;padding:8px 14px;border-radius:20px;font-size:14px}
 nav button.active{background:#166534;color:#fff}
@@ -42,7 +43,7 @@ h3{margin:0 0 4px}small.mut{color:#666}
 </style>
 </head>
 <body>
-<header><h1>🏔️ Budgeting Pendakian</h1></header>
+<header><img src="logo.png" alt="" width="40" height="40"><h1>bawaulin.cash</h1></header>
 <nav id="nav"></nav>
 <main id="main">Memuat...</main>
 <script>
@@ -76,7 +77,7 @@ const KEYS = Object.keys(CFG);
 
 /* ===== Penyimpanan lokal (IndexedDB) ===== */
 let DB, cur = 'dashboard', editId = null;
-const blank = () => ({ set: { destinasi: '', realisasi: 0 }, tamu: [], pemasukan: [], pengeluaran: [], itinerary: [], perlengkapan: [], checklist: [], arsip: [], seq: 1 });
+const blank = () => ({ set: { destinasi: '', realisasi: 0 }, tamu: [], pemasukan: [], pengeluaran: [], itinerary: [], perlengkapan: [], checklist: [], arsip: [], sim: [], simAktif: null, pin: null, seq: 1 });
 function idb() { return new Promise((ok, no) => { const r = indexedDB.open('budgeting', 1); r.onupgradeneeded = () => r.result.createObjectStore('kv'); r.onsuccess = () => ok(r.result); r.onerror = () => no(r.error); }); }
 async function load() { const d = await idb(); return new Promise(ok => { const q = d.transaction('kv').objectStore('kv').get('db'); q.onsuccess = () => ok(q.result || null); q.onerror = () => ok(null); }); }
 async function save() { const d = await idb(); return new Promise(ok => { const t = d.transaction('kv', 'readwrite'); t.objectStore('kv').put(DB, 'db'); t.oncomplete = ok; t.onerror = ok; }); }
@@ -119,14 +120,14 @@ const hbar = (l, v, mx, c, t) => `<div class="hrow"><div>${esc(l)}</div><div cla
 const stat = (l, v) => `<div class="stat"><small>${esc(l)}</small><b>${esc(v)}</b></div>`;
 
 /* ===== Navigasi ===== */
-const TABS = [['dashboard', 'Dashboard']].concat(KEYS.map(k => [k, CFG[k].label])).concat([['checklist', 'Checklist'], ['trip', 'Trip & Cadangan']]);
+const TABS = [['dashboard', 'Dashboard']].concat(KEYS.map(k => [k, CFG[k].label])).concat([['checklist', 'Checklist'], ['simulasi', 'Simulasi'], ['bayar', 'Pembayaran'], ['rekap', 'Rekap'], ['trip', 'Trip & Arsip']]);
 function buildNav() {
   $('nav').innerHTML = TABS.map(([k, l]) => `<button data-k="${k}" onclick="show('${k}')">${l}</button>`).join('');
 }
 function show(k) {
   cur = k; editId = null;
   document.querySelectorAll('nav button').forEach(b => b.classList.toggle('active', b.dataset.k === k));
-  if (k === 'dashboard') renderDash(); else if (k === 'checklist') renderCl(); else if (k === 'trip') renderTrip(); else renderSheet(k);
+  if (k === 'dashboard') renderDash(); else if (k === 'checklist') renderCl(); else if (k === 'trip') renderTrip(); else if (k === 'simulasi') renderSim(); else if (k === 'bayar') renderBayar(); else if (k === 'rekap') renderRekap(); else renderSheet(k);
   window.scrollTo(0, 0);
 }
 
@@ -144,7 +145,10 @@ function renderDash() {
   <div class="card"><h3>Pengaturan</h3>
     <label>Destinasi</label><input id="sDest" value="${esc(d.destinasi)}">
     <label>Total Realisasi (Rp)</label><input id="sReal" type="number" inputmode="decimal" value="${d.real}">
-    <button class="btn" onclick="saveSet()">Simpan Pengaturan</button><div id="sMsg" class="msg"></div></div>`;
+    <button class="btn" onclick="saveSet()">Simpan Pengaturan</button><div id="sMsg" class="msg"></div></div>
+  <div class="card"><h3>🔒 PIN Pengaman</h3><small class="mut">${DB.pin ? 'PIN aktif. Isi PIN baru untuk mengganti, atau kosongkan untuk mematikan.' : 'PIN belum aktif. Isi 4-8 angka untuk mengaktifkan. Jika lupa PIN, pulihkan lewat file cadangan.'}</small>
+    ${DB.pin ? '<label>PIN lama</label><input id="po" type="password" inputmode="numeric">' : ''}<label>PIN baru</label><input id="pn" type="password" inputmode="numeric" maxlength="8">
+    <button class="btn alt" onclick="setPin()">Simpan PIN</button><div id="pmsg" class="msg"></div></div>`;
 }
 async function saveSet() { DB.set.destinasi = $('sDest').value.trim(); DB.set.realisasi = Number($('sReal').value) || 0; await save(); renderDash(); setMsg('sMsg', 'Pengaturan disimpan.', 1); }
 
@@ -273,40 +277,9 @@ function drawCl() {
 
 /* ===== Trip baru, arsip & cadangan ===== */
 function snapshot() {
-  const d = dash(), s = JSON.parse(JSON.stringify(DB)); delete s.arsip;
+  const d = dash(), s = JSON.parse(JSON.stringify(DB)); delete s.arsip; delete s.pin; delete s.sim;
   return { id: DB.seq++, tanggal: new Date().toLocaleString('id-ID'), destinasi: d.destinasi,
     ringkasan: 'Pemasukan ' + rp(d.masuk) + '; Pengeluaran ' + rp(d.keluar) + '; Saldo ' + rp(d.saldo) + '; Tamu diterima ' + DB.tamu.filter(t => t['Status'] === 'Diterima').length, data: s };
-}
-function renderTrip() {
-  $('main').innerHTML = `
-  <div class="card"><h3>Arsipkan Trip Ini</h3><small class="mut">Menyimpan salinan seluruh data ke daftar arsip di HP. Data yang berjalan tidak berubah.</small>
-    <button class="btn" onclick="arsipkan(false)">🗂️ Arsipkan sekarang</button><div id="tmsg" class="msg"></div></div>
-  <div class="card"><h3>Mulai Trip Baru</h3><div class="warn yellow">Arsip dibuat otomatis lebih dulu, baru data dikosongkan.</div>
-    <label>Destinasi baru (kosongkan jika tidak diubah)</label><input id="nd">
-    <label>Total Realisasi baru (Rp, kosongkan jika tidak diubah)</label><input id="nr" type="number" inputmode="decimal">
-    <h3 style="margin-top:14px">Data yang dikosongkan</h3>
-    ${[['tamu', 1], ['pemasukan', 1], ['pengeluaran', 1], ['itinerary', 1], ['perlengkapan', 0]].map(([k, on]) => `<div style="margin-top:6px"><input type="checkbox" id="k_${k}" ${on ? 'checked' : ''}> ${CFG[k].label}</div>`).join('')}
-    <div style="margin-top:6px"><input type="checkbox" id="k_cl" checked> Reset centang Checklist</div>
-    <label>Ketik BARU untuk konfirmasi</label><input id="kf" placeholder="BARU">
-    <button class="btn red" onclick="arsipkan(true)">🚀 Arsipkan & mulai trip baru</button><div id="t2msg" class="msg"></div></div>
-  <div class="card"><h3>Daftar Arsip (${DB.arsip.length})</h3>
-    ${DB.arsip.length ? DB.arsip.slice().reverse().map(a => `<div style="padding:8px 0;border-bottom:1px solid #eee"><b>${esc(a.destinasi || '(tanpa nama)')} - ${esc(a.tanggal)}</b><div>${esc(a.ringkasan)}</div>
-      <button class="edt" onclick="arsipUnduh(${a.id})">Unduh</button><button class="del" onclick="arsipHapus(${a.id})">Hapus</button></div>`).join('') : '<div>Belum ada arsip.</div>'}</div>
-  <div class="card"><h3>💾 Cadangan Data</h3><small class="mut">Data tersimpan di HP ini. Unduh cadangan secara berkala (atau sebelum uninstall / ganti HP), simpan ke Google Drive atau WhatsApp.</small>
-    <button class="btn" onclick="ekspor()">⬇️ Unduh cadangan (JSON)</button>
-    <button class="btn alt" onclick="$('imp').click()">⬆️ Pulihkan dari cadangan</button>
-    <input type="file" id="imp" accept=".json,application/json" style="display:none" onchange="impor(this.files[0])"><div id="bmsg" class="msg"></div></div>`;
-}
-async function arsipkan(baru) {
-  if (!baru) { DB.arsip.push(snapshot()); await save(); renderTrip(); return setMsg('tmsg', 'Arsip dibuat.', 1); }
-  if ($('kf').value.trim().toUpperCase() !== 'BARU') return setMsg('t2msg', 'Ketik BARU dulu untuk konfirmasi.', 0);
-  if (!confirm('Data yang dipilih akan dikosongkan setelah arsip dibuat. Lanjut?')) return;
-  DB.arsip.push(snapshot());
-  KEYS.forEach(k => { if ($('k_' + k).checked) DB[k] = []; });
-  if ($('k_cl').checked) DB.checklist.forEach(x => x.siap = false);
-  if ($('nd').value.trim()) DB.set.destinasi = $('nd').value.trim();
-  if ($('nr').value !== '') DB.set.realisasi = Number($('nr').value) || 0;
-  await save(); renderTrip(); setMsg('t2msg', 'Trip baru siap. Data lama sudah diarsipkan.', 1);
 }
 function arsipUnduh(id) { const a = DB.arsip.find(x => x.id === id); download('arsip-' + (a.destinasi || 'trip').replace(/\W+/g, '-') + '.json', JSON.stringify(a, null, 1)); }
 async function arsipHapus(id) { if (!confirm('Hapus arsip ini?')) return; DB.arsip = DB.arsip.filter(x => x.id !== id); await save(); renderTrip(); }
@@ -324,12 +297,237 @@ function impor(file) {
   r.readAsText(file);
 }
 
+/* ===== Simulasi ===== */
+const SIM_T = { orang: 'Per orang', grup: 'Sekali per trip', tenda: 'Tenda (sewa jika stok kurang)' };
+const KATS = CFG.pengeluaran.fields[1].options, up5 = x => Math.ceil(x / 5000) * 5000;
+const simDef = () => ({ nama: 'Gunung Gede', peserta: 5, official: 3, ikut: true, harga: 400000, target: 0, items: [
+  { n: 'Basecamp', t: 'orang', std: 150000, sim: 100000, kap: 4, stok: 0, kat: 'Simaksi' },
+  { n: 'Konsumsi (3x makan)', t: 'orang', std: 60000, sim: 55000, kap: 4, stok: 0, kat: 'Konsumsi' },
+  { n: 'Tenda 4p', t: 'tenda', std: 40000, sim: 35000, kap: 4, stok: 2, kat: 'Peralatan' },
+  { n: 'Alat makan', t: 'orang', std: 25000, sim: 20000, kap: 4, stok: 0, kat: 'Peralatan' },
+  { n: 'Merchandise', t: 'orang', std: 35000, sim: 30000, kap: 4, stok: 0, kat: 'Lainnya' }] });
+let SIM = null;
+function simCalc(s, p) {
+  const orang = p + (s.ikut ? +s.official || 0 : 0); let total = 0, tendaSewa = 0; const rows = [];
+  s.items.forEach(it => {
+    const std = +it.std || 0, sim = +it.sim || 0; let cost, qty, sewa = 0, unitStd = std;
+    if (it.t === 'orang') { cost = sim * orang; qty = orang; }
+    else if (it.t === 'grup') { cost = sim; qty = 1; unitStd = std * p; }
+    else { const need = Math.ceil(orang / Math.max(1, +it.kap || 1)); sewa = Math.max(0, need - (+it.stok || 0)); cost = sewa * sim; qty = sewa; tendaSewa += sewa; }
+    total += cost; rows.push({ n: String(it.n || ''), t: it.t, kat: it.kat || 'Lainnya', cost, rev: std * p, qty, unitSim: sim, unitStd, sewa });
+  });
+  const off = +s.official || 0, pend = (+s.harga || 0) * p, profit = pend - total;
+  return { orang, total, rows, tendaSewa, pend, profit, perOff: off ? profit / off : 0, margin: pend ? profit / pend * 100 : 0,
+    be: p ? up5(total / p) : 0, hTarget: p ? up5((total + (+s.target || 0) * off) / p) : 0 };
+}
+function renderSim() {
+  SIM = SIM || simDef();
+  $('main').innerHTML = `<div class="card"><h3>Skenario Simulasi</h3><select id="ssel"><option value="">-- Pilih skenario tersimpan --</option>${DB.sim.map(x => `<option value="${x.id}">${esc(x.nama)} (${esc(x.diubah)})</option>`).join('')}</select>
+  <div class="flt"><button class="btn alt" onclick="simLoad()">Muat</button><button class="btn" onclick="simSave()">Simpan</button><button class="btn alt" onclick="simDel()">Hapus</button><button class="btn alt" onclick="SIM=simDef();renderSim()">Baru (contoh)</button></div><div id="smsg" class="msg"></div></div>
+  <div class="card"><h3>Parameter</h3><label>Nama simulasi / destinasi</label><input value="${esc(SIM.nama)}" oninput="SIM.nama=this.value">
+  ${[['Jumlah peserta', 'peserta'], ['Jumlah official', 'official'], ['Harga jual per peserta (Rp)', 'harga'], ['Target keuntungan per official (Rp)', 'target']].map(([l, k]) => `<label>${l}</label><input type="number" inputmode="decimal" value="${SIM[k]}" oninput="SIM.${k}=+this.value||0;drawSim()">`).join('')}
+  <div style="margin-top:10px"><input type="checkbox" ${SIM.ikut ? 'checked' : ''} onchange="SIM.ikut=this.checked;drawSim()"> Official ikut berangkat (biaya ikut ditanggung)</div></div>
+  <div class="card"><h3>Komponen Biaya</h3><small class="mut">Harga standar = bagian dari harga jual per peserta. Biaya simulasi = yang benar-benar Anda keluarkan.</small><div id="sitems"></div>
+  <button class="btn alt" onclick="SIM.items.push({n:'Komponen baru',t:'orang',std:0,sim:0,kap:4,stok:0,kat:'Lainnya'});drawItems();drawSim()">+ Tambah komponen</button></div>
+  <div class="card"><h3>Terapkan ke Anggaran Pengeluaran</h3><small class="mut">Mengisi tab Pengeluaran dari komponen simulasi. Simulasi yang diterapkan menjadi acuan perbandingan dengan kenyataan.</small>
+  <label>Kolom Anggaran diisi dengan</label><select id="ap_d"><option value="sim">Biaya simulasi (anggaran ditekan)</option><option value="std">Harga standar komponen</option></select>
+  <div style="margin-top:10px"><input type="checkbox" id="ap_b"> Isi juga kolom Biaya sesuai biaya simulasi</div>
+  <div style="margin-top:10px"><input type="checkbox" id="ap_r" checked> Atur Total Realisasi = pendapatan simulasi</div>
+  <button class="btn" onclick="simApply()">Terapkan ke Anggaran Pengeluaran</button><div id="amsg" class="msg"></div></div>
+  <div id="simres"></div><div id="vsbox"></div>`;
+  drawItems(); drawSim(); drawVs();
+}
+function drawItems() {
+  $('sitems').innerHTML = SIM.items.map((it, i) => {
+    const num = (l, k) => `<label>${l}</label><input type="number" inputmode="decimal" value="${it[k]}" oninput="SIM.items[${i}].${k}=+this.value||0;drawSim()">`;
+    return `<div style="border:1px solid #e5e7eb;border-radius:10px;padding:10px;margin-top:10px"><label>Nama komponen</label><input value="${esc(it.n)}" oninput="SIM.items[${i}].n=this.value;drawSim()">
+    <label>Jenis biaya</label><select onchange="SIM.items[${i}].t=this.value;drawItems();drawSim()">${Object.keys(SIM_T).map(k => `<option value="${k}" ${it.t === k ? 'selected' : ''}>${SIM_T[k]}</option>`).join('')}</select>
+    <label>Kategori di Pengeluaran</label><select onchange="SIM.items[${i}].kat=this.value">${KATS.map(k => `<option ${(it.kat || 'Lainnya') === k ? 'selected' : ''}>${k}</option>`).join('')}</select>
+    ${num('Harga standar per peserta (Rp)', 'std')}${num(it.t === 'orang' ? 'Biaya simulasi per orang (Rp)' : it.t === 'grup' ? 'Biaya simulasi total per trip (Rp)' : 'Sewa per tenda (Rp)', 'sim')}${it.t === 'tenda' ? num('Kapasitas per tenda (orang)', 'kap') + num('Tenda milik sendiri (stok)', 'stok') : ''}
+    <button class="del" style="margin-top:10px" onclick="SIM.items.splice(${i},1);drawItems();drawSim()">Hapus komponen</button></div>`;
+  }).join('');
+}
+function drawSim() {
+  const p = +SIM.peserta || 0, r = simCalc(SIM, p), cnt = [5, 8, 10, 12, 15, 20, 25, 30]; if (cnt.indexOf(p) < 0) cnt.push(p); cnt.sort((a, b) => a - b);
+  const kes = r.profit >= 0 ? `Keuntungan ${rp(r.profit)} (${r.margin.toFixed(1)}%). Tiap official mendapat ${rp(r.perOff)}.` : `Rugi ${rp(-r.profit)}. Agar balik modal, harga minimal ${rp(r.be)} per peserta.`;
+  const al = []; if (r.profit < 0) al.push(['red', 'Simulasi ini rugi. Naikkan harga atau tekan biaya.']); if (r.tendaSewa > 0) al.push(['yellow', 'Perlu menyewa ' + r.tendaSewa + ' tenda tambahan.']);
+  $('simres').innerHTML = `<div class="card"><h3>Hasil Simulasi</h3><div class="warn note">${esc(kes)}</div>${al.map(a => `<div class="warn ${a[0]}">${esc(a[1])}</div>`).join('')}
+  <div class="grid" style="margin-top:10px">${stat('Orang berangkat', r.orang)}${stat('Total biaya', rp(r.total))}${stat('Pendapatan', rp(r.pend))}${stat('Keuntungan', rp(r.profit))}${stat('Per official', rp(r.perOff))}${stat('Harga min. balik modal', rp(r.be))}${SIM.target > 0 ? stat('Harga min. capai target', rp(r.hTarget)) : ''}</div>
+  <h3 style="margin-top:14px">Per komponen</h3>${tab(['Komponen', 'Dari harga', 'Biaya', 'Selisih'], r.rows.map(x => [x.n, rp(x.rev), rp(x.cost), rp(x.rev - x.cost)]))}
+  <h3 style="margin-top:14px">Jika jumlah peserta berubah</h3>${tab(['Peserta', 'Total biaya', 'Keuntungan', 'Per official'], cnt.map(n => { const x = simCalc(SIM, n); return [(n === p ? '► ' : '') + n, rp(x.total), rp(x.profit), rp(x.perOff)]; }))}</div>`;
+}
+const tab = (h, rows) => rows.length ? `<div class="tbl"><table><tr>${h.map(x => `<th>${esc(x)}</th>`).join('')}</tr>${rows.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</table></div>` : '<div>Belum ada data.</div>';
+async function simSave() {
+  const nm = String(SIM.nama || '').trim(); if (!nm) return setMsg('smsg', 'Isi nama simulasi dulu', 0);
+  const ex = DB.sim.find(x => x.nama.toLowerCase() === nm.toLowerCase()), o = { nama: nm, data: JSON.parse(JSON.stringify(SIM)), diubah: new Date().toLocaleString('id-ID') };
+  if (ex) Object.assign(ex, o); else DB.sim.push(Object.assign({ id: DB.seq++ }, o));
+  await save(); renderSim(); setMsg('smsg', 'Simulasi "' + nm + '" disimpan.', 1);
+}
+function simLoad() { const x = DB.sim.find(s => String(s.id) === $('ssel').value); if (!x) return setMsg('smsg', 'Pilih skenario dulu', 0); SIM = JSON.parse(JSON.stringify(x.data)); renderSim(); }
+async function simDel() { const id = $('ssel').value; if (!id) return setMsg('smsg', 'Pilih skenario dulu', 0); if (!confirm('Hapus skenario ini?')) return; DB.sim = DB.sim.filter(s => String(s.id) !== id); await save(); renderSim(); }
+async function simApply() {
+  const std = $('ap_d').value === 'std', p = +SIM.peserta || 0, plan = simCalc(SIM, p), marker = 'Simulasi: ' + SIM.nama; let n = 0;
+  if (!SIM.items.length) return setMsg('amsg', 'Data simulasi kosong', 0);
+  if (!confirm('Terapkan simulasi ini ke tab Pengeluaran? Baris dari simulasi dengan nama sama akan diperbarui.')) return;
+  plan.rows.forEach(x => {
+    let a, q;
+    if (x.t === 'tenda') { if (std) { a = x.unitStd; q = p; } else if (x.sewa <= 0) return; else { a = x.unitSim; q = x.sewa; } }
+    else if (x.t === 'grup') { a = std ? x.unitStd : x.unitSim; q = 1; } else { a = std ? x.unitStd : x.unitSim; q = x.qty; }
+    const b = $('ap_b').checked ? Math.round(q > 0 ? x.cost / q : 0) : '';
+    const f = DB.pengeluaran.find(r => String(r['Detail pengeluaran']).trim().toLowerCase() === x.n.trim().toLowerCase() && String(r['Catatan'] || '').indexOf('Simulasi:') === 0);
+    if (f) { Object.assign(f, { 'Kategori': x.kat, 'Anggaran': a, 'Quantity': q, 'Catatan': marker }); if (b !== '') f['Biaya'] = b; }
+    else DB.pengeluaran.push({ id: DB.seq++, 'Detail pengeluaran': x.n, 'Kategori': x.kat, 'Anggaran': a, 'Biaya': b, 'Quantity': q, 'Tanggal transaksi': today(), 'Dibayar oleh': '', 'Catatan': marker });
+    n++;
+  });
+  DB.simAktif = Object.assign(JSON.parse(JSON.stringify(SIM)), { applied: new Date().toLocaleString('id-ID') });
+  if ($('ap_r').checked) DB.set.realisasi = plan.pend;
+  await save(); setMsg('amsg', n + ' baris pengeluaran diterapkan dari simulasi "' + SIM.nama + '".', 1); drawVs();
+}
+/* Simulasi vs kenyataan */
+function vsReal() {
+  const s = DB.simAktif; if (!s) return null;
+  const plan = simCalc(s, +s.peserta || 0), masuk = sum(DB.pemasukan, r => r['Biaya']), pr = rowsOf('pengeluaran'), biaya = sum(pr, r => r['Total Biaya']), used = {};
+  const komp = plan.rows.map(x => {
+    let bi = 0, ada = false;
+    pr.forEach((r, i) => { if (String(r['Detail pengeluaran']).trim().toLowerCase() === x.n.trim().toLowerCase()) { bi += r['Total Biaya']; ada = true; used[i] = 1; } });
+    return { n: x.n, rencana: x.cost, nyata: bi, ada, selisih: ada ? x.cost - bi : null };
+  });
+  let luar = 0; pr.forEach((r, i) => { if (!used[i]) luar += r['Total Biaya']; });
+  const off = +s.official || 0, saldo = masuk - biaya, sebab = [];
+  if (masuk < plan.pend) sebab.push('Pemasukan baru ' + rp(masuk) + ' dari target ' + rp(plan.pend) + ' (kurang ' + rp(plan.pend - masuk) + ').');
+  else if (masuk > plan.pend) sebab.push('Pemasukan melebihi target sebesar ' + rp(masuk - plan.pend) + '.');
+  komp.forEach(k => {
+    if (!k.ada) sebab.push(k.n + ' belum dicatat di Pengeluaran.');
+    else if (k.selisih < 0) sebab.push(k.n + ' lebih mahal ' + rp(-k.selisih) + ' dari rencana.');
+    else if (k.selisih > 0) sebab.push(k.n + ' lebih hemat ' + rp(k.selisih) + ' dari rencana.');
+  });
+  if (luar > 0) sebab.push('Ada biaya di luar komponen simulasi sebesar ' + rp(luar) + '.');
+  return { nama: s.nama, off, target: +s.target || 0, diterapkan: s.applied || '', rencana: { pend: plan.pend, biaya: plan.total, profit: plan.profit, perOff: plan.perOff },
+    nyata: { masuk, biaya, profit: saldo, perOff: off ? saldo / off : 0 }, komp, sebab: sebab.slice(0, 12) };
+}
+function vsHtml(v) {
+  const dp = v.nyata.profit - v.rencana.profit, txt = x => x === null ? '-' : (x >= 0 ? 'Hemat ' + rp(x) : 'Lebih ' + rp(-x));
+  return `<div class="warn note">Keuntungan rencana ${rp(v.rencana.profit)}, nyata saat ini ${rp(v.nyata.profit)} (${dp >= 0 ? 'lebih tinggi ' : 'lebih rendah '}${rp(Math.abs(dp))}). Per official: rencana ${rp(v.rencana.perOff)}, nyata ${rp(v.nyata.perOff)} (${v.off} official).</div>
+  ${v.nyata.profit < 0 ? `<div class="warn red">Sisa saldo saat ini negatif (${rp(v.nyata.profit)}).</div>` : ''}
+  <div class="grid" style="margin-top:10px">${stat('Pendapatan rencana', rp(v.rencana.pend))}${stat('Pemasukan nyata', rp(v.nyata.masuk))}${stat('Biaya rencana', rp(v.rencana.biaya))}${stat('Biaya nyata', rp(v.nyata.biaya))}${stat('Keuntungan rencana', rp(v.rencana.profit))}${stat('Keuntungan nyata', rp(v.nyata.profit))}</div>
+  <h3 style="margin-top:14px">Per komponen</h3>${tab(['Komponen', 'Rencana', 'Nyata', 'Selisih'], v.komp.map(k => [k.n, rp(k.rencana), k.ada ? rp(k.nyata) : 'Belum dicatat', txt(k.selisih)]))}
+  <h3 style="margin-top:14px">Penyebab selisih</h3>${v.sebab.length ? v.sebab.map(s => `<div class="warn yellow">${esc(s)}</div>`).join('') : '<div>Tidak ada selisih berarti.</div>'}`;
+}
+function drawVs() {
+  const v = vsReal(), b = $('vsbox'); if (!b) return;
+  b.innerHTML = `<div class="card"><h3>📋 Simulasi vs Kenyataan</h3>${v ? `<small class="mut">Acuan: simulasi "${esc(v.nama)}" (diterapkan ${esc(v.diterapkan)})</small>${vsHtml(v)}` : '<div>Belum ada simulasi yang diterapkan. Gunakan tombol "Terapkan ke Anggaran Pengeluaran" di atas.</div>'}</div>`;
+}
+
+/* ===== Pembayaran ===== */
+function bayarData() {
+  const n = x => String(x || '').trim().toLowerCase(), paid = {};
+  DB.pemasukan.forEach(r => { if (r['Kategori'] !== 'Peserta') return; const w = n(r['Dibayar oleh']) || n(r['Detail pemasukan']); paid[w] = (paid[w] || 0) + (+r['Biaya'] || 0); });
+  const pr = rowsOf('pengeluaran'), ang = sum(pr, r => r['Total Anggaran']), bi = sum(pr, r => r['Total Biaya']);
+  const ps = DB.tamu.filter(t => t['Status'] === 'Diterima').map(t => ({ nama: t['Nama'], tagihan: t['Tagihan'] || '', dibayar: paid[n(t['Nama'])] || 0 })), k = ps.length;
+  const tg = { 'Lunas': 0, 'DP': 0, 'Belum Lunas': 0, 'Belum diisi': 0 }; ps.forEach(p => tg[tg[p.tagihan] !== undefined ? p.tagihan : 'Belum diisi']++);
+  return { k, ang, bi, perA: k ? Math.ceil(ang / k) : 0, perB: k ? Math.ceil(bi / k) : 0, harga: DB.simAktif ? +DB.simAktif.harga || 0 : 0, tg, ps, iuran: Object.values(paid).reduce((a, b) => a + b, 0) };
+}
+const sisaTxt = s => s > 0 ? rp(s) : (s < 0 ? 'Lebih ' + rp(-s) : 'Lunas');
+function renderBayar() {
+  const b = bayarData(), per = {}; if (b.harga > 0) per['Harga jual simulasi'] = b.harga; per['Realisasi (total biaya)'] = b.perB; per['Anggaran'] = b.perA;
+  $('main').innerHTML = `<div class="card"><h3>Patungan Otomatis</h3><small class="mut">${b.harga > 0 ? 'Tagihan memakai harga jual dari simulasi yang diterapkan.' : 'Dihitung dari total pengeluaran dibagi peserta berstatus Diterima.'}</small>
+  <div class="grid" style="margin-top:10px">${stat('Peserta Diterima', b.k + ' orang')}${stat('Total Pengeluaran', rp(b.bi))}${stat('Total Anggaran', rp(b.ang))}${stat('Iuran terkumpul', rp(b.iuran))}${stat('Per orang (realisasi)', rp(b.perB))}${stat('Per orang (anggaran)', rp(b.perA))}</div>
+  <div style="margin-top:10px"><span class="badge g">Lunas ${b.tg['Lunas']}</span> <span class="badge y">DP ${b.tg['DP']}</span> <span class="badge r">Belum lunas ${b.tg['Belum Lunas']}</span> ${b.tg['Belum diisi'] ? `<span class="badge">Belum diisi ${b.tg['Belum diisi']}</span>` : ''}</div></div>
+  <div class="card"><h3>Status Pembayaran Peserta</h3><label>Dasar hitung tagihan</label><select id="bsel" onchange="drawBayar()">${Object.keys(per).map(k => `<option>${k}</option>`).join('')}</select>
+  <small class="mut">Sudah bayar = jumlah Pemasukan kategori Peserta yang "Dibayar oleh" (atau Detail) sama dengan nama tamu.</small><div id="bbox"></div></div>
+  <button class="btn" style="background:#25d366" onclick="waBayar()">💬 Bagikan status pembayaran ke WhatsApp</button>`;
+  window._per = per; drawBayar();
+}
+function drawBayar() {
+  const b = bayarData(), base = window._per[$('bsel').value];
+  $('bbox').innerHTML = b.ps.length ? `<div class="tbl"><table><tr><th>Nama</th><th>Tagihan</th><th>Sudah bayar</th><th>Sisa</th></tr>${b.ps.map(p => `<tr><td>${esc(p.nama)}</td><td>${badge(p.tagihan) || '-'}</td><td>${rp(p.dibayar)}</td><td style="color:${base - p.dibayar > 0 ? '#b91c1c' : '#15803d'}">${sisaTxt(base - p.dibayar)}</td></tr>`).join('')}</table></div>` : '<div>Belum ada peserta berstatus Diterima.</div>';
+}
+function waBayar() {
+  const b = bayarData(), base = window._per[$('bsel').value]; let t = '*STATUS PEMBAYARAN*\nPatungan/orang: ' + rp(base) + '\n\n';
+  b.ps.forEach(p => { const s = base - p.dibayar; t += '- ' + p.nama + ': ' + (p.tagihan || '-') + ', ' + (s > 0 ? 'kurang ' + rp(s) : 'aman') + '\n'; }); openWA(t);
+}
+
+/* ===== Rekap ===== */
+function renderRekap() {
+  const d = dash(), b = bayarData(), v = vsReal(), base = b.harga > 0 ? b.harga : b.perB, tam = DB.tamu, rs = s => tam.filter(t => t['Status'] === s).length;
+  const grp = (a, f) => { const m = {}; a.forEach(r => { const k = r['Kategori'] || '(Tanpa kategori)'; m[k] = (m[k] || 0) + f(r); }); return m; };
+  const mk = grp(DB.pemasukan, r => +r['Biaya'] || 0), pr = rowsOf('pengeluaran'), ak = grp(pr, r => r['Total Anggaran']), bk = grp(pr, r => r['Total Biaya']), ks = Object.keys(ak);
+  const sw = rowsOf('perlengkapan').filter(r => r['Sewa'] > 0);
+  window._rekapWA = () => '*REKAP PENDAKIAN*' + (d.destinasi ? ' - ' + d.destinasi : '') + '\nPer ' + new Date().toLocaleString('id-ID') + '\n\n*Keuangan*\nPemasukan: ' + rp(d.masuk) + '\nPengeluaran: ' + rp(d.keluar) + '\nSisa saldo: ' + rp(d.saldo) + '\nPemakaian: ' + (d.persen * 100).toFixed(1) + '%\n\n*Tamu*\nTotal ' + tam.length + ' | Diterima ' + rs('Diterima') + ' | Menunggu ' + rs('Menunggu respons') + ' | Ditolak ' + rs('Ditolak') + '\n\n' + (v ? '*Bagi hasil official*\nPer official (' + v.off + '): ' + rp(v.nyata.perOff) + ' (rencana ' + rp(v.rencana.perOff) + ')\n\n' : '') + '*Tagihan*\nPer orang: ' + rp(base) + '\nLunas ' + b.tg['Lunas'] + ' | DP ' + b.tg['DP'] + ' | Belum lunas ' + b.tg['Belum Lunas'] + (d.warnings.length ? '\n\n*Peringatan*\n' + d.warnings.map(w => '- ' + w.text).join('\n') : '');
+  $('main').innerHTML = `<div class="card"><h3>Rekapitulasi${d.destinasi ? ' - ' + esc(d.destinasi) : ''}</h3><small class="mut">Per ${new Date().toLocaleString('id-ID')}</small>
+  <div class="grid" style="margin-top:10px">${stat('Total Pemasukan', rp(d.masuk))}${stat('Total Pengeluaran', rp(d.keluar))}${stat('Sisa Saldo', rp(d.saldo))}${stat('Pemakaian', (d.persen * 100).toFixed(1) + '%')}${stat('Tamu Diterima', rs('Diterima') + ' / ' + tam.length)}${stat(b.harga > 0 ? 'Tagihan / peserta' : 'Patungan / orang', rp(base))}</div>
+  ${d.warnings.length ? d.warnings.map(w => `<div class="warn ${w.level}">${esc(w.text)}</div>`).join('') : '<div class="warn green">✅ Semua kategori masih sesuai anggaran.</div>'}
+  <button class="btn" onclick="window.print()">📄 Cetak / simpan sebagai PDF</button><button class="btn" style="background:#25d366" onclick="openWA(_rekapWA())">💬 Bagikan ringkasan ke WhatsApp</button></div>
+  <div class="card"><h3>Sisa Saldo & Bagi Hasil Official</h3>${v ? `<div class="grid">${stat('Sisa saldo saat ini', rp(d.saldo))}${stat('Jumlah official', v.off + ' orang')}${stat('Per official (nyata)', rp(v.nyata.perOff))}${stat('Per official (rencana)', rp(v.rencana.perOff))}${stat('Target per official', v.target ? rp(v.target) : '-')}${stat('Selisih vs rencana', rp(v.nyata.perOff - v.rencana.perOff))}</div>` : '<div class="warn note">Terapkan simulasi ke anggaran (tab Simulasi) untuk melihat bagi hasil official.</div>'}</div>
+  ${v ? `<div class="card"><h3>Simulasi vs Kenyataan</h3>${vsHtml(v)}</div>` : ''}
+  <div class="card"><h3>Pemasukan: ${rp(d.masuk)}</h3>${tab(['Kategori', 'Total'], Object.keys(mk).map(k => [k, rp(mk[k])]))}</div>
+  <div class="card"><h3>Pengeluaran: ${rp(d.keluar)}</h3>${tab(['Kategori', 'Anggaran', 'Biaya', 'Selisih'], ks.map(k => [k, rp(ak[k]), rp(bk[k]), rp(ak[k] - bk[k])]))}</div>
+  <div class="card"><h3>Perlengkapan Disewa: ${rp(sum(sw, r => r['Total Sewa']))}</h3>${sw.length ? tab(['Barang', 'Butuh', 'Punya', 'Sewa', 'Total'], sw.map(r => [r['Perlengkapan'], r['Kebutuhan'], r['Kesediaan'], r['Sewa'], rp(r['Total Sewa'])])) : '<div>Tidak ada barang yang disewa.</div>'}</div>`;
+}
+
+/* ===== PIN ===== */
+const sha = async t => [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)))].map(b => b.toString(16).padStart(2, '0')).join('');
+function lock(note) {
+  $('nav').innerHTML = ''; $('main').innerHTML = `<div class="card"><h3>🔒 Masukkan PIN</h3><div class="msg err">${note || ''}</div><input id="pin" type="password" inputmode="numeric" onkeydown="if(event.key==='Enter')unlock()"><button class="btn" onclick="unlock()">Buka</button></div>`;
+}
+async function unlock() { if (await sha(DB.pin.salt + ':' + $('pin').value) === DB.pin.hash) { buildNav(); show('dashboard'); } else lock('PIN salah'); }
+async function setPin() {
+  const o = $('po') ? $('po').value : '', n = $('pn').value;
+  if (DB.pin && await sha(DB.pin.salt + ':' + o) !== DB.pin.hash) return setMsg('pmsg', 'PIN lama salah.', 0);
+  if (n === '') DB.pin = null; else if (!/^\d{4,8}$/.test(n)) return setMsg('pmsg', 'PIN harus 4-8 angka.', 0);
+  else { const salt = String(Math.random()).slice(2) + Date.now(); DB.pin = { salt, hash: await sha(salt + ':' + n) }; }
+  await save(); setMsg('pmsg', DB.pin ? 'PIN disimpan.' : 'PIN dinonaktifkan.', 1);
+}
+
+/* ===== Trip baru (salin) & arsip ===== */
+const CARRY = [['tamu', 'Tamu', 0], ['pemasukan', 'Pemasukan', 0], ['pengeluaran', 'Pengeluaran', 0], ['itinerary', 'Itinerary', 1], ['perlengkapan', 'Perlengkapan', 1]];
+function renderTrip() {
+  $('main').innerHTML = `
+  <div class="card"><h3>Arsipkan Trip yang Sudah Selesai</h3><small class="mut">Menyimpan salinan seluruh data trip ini ke daftar arsip. Data yang berjalan tidak berubah.</small>
+    <button class="btn" onclick="arsipkan(false)">🗂️ Arsipkan sekarang</button><div id="tmsg" class="msg"></div></div>
+  <div class="card"><h3>Trip Berikutnya (Salin Data)</h3><div class="warn yellow">Data trip lama diarsipkan lebih dulu (tidak hilang). Lalu data yang TIDAK dicentang dikosongkan, yang dicentang dibawa ke trip baru.</div>
+    <label>Destinasi baru (kosongkan jika tidak diubah)</label><input id="nd">
+    <label>Total Realisasi baru (Rp, kosongkan jika tidak diubah)</label><input id="nr" type="number" inputmode="decimal">
+    <h3 style="margin-top:14px">Bawa ke trip baru</h3>
+    ${CARRY.map(([k, l, on]) => `<div style="margin-top:6px"><input type="checkbox" id="k_${k}" ${on ? 'checked' : ''}> ${l}</div>`).join('')}
+    <div style="margin-top:6px"><input type="checkbox" id="k_cl" checked> Checklist (centang direset)</div>
+    <div style="margin-top:6px"><input type="checkbox" id="k_sim" checked> Simulasi aktif (acuan perbandingan)</div>
+    <label>Ketik BARU untuk konfirmasi</label><input id="kf" placeholder="BARU">
+    <button class="btn red" onclick="arsipkan(true)">🚀 Arsipkan & mulai trip baru</button><div id="t2msg" class="msg"></div></div>
+  <div class="card"><h3>Daftar Arsip (${DB.arsip.length})</h3>
+    ${DB.arsip.length ? DB.arsip.slice().reverse().map(a => `<div style="padding:8px 0;border-bottom:1px solid #eee"><b>${esc(a.destinasi || '(tanpa nama)')} - ${esc(a.tanggal)}</b><div>${esc(a.ringkasan)}</div>
+      <button class="edt" onclick="arsipBuka(${a.id})">Buka</button><button class="edt" onclick="arsipUnduh(${a.id})">Unduh</button><button class="del" onclick="arsipHapus(${a.id})">Hapus</button></div>`).join('') : '<div>Belum ada arsip.</div>'}
+    <small class="mut">"Buka" menjadikan arsip sebagai data aktif. Trip yang sedang berjalan diarsipkan otomatis lebih dulu.</small></div>
+  <div class="card"><h3>💾 Cadangan Data</h3><small class="mut">Data tersimpan di HP ini. Unduh cadangan berkala (atau sebelum uninstall / ganti HP), simpan ke Google Drive atau WhatsApp.</small>
+    <button class="btn" onclick="ekspor()">⬇️ Unduh cadangan (JSON)</button>
+    <button class="btn alt" onclick="$('imp').click()">⬆️ Pulihkan dari cadangan</button>
+    <input type="file" id="imp" accept=".json,application/json" style="display:none" onchange="impor(this.files[0])"><div id="bmsg" class="msg"></div></div>`;
+}
+async function arsipkan(baru) {
+  if (!baru) { DB.arsip.push(snapshot()); await save(); renderTrip(); return setMsg('tmsg', 'Arsip dibuat.', 1); }
+  if ($('kf').value.trim().toUpperCase() !== 'BARU') return setMsg('t2msg', 'Ketik BARU dulu untuk konfirmasi.', 0);
+  if (!confirm('Trip lama diarsipkan, lalu data yang tidak dicentang dikosongkan. Lanjut?')) return;
+  DB.arsip.push(snapshot());
+  KEYS.forEach(k => { if (!$('k_' + k).checked) DB[k] = []; });
+  if ($('k_cl').checked) DB.checklist.forEach(x => x.siap = false); else DB.checklist = [];
+  if (!$('k_sim').checked) DB.simAktif = null;
+  if ($('nd').value.trim()) DB.set.destinasi = $('nd').value.trim();
+  if ($('nr').value !== '') DB.set.realisasi = Number($('nr').value) || 0;
+  await save(); renderTrip(); setMsg('t2msg', 'Trip baru siap. Trip lama tersimpan di arsip.', 1);
+}
+async function arsipBuka(id) {
+  const a = DB.arsip.find(x => x.id === id); if (!a || !confirm('Jadikan arsip ini data aktif? Trip yang sedang berjalan diarsipkan otomatis.')) return;
+  DB.arsip.push(snapshot()); const d = JSON.parse(JSON.stringify(a.data));
+  KEYS.concat(['checklist', 'set', 'simAktif']).forEach(k => DB[k] = d[k] === undefined ? (k === 'set' ? { destinasi: '', realisasi: 0 } : k === 'simAktif' ? null : []) : d[k]);
+  DB.seq = Math.max(DB.seq, d.seq || 0); await save(); renderTrip(); setMsg('tmsg', 'Arsip dibuka sebagai data aktif.', 1);
+}
+
 /* ===== Mulai ===== */
 (async function () {
   DB = Object.assign(blank(), await load() || {});
   if (!DB.set.destinasi && !DB.tamu.length && !DB.pengeluaran.length) { DB.set.destinasi = 'Gunung Gede'; }
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
-  buildNav(); show('dashboard');
+  if (DB.pin) lock(); else { buildNav(); show('dashboard'); }
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
 })();
 </script>
