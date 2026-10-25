@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0b0d">
+<title>Pendaftaran Trip - bawaulin.trip</title>
+<style>*{box-sizing:border-box}body{margin:0;font-family:system-ui,Arial,sans-serif;background:#0b0b0d;color:#f7f1e8;padding-bottom:40px}
+header{text-align:center;padding:18px 16px;border-bottom:3px solid #f97316;background:#000}header img{height:70px}h1{margin:6px 0 0;font-size:22px;color:#fbbf24}header small{color:#b8ada0;letter-spacing:3px}
+main{max-width:560px;margin:0 auto;padding:16px}.card{background:#17171b;border:1px solid #2a2a31;border-radius:18px;padding:16px}
+label{display:block;margin:14px 0 5px;font-size:13px;color:#b8ada0;font-weight:600}input,select,textarea{width:100%;padding:12px;border:1px solid #2a2a31;border-radius:12px;background:#222228;color:#f7f1e8;font-size:16px}
+button{margin-top:18px;width:100%;padding:14px;border:0;border-radius:14px;background:linear-gradient(135deg,#f97316,#fbbf24);color:#1a1000;font-size:17px;font-weight:700}button:disabled{opacity:.6}
+.m{margin-top:12px;padding:12px;border-radius:12px;display:none}.ok{background:rgba(34,197,94,.15);color:#4ade80}.er{background:rgba(239,68,68,.15);color:#f87171}h2{margin:0 0 4px;color:#fbbf24}</style></head>
+<body><header><img src="logo.png" alt=""><h1>Pendaftaran Trip</h1><small>bawaulin.trip</small></header>
+<main><div class="card"><h2 id="tt">Formulir Pendaftaran</h2><div id="sub" style="color:#b8ada0;font-size:14px"></div><div id="f">
+<label>Nama lengkap *</label><input id="nama" autocomplete="name"><label>Nomor WhatsApp *</label><input id="hp" type="tel" inputmode="tel" placeholder="08xxxxxxxxxx">
+<label>Meeting point / kota asal</label><input id="mp"><label>Kontak darurat (nama & nomor)</label><input id="dr" placeholder="Nama - 08xxxxxxxxxx">
+<label>Golongan darah</label><select id="gol"><option value="">Pilih</option><option>A</option><option>B</option><option>AB</option><option>O</option><option>Tidak tahu</option></select>
+<label>Riwayat penyakit / alergi</label><textarea id="rw" rows="2" placeholder="Kosongkan jika tidak ada"></textarea><label>Catatan lain</label><textarea id="ct" rows="2"></textarea>
+<button id="b" onclick="kirim()">Kirim Pendaftaran</button></div><div id="m" class="m"></div></div></main>
+<script>const q=new URLSearchParams(location.search),S=q.get('s'),T=q.get('t')||'';const $=i=>document.getElementById(i);
+if(T){$('sub').textContent='Trip: '+T}if(!S){$('f').style.display='none';msg('Link pendaftaran tidak valid. Minta link baru ke panitia.',0)}
+function msg(t,ok){const m=$('m');m.style.display='block';m.className='m '+(ok?'ok':'er');m.textContent=t}
+async function kirim(){const nama=$('nama').value.trim(),hp=$('hp').value.trim();if(!nama||hp.replace(/\D/g,'').length<9)return msg('Isi nama dan nomor WhatsApp dengan benar.',0);
+$('b').disabled=true;$('b').textContent='Mengirim...';
+try{const r=await fetch(S,{method:'POST',body:JSON.stringify({nama,ponsel:hp,mp:$('mp').value.trim(),darurat:$('dr').value.trim(),gol:$('gol').value,riwayat:$('rw').value.trim(),catatan:$('ct').value.trim(),trip:T})});const j=await r.json();
+if(!j.ok)throw new Error(j.error||'gagal');$('f').style.display='none';msg('Terima kasih, '+nama+'! Pendaftaranmu sudah terkirim dan menunggu konfirmasi panitia.',1)}
+catch(e){$('b').disabled=false;$('b').textContent='Kirim Pendaftaran';msg('Gagal mengirim. Periksa internet lalu coba lagi.',0)}}</script></body></html>
