@@ -1054,11 +1054,52 @@ function bagiPdf() {
   return pT(['Keterangan', 'Jumlah'], [['Total pemasukan', rp(g.d.masuk)], ['Total pengeluaran', rp(g.d.keluar)], [u ? 'UNTUNG' : 'RUGI', rp(Math.abs(g.s))], ['Jumlah official / panitia', g.n ? g.n + ' orang' : 'Belum diisi'], [u ? 'Untung per official' : 'Rugi per official', g.n ? rp(Math.abs(g.per)) : '-']]) + '<div class="pw">' + (u ? 'Keuntungan dibagi rata ke official.' : 'Kerugian ditanggung official/panitia dan tidak ditagihkan ke peserta.') + '</div>';
 }
 
+/* ===== Lisensi (seumur hidup, offline). Disimpan di key terpisah, tidak ikut cadangan ===== */
+const LIC_PUB = {"kty":"EC","crv":"P-256","x":"28t6n9GOoAIzuRVz5AHfg02uJ4j1XHdWlGIGkCnni28","y":"QGF5YS8V4928En_C4z44es1-ekyXjoOE8J1wpk13yzY"};
+const LIC_AL = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+async function kvGet(k) { const d = await idb(); return new Promise(ok => { const q = d.transaction('kv').objectStore('kv').get(k); q.onsuccess = () => ok(q.result === undefined ? null : q.result); q.onerror = () => ok(null); }); }
+async function kvPut(k, v) { const d = await idb(); return new Promise(ok => { const t = d.transaction('kv', 'readwrite'); t.objectStore('kv').put(v, k); t.oncomplete = ok; t.onerror = ok; }); }
+async function devId() {
+  let id = await kvGet('devid'); try { id = id || localStorage.getItem('bu_id'); } catch (e) {}
+  if (!/^BU-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}$/.test(id || '')) { const a = crypto.getRandomValues(new Uint8Array(8)); const c = Array.from(a, x => LIC_AL[x % 32]).join(''); id = 'BU-' + c.slice(0, 4) + '-' + c.slice(4); }
+  await kvPut('devid', id); try { localStorage.setItem('bu_id', id); } catch (e) {}
+  return id;
+}
+async function licOk(id, key) {
+  try {
+    const sig = Uint8Array.from(atob(String(key).trim().replace(/\s/g, '').replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
+    if (sig.length !== 64) return false;
+    const k = await crypto.subtle.importKey('jwk', LIC_PUB, { name: 'ECDSA', namedCurve: 'P-256' }, false, ['verify']);
+    return await crypto.subtle.verify({ name: 'ECDSA', hash: 'SHA-256' }, k, sig, new TextEncoder().encode('bawaulin|' + id));
+  } catch (e) { return false; }
+}
+async function cekLisensi() { try { const id = await devId(), l = await kvGet('lic'); return !!l && await licOk(id, l); } catch (e) { return false; } }
+async function layarAktivasi(note) {
+  const id = await devId();
+  $('nav').innerHTML = ''; $('main').innerHTML = `<div class="card"><h3>🔑 Aktivasi Aplikasi</h3>
+  <div class="msg err">${note || ''}</div>
+  <p>Kode perangkat Anda:</p><input id="did" value="${id}" readonly>
+  <button class="btn alt" onclick="salinId()">Salin kode perangkat</button>
+  <p>Kirim kode ini ke penjual, lalu tempel kunci aktivasi dari penjual di bawah.</p>
+  <textarea id="lk" rows="4" placeholder="Tempel kunci aktivasi"></textarea>
+  <button class="btn" onclick="aktifkan()">Aktifkan</button></div>`;
+}
+function salinId() { const e = $('did'); e.select(); try { navigator.clipboard.writeText(e.value); } catch (x) { document.execCommand('copy'); } toast('Kode tersalin'); }
+async function aktifkan() {
+  const id = await devId(), k = $('lk').value.trim();
+  if (!k) return layarAktivasi('Tempel kunci aktivasi dulu.');
+  if (!await licOk(id, k)) return layarAktivasi('Kunci tidak cocok dengan perangkat ini.');
+  await kvPut('lic', k); toast('Aplikasi aktif'); await mulai();
+}
+
 /* ===== Mulai ===== */
-(async function () {
+async function mulai() {
   DB = Object.assign(blank(), await load() || {}); applyKat(); DB.trash = (DB.trash || []).filter(x => Date.now() - x.ts < 30 * 864e5); if (jalankanUlang()) { await save(); setTimeout(() => toast('Transaksi berulang ditambahkan'), 700); }
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
   if (DB.pin) lock(); else { buildNav(); show('dashboard'); }
+}
+(async function () {
+  if (await cekLisensi()) await mulai(); else await layarAktivasi();
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
 })();
 </script>
