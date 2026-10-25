@@ -122,7 +122,8 @@ const CFG = {
     { h: 'Anggaran', type: 'number', rp: 1 }, { h: 'Biaya', type: 'number', rp: 1 }, { h: 'Quantity', type: 'number', def: 1 },
     { h: 'Total Anggaran', ro: 1, rp: 1, f: r => (+r['Anggaran'] || 0) * (+r['Quantity'] || 0) },
     { h: 'Total Biaya', ro: 1, rp: 1, f: r => (+r['Biaya'] || 0) * (+r['Quantity'] || 0) },
-    { h: 'Tanggal transaksi', type: 'date' }, { h: 'Dibayar oleh', type: 'text' }, { h: 'Catatan', type: 'textarea' }] },
+    { h: 'Tanggal transaksi', type: 'date' }, { h: 'Dibayar oleh', type: 'text' }, { h: 'Catatan', type: 'textarea' },
+    { h: 'Status bayar', type: 'select', options: ['Lunas', 'DP', 'Belum bayar'] }, { h: 'Sudah dibayar', type: 'number', rp: 1 }, { h: 'Tenggat bayar', type: 'date' }] },
   itinerary: { label: 'Itinerary', fields: [
     { h: 'Aktivitas', type: 'text', req: 1 },
     { h: 'Jenis aktivitas', type: 'select', options: ['Mepo - BC', 'BC - POS 1', 'POS 1 - POS 2', 'POS 2 - POS 3', 'POS 3 - POS 4', 'POS 4 - POS 5', 'POS 5 - POS 6', 'ISHOMA', 'CAMP GROUND', 'CAMP - BC', 'BC - MEPO', 'SUMMIT'] },
@@ -180,11 +181,11 @@ const hbar = (l, v, mx, c, t) => `<div class="hrow"><div>${esc(l)}</div><div cla
 const stat = (l, v) => `<div class="stat"><small>${esc(l)}</small><b>${esc(v)}</b></div>`;
 
 /* ===== Navigasi ===== */
-const TABS = [['dashboard', 'Dashboard']].concat(KEYS.map(k => [k, CFG[k].label])).concat([['checklist', 'Checklist'], ['simulasi', 'Simulasi'], ['bayar', 'Pembayaran'], ['rekap', 'Rekap'], ['trip', 'Trip & Arsip'], ['talangan', 'Talangan'], ['kategori', 'Kategori'], ['daftar', 'Pendaftaran']]);
+const TABS = [['dashboard', 'Dashboard']].concat(KEYS.map(k => [k, CFG[k].label])).concat([['checklist', 'Checklist'], ['simulasi', 'Simulasi'], ['bayar', 'Pembayaran'], ['rekap', 'Rekap'], ['trip', 'Trip & Arsip'], ['kewajiban', 'Kewajiban'], ['kategori', 'Kategori'], ['daftar', 'Pendaftaran']]);
 function show(k) {
   cur = k; editId = null;
   document.querySelectorAll('nav button').forEach(b => b.classList.toggle('active', b.dataset.k === (MAIN.includes(k) ? k : 'more')));
-  if (k === 'dashboard') renderDash(); else if (k === 'more') renderMore(); else if (k === 'checklist') renderCl(); else if (k === 'trip') renderTrip(); else if (k === 'simulasi') renderSim(); else if (k === 'bayar') renderBayar(); else if (k === 'rekap') renderRekap(); else if (k === 'talangan') renderTalangan(); else if (k === 'kategori') renderKat(); else if (k === 'daftar') renderDaftar(); else renderSheet(k);
+  if (k === 'dashboard') renderDash(); else if (k === 'more') renderMore(); else if (k === 'checklist') renderCl(); else if (k === 'trip') renderTrip(); else if (k === 'simulasi') renderSim(); else if (k === 'bayar') renderBayar(); else if (k === 'rekap') renderRekap(); else if (k === 'kewajiban') renderKewajiban(); else if (k === 'kategori') renderKat(); else if (k === 'daftar') renderDaftar(); else renderSheet(k);
   if (k !== 'dashboard' && k !== 'more') { const lb = (TABS.find(t => t[0] === k) || ['', ''])[1]; $('main').insertAdjacentHTML('afterbegin', `<div class="pgh">${MAIN.includes(k) ? '' : '<button class="back" onclick="show(\'more\')">‹ Menu</button>'}<h2>${lb}</h2></div>`); }
   window.scrollTo(0, 0);
 }
@@ -220,12 +221,12 @@ function renderSheet(key) {
     let inp;
     if (f.type === 'select') inp = `<select id="f${i}"><option value="">-- Pilih --</option>${f.options.map(o => `<option>${esc(o)}</option>`).join('')}</select>`;
     else if (f.type === 'textarea') inp = `<textarea id="f${i}" rows="2"></textarea>`;
-    else inp = `<input id="f${i}" type="${f.rp ? 'text' : f.type}" ${f.rp ? 'inputmode="numeric" oninput="fmtNum(this)"' : f.type === 'number' ? 'step="any" inputmode="decimal"' : ''} value="${f.def !== undefined ? f.def : ''}">`;
+    else inp = `<input id="f${i}" ${f.h === 'Dibayar oleh' ? 'list="dlby" autocomplete="off" ' : ''}type="${f.rp ? 'text' : f.type}" ${f.rp ? 'inputmode="numeric" oninput="fmtNum(this)"' : f.type === 'number' ? 'step="any" inputmode="decimal"' : ''} value="${f.def !== undefined ? f.def : ''}">`;
     return `<label>${esc(f.h)}${f.req ? ' *' : ''}</label>${inp}`;
   }).join('');
   const filters = c.fields.map((f, i) => f.type === 'select' ? `<select id="flt${i}" onchange="drawList('${key}')"><option value="">Semua ${esc(f.h)}</option>${f.options.map(o => `<option>${esc(o)}</option>`).join('')}</select>` : '').join('');
   const hasDate = c.fields.some(f => f.type === 'date');
-  const bukti = (key === 'pemasukan' || key === 'pengeluaran') ? `<label>Bukti nota</label><div class="flt"><button class="btn alt" style="margin:0" onclick="$('bcam').click()">📷 Kamera</button><button class="btn alt" style="margin:0" onclick="$('bfile').click()">📎 Unggah file</button></div><input type="file" id="bcam" accept="image/*" capture="environment" hidden onchange="pickBukti(this)"><input type="file" id="bfile" accept="image/*,application/pdf" hidden onchange="pickBukti(this)"><div id="bprev"></div><label>Ulangi otomatis</label><select id="frep"><option value="">Tidak berulang</option><option value="7">Tiap 7 hari</option><option value="30">Tiap 30 hari</option></select>` : '';
+  const bukti = (key === 'pemasukan' || key === 'pengeluaran') ? `<label>Bukti nota</label><div class="flt"><button class="btn alt" style="margin:0" onclick="$('bcam').click()">📷 Kamera</button><button class="btn alt" style="margin:0" onclick="$('bfile').click()">📎 Unggah file</button></div><input type="file" id="bcam" accept="image/*" capture="environment" hidden onchange="pickBukti(this)"><input type="file" id="bfile" accept="image/*,application/pdf" hidden onchange="pickBukti(this)"><div id="bprev"></div><datalist id="dlby">${dlOpts()}</datalist><label>Ulangi otomatis</label><select id="frep"><option value="">Tidak berulang</option><option value="7">Tiap 7 hari</option><option value="30">Tiap 30 hari</option></select>` : '';
   let extra = '';
   if (key === 'perlengkapan') extra = `<div class="card"><h3>Ringkasan Sewa</h3><div id="sewa"></div><button class="btn" onclick="pushSewa()">➡️ Masukkan Total Sewa ke Pengeluaran</button><div id="sewaMsg" class="msg"></div></div>`;
   $('main').innerHTML = `${extra}
@@ -498,7 +499,8 @@ function renderRekap() {
   $('main').innerHTML = `<div class="card"><h3>Rekapitulasi${d.destinasi ? ' - ' + esc(d.destinasi) : ''}</h3><small class="mut">Per ${new Date().toLocaleString('id-ID')}</small>
   <div class="grid" style="margin-top:10px">${stat('Total Pemasukan', rp(d.masuk))}${stat('Total Pengeluaran', rp(d.keluar))}${stat('Sisa Saldo', rp(d.saldo))}${stat('Pemakaian', (d.persen * 100).toFixed(1) + '%')}${stat('Tamu Diterima', rs('Diterima') + ' / ' + tam.length)}${stat(b.harga > 0 ? 'Tagihan / peserta' : 'Patungan / orang', rp(base))}</div>
   ${d.warnings.length ? d.warnings.map(w => `<div class="warn ${w.level}">${esc(w.text)}</div>`).join('') : '<div class="warn green">✅ Semua kategori masih sesuai anggaran.</div>'}
-  <button class="btn" onclick="printDoc(laporanHtml())">📄 Unduh Laporan Lengkap Trip (PDF)</button><button class="btn" style="background:#25d366" onclick="openWA(_rekapWA())">💬 Bagikan ringkasan ke WhatsApp</button></div>
+  <button class="btn" onclick="printDoc(laporanHtml())">📄 Unduh Laporan Lengkap Trip (PDF)</button><button class="btn" style="background:#25d366" onclick="openWA(_rekapWA() + settleWA())">💬 Bagikan ringkasan ke WhatsApp</button></div>
+  ${pesertaCard()}
   ${bagiCard()}
   ${v ? `<div class="card"><h3>Simulasi vs Kenyataan</h3>${vsHtml(v)}</div>` : ''}
   <div class="card"><h3>Pemasukan: ${rp(d.masuk)}</h3>${tab(['Kategori', 'Total'], Object.keys(mk).map(k => [k, rp(mk[k])]))}</div>
@@ -634,7 +636,7 @@ async function arsipkan(baru) {
   if (!confirm('Trip saat ini diarsipkan, lalu semua data dikosongkan. Lanjut?')) return;
   if (hasData()) DB.arsip.push(snapshot());
   KEYS.forEach(k => DB[k] = []); DB.checklist = []; DB.simAktif = null; SIM = null;
-  DB.set = Object.assign({}, DB.set, { destinasi: $('nd').value.trim(), realisasi: Number($('nr').value) || 0, tenggat: '' }); DB.ganti = {}; DB.ulang = [];
+  DB.set = Object.assign({}, DB.set, { destinasi: $('nd').value.trim(), realisasi: Number($('nr').value) || 0, tenggat: '', lunasTf: {} }); DB.ganti = {}; DB.ulang = [];
   await save(); renderTrip(); setMsg('t2msg', 'Trip baru siap. Semua data sudah kosong; trip lama ada di arsip.', 1);
 }
 async function arsipBuka(id) {
@@ -653,7 +655,7 @@ function buildNav() {
   $('nav').innerHTML = [['dashboard', 'Beranda'], ['pemasukan', 'Masuk'], ['pengeluaran', 'Keluar'], ['rekap', 'Rekap'], ['more', 'Menu']].map(([k, l]) => `<button data-k="${k}" onclick="show('${k}')"><svg viewBox="0 0 24 24">${ICO[k]}</svg>${l}</button>`).join('');
 }
 function renderMore() {
-  const T = [['tamu', '👥', 'Tamu', 'Daftar peserta'], ['itinerary', '🗺️', 'Itinerary', 'Rundown perjalanan'], ['perlengkapan', '🎒', 'Perlengkapan', 'Kebutuhan & sewa'], ['checklist', '✅', 'Checklist', 'Barang bawaan'], ['simulasi', '🧮', 'Simulasi', 'Harga & keuntungan'], ['bayar', '💳', 'Pembayaran', 'Patungan peserta'], ['trip', '🗂️', 'Trip & Arsip', 'Arsip & cadangan'], ['talangan', '🤝', 'Talangan', 'Ganti uang panitia'], ['kategori', '🏷️', 'Kategori', 'Kategori & berulang'], ['daftar', '📝', 'Pendaftaran', 'Link & pendaftar online']];
+  const T = [['tamu', '👥', 'Tamu', 'Daftar peserta'], ['itinerary', '🗺️', 'Itinerary', 'Rundown perjalanan'], ['perlengkapan', '🎒', 'Perlengkapan', 'Kebutuhan & sewa'], ['checklist', '✅', 'Checklist', 'Barang bawaan'], ['simulasi', '🧮', 'Simulasi', 'Harga & keuntungan'], ['bayar', '💳', 'Pembayaran', 'Patungan peserta'], ['trip', '🗂️', 'Trip & Arsip', 'Arsip & cadangan'], ['kewajiban', '⏳', 'Kewajiban', 'Belum lunas & proyeksi'], ['kategori', '🏷️', 'Kategori', 'Kategori & berulang'], ['daftar', '📝', 'Pendaftaran', 'Link & pendaftar online']];
   $('main').innerHTML = `<div class="pgh"><h2>Menu</h2></div><div class="tiles">${T.map(t => `<button class="tile" onclick="show('${t[0]}')"><span>${t[1]}</span>${t[2]}<small>${t[3]}</small></button>`).join('')}</div>`;
 }
 function toggleTheme() {
@@ -666,7 +668,7 @@ function closeSheet() { const s = $('sheet'); if (s) s.classList.remove('on'); }
 function txRow(key, r) {
   const c = CFG[key], title = r[c.fields[0].h] || '?'; let amt = '', cls = '', sub = [], badges = '';
   if (key === 'pemasukan') { amt = '+ ' + rp(r['Biaya']); cls = 'in'; sub = [r['Kategori'], fmtDate(r['Tanggal transaksi']), r['Dibayar oleh']]; }
-  else if (key === 'pengeluaran') { amt = '- ' + rp(r['Total Biaya']); cls = 'out'; sub = [r['Kategori'], r['Quantity'] + ' x ' + rp(r['Biaya']), fmtDate(r['Tanggal transaksi']), r['Dibayar oleh']]; }
+  else if (key === 'pengeluaran') { amt = '- ' + rp(r['Total Biaya']); cls = 'out'; sub = [r['Kategori'], r['Quantity'] + ' x ' + rp(r['Biaya']), fmtDate(r['Tanggal transaksi']), r['Dibayar oleh'], belumLunas(r) ? '⏳ ' + r['Status bayar'] + (r['Tenggat bayar'] ? ' s/d ' + fmtDate(r['Tenggat bayar']) : '') : '', r.Bukti ? '' : '🧾 tanpa nota']; }
   else if (key === 'tamu') { sub = [r['Meeting Point'], r['Ponsel']]; badges = badge(r['Status'] || '') + badge(r['Tagihan'] || ''); }
   else if (key === 'itinerary') sub = [r['Jenis aktivitas'], fmtDate(r['Waktu mulai']) + (r['Waktu berakhir'] ? ' - ' + fmtDate(r['Waktu berakhir']).slice(-5) : ''), r['Lokasi']];
   else { sub = ['Butuh ' + r['Kebutuhan'] + ', punya ' + r['Kesediaan'] + ', sewa ' + r['Sewa']]; amt = rp(r['Total Sewa']); }
@@ -816,7 +818,7 @@ function laporanHtml() {
   o += sec('4. Rincian Pemasukan', pT(['No', 'Tanggal', 'Detail', 'Kategori', 'Dibayar oleh', 'Jumlah'], pm.map((r, i) => [i + 1, fmtDate(r['Tanggal transaksi']), r['Detail pemasukan'], r['Kategori'], r['Dibayar oleh'], rp(r['Biaya'])]), ['', '', '', '', 'TOTAL', rp(d.masuk)]));
   o += sec('5. Rincian Pengeluaran', pT(['No', 'Tanggal', 'Detail', 'Kategori', 'Qty', 'Anggaran', 'Biaya', 'Dibayar oleh'], pg.map((r, i) => [i + 1, fmtDate(r['Tanggal transaksi']), r['Detail pengeluaran'], r['Kategori'], r['Quantity'], rp(r['Total Anggaran']), rp(r['Total Biaya']), r['Dibayar oleh']]), ['', '', '', '', 'TOTAL', rp(d.anggaran), rp(d.keluar), '']) + '<h3>Per kategori</h3>' + pT(['Kategori', 'Anggaran', 'Biaya', 'Selisih'], d.kategori.map(x => [x.k, rp(x.anggaran), rp(x.biaya), (x.anggaran >= x.biaya ? 'Hemat ' : 'Lebih ') + rp(Math.abs(x.anggaran - x.biaya))])));
   o += sec('6. Perlengkapan & Barang yang Disewa', pT(['Barang', 'Butuh', 'Punya', 'Sewa', 'Harga/unit', 'Total sewa'], pl.map(r => [r['Perlengkapan'], r['Kebutuhan'], r['Kesediaan'], r['Sewa'], rp(r['Harga/Unit']), rp(r['Total Sewa'])]), ['', '', '', '', 'TOTAL SEWA', rp(sum(pl, r => r['Total Sewa']))]));
-  o += sec('7. Talangan Panitia', tl.length ? pT(['Nama', 'Menalangi', 'Sudah diganti', 'Sisa diganti'], tl.map(x => [x.nama, rp(x.tot), rp(x.ganti), rp(Math.max(0, x.tot - x.ganti))]), ['TOTAL', rp(sum(tl, x => x.tot)), rp(sum(tl, x => x.ganti)), rp(sum(tl, x => Math.max(0, x.tot - x.ganti)))]) : '<div class="pw">Tidak ada talangan.</div>');
+  o += sec('7. Penyelesaian Official', settlePdf());
   o += sec('8. Untung/Rugi, Bagi Hasil Official & Simulasi vs Realita', bagiPdf() + (v ? pT(['Keterangan', 'Rencana (simulasi)', 'Nyata'], [['Pendapatan / pemasukan', rp(v.rencana.pend), rp(v.nyata.masuk)], ['Total biaya', rp(v.rencana.biaya), rp(v.nyata.biaya)], ['Keuntungan', rp(v.rencana.profit), rp(v.nyata.profit)]]) + '<h3>Per komponen</h3>' + pT(['Komponen', 'Rencana', 'Nyata', 'Selisih'], v.komp.map(k => [k.n, rp(k.rencana), k.ada ? rp(k.nyata) : 'Belum dicatat', k.selisih === null ? '-' : (k.selisih >= 0 ? 'Hemat ' : 'Lebih ') + rp(Math.abs(k.selisih))])) + '<h3>Penyebab selisih</h3>' + (v.sebab.length ? v.sebab.map(x => `<div class="pw">${esc(x)}</div>`).join('') : '<div class="pw">Tidak ada selisih berarti.</div>') : '<div class="pw">Belum ada simulasi yang diterapkan.</div>'));
   o += sec('9. Rundown Itinerary', pT(['No', 'Mulai', 'Selesai', 'Aktivitas', 'Jenis', 'Lokasi'], it.map((r, i) => [i + 1, fmtDate(r['Waktu mulai']), fmtDate(r['Waktu berakhir']), r['Aktivitas'], r['Jenis aktivitas'], r['Lokasi']])));
   o += sec('10. Checklist Perlengkapan (' + cl.filter(x => x.siap).length + ' dari ' + cl.length + ' siap)', pT(['Barang', 'Dibawa oleh', 'Catatan', 'Status'], cl.map(x => [x.barang, x.oleh, x.catatan, x.siap ? 'Siap' : 'Belum'])));
@@ -956,7 +958,10 @@ function pengingat() {
       else L.push(['note', bl + ' peserta belum lunas', 'bayar']); } }
   const pend = DB.tamu.filter(t => t['Status'] === 'Menunggu respons').length; if (pend) L.push(['yellow', pend + ' pendaftar menunggu respons', 'daftar']);
   const cb = DB.checklist.filter(x => !x.siap).length; if (cb) L.push(['yellow', cb + ' dari ' + DB.checklist.length + ' barang checklist belum siap', 'checklist']);
-  const tl = sum(talanganData(), x => Math.max(0, x.tot - x.ganti)); if (tl > 0) L.push(['note', 'Talangan panitia belum diganti ' + rp(tl), 'talangan']);
+  const st = settle(); if (st && st.tf.length && !st.selesai) L.push(['yellow', 'Penyelesaian official: ' + st.tf.filter(t => !t.lunas).length + ' transfer belum dibayar', 'rekap']);
+  const kw = kewajibanData(); if (kw.telat.length) L.push(['red', kw.telat.length + ' kewajiban lewat tenggat (' + rp(sum(kw.telat, x => x.sisa)) + ')', 'kewajiban']); else if (kw.dekat.length) L.push(['yellow', kw.dekat.length + ' kewajiban jatuh tempo dalam 3 hari (' + rp(sum(kw.dekat, x => x.sisa)) + ')', 'kewajiban']);
+  if (kw.proyeksi < 0) L.push(['red', 'Proyeksi kas akhir kurang ' + rp(-kw.proyeksi), 'kewajiban']);
+  const nn = DB.pengeluaran.filter(r => !r.Bukti).length; if (nn) L.push(['note', nn + ' pengeluaran belum ada bukti nota', 'pengeluaran']);
   if (hasData()) { if (!DB.lastBackup) L.push(['red', 'Data belum pernah dicadangkan', 'trip']); else if (hariLalu(DB.lastBackup) >= 7) L.push(['yellow', 'Cadangan terakhir ' + hariLalu(DB.lastBackup) + ' hari lalu', 'trip']); }
   return L;
 }
@@ -1037,69 +1042,103 @@ function csvImpor(inp, key) {
 const baseTagihan = b => (+DB.set.tagihan > 0 ? +DB.set.tagihan : b.harga > 0 ? b.harga : b.plan);
 /* ===== Bagi hasil official, format uang simulasi ===== */
 const numVal = v => Number(String(v).replace(/\D/g, '')) || 0;
-function bagiData() { const d = dash(), v = vsReal(), n = Math.round(+DB.set.official) || (v ? v.off : 0), s = d.saldo; return { d, v, n, s, per: n ? s / n : 0 }; }
-function bagiCard() {
-  const g = bagiData(), v = g.v, u = g.s >= 0;
-  return `<div class="card"><h3>Sisa Saldo & Bagi Hasil Official</h3>
-  <div class="warn ${u ? 'green' : 'red'}"><b>${u ? '✅ UNTUNG ' : '⚠️ RUGI '}${rp(Math.abs(g.s))}</b><br>Pemasukan ${rp(g.d.masuk)} dikurangi pengeluaran ${rp(g.d.keluar)}.</div>
-  <label>Jumlah official / panitia yang ikut</label><input id="nof" inputmode="numeric" value="${g.n || ''}" placeholder="mis. 3">
-  <button class="btn alt" onclick="simpanOff()">Simpan jumlah official</button>
-  ${g.n ? `<div class="grid" style="margin-top:12px">${stat(u ? 'Untung per official' : 'Rugi per official', rp(Math.abs(g.per)))}${stat('Jumlah official', g.n + ' orang')}</div>
-  <div class="warn note">${u ? 'Keuntungan dibagi rata ke ' + g.n + ' official, masing-masing ' + rp(g.per) + '.' : 'Kerugian ditanggung ' + g.n + ' official, masing-masing ' + rp(-g.per) + '. Kerugian tidak ditagihkan ke peserta.'}</div>` : '<div class="warn note">Isi jumlah official untuk melihat bagian tiap orang.</div>'}
-  ${v && g.n ? `<div class="grid" style="margin-top:10px">${stat('Rencana per official', rp(v.rencana.perOff))}${stat('Target per official', v.target ? rp(v.target) : '-')}${stat('Selisih vs rencana', rp(g.per - v.rencana.perOff))}</div>` : ''}</div>`;
+
+/* ===== Penyelesaian official, kewajiban & proyeksi, laporan peserta ===== */
+const offList = () => (DB.set.officials || []).filter(Boolean);
+const adilTxt = x => x < 0 ? 'Untung ' + rp(-x) : rp(x);
+const panitiaIn = () => sum(DB.pemasukan.filter(r => r['Kategori'] === 'Panitia'), r => r['Biaya']);
+const talangOf = r => { const w = normN(r['Dibayar oleh']); return !!w && !['kas', 'bendahara', 'kas trip'].includes(w); };
+const belumLunas = r => r['Status bayar'] === 'DP' || r['Status bayar'] === 'Belum bayar';
+function bagiData() {
+  const d = dash(), v = vsReal(), P = panitiaIn(), s = d.masuk - P - d.keluar, n = offList().length || Math.round(+DB.set.official) || (v ? v.off : 0);
+  return { d, v, n, s, P, per: n ? s / n : 0 };
 }
-async function simpanOff() { DB.set.official = Math.max(0, Math.round(numVal($('nof').value))); await save(); renderRekap(); toast('Tersimpan'); }
+function settle() {
+  const names = offList(), nl = names.map(normN), n = names.length; if (!n) return null;
+  const g = bagiData(), fair = -g.s / n, O = names.map(nm => ({ nama: nm, setor: 0, talang: 0, sa: [], ta: [] })), asing = {};
+  const idx = w => { const k = normN(w); if (!k || ['kas', 'bendahara', 'kas trip'].includes(k)) return -1; return nl.indexOf(matchNama(k, nl)); };
+  DB.pemasukan.forEach(r => { if (r['Kategori'] !== 'Panitia') return; const i = idx(r['Dibayar oleh']); if (i < 0) asing[String(r['Dibayar oleh'] || '(kosong)')] = 1; else { O[i].setor += +r['Biaya'] || 0; O[i].sa.push(+r['Biaya'] || 0); } });
+  rowsOf('pengeluaran').forEach(r => { if (!talangOf(r)) return; const w = String(r['Dibayar oleh']).trim(), i = idx(w); if (i < 0) asing[w] = 1; else { O[i].talang += r['Total Biaya']; O[i].ta.push(r['Total Biaya']); } });
+  const dobel = []; O.forEach(o => { o.keluar = o.setor + o.talang; o.adil = fair; o.sel = Math.round(o.keluar - fair); if (o.sa.some(x => x > 0 && o.ta.indexOf(x) >= 0)) dobel.push(o.nama); });
+  const kasBal = -sum(O, o => o.sel), bal = O.map(o => ({ nama: o.nama, v: o.sel })).concat(kasBal ? [{ nama: 'Kas', v: kasBal }] : []);
+  const deb = bal.filter(x => x.v < 0).map(x => ({ nama: x.nama, v: -x.v })).sort((a, b) => b.v - a.v), kre = bal.filter(x => x.v > 0).map(x => ({ nama: x.nama, v: x.v })).sort((a, b) => b.v - a.v), tf = [];
+  let i = 0, j = 0; while (i < deb.length && j < kre.length) { const m = Math.min(deb[i].v, kre[j].v); if (m > 0) tf.push({ dari: deb[i].nama, ke: kre[j].nama, jml: m }); deb[i].v -= m; kre[j].v -= m; if (deb[i].v <= 0) i++; if (kre[j].v <= 0) j++; }
+  const lunas = DB.set.lunasTf || {}; tf.forEach(t => { t.id = t.dari + '>' + t.ke + '>' + t.jml; t.lunas = !!lunas[t.id]; });
+  return { O, fair, kasBal, tf, asing: Object.keys(asing), dobel, selesai: tf.every(t => t.lunas), n };
+}
+function settleBody(st, u) {
+  return `<div class="grid" style="margin-top:12px">${stat(u ? 'Untung tiap official' : 'Beban adil tiap official', adilTxt(st.fair))}${stat('Jumlah official', st.n + ' orang')}</div>
+  ${tab(['Official', 'Sudah keluar', 'Selisih'], st.O.map(o => [o.nama, rp(o.keluar), o.sel > 0 ? 'Menerima ' + rp(o.sel) : o.sel < 0 ? 'Membayar ' + rp(-o.sel) : 'Pas']))}
+  <small class="mut">Sudah keluar = setoran kategori Panitia + pengeluaran yang ditalangi (kolom "Dibayar oleh").</small><h3 style="margin-top:12px">Siapa membayar siapa</h3>
+  ${st.tf.length ? st.tf.map((t, i) => `<div class="txw"><div class="tx"><div class="tm"><b>${esc(t.dari)} → ${esc(t.ke)}</b><small>${rp(t.jml)}</small></div><button class="edt" onclick="tfToggle(${i})">${t.lunas ? '✅ Sudah (batalkan)' : 'Tandai dibayar'}</button></div></div>`).join('') : '<div class="warn green">Semua sudah pas, tidak ada transfer.</div>'}
+  ${st.tf.length && st.selesai ? '<div class="warn green">✅ Selesai. Semua transfer sudah dibayar.</div>' : ''}
+  ${st.kasBal < 0 ? `<div class="warn note">Sisa kas ${rp(-st.kasBal)} diberikan ke official yang berhak menerima.</div>` : st.kasBal > 0 ? `<div class="warn yellow">Kas masih kurang ${rp(st.kasBal)}: ada pengeluaran kas yang belum tercatat siapa penyetornya.</div>` : ''}
+  ${st.asing.length ? `<div class="warn yellow">Nama di "Dibayar oleh" yang tidak ada di daftar official: ${esc(st.asing.join(', '))}. Samakan namanya.</div>` : ''}
+  ${st.dobel.length ? `<div class="warn yellow">Mungkin tercatat dobel (setoran dan talangan bernominal sama): ${esc(st.dobel.join(', '))}.</div>` : ''}`;
+}
+function bagiCard() {
+  const g = bagiData(), u = g.s >= 0, st = settle(), nm = offList();
+  return `<div class="card"><h3>Penyelesaian Official</h3>
+  <div class="warn ${u ? 'green' : 'red'}"><b>${u ? '✅ UNTUNG ' : '⚠️ RUGI '}${rp(Math.abs(g.s))}</b><br>Hasil trip tanpa setoran panitia: pemasukan ${rp(g.d.masuk - g.P)} dikurangi pengeluaran ${rp(g.d.keluar)}.${u ? '' : ' Kerugian ditanggung official dan tidak ditagihkan ke peserta.'}</div>
+  <label>Daftar official / panitia</label><div>${nm.length ? nm.map((x, i) => `<span class="badge y" style="margin:3px;padding:6px 10px">${esc(x)} <a onclick="offDel(${i})" style="color:#f87171;margin-left:6px">✕</a></span>`).join('') : '<small class="mut">Belum ada nama. Tambahkan semua official yang ikut.</small>'}</div>
+  <div class="flt"><input id="nof" placeholder="Nama official"><button class="btn alt" style="margin:0" onclick="offAdd()">+ Tambah</button></div>
+  ${st ? settleBody(st, u) : g.n ? `<div class="grid" style="margin-top:12px">${stat(u ? 'Untung per official' : 'Rugi per official', rp(Math.abs(g.per)))}${stat('Jumlah official', g.n + ' orang')}</div>` : ''}</div>`;
+}
+async function offAdd() { const v = $('nof').value.trim(); if (!v) return; if (offList().some(x => normN(x) === normN(v))) return toast('Nama sudah ada'); DB.set.officials = offList().concat(v); await save(); renderRekap(); }
+async function offDel(i) { const a = offList(); if (!confirm('Hapus ' + a[i] + ' dari daftar official?')) return; a.splice(i, 1); DB.set.officials = a; await save(); renderRekap(); }
+async function tfToggle(i) { const t = settle().tf[i]; if (!t) return; DB.set.lunasTf = DB.set.lunasTf || {}; if (DB.set.lunasTf[t.id]) delete DB.set.lunasTf[t.id]; else DB.set.lunasTf[t.id] = 1; await save(); renderRekap(); }
+function settlePdf() {
+  const st = settle(); if (!st) return '<div class="pw">Daftar official belum diisi (Rekap → Penyelesaian Official).</div>';
+  return pT(['Official', 'Sudah keluar', 'Bagian adil', 'Selisih'], st.O.map(o => [o.nama, rp(o.keluar), adilTxt(o.adil), o.sel > 0 ? 'Menerima ' + rp(o.sel) : o.sel < 0 ? 'Membayar ' + rp(-o.sel) : 'Pas'])) + (st.tf.length ? pT(['Dari', 'Ke', 'Jumlah', 'Status'], st.tf.map(t => [t.dari, t.ke, rp(t.jml), t.lunas ? 'Sudah dibayar' : 'Belum'])) : '<div class="pw">Tidak ada transfer: semua sudah pas.</div>');
+}
+function settleWA() { const st = settle(); if (!st) return ''; return '\n\n*Penyelesaian official*\nBagian adil tiap official: ' + adilTxt(st.fair) + '\n' + (st.tf.length ? st.tf.map(t => '- ' + t.dari + ' membayar ' + rp(t.jml) + ' ke ' + t.ke + (t.lunas ? ' (sudah)' : '')).join('\n') : 'Semua sudah pas.'); }
 function bagiPdf() {
   const g = bagiData(), u = g.s >= 0;
-  return pT(['Keterangan', 'Jumlah'], [['Total pemasukan', rp(g.d.masuk)], ['Total pengeluaran', rp(g.d.keluar)], [u ? 'UNTUNG' : 'RUGI', rp(Math.abs(g.s))], ['Jumlah official / panitia', g.n ? g.n + ' orang' : 'Belum diisi'], [u ? 'Untung per official' : 'Rugi per official', g.n ? rp(Math.abs(g.per)) : '-']]) + '<div class="pw">' + (u ? 'Keuntungan dibagi rata ke official.' : 'Kerugian ditanggung official/panitia dan tidak ditagihkan ke peserta.') + '</div>';
+  return pT(['Keterangan', 'Jumlah'], [['Pemasukan (tanpa setoran panitia)', rp(g.d.masuk - g.P)], ['Setoran panitia', rp(g.P)], ['Total pengeluaran', rp(g.d.keluar)], [u ? 'UNTUNG' : 'RUGI', rp(Math.abs(g.s))], ['Jumlah official', g.n ? g.n + ' orang' : 'Belum diisi'], [u ? 'Untung per official' : 'Rugi per official', g.n ? rp(Math.abs(g.per)) : '-']]) + '<div class="pw">' + (u ? 'Keuntungan dibagi rata ke official.' : 'Kerugian ditanggung official/panitia dan tidak ditagihkan ke peserta.') + '</div>';
 }
-
-/* ===== Lisensi (seumur hidup, offline). Disimpan di key terpisah, tidak ikut cadangan ===== */
-const LIC_PUB = {"kty":"EC","crv":"P-256","x":"28t6n9GOoAIzuRVz5AHfg02uJ4j1XHdWlGIGkCnni28","y":"QGF5YS8V4928En_C4z44es1-ekyXjoOE8J1wpk13yzY"};
-const LIC_AL = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-async function kvGet(k) { const d = await idb(); return new Promise(ok => { const q = d.transaction('kv').objectStore('kv').get(k); q.onsuccess = () => ok(q.result === undefined ? null : q.result); q.onerror = () => ok(null); }); }
-async function kvPut(k, v) { const d = await idb(); return new Promise(ok => { const t = d.transaction('kv', 'readwrite'); t.objectStore('kv').put(v, k); t.oncomplete = ok; t.onerror = ok; }); }
-async function devId() {
-  let id = await kvGet('devid'); try { id = id || localStorage.getItem('bu_id'); } catch (e) {}
-  if (!/^BU-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}$/.test(id || '')) { const a = crypto.getRandomValues(new Uint8Array(8)); const c = Array.from(a, x => LIC_AL[x % 32]).join(''); id = 'BU-' + c.slice(0, 4) + '-' + c.slice(4); }
-  await kvPut('devid', id); try { localStorage.setItem('bu_id', id); } catch (e) {}
-  return id;
+const dlOpts = () => [...new Set(['Kas'].concat(offList(), DB.tamu.map(t => t['Nama'])).filter(Boolean))].map(x => `<option value="${esc(x)}">`).join('');
+/* Kewajiban & proyeksi */
+function kewajibanData() {
+  const pr = rowsOf('pengeluaran'), d = dash(), td = today(), paid = r => r['Status bayar'] === 'Belum bayar' ? 0 : r['Status bayar'] === 'DP' ? Math.min(r['Total Biaya'], +r['Sudah dibayar'] || 0) : r['Total Biaya'];
+  const kasPr = pr.filter(r => !talangOf(r)), items = kasPr.filter(belumLunas).map(r => Object.assign({}, r, { sisa: r['Total Biaya'] - paid(r) })).filter(x => x.sisa > 0).sort((a, b) => String(a['Tenggat bayar'] || '9').localeCompare(String(b['Tenggat bayar'] || '9')));
+  const kas = d.masuk - sum(kasPr, paid), kew = sum(items, x => x.sisa), rencana = sum(pr.filter(r => (r['Biaya'] === '' || r['Biaya'] == null) && r['Total Anggaran'] > 0), r => r['Total Anggaran']);
+  return { kas, kew, rencana, items, proyeksi: kas - kew - rencana, telat: items.filter(x => x['Tenggat bayar'] && x['Tenggat bayar'] < td), dekat: items.filter(x => x['Tenggat bayar'] && x['Tenggat bayar'] >= td && x['Tenggat bayar'] <= addDays(td, 3)) };
 }
-async function licOk(id, key) {
-  try {
-    const sig = Uint8Array.from(atob(String(key).trim().replace(/\s/g, '').replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
-    if (sig.length !== 64) return false;
-    const k = await crypto.subtle.importKey('jwk', LIC_PUB, { name: 'ECDSA', namedCurve: 'P-256' }, false, ['verify']);
-    return await crypto.subtle.verify({ name: 'ECDSA', hash: 'SHA-256' }, k, sig, new TextEncoder().encode('bawaulin|' + id));
-  } catch (e) { return false; }
+function renderKewajiban() {
+  const k = kewajibanData(), td = today();
+  $('main').innerHTML = `<div class="card"><h3>Kewajiban & Proyeksi Dana</h3><small class="mut">Pengeluaran berstatus DP atau Belum bayar dihitung sebagai kewajiban. Isi Status bayar, Sudah dibayar, dan Tenggat bayar di form Pengeluaran (status kosong = lunas).</small>
+  <div class="grid" style="margin-top:10px">${stat('Dana di kas sekarang', rp(k.kas))}${stat('Kewajiban belum dibayar', rp(k.kew))}${stat('Rencana belum terealisasi', rp(k.rencana))}${stat('Proyeksi kas akhir', rp(k.proyeksi))}</div>
+  <div class="warn ${k.proyeksi < 0 ? 'red' : 'green'}">${k.proyeksi < 0 ? '⚠️ Diperkirakan kurang ' + rp(-k.proyeksi) + '. Siapkan tambahan dana sebelum tenggat pelunasan.' : '✅ Dana kas diperkirakan cukup, sisa ' + rp(k.proyeksi) + '.'}</div></div>
+  <div class="card"><h3>Daftar Kewajiban (${k.items.length})</h3>${k.items.length ? k.items.map(x => { const tg = x['Tenggat bayar'], late = tg && tg < td;
+    return `<div class="txw"><div class="tx"><div class="tm"><b>${esc(x['Detail pengeluaran'])}</b><small>${esc(x['Status bayar'])}${tg ? ' | tenggat ' + esc(fmtDate(tg)) : ''}</small>${late ? '<span class="badge r">Lewat tenggat</span>' : ''}</div><div class="ta out">${rp(x.sisa)}</div></div><div class="acts"><button class="edt" onclick="lunasi(${x.id})">Tandai lunas</button></div></div>`; }).join('') : '<div>Tidak ada kewajiban belum lunas.</div>'}</div>`;
 }
-async function cekLisensi() { try { const id = await devId(), l = await kvGet('lic'); return !!l && await licOk(id, l); } catch (e) { return false; } }
-async function layarAktivasi(note) {
-  const id = await devId();
-  $('nav').innerHTML = ''; $('main').innerHTML = `<div class="card"><h3>🔑 Aktivasi Aplikasi</h3>
-  <div class="msg err">${note || ''}</div>
-  <p>Kode perangkat Anda:</p><input id="did" value="${id}" readonly>
-  <button class="btn alt" onclick="salinId()">Salin kode perangkat</button>
-  <p>Kirim kode ini ke penjual, lalu tempel kunci aktivasi dari penjual di bawah.</p>
-  <textarea id="lk" rows="4" placeholder="Tempel kunci aktivasi"></textarea>
-  <button class="btn" onclick="aktifkan()">Aktifkan</button></div>`;
+async function lunasi(id) { const r = DB.pengeluaran.find(x => x.id === id); if (!r) return; r['Status bayar'] = 'Lunas'; r['Sudah dibayar'] = ''; await save(); renderKewajiban(); toast('Ditandai lunas'); }
+/* Laporan untuk peserta (tanpa data pribadi) */
+function pesertaData() {
+  const d = dash(), b = bayarData(), masuk = d.masuk - panitiaIn(), pr = rowsOf('pengeluaran'), kat = {};
+  pr.forEach(r => { const k = r['Kategori'] || '(Tanpa kategori)'; kat[k] = (kat[k] || 0) + r['Total Biaya']; });
+  return { d, b, masuk, keluar: d.keluar, hasil: masuk - d.keluar, pr, base: baseTagihan(b), kat: Object.keys(kat).sort((a, c) => kat[c] - kat[a]).map(k => ({ k, v: kat[k], p: d.keluar ? kat[k] / d.keluar * 100 : 0 })) };
 }
-function salinId() { const e = $('did'); e.select(); try { navigator.clipboard.writeText(e.value); } catch (x) { document.execCommand('copy'); } toast('Kode tersalin'); }
-async function aktifkan() {
-  const id = await devId(), k = $('lk').value.trim();
-  if (!k) return layarAktivasi('Tempel kunci aktivasi dulu.');
-  if (!await licOk(id, k)) return layarAktivasi('Kunci tidak cocok dengan perangkat ini.');
-  await kvPut('lic', k); toast('Aplikasi aktif'); await mulai();
+function pesertaHtml() {
+  const g = pesertaData(), u = g.hasil >= 0;
+  const body = `<div class="sum">${[['Jumlah peserta', g.b.k + ' orang'], ['Iuran per peserta', g.base > 0 ? rp(g.base) : '-'], ['Uang masuk', rp(g.masuk)], ['Total pengeluaran', rp(g.keluar)], [u ? 'Sisa dana' : 'Kekurangan dana', rp(Math.abs(g.hasil))]].map(x => `<div>${x[0]}<b>${x[1]}</b></div>`).join('')}</div>
+  <div class="pw">${u ? 'Dana yang terkumpul mencukupi seluruh pengeluaran. Sisa dana dikelola panitia.' : 'Pengeluaran melebihi uang yang terkumpul. Kekurangan ' + rp(-g.hasil) + ' ditanggung panitia dan tidak ditagihkan ke peserta.'}</div>
+  <h2>Dana Dipakai untuk Apa</h2>${pT(['Kategori', 'Jumlah', '% dari total'], g.kat.map(x => [x.k, rp(x.v), x.p.toFixed(0) + '%']), ['TOTAL', rp(g.keluar), '100%'])}
+  <h2>Rincian Pengeluaran</h2>${pT(['No', 'Tanggal', 'Keterangan', 'Kategori', 'Jumlah'], g.pr.map((r, i) => [i + 1, fmtDate(r['Tanggal transaksi']), r['Detail pengeluaran'], r['Kategori'], rp(r['Total Biaya'])]), ['', '', '', 'TOTAL', rp(g.keluar)])}`;
+  return docWrap('LAPORAN KEUANGAN TRIP', 'Destinasi: ' + (DB.set.destinasi || '-'), body);
 }
+function pesertaWA() {
+  const g = pesertaData(), u = g.hasil >= 0;
+  return '*LAPORAN KEUANGAN TRIP*' + (DB.set.destinasi ? ' - ' + DB.set.destinasi : '') + '\n\nUang masuk: ' + rp(g.masuk) + '\nTotal pengeluaran: ' + rp(g.keluar) + '\n' + (u ? 'Sisa dana: ' : 'Kekurangan dana: ') + rp(Math.abs(g.hasil)) + (u ? '' : ' (ditanggung panitia, tidak ditagihkan ke peserta)') + '\n\n*Dana dipakai untuk:*\n' + g.kat.map(x => '- ' + x.k + ': ' + rp(x.v) + ' (' + x.p.toFixed(0) + '%)').join('\n') + '\n\nTerima kasih atas kepercayaannya 🙏';
+}
+const pesertaCard = () => `<div class="card"><h3>📣 Laporan untuk Peserta</h3><small class="mut">Ringkasan uang masuk, dipakai untuk apa, dan sisa dana, tanpa data pribadi.</small>
+  <button class="btn" onclick="printDoc(pesertaHtml())">📄 Unduh PDF laporan peserta</button><button class="btn" style="background:#25d366" onclick="openWA(pesertaWA())">💬 Bagikan ke WhatsApp</button></div>`;
 
 /* ===== Mulai ===== */
-async function mulai() {
+(async function () {
   DB = Object.assign(blank(), await load() || {}); applyKat(); DB.trash = (DB.trash || []).filter(x => Date.now() - x.ts < 30 * 864e5); if (jalankanUlang()) { await save(); setTimeout(() => toast('Transaksi berulang ditambahkan'), 700); }
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
   if (DB.pin) lock(); else { buildNav(); show('dashboard'); }
-}
-(async function () {
-  if (await cekLisensi()) await mulai(); else await layarAktivasi();
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
 })();
 </script>
