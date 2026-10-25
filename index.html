@@ -94,6 +94,11 @@ body.printing>*:not(#pdoc){display:none!important}body.printing #pdoc{display:bl
 .kv{display:flex;justify-content:space-between;gap:8px;padding:2px 0;border-bottom:1px dotted var(--pbd)}.st{text-align:center;font-weight:800;font-size:13px;margin:6px 0;padding:4px;border:2px solid;border-radius:6px}}
 header{display:grid;grid-template-columns:56px 1fr 56px;background:var(--card);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
 header img{width:auto;height:46px}.ht{text-align:center}.ht h1{font-size:19px}.ht small{display:block;color:var(--mut);font-size:11px;letter-spacing:1.6px;margin-top:1px}#tg{justify-self:end}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:url(bg.png) center 52%/min(94vw,640px) no-repeat;opacity:.22}
+html[data-t=light] body::before{opacity:.16}
+main{position:relative}
+@media print{html,html[data-t],html[data-t=light]{--pbg:#fff;--ptx:#111;--pmut:#555;--pbd:#c9c9c9;--pth:#fef3c7;--ptot:#ecfdf3;--pbox:#fafafa;--phd:#fff;--pti:#ea580c;--bg:#fff;--solid:#fff;--card:#fff;--card2:#f3f4f6;--tx:#111;--mut:#555;--bd:#ddd;--h:#c2410c;color-scheme:light}
+#pdoc .rdt{color:#166534}#pdoc .warn.red{color:#b91c1c}#pdoc .warn.yellow{color:#92400e}#pdoc .warn.green{color:#166534}#pdoc .warn.note{color:#1e40af}}
 </style>
 
 </head>
@@ -365,12 +370,12 @@ function renderSim() {
   $('main').innerHTML = kalkCard() + `<div class="card"><h3>Skenario Simulasi</h3><select id="ssel"><option value="">-- Pilih skenario tersimpan --</option>${DB.sim.map(x => `<option value="${x.id}">${esc(x.nama)} (${esc(x.diubah)})</option>`).join('')}</select>
   <div class="flt"><button class="btn alt" onclick="simLoad()">Muat</button><button class="btn" onclick="simSave()">Simpan</button><button class="btn alt" onclick="simDel()">Hapus</button><button class="btn alt" onclick="SIM=simDef();renderSim()">Form baru</button></div><div id="smsg" class="msg"></div></div>
   <div class="card"><h3>Parameter</h3><label>Nama simulasi / destinasi</label><input value="${esc(SIM.nama)}" oninput="SIM.nama=this.value">
-  ${[['Jumlah peserta', 'peserta'], ['Jumlah official', 'official'], ['Harga jual per peserta (Rp)', 'harga'], ['Target keuntungan per official (Rp)', 'target']].map(([l, k]) => `<label>${l}</label><input type="number" inputmode="decimal" value="${SIM[k]}" oninput="SIM.${k}=+this.value||0;drawSim()">`).join('')}
+  ${[['Jumlah peserta', 'peserta'], ['Jumlah official', 'official'], ['Harga jual per peserta (Rp)', 'harga', 1], ['Target keuntungan per official (Rp)', 'target', 1]].map(([l, k, m]) => `<label>${l}</label>` + (m ? `<input type="text" inputmode="numeric" value="${fmtN(SIM[k])}" oninput="fmtNum(this);SIM.${k}=numVal(this.value);drawSim()">` : `<input type="number" inputmode="decimal" value="${SIM[k]}" oninput="SIM.${k}=+this.value||0;drawSim()">`)).join('')}
   <div style="margin-top:10px"><input type="checkbox" ${SIM.ikut ? 'checked' : ''} onchange="SIM.ikut=this.checked;drawSim()"> Official ikut berangkat (biaya ikut ditanggung)</div></div>
-  <div class="card"><h3>Komponen Biaya</h3><small class="mut">Harga standar = bagian dari harga jual per peserta. Biaya simulasi = yang benar-benar Anda keluarkan.</small><div id="sitems"></div>
+  <div class="card"><h3>Komponen Biaya</h3><small class="mut">Anggaran = bagian harga jual yang dibayar tiap peserta (rencana). Biaya asli = uang yang benar-benar kamu keluarkan ke pihak lain.</small><div id="sitems"></div>
   <button class="btn alt" onclick="SIM.items.push({n:'Komponen baru',t:'orang',std:0,sim:0,kap:4,stok:0,kat:'Lainnya'});drawItems();drawSim()">+ Tambah komponen</button></div>
   <div class="card"><h3>Terapkan ke Anggaran Pengeluaran</h3><small class="mut">Mengisi tab Pengeluaran dari komponen simulasi. Simulasi yang diterapkan menjadi acuan perbandingan dengan kenyataan.</small>
-  <label>Kolom Anggaran diisi dengan</label><select id="ap_d"><option value="sim">Biaya simulasi (anggaran ditekan)</option><option value="std">Harga standar komponen</option></select>
+  <label>Kolom Anggaran diisi dengan</label><select id="ap_d"><option value="sim">Biaya asli (anggaran ditekan)</option><option value="std">Anggaran komponen (bagian harga jual)</option></select>
   <div style="margin-top:10px"><input type="checkbox" id="ap_b"> Isi juga kolom Biaya sesuai biaya simulasi</div>
   <div style="margin-top:10px"><input type="checkbox" id="ap_r" checked> Atur Total Realisasi = pendapatan simulasi</div>
   <button class="btn" onclick="simApply()">Terapkan ke Anggaran Pengeluaran</button><div id="amsg" class="msg"></div></div>
@@ -379,21 +384,21 @@ function renderSim() {
 }
 function drawItems() {
   $('sitems').innerHTML = SIM.items.map((it, i) => {
-    const num = (l, k) => `<label>${l}</label><input type="number" inputmode="decimal" value="${it[k]}" oninput="SIM.items[${i}].${k}=+this.value||0;drawSim()">`;
+    const num = (l, k, m) => `<label>${l}</label>` + (m ? `<input type="text" inputmode="numeric" value="${fmtN(it[k])}" oninput="fmtNum(this);SIM.items[${i}].${k}=numVal(this.value);drawSim()">` : `<input type="number" inputmode="decimal" value="${it[k]}" oninput="SIM.items[${i}].${k}=+this.value||0;drawSim()">`);
     return `<div style="border:1px solid var(--bd);border-radius:10px;padding:10px;margin-top:10px"><label>Nama komponen</label><input value="${esc(it.n)}" oninput="SIM.items[${i}].n=this.value;drawSim()">
     <label>Jenis biaya</label><select onchange="SIM.items[${i}].t=this.value;drawItems();drawSim()">${Object.keys(SIM_T).map(k => `<option value="${k}" ${it.t === k ? 'selected' : ''}>${SIM_T[k]}</option>`).join('')}</select>
     <label>Kategori di Pengeluaran</label><select onchange="SIM.items[${i}].kat=this.value">${KATS.map(k => `<option ${(it.kat || 'Lainnya') === k ? 'selected' : ''}>${k}</option>`).join('')}</select>
-    ${num('Harga standar per peserta (Rp)', 'std')}${num(it.t === 'orang' ? 'Biaya simulasi per orang (Rp)' : it.t === 'grup' ? 'Biaya simulasi total per trip (Rp)' : 'Sewa per tenda (Rp)', 'sim')}${it.t === 'tenda' ? num('Kapasitas per tenda (orang)', 'kap') + num('Tenda milik sendiri (stok)', 'stok') : ''}
+    ${num('Anggaran per peserta (Rp), bagian dari harga jual', 'std', 1)}${num(it.t === 'orang' ? 'Biaya asli per orang (Rp), yang benar-benar dikeluarkan' : it.t === 'grup' ? 'Biaya asli total per trip (Rp)' : 'Biaya sewa per tenda (Rp)', 'sim', 1)}${it.t === 'tenda' ? num('Kapasitas per tenda (orang)', 'kap') + num('Tenda milik sendiri (stok)', 'stok') : ''}
     <button class="del" style="margin-top:10px" onclick="SIM.items.splice(${i},1);drawItems();drawSim()">Hapus komponen</button></div>`;
   }).join('');
 }
 function drawSim() {
-  const p = +SIM.peserta || 0, r = simCalc(SIM, p), cnt = [5, 8, 10, 12, 15, 20, 25, 30]; if (p > 0 && cnt.indexOf(p) < 0) cnt.push(p); cnt.sort((a, b) => a - b);
+  const p = +SIM.peserta || 0, r = simCalc(SIM, p), cnt = Array.from({ length: 20 }, (_, i) => i + 1); if (p > 20) cnt.push(p);
   const kes = r.profit >= 0 ? `Keuntungan ${rp(r.profit)} (${r.margin.toFixed(1)}%). Tiap official mendapat ${rp(r.perOff)}.` : `Rugi ${rp(-r.profit)}. Agar balik modal, harga minimal ${rp(r.be)} per peserta.`;
   const al = []; if (r.profit < 0) al.push(['red', 'Simulasi ini rugi. Naikkan harga atau tekan biaya.']); if (r.tendaSewa > 0) al.push(['yellow', 'Perlu menyewa ' + r.tendaSewa + ' tenda tambahan.']);
   $('simres').innerHTML = `<div class="card"><h3>Hasil Simulasi</h3><div class="warn note">${esc(kes)}</div>${al.map(a => `<div class="warn ${a[0]}">${esc(a[1])}</div>`).join('')}
   <div class="grid" style="margin-top:10px">${stat('Orang berangkat', r.orang)}${stat('Total biaya', rp(r.total))}${stat('Pendapatan', rp(r.pend))}${stat('Keuntungan', rp(r.profit))}${stat('Per official', rp(r.perOff))}${stat('Harga min. balik modal', rp(r.be))}${SIM.target > 0 ? stat('Harga min. capai target', rp(r.hTarget)) : ''}</div>
-  <h3 style="margin-top:14px">Per komponen</h3>${tab(['Komponen', 'Dari harga', 'Biaya', 'Selisih'], r.rows.map(x => [x.n, rp(x.rev), rp(x.cost), rp(x.rev - x.cost)]))}
+  <h3 style="margin-top:14px">Per komponen</h3>${tab(['Komponen', 'Anggaran', 'Biaya asli', 'Selisih'], r.rows.map(x => [x.n, rp(x.rev), rp(x.cost), rp(x.rev - x.cost)]))}
   <h3 style="margin-top:14px">Jika jumlah peserta berubah</h3>${tab(['Peserta', 'Total biaya', 'Keuntungan', 'Per official'], cnt.map(n => { const x = simCalc(SIM, n); return [(n === p ? '► ' : '') + n, rp(x.total), rp(x.profit), rp(x.perOff)]; }))}</div>`;
 }
 const tab = (h, rows) => rows.length ? `<div class="tbl"><table><tr>${h.map(x => `<th>${esc(x)}</th>`).join('')}</tr>${rows.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</table></div>` : '<div>Belum ada data.</div>';
@@ -465,12 +470,12 @@ function bayarData() {
   const pr = rowsOf('pengeluaran'), ang = sum(pr, r => r['Total Anggaran']), bi = sum(pr, r => r['Total Biaya']);
   const ps = DB.tamu.filter(t => t['Status'] === 'Diterima').map(t => ({ nama: t['Nama'], tagihan: t['Tagihan'] || '', dibayar: paidFor(paid, n(t['Nama'])), ponsel: t['Ponsel'] })), k = ps.length;
   const tg = { 'Lunas': 0, 'DP': 0, 'Belum Lunas': 0, 'Belum diisi': 0 }; ps.forEach(p => tg[tg[p.tagihan] !== undefined ? p.tagihan : 'Belum diisi']++);
-  return { k, ang, bi, perA: k ? Math.ceil(ang / k) : 0, perB: k ? Math.ceil(bi / k) : 0, harga: DB.simAktif ? +DB.simAktif.harga || 0 : 0, tg, ps, iuran: Object.values(paid).reduce((a, b) => a + b, 0) };
+  return { k, ang, bi, perA: k ? Math.ceil(ang / k) : 0, perB: k ? Math.ceil(bi / k) : 0, plan: k && (+DB.set.realisasi) > 0 ? Math.ceil(DB.set.realisasi / k) : 0, harga: DB.simAktif ? +DB.simAktif.harga || 0 : 0, tg, ps, iuran: Object.values(paid).reduce((a, b) => a + b, 0) };
 }
 const sisaTxt = s => s > 0 ? rp(s) : (s < 0 ? 'Lebih ' + rp(-s) : 'Lunas');
 function renderBayar() {
-  const b = bayarData(), per = {}; if (DB.set.tagihan > 0) per['Tagihan tetap (manual)'] = DB.set.tagihan; if (b.harga > 0) per['Harga jual simulasi'] = b.harga; per['Realisasi (total biaya)'] = b.perB; per['Anggaran'] = b.perA;
-  $('main').innerHTML = `${rekCard()}<div class="card"><h3>Patungan Otomatis</h3><small class="mut">${b.harga > 0 ? 'Tagihan memakai harga jual dari simulasi yang diterapkan.' : 'Dihitung dari total pengeluaran dibagi peserta berstatus Diterima.'}</small>
+  const b = bayarData(), per = {}; if (DB.set.tagihan > 0) per['Tagihan tetap (manual)'] = DB.set.tagihan; if (b.harga > 0) per['Harga jual simulasi'] = b.harga; if (b.plan > 0) per['Rencana patungan (Total Realisasi ÷ peserta)'] = b.plan; if (!Object.keys(per).length) per['Belum ditetapkan'] = 0; per['Anggaran'] = b.perA;
+  $('main').innerHTML = `${rekCard()}<div class="card"><h3>Patungan Otomatis</h3><small class="mut">${DB.set.tagihan > 0 ? 'Tagihan memakai tagihan tetap (manual).' : b.harga > 0 ? 'Tagihan memakai harga jual dari simulasi yang diterapkan.' : b.plan > 0 ? 'Tagihan memakai rencana patungan (Total Realisasi dibagi peserta Diterima). Biaya yang melebihi rencana tidak ditagihkan ke peserta.' : 'Tagihan belum ditetapkan: isi Total Realisasi di Beranda, isi tagihan tetap, atau terapkan simulasi. Biaya yang melebihi rencana tidak ditagihkan ke peserta.'}</small>
   <div class="grid" style="margin-top:10px">${stat('Peserta Diterima', b.k + ' orang')}${stat('Total Pengeluaran', rp(b.bi))}${stat('Total Anggaran', rp(b.ang))}${stat('Iuran terkumpul', rp(b.iuran))}${stat('Per orang (realisasi)', rp(b.perB))}${stat('Per orang (anggaran)', rp(b.perA))}</div>
   <div style="margin-top:10px"><span class="badge g">Lunas ${b.tg['Lunas']}</span> <span class="badge y">DP ${b.tg['DP']}</span> <span class="badge r">Belum lunas ${b.tg['Belum Lunas']}</span> ${b.tg['Belum diisi'] ? `<span class="badge">Belum diisi ${b.tg['Belum diisi']}</span>` : ''}</div></div>
   <div class="card"><h3>Status Pembayaran Peserta</h3><label>Dasar hitung tagihan</label><select id="bsel" onchange="drawBayar()">${Object.keys(per).map(k => `<option>${k}</option>`).join('')}</select>
@@ -485,16 +490,16 @@ function waBayar() {
 
 /* ===== Rekap ===== */
 function renderRekap() {
-  const d = dash(), b = bayarData(), v = vsReal(), base = baseTagihan(b), tam = DB.tamu, rs = s => tam.filter(t => t['Status'] === s).length;
+  const d = dash(), b = bayarData(), v = vsReal(), base = baseTagihan(b), bg = bagiData(), tam = DB.tamu, rs = s => tam.filter(t => t['Status'] === s).length;
   const grp = (a, f) => { const m = {}; a.forEach(r => { const k = r['Kategori'] || '(Tanpa kategori)'; m[k] = (m[k] || 0) + f(r); }); return m; };
   const mk = grp(DB.pemasukan, r => +r['Biaya'] || 0), pr = rowsOf('pengeluaran'), ak = grp(pr, r => r['Total Anggaran']), bk = grp(pr, r => r['Total Biaya']), ks = Object.keys(ak);
   const sw = rowsOf('perlengkapan').filter(r => r['Sewa'] > 0);
-  window._rekapWA = () => '*REKAP PENDAKIAN*' + (d.destinasi ? ' - ' + d.destinasi : '') + '\nPer ' + new Date().toLocaleString('id-ID') + '\n\n*Keuangan*\nPemasukan: ' + rp(d.masuk) + '\nPengeluaran: ' + rp(d.keluar) + '\nSisa saldo: ' + rp(d.saldo) + '\nPemakaian: ' + (d.persen * 100).toFixed(1) + '%\n\n*Tamu*\nTotal ' + tam.length + ' | Diterima ' + rs('Diterima') + ' | Menunggu ' + rs('Menunggu respons') + ' | Ditolak ' + rs('Ditolak') + '\n\n' + (v ? '*Bagi hasil official*\nPer official (' + v.off + '): ' + rp(v.nyata.perOff) + ' (rencana ' + rp(v.rencana.perOff) + ')\n\n' : '') + '*Tagihan*\nPer orang: ' + rp(base) + '\nLunas ' + b.tg['Lunas'] + ' | DP ' + b.tg['DP'] + ' | Belum lunas ' + b.tg['Belum Lunas'] + (d.warnings.length ? '\n\n*Peringatan*\n' + d.warnings.map(w => '- ' + w.text).join('\n') : '');
+  window._rekapWA = () => '*REKAP PENDAKIAN*' + (d.destinasi ? ' - ' + d.destinasi : '') + '\nPer ' + new Date().toLocaleString('id-ID') + '\n\n*Keuangan*\nPemasukan: ' + rp(d.masuk) + '\nPengeluaran: ' + rp(d.keluar) + '\nSisa saldo: ' + rp(d.saldo) + '\nPemakaian: ' + (d.persen * 100).toFixed(1) + '%\n\n*Tamu*\nTotal ' + tam.length + ' | Diterima ' + rs('Diterima') + ' | Menunggu ' + rs('Menunggu respons') + ' | Ditolak ' + rs('Ditolak') + '\n\n' + (bg.n ? '*' + (bg.s >= 0 ? 'Untung ' : 'Rugi ') + rp(Math.abs(bg.s)) + '*\nPer official (' + bg.n + ' orang): ' + rp(Math.abs(bg.per)) + (bg.s < 0 ? ' (ditanggung panitia, tidak ditagih ke peserta)' : '') + '\n\n' : '') + '*Tagihan*\nPer orang: ' + rp(base) + '\nLunas ' + b.tg['Lunas'] + ' | DP ' + b.tg['DP'] + ' | Belum lunas ' + b.tg['Belum Lunas'] + (d.warnings.length ? '\n\n*Peringatan*\n' + d.warnings.map(w => '- ' + w.text).join('\n') : '');
   $('main').innerHTML = `<div class="card"><h3>Rekapitulasi${d.destinasi ? ' - ' + esc(d.destinasi) : ''}</h3><small class="mut">Per ${new Date().toLocaleString('id-ID')}</small>
   <div class="grid" style="margin-top:10px">${stat('Total Pemasukan', rp(d.masuk))}${stat('Total Pengeluaran', rp(d.keluar))}${stat('Sisa Saldo', rp(d.saldo))}${stat('Pemakaian', (d.persen * 100).toFixed(1) + '%')}${stat('Tamu Diterima', rs('Diterima') + ' / ' + tam.length)}${stat(b.harga > 0 ? 'Tagihan / peserta' : 'Patungan / orang', rp(base))}</div>
   ${d.warnings.length ? d.warnings.map(w => `<div class="warn ${w.level}">${esc(w.text)}</div>`).join('') : '<div class="warn green">✅ Semua kategori masih sesuai anggaran.</div>'}
   <button class="btn" onclick="printDoc(laporanHtml())">📄 Unduh Laporan Lengkap Trip (PDF)</button><button class="btn" style="background:#25d366" onclick="openWA(_rekapWA())">💬 Bagikan ringkasan ke WhatsApp</button></div>
-  <div class="card"><h3>Sisa Saldo & Bagi Hasil Official</h3>${v ? `<div class="grid">${stat('Sisa saldo saat ini', rp(d.saldo))}${stat('Jumlah official', v.off + ' orang')}${stat('Per official (nyata)', rp(v.nyata.perOff))}${stat('Per official (rencana)', rp(v.rencana.perOff))}${stat('Target per official', v.target ? rp(v.target) : '-')}${stat('Selisih vs rencana', rp(v.nyata.perOff - v.rencana.perOff))}</div>` : '<div class="warn note">Terapkan simulasi ke anggaran (tab Simulasi) untuk melihat bagi hasil official.</div>'}</div>
+  ${bagiCard()}
   ${v ? `<div class="card"><h3>Simulasi vs Kenyataan</h3>${vsHtml(v)}</div>` : ''}
   <div class="card"><h3>Pemasukan: ${rp(d.masuk)}</h3>${tab(['Kategori', 'Total'], Object.keys(mk).map(k => [k, rp(mk[k])]))}</div>
   <div class="card"><h3>Pengeluaran: ${rp(d.keluar)}</h3>${tab(['Kategori', 'Anggaran', 'Biaya', 'Selisih'], ks.map(k => [k, rp(ak[k]), rp(bk[k]), rp(ak[k] - bk[k])]))}</div>
@@ -802,7 +807,7 @@ function kwitansi(i) {
   printDoc(docWrap('KWITANSI PEMBAYARAN', '', body, true));
 }
 function laporanHtml() {
-  const d = dash(), b = bayarData(), v = vsReal(), pm = rowsOf('pemasukan'), pg = rowsOf('pengeluaran'), pl = rowsOf('perlengkapan'), tl = talanganData(), it = rundownRows(), cl = DB.checklist, base = b.harga > 0 ? b.harga : b.perB;
+  const d = dash(), b = bayarData(), v = vsReal(), pm = rowsOf('pemasukan'), pg = rowsOf('pengeluaran'), pl = rowsOf('perlengkapan'), tl = talanganData(), it = rundownRows(), cl = DB.checklist, base = baseTagihan(b);
   const lamp = pm.map(r => ({ t: 'Pemasukan', n: r['Detail pemasukan'], a: r['Biaya'], v: r.Bukti })).concat(pg.map(r => ({ t: 'Pengeluaran', n: r['Detail pengeluaran'], a: r['Total Biaya'], v: r.Bukti }))).filter(x => x.v && x.v.indexOf('data:image') === 0);
   const sec = (t, h) => `<h2>${t}</h2>${h}`; let o = '';
   o += sec('1. Ringkasan Keuangan', `<div class="sum">${[['Total Realisasi', rp(d.real)], ['Total Anggaran', rp(d.anggaran)], ['Total Pemasukan', rp(d.masuk)], ['Total Pengeluaran', rp(d.keluar)], ['Sisa Saldo', rp(d.saldo)], ['Pemakaian', (d.persen * 100).toFixed(1) + '%']].map(x => `<div>${x[0]}<b>${x[1]}</b></div>`).join('')}</div>` + (d.warnings.length ? d.warnings.map(w => `<div class="pw">${w.level === 'red' ? '⚠️' : '🔔'} ${esc(w.text)}</div>`).join('') : '<div class="pw">✅ Semua kategori sesuai anggaran.</div>'));
@@ -812,7 +817,7 @@ function laporanHtml() {
   o += sec('5. Rincian Pengeluaran', pT(['No', 'Tanggal', 'Detail', 'Kategori', 'Qty', 'Anggaran', 'Biaya', 'Dibayar oleh'], pg.map((r, i) => [i + 1, fmtDate(r['Tanggal transaksi']), r['Detail pengeluaran'], r['Kategori'], r['Quantity'], rp(r['Total Anggaran']), rp(r['Total Biaya']), r['Dibayar oleh']]), ['', '', '', '', 'TOTAL', rp(d.anggaran), rp(d.keluar), '']) + '<h3>Per kategori</h3>' + pT(['Kategori', 'Anggaran', 'Biaya', 'Selisih'], d.kategori.map(x => [x.k, rp(x.anggaran), rp(x.biaya), (x.anggaran >= x.biaya ? 'Hemat ' : 'Lebih ') + rp(Math.abs(x.anggaran - x.biaya))])));
   o += sec('6. Perlengkapan & Barang yang Disewa', pT(['Barang', 'Butuh', 'Punya', 'Sewa', 'Harga/unit', 'Total sewa'], pl.map(r => [r['Perlengkapan'], r['Kebutuhan'], r['Kesediaan'], r['Sewa'], rp(r['Harga/Unit']), rp(r['Total Sewa'])]), ['', '', '', '', 'TOTAL SEWA', rp(sum(pl, r => r['Total Sewa']))]));
   o += sec('7. Talangan Panitia', tl.length ? pT(['Nama', 'Menalangi', 'Sudah diganti', 'Sisa diganti'], tl.map(x => [x.nama, rp(x.tot), rp(x.ganti), rp(Math.max(0, x.tot - x.ganti))]), ['TOTAL', rp(sum(tl, x => x.tot)), rp(sum(tl, x => x.ganti)), rp(sum(tl, x => Math.max(0, x.tot - x.ganti)))]) : '<div class="pw">Tidak ada talangan.</div>');
-  o += sec('8. Simulasi vs Realita, Keuntungan & Bagi Hasil Official', v ? pT(['Keterangan', 'Rencana (simulasi)', 'Nyata'], [['Pendapatan / pemasukan', rp(v.rencana.pend), rp(v.nyata.masuk)], ['Total biaya', rp(v.rencana.biaya), rp(v.nyata.biaya)], ['Keuntungan', rp(v.rencana.profit), rp(v.nyata.profit)], ['Jumlah official', v.off + ' orang', v.off + ' orang'], ['Bagi hasil per official', rp(v.rencana.perOff), rp(v.nyata.perOff)], ['Target per official', v.target ? rp(v.target) : '-', '-']]) + '<h3>Per komponen</h3>' + pT(['Komponen', 'Rencana', 'Nyata', 'Selisih'], v.komp.map(k => [k.n, rp(k.rencana), k.ada ? rp(k.nyata) : 'Belum dicatat', k.selisih === null ? '-' : (k.selisih >= 0 ? 'Hemat ' : 'Lebih ') + rp(Math.abs(k.selisih))])) + '<h3>Penyebab selisih</h3>' + (v.sebab.length ? v.sebab.map(x => `<div class="pw">${esc(x)}</div>`).join('') : '<div class="pw">Tidak ada selisih berarti.</div>') : '<div class="pw">Belum ada simulasi yang diterapkan, jadi bagi hasil official belum bisa dihitung. Saldo saat ini: ' + rp(d.saldo) + '.</div>');
+  o += sec('8. Untung/Rugi, Bagi Hasil Official & Simulasi vs Realita', bagiPdf() + (v ? pT(['Keterangan', 'Rencana (simulasi)', 'Nyata'], [['Pendapatan / pemasukan', rp(v.rencana.pend), rp(v.nyata.masuk)], ['Total biaya', rp(v.rencana.biaya), rp(v.nyata.biaya)], ['Keuntungan', rp(v.rencana.profit), rp(v.nyata.profit)]]) + '<h3>Per komponen</h3>' + pT(['Komponen', 'Rencana', 'Nyata', 'Selisih'], v.komp.map(k => [k.n, rp(k.rencana), k.ada ? rp(k.nyata) : 'Belum dicatat', k.selisih === null ? '-' : (k.selisih >= 0 ? 'Hemat ' : 'Lebih ') + rp(Math.abs(k.selisih))])) + '<h3>Penyebab selisih</h3>' + (v.sebab.length ? v.sebab.map(x => `<div class="pw">${esc(x)}</div>`).join('') : '<div class="pw">Tidak ada selisih berarti.</div>') : '<div class="pw">Belum ada simulasi yang diterapkan.</div>'));
   o += sec('9. Rundown Itinerary', pT(['No', 'Mulai', 'Selesai', 'Aktivitas', 'Jenis', 'Lokasi'], it.map((r, i) => [i + 1, fmtDate(r['Waktu mulai']), fmtDate(r['Waktu berakhir']), r['Aktivitas'], r['Jenis aktivitas'], r['Lokasi']])));
   o += sec('10. Checklist Perlengkapan (' + cl.filter(x => x.siap).length + ' dari ' + cl.length + ' siap)', pT(['Barang', 'Dibawa oleh', 'Catatan', 'Status'], cl.map(x => [x.barang, x.oleh, x.catatan, x.siap ? 'Siap' : 'Belum'])));
   o += sec('11. Statistik Antar-Trip', statPdf());
@@ -893,16 +898,28 @@ function tripStat(d, nama, tgl) {
 function statData() {
   const seen = {}, L = DB.arsip.map(a => tripStat(a.data, (a.destinasi || '(tanpa nama)') + (a.auto ? ' (backup)' : ''), a.tanggal)).concat([tripStat(DB, (DB.set.destinasi || '(tanpa nama)') + ' (berjalan)', 'Sekarang')])
     .filter(x => { const k = [x.nama.replace(/ \(.*\)$/, ''), x.ps, x.masuk, x.keluar].join('|'); if ((!x.ps && !x.masuk && !x.keluar) || seen[k]) return false; return seen[k] = 1; });
-  const rows = L.map(x => [x.nama, x.ps, rp(x.masuk), rp(x.keluar), rp(x.untung), rp(x.per), x.margin.toFixed(1) + '%']), cat = {}, lines = [];
-  L.forEach(x => Object.keys(x.kat).forEach(k => cat[k] = (cat[k] || 0) + x.kat[k]));
-  const tk = Object.keys(cat).sort((a, b) => cat[b] - cat[a]), tot = sum(L, x => x.keluar);
-  if (L.length) { const best = L.slice().sort((a, b) => b.untung - a.untung)[0], u = sum(L, x => x.untung); lines.push('Total keuntungan ' + L.length + ' trip: ' + rp(u) + ' (rata-rata ' + rp(u / L.length) + ' per trip).', 'Trip paling untung: ' + best.nama + ' (' + rp(best.untung) + ').'); }
-  if (L.length > 1) { const a = L[L.length - 2], b = L[L.length - 1]; lines.push('Dibanding trip sebelumnya (' + a.nama + '), keuntungan ' + (b.untung >= a.untung ? 'naik ' : 'turun ') + rp(Math.abs(b.untung - a.untung)) + ' dan biaya per peserta ' + (b.per >= a.per ? 'naik ' : 'turun ') + rp(Math.abs(b.per - a.per)) + '.'); }
-  if (tk.length && tot > 0) lines.push('Kategori terboros: ' + tk.slice(0, 3).map(k => k + ' ' + rp(cat[k]) + ' (' + (cat[k] / tot * 100).toFixed(0) + '%)').join(', ') + '.');
-  return { rows, lines, n: L.length };
+  const cat = {}; L.forEach(x => Object.keys(x.kat).forEach(k => cat[k] = (cat[k] || 0) + x.kat[k]));
+  const tk = Object.keys(cat).sort((a, b) => cat[b] - cat[a]), tot = sum(L, x => x.keluar), u = sum(L, x => x.untung), lines = [];
+  const best = L.filter(x => x.untung > 0).sort((a, b) => b.untung - a.untung)[0], worst = L.filter(x => x.untung < 0).sort((a, b) => a.untung - b.untung)[0];
+  const hasil = n => n > 0 ? 'untung ' + rp(n) : n < 0 ? 'rugi ' + rp(-n) : 'impas (tidak untung, tidak rugi)';
+  if (L.length === 1) lines.push('Trip ini ' + hasil(u) + '.');
+  if (L.length > 1) lines.push('Dari ' + L.length + ' trip: ' + L.filter(x => x.untung > 0).length + ' untung dan ' + L.filter(x => x.untung < 0).length + ' rugi. Secara keseluruhan ' + hasil(u) + ', rata-rata ' + rp(u / L.length) + ' per trip.');
+  if (L.length > 1 && best) lines.push('Paling menguntungkan: ' + best.nama + ' (untung ' + rp(best.untung) + ').');
+  if (L.length > 1 && worst) lines.push('Paling merugi: ' + worst.nama + ' (rugi ' + rp(-worst.untung) + ').');
+  if (L.length > 1) { const a = L[L.length - 2], b = L[L.length - 1], d = b.untung - a.untung; lines.push('Dibanding trip sebelumnya (' + a.nama + '): hasil ' + (d > 0 ? 'lebih baik ' + rp(d) : d < 0 ? 'lebih buruk ' + rp(-d) : 'sama') + ', biaya per peserta ' + (b.per > a.per ? 'naik ' + rp(b.per - a.per) : b.per < a.per ? 'turun ' + rp(a.per - b.per) : 'sama') + '.'); }
+  if (tk.length && tot > 0) lines.push('Biaya terbesar: ' + tk.slice(0, 3).map(k => k + ' ' + rp(cat[k]) + ' (' + (cat[k] / tot * 100).toFixed(0) + '% dari seluruh biaya)').join(', ') + '.');
+  const rows = L.map(x => [x.nama, x.ps + ' orang', rp(x.masuk), rp(x.keluar), (x.untung > 0 ? 'UNTUNG ' : x.untung < 0 ? 'RUGI ' : 'IMPAS ') + rp(Math.abs(x.untung)), rp(x.per), Math.abs(x.margin).toFixed(1) + '%']);
+  return { rows, lines, n: L.length, trips: L };
 }
-const STH = ['Trip', 'Peserta', 'Pemasukan', 'Pengeluaran', 'Untung', 'Biaya/peserta', 'Margin'];
-function statCard() { const s = statData(); return `<div class="card"><h3>📊 Statistik Antar-Trip</h3>${s.n ? tab(STH, s.rows) + s.lines.map(x => `<div class="warn note">${esc(x)}</div>`).join('') + (s.n < 2 ? '<small class="mut">Arsipkan trip yang selesai (Menu → Trip & Arsip) supaya bisa dibandingkan.</small>' : '') : '<div>Belum ada data trip.</div>'}</div>`; }
+const STH = ['Trip', 'Peserta', 'Pemasukan', 'Pengeluaran', 'Hasil', 'Biaya per peserta', '% dari pemasukan'];
+function statCard() {
+  const s = statData();
+  return `<div class="card"><h3>📊 Statistik Antar-Trip</h3>${s.n ? s.trips.map(x => { const u = x.untung > 0, r = x.untung < 0;
+    return `<div class="card" style="margin:10px 0;padding:14px"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><b>${esc(x.nama)}</b><span class="badge ${u ? 'g' : r ? 'r' : 'y'}" style="font-size:13px">${u ? 'UNTUNG' : r ? 'RUGI' : 'IMPAS'}</span></div>
+    <div style="font-size:24px;font-weight:800;margin:6px 0 0;color:${u ? 'var(--grn)' : r ? 'var(--red)' : 'var(--tx)'}">${u ? '+ ' : r ? '- ' : ''}${rp(Math.abs(x.untung))}</div><small class="mut">${u ? 'Untung ' : r ? 'Rugi ' : 'Impas '}${Math.abs(x.margin).toFixed(1)}% dari pemasukan</small>
+    <div class="grid" style="margin-top:10px"><div class="stat"><small>Peserta</small><b>${x.ps} orang</b></div><div class="stat"><small>Biaya per peserta</small><b>${rp(x.per)}</b></div><div class="stat"><small>Pemasukan</small><b>${rp(x.masuk)}</b></div><div class="stat"><small>Pengeluaran</small><b>${rp(x.keluar)}</b></div></div></div>`; }).join('')
+    + s.lines.map(x => `<div class="warn note">${esc(x)}</div>`).join('') + (s.n < 2 ? '<small class="mut">Arsipkan trip yang selesai (Menu → Trip & Arsip) supaya bisa dibandingkan dengan trip lain.</small>' : '') : '<div>Belum ada data trip.</div>'}</div>`;
+}
 function statPdf() { const s = statData(); return s.n ? pT(STH, s.rows) + s.lines.map(x => `<div class="pw">${esc(x)}</div>`).join('') : '<div class="pw">Belum ada data trip.</div>'; }
 
 function parseCSV(t) {
@@ -932,7 +949,7 @@ const csvQ = v => { v = v == null ? '' : String(v); if (/^[=+\-@]/.test(v) && is
 const hariLalu = ts => Math.floor((Date.now() - ts) / 864e5);
 const tlab = k => k === 'checklist' ? 'Checklist' : CFG[k].label;
 function pengingat() {
-  const L = [], b = bayarData(), base = b.harga > 0 ? b.harga : b.perB, td = today(), tg = DB.set.tenggat;
+  const L = [], b = bayarData(), base = baseTagihan(b), td = today(), tg = DB.set.tenggat;
   if (base > 0 && b.ps.length) { const bl = b.ps.filter(p => base - p.dibayar > 0).length;
     if (bl) { if (tg && td > tg) L.push(['red', bl + ' peserta telat bayar (tenggat ' + fmtDate(tg) + ')', 'bayar']);
       else if (tg && addDays(td, 3) >= tg) L.push(['yellow', 'Tenggat bayar ' + fmtDate(tg) + ', ' + bl + ' peserta belum lunas', 'bayar']);
@@ -1017,7 +1034,26 @@ function csvImpor(inp, key) {
   rd.readAsText(f);
 }
 
-const baseTagihan = b => b.harga > 0 ? b.harga : b.perB;
+const baseTagihan = b => (+DB.set.tagihan > 0 ? +DB.set.tagihan : b.harga > 0 ? b.harga : b.plan);
+/* ===== Bagi hasil official, format uang simulasi ===== */
+const numVal = v => Number(String(v).replace(/\D/g, '')) || 0;
+function bagiData() { const d = dash(), v = vsReal(), n = Math.round(+DB.set.official) || (v ? v.off : 0), s = d.saldo; return { d, v, n, s, per: n ? s / n : 0 }; }
+function bagiCard() {
+  const g = bagiData(), v = g.v, u = g.s >= 0;
+  return `<div class="card"><h3>Sisa Saldo & Bagi Hasil Official</h3>
+  <div class="warn ${u ? 'green' : 'red'}"><b>${u ? '✅ UNTUNG ' : '⚠️ RUGI '}${rp(Math.abs(g.s))}</b><br>Pemasukan ${rp(g.d.masuk)} dikurangi pengeluaran ${rp(g.d.keluar)}.</div>
+  <label>Jumlah official / panitia yang ikut</label><input id="nof" inputmode="numeric" value="${g.n || ''}" placeholder="mis. 3">
+  <button class="btn alt" onclick="simpanOff()">Simpan jumlah official</button>
+  ${g.n ? `<div class="grid" style="margin-top:12px">${stat(u ? 'Untung per official' : 'Rugi per official', rp(Math.abs(g.per)))}${stat('Jumlah official', g.n + ' orang')}</div>
+  <div class="warn note">${u ? 'Keuntungan dibagi rata ke ' + g.n + ' official, masing-masing ' + rp(g.per) + '.' : 'Kerugian ditanggung ' + g.n + ' official, masing-masing ' + rp(-g.per) + '. Kerugian tidak ditagihkan ke peserta.'}</div>` : '<div class="warn note">Isi jumlah official untuk melihat bagian tiap orang.</div>'}
+  ${v && g.n ? `<div class="grid" style="margin-top:10px">${stat('Rencana per official', rp(v.rencana.perOff))}${stat('Target per official', v.target ? rp(v.target) : '-')}${stat('Selisih vs rencana', rp(g.per - v.rencana.perOff))}</div>` : ''}</div>`;
+}
+async function simpanOff() { DB.set.official = Math.max(0, Math.round(numVal($('nof').value))); await save(); renderRekap(); toast('Tersimpan'); }
+function bagiPdf() {
+  const g = bagiData(), u = g.s >= 0;
+  return pT(['Keterangan', 'Jumlah'], [['Total pemasukan', rp(g.d.masuk)], ['Total pengeluaran', rp(g.d.keluar)], [u ? 'UNTUNG' : 'RUGI', rp(Math.abs(g.s))], ['Jumlah official / panitia', g.n ? g.n + ' orang' : 'Belum diisi'], [u ? 'Untung per official' : 'Rugi per official', g.n ? rp(Math.abs(g.per)) : '-']]) + '<div class="pw">' + (u ? 'Keuntungan dibagi rata ke official.' : 'Kerugian ditanggung official/panitia dan tidak ditagihkan ke peserta.') + '</div>';
+}
+
 /* ===== Mulai ===== */
 (async function () {
   DB = Object.assign(blank(), await load() || {}); applyKat(); DB.trash = (DB.trash || []).filter(x => Date.now() - x.ts < 30 * 864e5); if (jalankanUlang()) { await save(); setTimeout(() => toast('Transaksi berulang ditambahkan'), 700); }
