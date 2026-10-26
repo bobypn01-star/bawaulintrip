@@ -154,6 +154,67 @@ html[data-fz=s] main{zoom:.92}html[data-fz=l] main{zoom:1.1}
 .zsh{padding-bottom:30px}
 @media (prefers-reduced-motion:reduce){.zsw:after{transition:none}}
 nav:empty{display:none}
+/* v19 */
+.tiles .tile:last-child:nth-child(odd){grid-column:1/-1}
+.kseg{display:flex;margin-bottom:12px}.kseg button{flex:1;padding:10px 4px;font-size:13px}
+.kdisp{text-align:right;min-height:150px;display:flex;flex-direction:column;justify-content:flex-end;gap:2px;padding:14px 16px}
+.kmem{font-size:11px;color:var(--h);text-align:left;min-height:14px;font-weight:700}
+.kex{font-size:18px;color:var(--mut);overflow-wrap:anywhere;min-height:24px;max-height:76px;overflow:hidden}
+.krs{font-weight:800;line-height:1.15;overflow-wrap:anywhere}
+.ktb{font-size:12px;color:var(--h);min-height:16px}
+.kchips{display:flex;gap:8px;margin:10px 0;overflow-x:auto}
+.kchip{border:1px solid var(--bd);background:var(--card2);color:var(--h);border-radius:20px;padding:8px 14px;font-size:13px;font-weight:700;white-space:nowrap;font-family:inherit}
+.kpad{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.kb{height:clamp(52px,14vw,64px);border:0;border-radius:18px;font-size:22px;font-weight:700;background:var(--card2);color:var(--tx);font-family:inherit}
+.kb:active{transform:scale(.95);filter:brightness(1.2)}
+.kb.op{background:color-mix(in srgb,var(--pri) 22%,transparent);color:var(--pri)}
+.kb.fn{color:var(--h)}
+.kb.eq{background:linear-gradient(135deg,var(--pri),var(--pri2));color:var(--onpri)}
+.kb.kmm{height:36px;font-size:13px;border-radius:12px;color:var(--mut);background:transparent;border:1px solid var(--bd)}
+.khi{padding:10px 0;border-bottom:1px solid var(--bd);cursor:pointer}.khe{font-size:13px;color:var(--mut);overflow-wrap:anywhere}.khr{font-size:20px;font-weight:800}
+.zid{padding:0;overflow:hidden}
+.zid-top{display:flex;gap:14px;align-items:center;padding:16px;cursor:pointer;background:radial-gradient(110% 100% at 0% 0%,color-mix(in srgb,var(--pri) 16%,transparent),transparent 60%)}
+.zid-top img{width:76px;height:auto;max-height:76px;object-fit:contain;flex:none}
+.zid-set{display:flex;align-items:center;gap:12px;width:100%;border:0;border-top:1px solid color-mix(in srgb,var(--pri) 35%,var(--bd));background:linear-gradient(90deg,color-mix(in srgb,var(--pri) 18%,transparent),color-mix(in srgb,var(--pri2) 6%,transparent));color:var(--tx);font-family:inherit;text-align:left;padding:11px 14px;cursor:pointer}
+.zid-set:active{filter:brightness(1.12)}
+.zgi2{flex:none;width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,var(--pri),var(--pri2));color:var(--onpri);display:flex;align-items:center;justify-content:center}.zgi2 svg{width:20px;height:20px}
+.zgt2{flex:1;min-width:0;display:flex;flex-direction:column}.zgt2 b{font-size:15px}.zgt2 small{color:var(--mut);font-size:12px}
+.zdot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.zpill{flex:none;font-size:12px;font-weight:700;color:var(--h);border:1px solid color-mix(in srgb,var(--pri) 50%,transparent);border-radius:14px;padding:6px 11px}
+.pdl{display:flex;flex-direction:column;gap:10px}
+.pdc{display:flex;align-items:center;gap:12px;width:100%;text-align:left;font-family:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:12px 14px}
+.pdi{flex:none;width:44px;height:44px;border-radius:14px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:22px}
+.pdt{flex:1;min-width:0;display:flex;flex-direction:column}.pdt b{font-size:15px}.pdt small{color:var(--mut);font-size:12px}
+.pds{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--bd);font-size:14px;line-height:1.45}.pds:last-child{border-bottom:0}
+.pds>span{flex:none;width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,var(--pri),var(--pri2));color:var(--onpri);font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.pd-phone{position:relative;width:min(100%,270px);aspect-ratio:9/15;margin:14px auto 8px;border:4px solid color-mix(in srgb,var(--tx) 28%,transparent);border-radius:30px;background:var(--bg);overflow:hidden;font-size:10px;cursor:pointer;color:var(--tx)}
+.pd-scr{position:absolute;inset:0}
+.pd-f{position:absolute;inset:0;padding:10px 9px 44px;display:flex;flex-direction:column;gap:6px;opacity:0;transition:opacity .45s;overflow:hidden}.pd-f.on{opacity:1}
+.pd-f .tp{outline:2px solid var(--pri);outline-offset:1px;border-radius:7px}
+.pd-tap{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;background:color-mix(in srgb,var(--pri2) 40%,transparent);border:2px solid var(--pri);pointer-events:none;z-index:6;transition:left .7s ease,top .7s ease}
+.pd-tap:after{content:'👆';position:absolute;left:9px;top:10px;font-size:17px}
+.pd-tap.hit{animation:pdp 1s ease-out 2}
+@keyframes pdp{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--pri) 70%,transparent)}100%{box-shadow:0 0 0 18px transparent}}
+.pd-cap{font-size:14px;line-height:1.45;text-align:center;margin:8px 2px;min-height:60px}.pd-cap b{color:var(--h)}
+.pd-dots{display:flex;gap:8px;justify-content:center;margin-bottom:8px}.pd-dots button{width:9px;height:9px;border-radius:50%;border:0;padding:0;background:var(--card2)}.pd-dots button.on{background:var(--pri);width:22px;border-radius:6px}
+.mh{font-weight:800;font-size:12px;color:var(--pri);padding:2px 2px 0}
+.mc{background:var(--card);border:1px solid var(--bd);border-radius:11px;padding:7px 8px;display:flex;flex-direction:column;gap:4px}.mc>b{font-size:10.5px}
+.mbt{background:var(--card2);border:1px solid var(--bd);border-radius:9px;padding:8px 6px;text-align:center;font-weight:700;color:var(--h)}
+.mc .mbt{margin-top:2px}
+.mrw{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:3px 2px;border-bottom:1px solid var(--bd)}.mrw:last-child{border-bottom:0}.mrw span{color:var(--mut)}.mrw b{font-weight:700;text-align:right}
+.min{display:flex;flex-direction:column;gap:2px}.min small{color:var(--mut);font-size:8.5px}.min div{background:var(--card2);border-radius:7px;padding:5px 7px;min-height:21px}
+.mnv{position:absolute;left:8px;right:8px;bottom:8px;display:flex;justify-content:space-around;align-items:center;background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:5px 2px;height:34px}
+.mnv i{font-style:normal;font-size:13px;opacity:.55;padding:2px 6px;border-radius:9px}.mnv i.on{opacity:1;background:color-mix(in srgb,var(--pri) 20%,transparent)}.mnv i.mid{background:linear-gradient(135deg,var(--pri),var(--pri2));opacity:1;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;margin-top:-14px;color:var(--onpri);padding:0}
+.mtl{display:grid;grid-template-columns:1fr 1fr;gap:6px}.mtl div{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px 6px;font-weight:700;text-align:center}.mtl .hi{border-color:var(--pri)}
+.msh{position:absolute;left:0;right:0;bottom:0;background:color-mix(in srgb,var(--bg) 90%,var(--tx));border-top:1px solid var(--bd);border-radius:16px 16px 0 0;padding:10px 9px 12px;display:flex;flex-direction:column;gap:5px;box-shadow:0 0 0 600px rgba(0,0,0,.45);z-index:3}.msh>b{font-size:11px}
+.mhero{background:linear-gradient(135deg,var(--pri),var(--pri2));color:var(--onpri);border-radius:14px;padding:10px;display:flex;flex-direction:column}.mhero b{font-size:19px}
+.mtg{width:24px;height:14px;border-radius:8px;background:var(--card2);position:relative;display:inline-block}.mtg:after{content:'';position:absolute;top:2px;left:2px;width:10px;height:10px;border-radius:50%;background:#fff}.mtg.on{background:var(--pri)}.mtg.on:after{left:12px}
+.mdisp{text-align:right;padding:8px 6px;display:flex;flex-direction:column;background:var(--card);border-radius:11px;margin-bottom:2px}.mdisp small{color:var(--mut)}.mdisp b{font-size:17px}
+.mpad{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.mpad i{font-style:normal;background:var(--card2);border-radius:10px;padding:9px 0;text-align:center;font-weight:700;font-size:12px}.mpad .eqk{background:linear-gradient(135deg,var(--pri),var(--pri2));color:var(--onpri)}
+.mchips{display:flex;gap:5px;flex-wrap:wrap}.mchips span{border:1px solid var(--bd);background:var(--card2);color:var(--h);border-radius:12px;padding:5px 8px;font-weight:700}
+.mseg{display:flex;background:var(--card2);border-radius:9px;padding:2px;gap:2px}.mseg span{flex:1;text-align:center;padding:5px 1px;border-radius:7px;color:var(--mut);font-weight:700;font-size:8.5px}.mseg .on{background:var(--pri);color:var(--onpri)}
+.msw{display:flex;gap:5px}.msw i{width:14px;height:14px;border-radius:50%;display:inline-block}
+@media (prefers-reduced-motion:reduce){.pd-tap,.pd-f{transition:none}.pd-tap.hit{animation:none}}
 </style>
 
 </head>
@@ -235,11 +296,11 @@ const hbar = (l, v, mx, c, t) => `<div class="hrow"><div>${esc(l)}</div><div cla
 const stat = (l, v) => `<div class="stat"><small>${esc(l)}</small><b>${esc(v)}</b></div>`;
 
 /* ===== Navigasi ===== */
-const TABS = [['dashboard', 'Dashboard']].concat(KEYS.map(k => [k, CFG[k].label])).concat([['checklist', 'Checklist'], ['simulasi', 'Simulasi'], ['bayar', 'Pembayaran'], ['rekap', 'Rekap'], ['trip', 'Trip & Arsip'], ['bagihasil', 'Bagi Hasil'], ['kategori', 'Kategori'], ['daftar', 'Pendaftaran'], ['akun', 'Akun'], ['pengaturan', 'Pengaturan']]);
+const TABS = [['dashboard', 'Dashboard']].concat(KEYS.map(k => [k, CFG[k].label])).concat([['checklist', 'Checklist'], ['simulasi', 'Simulasi'], ['bayar', 'Pembayaran'], ['rekap', 'Rekap'], ['trip', 'Trip & Arsip'], ['bagihasil', 'Bagi Hasil'], ['kategori', 'Kategori'], ['daftar', 'Pendaftaran'], ['akun', 'Akun'], ['pengaturan', 'Pengaturan'], ['kalk', 'Kalkulator'], ['panduan', 'Panduan']]);
 function show(k) {
   cur = k; editId = null;
   document.querySelectorAll('nav button').forEach(b => b.classList.toggle('active', b.dataset.k === (MAIN.includes(k) ? k : k === 'pengaturan' ? 'akun' : 'more')));
-  if (k === 'dashboard') renderDash(); else if (k === 'more') renderMore(); else if (k === 'checklist') renderCl(); else if (k === 'trip') renderTrip(); else if (k === 'simulasi') renderSim(); else if (k === 'bayar') renderBayar(); else if (k === 'rekap') renderRekap(); else if (k === 'bagihasil') renderBagiHasil(); else if (k === 'kategori') renderKat(); else if (k === 'daftar') renderDaftar(); else if (k === 'akun') renderAkun(); else if (k === 'pengaturan') renderPeng(); else renderSheet(k);
+  if (k === 'dashboard') renderDash(); else if (k === 'more') renderMore(); else if (k === 'checklist') renderCl(); else if (k === 'trip') renderTrip(); else if (k === 'simulasi') renderSim(); else if (k === 'bayar') renderBayar(); else if (k === 'rekap') renderRekap(); else if (k === 'bagihasil') renderBagiHasil(); else if (k === 'kategori') renderKat(); else if (k === 'daftar') renderDaftar(); else if (k === 'akun') renderAkun(); else if (k === 'pengaturan') renderPeng(); else if (k === 'kalk') renderKalk(); else if (k === 'panduan') { if (!PD.keep) PD.ch = -1; PD.keep = false; renderPanduan(); } else renderSheet(k);
   if (k !== 'dashboard' && k !== 'more') { const lb = (TABS.find(t => t[0] === k) || ['', ''])[1]; $('main').insertAdjacentHTML('afterbegin', `<div class="pgh">${MAIN.includes(k) ? '' : k === 'pengaturan' ? '<button class="back" onclick="show(\'akun\')">‹ Akun</button>' : '<button class="back" onclick="show(\'more\')">‹ Menu</button>'}<h2>${lb}</h2></div>`); }
   if (CR_OK === false) $('main').insertAdjacentHTML('afterbegin', '<div class="warn red">Identitas pembuat aplikasi berubah. Fitur PDF dikunci. Pasang ulang aplikasi asli.</div>');
   window.scrollTo(0, 0);
@@ -404,7 +465,7 @@ function impor(file) {
 
 /* ===== Simulasi ===== */
 const SIM_T = { orang: 'Per orang', grup: 'Sekali per trip', tenda: 'Tenda (sewa jika stok kurang)' };
-const KATS = CFG.pengeluaran.fields[1].options, up5 = x => Math.ceil(x / 5000) * 5000;
+const KATS = CFG.pengeluaran.fields[1].options, up5 = x => { const b = (typeof DB !== 'undefined' && DB && DB.pref && Number(DB.pref.bulat)) || 5000; return Math.ceil(x / b) * b; };
 const simDef = () => ({ nama: '', peserta: 0, official: 0, ikut: true, harga: 0, target: 0, items: [] });
 let SIM = null;
 function simCalc(s, p) {
@@ -422,7 +483,7 @@ function simCalc(s, p) {
 }
 function renderSim() {
   SIM = SIM || simDef();
-  $('main').innerHTML = kalkCard() + `<div class="card"><h3>Skenario Simulasi</h3><select id="ssel"><option value="">-- Pilih skenario tersimpan --</option>${DB.sim.map(x => `<option value="${x.id}">${esc(x.nama)} (${esc(x.diubah)})</option>`).join('')}</select>
+  $('main').innerHTML = `<div class="card"><h3>Skenario Simulasi</h3><select id="ssel"><option value="">-- Pilih skenario tersimpan --</option>${DB.sim.map(x => `<option value="${x.id}">${esc(x.nama)} (${esc(x.diubah)})</option>`).join('')}</select>
   <div class="flt"><button class="btn alt" onclick="simLoad()">Muat</button><button class="btn" onclick="simSave()">Simpan</button><button class="btn alt" onclick="simDel()">Hapus</button><button class="btn alt" onclick="SIM=simDef();renderSim()">Form baru</button></div><div id="smsg" class="msg"></div></div>
   <div class="card"><h3>Parameter</h3><label>Nama simulasi / destinasi</label><input value="${esc(SIM.nama)}" oninput="SIM.nama=this.value">
   ${[['Jumlah peserta', 'peserta'], ['Jumlah official', 'official'], ['Harga jual per peserta (Rp)', 'harga', 1], ['Target keuntungan per official (Rp)', 'target', 1]].map(([l, k, m]) => `<label>${l}</label>` + (m ? `<input type="text" inputmode="numeric" value="${fmtN(SIM[k])}" oninput="fmtNum(this);SIM.${k}=numVal(this.value);drawSim()">` : `<input type="number" inputmode="decimal" value="${SIM[k]}" oninput="SIM.${k}=+this.value||0;drawSim()">`)).join('')}
@@ -435,7 +496,7 @@ function renderSim() {
   <div style="margin-top:10px"><input type="checkbox" id="ap_r" checked> Atur Total Realisasi = pendapatan simulasi</div>
   <button class="btn" onclick="simApply()">Terapkan ke Anggaran Pengeluaran</button><div id="amsg" class="msg"></div></div>
   <div id="simres"></div><div id="vsbox"></div>`;
-  drawItems(); drawSim(); drawVs(); renderKform();
+  drawItems(); drawSim(); drawVs();
 }
 function drawItems() {
   $('sitems').innerHTML = SIM.items.map((it, i) => {
@@ -709,7 +770,7 @@ function buildNav() {
   $('nav').innerHTML = [['dashboard', 'Beranda'], ['simulasi', 'Simulasi'], ['more', 'Menu'], ['rekap', 'Rekap'], ['akun', 'Akun']].map(([k, l]) => k === 'more' ? `<button class="mid" data-k="more" onclick="show('more')"><span class="mic"><svg viewBox="0 0 24 24">${ICO.more}</svg></span>${l}</button>` : `<button data-k="${k}" onclick="show('${k}')"><svg viewBox="0 0 24 24">${ICO[k]}</svg>${l}</button>`).join('');
 }
 function renderMore() {
-  const T = [['tamu', '👥', 'Tamu', 'Daftar peserta'], ['itinerary', '🗺️', 'Itinerary', 'Rundown perjalanan'], ['perlengkapan', '🎒', 'Perlengkapan', 'Kebutuhan & sewa'], ['checklist', '✅', 'Checklist', 'Barang bawaan'], ['pemasukan', '⬇️', 'Masuk', 'Catat pemasukan'], ['pengeluaran', '⬆️', 'Keluar', 'Catat pengeluaran'], ['bayar', '💳', 'Pembayaran', 'Patungan peserta'], ['trip', '🗂️', 'Trip & Arsip', 'Arsip & cadangan'], ['bagihasil', '💰', 'Bagi Hasil', 'Untung/rugi & penyelesaian official'], ['kategori', '🏷️', 'Kategori', 'Kategori & berulang'], ['daftar', '📝', 'Pendaftaran', 'Link & pendaftar online']];
+  const T = [['tamu', '👥', 'Tamu', 'Daftar peserta'], ['itinerary', '🗺️', 'Itinerary', 'Rundown perjalanan'], ['perlengkapan', '🎒', 'Perlengkapan', 'Kebutuhan & sewa'], ['checklist', '✅', 'Checklist', 'Barang bawaan'], ['pemasukan', '⬇️', 'Masuk', 'Catat pemasukan'], ['pengeluaran', '⬆️', 'Keluar', 'Catat pengeluaran'], ['bayar', '💳', 'Pembayaran', 'Patungan peserta'], ['trip', '🗂️', 'Trip & Arsip', 'Arsip & cadangan'], ['bagihasil', '💰', 'Bagi Hasil', 'Untung/rugi & penyelesaian official'], ['kategori', '🏷️', 'Kategori', 'Kategori & berulang'], ['daftar', '📝', 'Pendaftaran', 'Link & pendaftar online'], ['kalk', '🧮', 'Kalkulator', 'Hitung, memori, riwayat'], ['panduan', '📖', 'Panduan', 'Demo & langkah rinci']];
   $('main').innerHTML = `<div class="pgh"><h2>Menu</h2></div><div class="tiles">${T.map(t => `<button class="tile" onclick="show('${t[0]}')"><span>${t[1]}</span>${t[2]}<small>${t[3]}</small></button>`).join('')}</div>`;
 }
 function toggleTheme() {
@@ -787,7 +848,7 @@ const normN = x => String(x || '').trim().toLowerCase();
 function pesertaInfo(i) { const b = bayarData(), base = window._per[$('bsel').value], p = b.ps[i]; return { base, p, s: base - p.dibayar }; }
 function tagihWA(i) {
   const { base, p, s } = pesertaInfo(i), d = DB.set, late = s > 0 && d.tenggat && today() > d.tenggat;
-  const t = 'Halo ' + p.nama + ', tagihan trip' + (d.destinasi ? ' ' + d.destinasi : '') + ':\nTotal tagihan: ' + rp(base) + '\nSudah dibayar: ' + rp(p.dibayar) + '\n*Sisa: ' + rp(s) + '*' + (d.tenggat ? '\nTenggat: ' + fmtDate(d.tenggat) + (late ? ' (sudah lewat)' : '') : '') + (d.rek ? '\n\nTransfer ke:\n' + d.rek : '') + (d.qris ? '\n(atau scan QRIS yang dikirim terpisah)' : '') + '\n\nMohon kirim bukti transfer. Terima kasih 🙏';
+  const t = tagihTpl(p, base, s, d, late) || 'Halo ' + p.nama + ', tagihan trip' + (d.destinasi ? ' ' + d.destinasi : '') + ':\nTotal tagihan: ' + rp(base) + '\nSudah dibayar: ' + rp(p.dibayar) + '\n*Sisa: ' + rp(s) + '*' + (d.tenggat ? '\nTenggat: ' + fmtDate(d.tenggat) + (late ? ' (sudah lewat)' : '') : '') + (d.rek ? '\n\nTransfer ke:\n' + d.rek : '') + (d.qris ? '\n(atau scan QRIS yang dikirim terpisah)' : '') + '\n\nMohon kirim bukti transfer. Terima kasih 🙏';
   let no = String(p.ponsel || '').replace(/\D/g, ''); if (no.indexOf('0') === 0) no = '62' + no.slice(1); openWA(t, no);
 }
 function terbilang(n) {
@@ -915,13 +976,74 @@ async function ambilDaftar() {
   } catch (e) { setMsg('dmsg', 'Gagal terhubung. Cek link Apps Script dan internet.', 0); }
 }
 
-/* ===== Kalkulator bantu (tab Simulasi) ===== */
+/* ===== Kalkulator (tab sendiri di Menu) ===== */
+/*K-CORE*/
+function kEval(s) {
+  const t = String(s).match(/\d+\.?\d*|\.\d+|[-+*\/()%]/g) || []; let i = 0;
+  const pk = () => t[i];
+  function factor() {
+    let neg = 1; while (pk() === '-' || pk() === '+') { if (t[i++] === '-') neg = -neg; }
+    const x = t[i++]; let v, p = false;
+    if (x === '(') { v = expr(); if (t[i] === ')') i++; } else if (x !== undefined && /^[\d.]/.test(x)) v = parseFloat(x); else throw new Error('x');
+    while (pk() === '%') { i++; v /= 100; p = true; }
+    return { v: neg * v, p };
+  }
+  function term() {
+    const f = factor(); let v = f.v, single = true;
+    while (pk() === '*' || pk() === '/') { single = false; const op = t[i++], g = factor(); if (op === '*') v *= g.v; else { if (g.v === 0) throw new Error('0'); v /= g.v; } }
+    return { v, pct: f.p && single };
+  }
+  function expr() {
+    let v = term().v;
+    while (pk() === '+' || pk() === '-') { const op = t[i++], b = term(), x = b.pct ? v * b.v : b.v; v = op === '+' ? v + x : v - x; }
+    return v;
+  }
+  const r = expr(); if (i < t.length) throw new Error('x');
+  if (!isFinite(r)) throw new Error('x'); return parseFloat(r.toPrecision(14));
+}
+function kTrim(e) { let s = e; while (/[-+*\/.]$/.test(s)) s = s.slice(0, -1); return s; }
+function kVal(e) { const s = kTrim(e); if (!s) return null; try { return kEval(s); } catch (x) { return null; } }
+function kPress(st, c) {
+  let e = st.e; const last = e.slice(-1), tok = (e.match(/[\d.]*$/) || [''])[0], isOp = ch => /[-+*\/]/.test(ch);
+  if (st.done) { st.done = false; if (/^[\d.(]$/.test(c) || c === ',') e = ''; }
+  const last2 = e.slice(-1);
+  if (/^\d$/.test(c)) {
+    if (last2 === ')' || last2 === '%') e += '*';
+    const tk = (e.match(/[\d.]*$/) || [''])[0];
+    if (tk === '0') e = e.slice(0, -1); else if (tk.replace('.', '').length >= 15) return st;
+    e += c;
+  } else if (c === ',') {
+    const tk = (e.match(/[\d.]*$/) || [''])[0];
+    if (tk.indexOf('.') >= 0) return st;
+    if (last2 === ')' || last2 === '%') e += '*';
+    e += tk === '' ? '0.' : '.';
+  } else if (/^[-+*\/]$/.test(c)) {
+    if (e === '' || last2 === '(') { if (c === '-') e += c; }
+    else if (isOp(last2)) { if (c === '-' && /[*\/]/.test(last2)) e += c; else { e = e.replace(/[-+*\/]+$/, '') + c; } }
+    else if (last2 === '.') e = e.slice(0, -1) + c; else e += c;
+  } else if (c === '%') { if (/[\d)%]$/.test(e)) e += '%'; }
+  else if (c === '()') {
+    const open = (e.match(/\(/g) || []).length, cl = (e.match(/\)/g) || []).length;
+    if (open > cl && /[\d)%]$/.test(e)) e += ')'; else { if (/[\d)%]$/.test(e)) e += '*'; e += '('; }
+  } else if (c === 'del') e = e.slice(0, -1);
+  else if (c === 'ac') e = '';
+  st.e = e; return st;
+}
+function kFmtNum(n) { if (n == null || !isFinite(n)) return ''; return Number(parseFloat(n.toPrecision(14))).toLocaleString('id-ID', { maximumFractionDigits: 10 }); }
+function kShow(e) {
+  return String(e).replace(/\d+\.?\d*|\.\d+/g, m => { const a = m.split('.'); return (a[0] === '' ? '0' : Number(a[0]).toLocaleString('id-ID')) + (m.indexOf('.') >= 0 ? ',' + (a[1] || '') : ''); }).replace(/\*/g, '×').replace(/\//g, '÷').replace(/-/g, '−');
+}
+/*K-CORE-END*/
+
+const KT = { e: '', done: false, mode: 'k', mem: 0 };
+const kHist = () => pref('khist', []);
+const kNumStr = v => v.toFixed(10).replace(/\.?0+$/, '');
 const KALK = [
   { n: 'Patungan per orang', f: [['tot', 'Total biaya (Rp)', 'rp'], ['p', 'Jumlah peserta', 'n'], ['adm', 'Cadangan / biaya admin (%)', 'n', '0'], ['bul', 'Pembulatan ke atas (Rp)', 'rp', '5.000']],
     run: v => { const adm = v.tot * v.adm / 100, t2 = v.tot + adm, raw = v.p ? t2 / v.p : 0, per = v.bul > 0 ? Math.ceil(raw / v.bul) * v.bul : Math.ceil(raw), kum = per * v.p;
       return { h: rp(per) + ' per orang', s: ['Cadangan = ' + rp(v.tot) + ' x ' + v.adm + '% = ' + rp(adm), 'Total + cadangan = ' + rp(t2), 'Dibagi ' + v.p + ' peserta = ' + rp(raw), 'Dibulatkan ke atas ' + rp(v.bul) + ' = ' + rp(per), 'Terkumpul ' + rp(kum) + ' (kelebihan ' + rp(kum - t2) + ')'] }; } },
   { n: 'Harga jual dari target untung', f: [['tot', 'Total biaya trip (Rp)', 'rp'], ['p', 'Jumlah peserta', 'n'], ['u', 'Target keuntungan total (Rp)', 'rp']],
-    run: v => { const raw = v.p ? (v.tot + v.u) / v.p : 0, h = up5(raw), pend = h * v.p; return { h: rp(h) + ' per peserta', s: ['(Biaya ' + rp(v.tot) + ' + untung ' + rp(v.u) + ') / ' + v.p + ' = ' + rp(raw), 'Dibulatkan ke atas Rp5.000 = ' + rp(h), 'Pendapatan ' + rp(pend) + ', untung nyata ' + rp(pend - v.tot)] }; } },
+    run: v => { const raw = v.p ? (v.tot + v.u) / v.p : 0, h = up5(raw), pend = h * v.p; return { h: rp(h) + ' per peserta', s: ['(Biaya ' + rp(v.tot) + ' + untung ' + rp(v.u) + ') / ' + v.p + ' = ' + rp(raw), 'Dibulatkan ke atas ' + rp(pulBulat()) + ' = ' + rp(h), 'Pendapatan ' + rp(pend) + ', untung nyata ' + rp(pend - v.tot)] }; } },
   { n: 'Balik modal (peserta minimal)', f: [['fx', 'Biaya tetap total (Rp)', 'rp'], ['vr', 'Biaya variabel per orang (Rp)', 'rp'], ['h', 'Harga jual per peserta (Rp)', 'rp']],
     run: v => { const m = v.h - v.vr; if (m <= 0) return { h: 'Tidak akan balik modal', s: ['Harga jual harus lebih besar dari biaya variabel per orang.'] }; const b = Math.ceil(v.fx / m);
       return { h: b + ' peserta', s: ['Kontribusi per peserta = ' + rp(v.h) + ' - ' + rp(v.vr) + ' = ' + rp(m), 'Biaya tetap ' + rp(v.fx) + ' / ' + rp(m) + ' = ' + (v.fx / m).toFixed(2) + ', dibulatkan ke atas = ' + b + ' peserta'] }; } },
@@ -929,22 +1051,80 @@ const KALK = [
     run: v => { const dp = Math.round(v.tot * v.pct / 100); return { h: 'DP ' + rp(dp) + ', sisa ' + rp(v.tot - dp), s: ['DP = ' + rp(v.tot) + ' x ' + v.pct + '% = ' + rp(dp), 'Sisa = ' + rp(v.tot) + ' - ' + rp(dp) + ' = ' + rp(v.tot - dp)] }; } },
   { n: 'Selisih & persentase', f: [['a', 'Nilai rencana (Rp)', 'rp'], ['b', 'Nilai nyata (Rp)', 'rp']],
     run: v => { const s = v.b - v.a, pc = v.a ? s / v.a * 100 : 0; return { h: (s >= 0 ? 'Lebih ' : 'Hemat ') + rp(Math.abs(s)) + ' (' + Math.abs(pc).toFixed(1) + '%)', s: ['Selisih = nyata - rencana = ' + rp(v.b) + ' - ' + rp(v.a) + ' = ' + rp(s), 'Persen = selisih / rencana = ' + pc.toFixed(2) + '%'] }; } },
-  { n: 'Kalkulator biasa', f: [['e', 'Ketik hitungan, mis. (1500000+250000)/8', 't']],
-    run: v => { let x = String(v.e).replace(/,/g, '.').replace(/(\d+(?:\.\d+)?)%/g, '($1/100)'); if (!x.trim()) return { h: '-', s: ['Gunakan + - * / ( ) dan %. Desimal pakai koma.'] }; if (!/^[0-9+\-*/().\s]+$/.test(x)) return { h: '-', s: ['Hanya angka dan + - * / ( ) %.'] };
-      const r = Function('"use strict";return (' + x + ')')(); return isFinite(r) ? { h: Number(r.toFixed(4)).toLocaleString('id-ID'), s: ['Hasil dari: ' + v.e] } : { h: '-', s: ['Hitungan tidak valid.'] }; } }
+  { n: 'Diskon & PPN', f: [['h', 'Harga awal (Rp)', 'rp'], ['d', 'Diskon (%)', 'n', '0'], ['p', 'PPN / pajak (%)', 'n', '0']],
+    run: v => { const ds = v.h * v.d / 100, a = v.h - ds, pj = a * v.p / 100, t = a + pj; return { h: rp(t), s: ['Diskon = ' + rp(v.h) + ' x ' + v.d + '% = ' + rp(ds), 'Setelah diskon = ' + rp(a), 'Pajak = ' + rp(a) + ' x ' + v.p + '% = ' + rp(pj), 'Total bayar = ' + rp(t)] }; } },
+  { n: 'Konversi mata uang', f: [['j', 'Jumlah (mata uang asing)', 'n'], ['k', 'Kurs (Rp per 1 unit)', 'rp']],
+    run: v => ({ h: rp(v.j * v.k), s: [v.j + ' x ' + rp(v.k) + ' = ' + rp(v.j * v.k), 'Isi kurs sendiri sesuai kurs hari ini.'] }) }
 ];
-const kalkCard = () => `<div class="card"><h3>🧮 Kalkulator Bantu</h3><small class="mut">Pilih jenis hitungan. Hasil dan langkahnya langsung muncul, tanpa internet.</small>
+const pulBulat = () => Number(pref('bulat', 5000)) || 5000;
+const kalkCard = () => `<div class="card"><h3>📊 Hitung Trip</h3><small class="mut">Pilih jenis hitungan. Hasil dan langkahnya langsung muncul, tanpa internet.</small>
   <select id="kt" onchange="renderKform()" style="margin-top:8px">${KALK.map((k, i) => `<option value="${i}">${k.n}</option>`).join('')}</select><div id="kform"></div><div id="kres" style="margin-top:10px"></div><button class="btn alt" onclick="copyK()">Salin hasil</button></div>`;
 function renderKform() {
   const k = KALK[+$('kt').value];
-  $('kform').innerHTML = k.f.map(f => `<label>${f[1]}</label><input id="k_${f[0]}" ${f[2] === 'rp' ? 'inputmode="numeric" oninput="fmtNum(this);calcK()"' : f[2] === 't' ? 'oninput="calcK()"' : 'inputmode="decimal" oninput="calcK()"'} value="${f[3] || ''}">`).join(''); calcK();
+  $('kform').innerHTML = k.f.map(f => `<label>${f[1]}</label><input id="k_${f[0]}" ${f[2] === 'rp' ? 'inputmode="numeric" oninput="fmtNum(this);calcK()"' : 'inputmode="decimal" oninput="calcK()"'} value="${f[3] || ''}">`).join(''); calcK();
 }
 function calcK() {
-  const k = KALK[+$('kt').value], v = {}; k.f.forEach(f => { const r = $('k_' + f[0]).value; v[f[0]] = f[2] === 't' ? r : Number(String(r).replace(/\./g, '').replace(',', '.')) || 0; });
+  const k = KALK[+$('kt').value], v = {}; k.f.forEach(f => { const r = $('k_' + f[0]).value; v[f[0]] = Number(String(r).replace(/\./g, '').replace(',', '.')) || 0; });
   let r; try { r = k.run(v); } catch (e) { r = { h: '-', s: ['Hitungan tidak valid.'] }; } window._kr = r.h + '\n' + r.s.join('\n');
   $('kres').innerHTML = `<div class="warn note"><b style="font-size:20px">${esc(r.h)}</b></div>${r.s.map(x => `<div style="margin-top:6px;font-size:14px">• ${esc(x)}</div>`).join('')}`;
 }
 function copyK() { if (navigator.clipboard) navigator.clipboard.writeText(window._kr || ''); toast('Hasil disalin'); }
+
+function renderKalk() {
+  KT.mem = Number(pref('kmem', 0)) || 0;
+  const seg = [['k', '🧮 Kalkulator'], ['t', '📊 Hitung Trip'], ['h', '🕘 Riwayat']];
+  $('main').innerHTML = `<div class="zsg kseg">${seg.map(([v, l]) => `<button class="${KT.mode === v ? 'on' : ''}" onclick="kMode('${v}')">${l}</button>`).join('')}</div><div id="kbody"></div>`;
+  if (KT.mode === 'k') kDraw(); else if (KT.mode === 't') { $('kbody').innerHTML = kalkCard(); renderKform(); } else kHistDraw();
+}
+const kMode = v => { KT.mode = v; renderKalk(); };
+function kDraw() {
+  const rows = [['ac', '()', '%', '/'], ['7', '8', '9', '*'], ['4', '5', '6', '-'], ['1', '2', '3', '+'], ['0', ',', 'del', '=']];
+  const lbl = { ac: 'AC', '()': '( )', '/': '÷', '*': '×', '-': '−', del: '⌫' }, cls = k => k === '=' ? 'eq' : /^[-+*\/]$/.test(k) ? 'op' : (k === 'ac' || k === '()' || k === '%' || k === 'del') ? 'fn' : '';
+  $('kbody').innerHTML = `<div class="card kdisp"><div class="kmem" id="kmem"></div><div class="kex" id="kex"></div><div class="krs" id="krs">0</div><div class="ktb" id="ktb"></div></div>
+  <div class="kchips"><button class="kchip" onclick="kSalin()">📋 Salin</button><button class="kchip" onclick="kBagi()">👥 ÷ Peserta</button><button class="kchip" onclick="kBulat()">⬆ Bulat ${kFmtNum(pulBulat())}</button></div>
+  <div class="kpad">${[['MC', 'mc'], ['MR', 'mr'], ['M+', 'm+'], ['M−', 'm-']].map(([l, k]) => `<button class="kb kmm" onclick="kMem('${k}')">${l}</button>`).join('')}${rows.map(r => r.map(k => `<button class="kb ${cls(k)}" onclick="kTap('${k}')">${lbl[k] || k}</button>`).join('')).join('')}</div>
+  <small class="mut" style="display:block;margin-top:12px">Tips: 200 + 10% = 220 (persen menyesuaikan angka di depannya). Ketuk ( ) untuk kurung buka dan tutup otomatis.</small>`;
+  kUpd();
+}
+function kUpd() {
+  const ex = $('kex'); if (!ex) return;
+  const v = kVal(KT.e), simple = /^-?[\d.]*$/.test(KT.e);
+  ex.textContent = KT.e ? kShow(KT.e) : '';
+  const rs = $('krs'), txt = KT.e === '' ? '0' : simple ? kShow(KT.e) : v == null ? '…' : kFmtNum(v);
+  rs.textContent = txt; rs.style.fontSize = txt.length > 16 ? '24px' : txt.length > 11 ? '30px' : '40px';
+  $('kmem').textContent = KT.mem ? 'M = ' + kFmtNum(KT.mem) : '';
+  const tb = $('ktb'); if (tb) tb.textContent = (v != null && Number.isInteger(v) && v >= 1000 && v < 1e12) ? terbilang(v).replace(/^./, c => c.toUpperCase()) : '';
+}
+function kTap(k) { if (k === '=') return kEq(); kPress(KT, k); kUpd(); }
+function kPush(e, r, lb) { const h = kHist().slice(); h.unshift({ e, r, lb: lb || '', t: Date.now() }); return setPref('khist', h.slice(0, 40)); }
+function kEq() {
+  if (/^-?[\d.]*$/.test(KT.e)) return;
+  const v = kVal(KT.e); if (v == null) return toast('Hitungan tidak lengkap atau tidak valid');
+  if (Math.abs(v) >= 1e15) return toast('Angka terlalu besar');
+  kPush(KT.e, v); KT.e = kNumStr(v); KT.done = true; kUpd();
+}
+function kApply(lb, r) { if (Math.abs(r) >= 1e15) return toast('Angka terlalu besar'); kPush('', r, kShow(KT.e) + ' ' + lb); KT.e = kNumStr(r); KT.done = true; kUpd(); }
+function kSalin() { const v = kVal(KT.e); if (v == null) return toast('Belum ada hasil'); try { navigator.clipboard.writeText(kNumStr(v).replace('.', ',')); toast('Hasil disalin'); } catch (e) { toast('Gagal menyalin'); } }
+function kBagi() { const v = kVal(KT.e), n = DB.tamu.filter(t => t['Status'] === 'Diterima').length; if (v == null) return toast('Hitung dulu'); if (!n) return toast('Belum ada peserta berstatus Diterima'); kApply('÷ ' + n + ' peserta', v / n); }
+function kBulat() { const v = kVal(KT.e), b = pulBulat(); if (v == null) return toast('Hitung dulu'); kApply('dibulatkan ke atas ' + kFmtNum(b), Math.ceil(v / b) * b); }
+async function kMem(op) {
+  const v = kVal(KT.e);
+  if (op === 'mc') KT.mem = 0;
+  else if (op === 'mr') { if (!KT.mem) return toast('Memori kosong'); if (KT.done || KT.e === '' || /[-+*\/(]$/.test(KT.e)) { if (KT.done) { KT.e = ''; KT.done = false; } KT.e += kNumStr(KT.mem); } else return toast('Pilih operator dulu'); kUpd(); return; }
+  else { if (v == null) return toast('Hitung dulu'); KT.mem += op === 'm+' ? v : -v; }
+  await setPref('kmem', KT.mem); kUpd(); toast(op === 'mc' ? 'Memori dihapus' : 'Memori tersimpan');
+}
+function kHistDraw() {
+  const h = kHist();
+  $('kbody').innerHTML = `<div class="card"><h3>Riwayat hitungan</h3>${h.length ? h.map((x, i) => `<div class="khi" onclick="kLoad(${i})"><div class="khe">${esc(x.lb || kShow(x.e))}</div><div class="khr">= ${kFmtNum(x.r)}</div></div>`).join('') + '<button class="btn alt" onclick="kHistClear()">Hapus riwayat</button>' : '<small class="mut">Belum ada. Hasil dari tombol = akan tersimpan di sini. Ketuk salah satu untuk memakainya lagi.</small>'}</div>`;
+}
+function kLoad(i) { const x = kHist()[i]; if (!x) return; KT.e = kNumStr(x.r); KT.done = true; KT.mode = 'k'; renderKalk(); }
+async function kHistClear() { if (pref('konf', true) && !confirm('Hapus semua riwayat hitungan?')) return; await setPref('khist', []); kHistDraw(); }
+document.addEventListener('keydown', ev => {
+  if (cur !== 'kalk' || KT.mode !== 'k' || /INPUT|TEXTAREA|SELECT/.test((ev.target || {}).tagName || '') || ev.ctrlKey || ev.metaKey) return;
+  const k = ev.key;
+  if (/^\d$/.test(k) || (k.length === 1 && '+-*/%'.indexOf(k) >= 0)) kTap(k); else if (k === ',' || k === '.') kTap(','); else if (k === 'Enter' || k === '=') { ev.preventDefault(); kEq(); } else if (k === 'Backspace') kTap('del'); else if (k === 'Escape') kTap('ac'); else if (k === '(' || k === ')') kTap('()');
+});
 
 /* ===== Statistik antar-trip (tab Rekap & PDF) ===== */
 function tripStat(d, nama, tgl) {
@@ -1028,7 +1208,7 @@ async function bagikanCadangan() {
   const txt = JSON.stringify(DB), f = new File([txt], 'cadangan-bawaulin-' + today() + '.json', { type: 'application/json' });
   try {
     if (navigator.canShare && navigator.canShare({ files: [f] })) await navigator.share({ files: [f], title: 'Cadangan Bawaulin' }); else { download(f.name, txt); toast('File cadangan diunduh, simpan ke Drive'); }
-    DB.lastBackup = Date.now(); await save(); if (cur === 'trip') renderTrip(); else if (cur === 'dashboard') renderDash();
+    DB.lastBackup = Date.now(); await save(); if (cur === 'trip') renderTrip(); else if (cur === 'dashboard') renderDash(); else if (cur === 'akun') renderAkun();
   } catch (e) { if (!e || e.name !== 'AbortError') toast('Gagal membagikan, coba Unduh cadangan'); }
 }
 /* Tempat sampah */
@@ -1238,7 +1418,7 @@ async function aktifkan() {
 }
 
 /* ===== v18: Akun, Pengaturan, warna aplikasi, nomor kwitansi, identitas pembuat ===== */
-const APP_V = 'v18';
+const APP_V = 'v19';
 const CR = Object.freeze({ nama: 'bawaulin.trip', tag: 'Lieur gawe, Bawa ulin', ig: 'https://www.instagram.com/bawaulin.trip?srtk=d29rcmh1YXVrajVz', igh: '@bawaulin.trip', wa: 'https://wa.me/6289618805100', wah: '+62 896-1880-5100' });
 const CR_H = 'bdaae993647f576cf92a364af7443befdce2ceefffe6c926d596f7e52a001b37', LOGO_H = '3763dd402cc104c4f9cebcce4a37a936cf2e0606bb1dd2d261e030f0a6ccc9bb';
 let CR_OK = null, LOCKED = false, hiddenAt = 0, PRIV_OBS = null;
@@ -1263,7 +1443,7 @@ const SVG_IG = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stro
 const SVG_WA = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round"><path d="M4 20l1.4-4.2A8 8 0 1 1 8.4 18.7z"/><path d="M9.2 8.8c.2 2.8 2.4 5 5.2 5.4l1-1.2-1.8-.9-.8.6c-.8-.4-1.5-1.1-1.9-1.9l.6-.8-.9-1.8z" fill="#fff" stroke="none"/></svg>';
 const SVG_GEAR = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>';
 function pembuatHtml() {
-  return `<div id="pembuat" class="card zabout"><img class="zbig" src="logo.png" alt="${esc(CR.nama)}"><div class="ztag">${esc(CR.tag)}</div><div class="zcts"><div><a class="zbtn zig" href="${CR.ig}" target="_blank" rel="noopener">${SVG_IG}Instagram</a><small>${esc(CR.igh)}</small></div><div><a class="zbtn zwa" href="${CR.wa}?text=${encodeURIComponent('Halo, saya mau tanya soal aplikasi bawaulin.trip')}" target="_blank" rel="noopener">${SVG_WA}WhatsApp</a><small>${esc(CR.wah)}</small></div></div><div class="zlock">🔒 Bagian ini dilindungi dan tidak bisa diubah</div></div>`;
+  return `<div id="pembuat" class="card zabout"><img class="zbig" src="logo.png" alt="${esc(CR.nama)}"><div class="ztag">${esc(CR.tag)}</div><div class="zcts"><div><a class="zbtn zig" href="${CR.ig}" target="_blank" rel="noopener">${SVG_IG}Instagram</a></div><div><a class="zbtn zwa" href="${CR.wa}?text=${encodeURIComponent('Halo, saya mau tanya soal aplikasi bawaulin.trip')}" target="_blank" rel="noopener">${SVG_WA}WhatsApp</a></div></div><div class="zlock">🔒 Bagian ini dilindungi dan tidak bisa diubah</div></div>`;
 }
 
 /* Warna & tampilan */
@@ -1376,17 +1556,62 @@ function ttdPad() {
   };
 }
 async function ttdHapus() { delete prof().ttd; await save(); $('fsheet').remove(); rerender(); }
+/* ===== v19: Akun (kartu identitas + Pengaturan menyatu) ===== */
+const TEMA_N = { dark: 'Gelap', light: 'Terang', auto: 'Ikuti HP' };
+const temaNow = () => { try { return localStorage.getItem('t') || 'dark'; } catch (e) { return 'dark'; } };
+const warnaNama = () => { const w = pref('warna', null); if (!w) return 'Oranye'; const p = PRESET.find(x => x[1] === w.a); return p ? p[0] : 'Kustom'; };
 function renderAkun() {
-  const p = prof();
+  const p = prof(), pf = [['WhatsApp', p.wa], ['Instagram', p.ig], ['Email', p.email], ['Kota / alamat', p.kota], ['Nama penanda tangan', p.ttdNama], ['Tanda tangan', p.ttd], ['Stempel', p.stempel]];
+  const ok = pf.filter(x => x[1]).length, kurang = pf.filter(x => !x[1]).map(x => x[0]), dit = DB.tamu.filter(t => t['Status'] === 'Diterima').length;
+  const w = pref('warna', null), dot = w ? w.a : '#f97316';
   $('main').innerHTML = `
-  <div class="card zprofile" onclick="editProfil()"><img src="${logoP()}" alt=""><div class="zpt"><div class="zpn">${esc(namaP())}</div><div class="zps">${esc(tagP())}</div><span class="zlnk">Ubah profil dan logo</span></div></div>
-  <button class="zgo" onclick="show('pengaturan')"><span class="zgi">${SVG_GEAR}</span><span class="zgt"><b>Pengaturan</b><small>PIN, tampilan, warna, pengingat, cadangan</small></span><span class="zgc">›</span></button>
+  <div class="card zid">
+    <div class="zid-top" onclick="editProfil()"><img src="${logoP()}" alt=""><div class="zpt"><div class="zpn">${esc(namaP())}</div><div class="zps">${esc(tagP())}</div><span class="zlnk">Ubah profil dan logo</span></div></div>
+    <button class="zid-set" onclick="show('pengaturan')" aria-label="Buka Pengaturan"><span class="zgi2">${SVG_GEAR}</span><span class="zgt2"><b>Pengaturan</b><small><i class="zdot" style="background:${dot}"></i>PIN ${DB.pin ? 'aktif' : 'mati'} · ${TEMA_N[temaNow()] || 'Gelap'} · ${warnaNama()}</small></span><span class="zpill">Buka ›</span></button>
+  </div>
+  <div class="zh">RINGKASAN</div><div class="card"><div class="grid">${stat('Peserta diterima', dit + ' orang')}${stat('Transaksi tercatat', DB.pemasukan.length + DB.pengeluaran.length)}${stat('Trip diarsipkan', DB.arsip.length)}${stat('Profil lengkap', ok + ' dari ' + pf.length)}</div>
+    ${ok < pf.length ? `<div class="bar" style="margin-top:12px"><div style="width:${Math.round(ok / pf.length * 100)}%"></div></div><small class="mut" style="display:block;margin-top:6px">Belum diisi: ${esc(kurang.join(', '))}. Kop dan kwitansi PDF memakai data ini.</small>` : '<small class="mut" style="display:block;margin-top:10px">Profil sudah lengkap.</small>'}</div>
   <div class="zh">KONTAK</div><div class="card zcard">${zrow('WhatsApp', p.wa, "editProf('wa')")}${zrow('Instagram', p.ig, "editProf('ig')")}${zrow('Email', p.email, "editProf('email')")}${zrow('Kota / alamat', p.kota, "editProf('kota')")}<div class="zhint">Kop dokumen memakai format bawaan. Logo dan informasinya diambil dari profil dan kontak ini.</div></div>
   <div class="zh">KWITANSI</div><div class="card zcard">${zrow('Nama &amp; jabatan penanda tangan', p.ttdNama, "editProf('ttdNama')", 'Bendahara')}${zrow('Tanda tangan', p.ttd ? 'Sudah ada' : '', 'ttdPad()', 'Gambar')}${zrow('Stempel', p.stempel ? 'Sudah ada' : '', 'stempelMenu()', 'Tambah foto')}${zrow('Kode penyelenggara', kodeP(), "editProf('kode')")}${zrow('Contoh nomor', contohNo(), '')}<div class="zhint">Nomor kwitansi dan catatan kaki dibuat otomatis, tidak perlu diisi. Kode destinasi diambil dari trip (ubah di Beranda, kartu Data Trip).</div></div>
+  <div class="zh">DATA &amp; CADANGAN</div><div class="card zcard">
+    <div class="zr"><span class="zk">Cadangan terakhir</span><div class="zrt"><span class="zv ${DB.lastBackup && hariLalu(DB.lastBackup) < 7 ? 'ok' : 'zph'}">${DB.lastBackup ? new Date(DB.lastBackup).toLocaleDateString('id-ID') + ' (' + hariLalu(DB.lastBackup) + ' hari lalu)' : 'Belum pernah'}</span></div></div>
+    <div class="zr" onclick="bagikanCadangan()"><span class="zk">Cadangkan sekarang (Drive / WhatsApp)</span><div class="zrt"><span class="zch">›</span></div></div>
+    <div class="zr" onclick="show('trip')"><span class="zk">Pulihkan, arsip, dan trip baru</span><div class="zrt"><span class="zch">›</span></div></div>
+    <div class="zhint">Data hanya ada di HP ini. Cadangkan sebelum ganti HP atau memasang ulang aplikasi.</div></div>
   <div class="zh">LISENSI</div><div class="card zcard"><div class="zr"><span class="zk">Status</span><div class="zrt"><span class="zv ok">Aktif, seumur hidup</span></div></div><div class="zr"><span class="zk">Kode perangkat</span><div class="zrt"><span class="zv zmono" id="zdev">...</span><button class="zmini" onclick="salinDev()">Salin</button></div></div></div>
   <div class="zh">TENTANG PEMBUAT</div>${pembuatHtml()}`;
   devId().then(id => { const e = $('zdev'); if (e) e.textContent = id; });
 }
+/* Pesan tagihan WhatsApp yang bisa diatur */
+const TPL_DEF = 'Halo {nama}, tagihan trip {destinasi}:\nTotal tagihan: {total}\nSudah dibayar: {dibayar}\n*Sisa: {sisa}*\nTenggat: {tenggat}\n\nTransfer ke:\n{rekening}\n\nMohon kirim bukti transfer. Terima kasih 🙏';
+function tplIsi(tpl, o) {
+  return String(tpl).replace(/\{(nama|destinasi|total|dibayar|sisa|tenggat|rekening)\}/g, (m, k) => o[k]).replace(/ {2,}/g, ' ').replace(/ :/g, ':');
+}
+function tagihTpl(p, base, s, d, late) {
+  const t = pref('tplTagih', ''); if (!String(t).trim()) return '';
+  return tplIsi(t, { nama: p.nama, destinasi: d.destinasi || '', total: rp(base), dibayar: rp(p.dibayar), sisa: rp(s), tenggat: d.tenggat ? fmtDate(d.tenggat) + (late ? ' (sudah lewat)' : '') : '-', rekening: d.rek || '-' });
+}
+function tplPrev() { const e = $('tplx'), o = $('tplp'); if (e && o) o.textContent = tplIsi(e.value, { nama: 'Budi', destinasi: DB.set.destinasi || 'Semeru', total: rp(750000), dibayar: rp(250000), sisa: rp(500000), tenggat: '30/11/2026', rekening: DB.set.rek || 'BCA 1234567890 a.n. Nama' }); }
+function tplIns(k) { const e = $('tplx'), a = e.selectionStart || 0, b = e.selectionEnd || 0; e.value = e.value.slice(0, a) + k + e.value.slice(b); e.focus(); e.selectionStart = e.selectionEnd = a + k.length; tplPrev(); }
+function tplTagihEdit() {
+  sheetOpen(`<h3>Pesan tagihan WhatsApp</h3><small class="mut">Ketuk kata kunci untuk menyisipkannya. Tombol 💬 Tagih di Pembayaran memakai pesan ini.</small>
+  <textarea id="tplx" rows="9" oninput="tplPrev()" style="margin-top:8px">${esc(pref('tplTagih', '') || TPL_DEF)}</textarea>
+  <div class="kchips" style="flex-wrap:wrap">${['nama', 'destinasi', 'total', 'dibayar', 'sisa', 'tenggat', 'rekening'].map(k => `<button class="kchip" onclick="tplIns('{${k}}')">{${k}}</button>`).join('')}</div>
+  <label>Pratinjau</label><div class="warn note" id="tplp" style="white-space:pre-wrap"></div>
+  <button class="btn" onclick="tplSimpan()">Simpan</button><button class="btn alt" onclick="tplBawaan()">Kembalikan ke bawaan</button>`); tplPrev();
+}
+async function tplSimpan() { await setPref('tplTagih', $('tplx').value); $('fsheet').remove(); toast('Pesan tagihan tersimpan'); if (cur === 'pengaturan') rerender(); }
+async function tplBawaan() { await setPref('tplTagih', ''); $('fsheet').remove(); toast('Kembali ke pesan bawaan'); if (cur === 'pengaturan') rerender(); }
+/* Cek pembaruan */
+async function cekUpdate() {
+  if (!navigator.onLine) return toast('Tidak ada internet');
+  try {
+    const r = await fetch('index.html?cek=' + Date.now(), { cache: 'no-store' }), t = await r.text(), m = t.match(/const APP_V = '([^']+)'/);
+    if (m && m[1] !== APP_V) { try { const g = await navigator.serviceWorker.getRegistration(); if (g) await g.update(); } catch (e) {} sheetOpen(`<h3>Versi baru ${esc(m[1])} tersedia</h3><div class="zli">Anda memakai ${esc(APP_V)}. Muat ulang untuk memakai versi baru. Data Anda tidak terhapus.</div><button class="btn" onclick="location.reload()">Muat ulang sekarang</button>`); }
+    else toast('Sudah versi terbaru (' + APP_V + ')');
+  } catch (e) { toast('Gagal memeriksa pembaruan'); }
+}
+
 async function salinDev() { const id = await devId(); try { await navigator.clipboard.writeText(id); toast('Kode tersalin'); } catch (e) { toast(id); } }
 
 /* ===== Tab Pengaturan ===== */
@@ -1396,7 +1621,7 @@ const zsrow = (l, id) => `<div class="zr"><span class="zk">${l}</span><div class
 const zsel = (l, key, opts, cv) => `<div class="zr"><span class="zk">${l}</span><div class="zrt"><select class="zsel" onchange="selTap('${key}',this.value)">${opts.map(([v, t]) => `<option value="${v}"${String(v) === String(cv) ? ' selected' : ''}>${t}</option>`).join('')}</select></div></div>`;
 const zseg = (l, g, opts, cv) => `<div class="zr"><span class="zk">${l}</span><div class="zrt"><div class="zsg">${opts.map(([v, t]) => `<button class="${v === cv ? 'on' : ''}" aria-pressed="${v === cv}" onclick="segTap('${g}','${v}')">${t}</button>`).join('')}</div></div></div>`;
 async function swTap(id) { const [k, d] = SW[id], v = !pref(k, d); await setPref(k, v); const e = $('sw_' + id); if (e) e.setAttribute('aria-checked', v); if (id === 'priv') { applyPriv(); if (!v) rerender(); } }
-async function selTap(k, v) { if (k === 'kunci' || k === 'ingCad') v = Number(v); await setPref(k, v); toast('Tersimpan'); }
+async function selTap(k, v) { if (k === 'kunci' || k === 'ingCad' || k === 'bulat') v = Number(v); await setPref(k, v); toast('Tersimpan'); }
 async function segTap(g, v) {
   if (g === 'tema') setTema(v); else { await setPref('fz', v); try { localStorage.setItem('fz', v); } catch (e) {} applyFz(); }
   rerender();
@@ -1411,8 +1636,7 @@ async function salinInfo() {
   const id = await devId(), s = await infoStorage(), t = ['bawaulin.trip ' + APP_V, 'Kode perangkat: ' + id, 'Layar: ' + screen.width + 'x' + screen.height, 'Online: ' + navigator.onLine, 'Penyimpanan: ' + (s.used / 1048576).toFixed(1) + ' MB, permanen: ' + (s.p ? 'ya' : 'belum'), navigator.userAgent].join('\n');
   try { await navigator.clipboard.writeText(t); toast('Info perangkat disalin'); } catch (e) { toast('Gagal menyalin'); }
 }
-const BARU = ['Navigasi baru: Beranda, Simulasi, Menu (tombol besar di tengah), Rekap, Akun.', 'Tombol "＋ Catat transaksi" di Beranda untuk input cepat. Masuk dan Keluar ada juga di Menu.', 'Tab Akun: profil, kontak, penanda tangan, stempel, lisensi, dan info pembuat.', 'Tab Pengaturan: PIN dengan kode pemulihan, kunci otomatis, mode privasi, tema, warna aplikasi, ukuran huruf, latar foto, pengingat.', 'Warna aplikasi bisa diganti (6 pilihan atau warna sendiri). PDF tetap tema terang.', 'Nomor kwitansi otomatis berformat KW/kode/destinasi/tahun/urut. Catatan kaki berisi tanggal cetak.'];
-const PANDUAN = ['Beranda: ringkasan saldo, pengingat, dan tombol "＋ Catat transaksi".', 'Simulasi: hitung harga jual dan untung sebelum trip.', 'Menu: Tamu, Itinerary, Perlengkapan, Checklist, Masuk, Keluar, Pembayaran, Trip & Arsip, Bagi Hasil, Kategori, Pendaftaran.', 'Rekap: untung/rugi, statistik, dan PDF laporan lengkap.', 'Akun: profil, kontak, tanda tangan, dan lisensi. Pengaturan dibuka dari kartu di bagian atas Akun.', 'Cadangkan data berkala lewat Menu → Trip & Arsip. Data hanya tersimpan di HP ini.'];
+const BARU = ['Kalkulator pindah ke Menu › Kalkulator: tampilan seperti kalkulator HP, memori, riwayat, tombol ÷ Peserta dan Bulat, plus 7 rumus Hitung Trip.', 'Akun: kartu profil dan tombol Pengaturan menyatu, ada Ringkasan, kelengkapan profil, dan Data & Cadangan.', 'Tentang pembuat: tombol Instagram dan WhatsApp saja, tanpa tulisan nama atau nomor.', 'Pengaturan baru: pesan tagihan WhatsApp bisa diubah, pembulatan harga jual, dan Cek pembaruan aplikasi.', 'Panduan singkat kini berisi demo bergerak dan langkah rinci untuk semua fitur (Menu › Panduan).'];
 const listSheet = (t, a) => sheetOpen(`<h3>${t}</h3>${a.map(x => `<div class="zli">• ${esc(x)}</div>`).join('')}`);
 async function resetPref() {
   if (!confirm('Kembalikan semua pengaturan tampilan dan perilaku ke bawaan? Data trip tidak berubah.')) return;
@@ -1464,7 +1688,10 @@ function renderPeng() {
     <div class="zhint">Warna dipakai di tombol, sakelar, dan judul. PDF tetap tema terang.</div></div>
   <div class="zh">PERILAKU INPUT</div><div class="card zcard">
     ${zsel('Halaman awal', 'awal', [['dashboard', 'Beranda'], ['pemasukan', 'Masuk'], ['pengeluaran', 'Keluar'], ['simulasi', 'Simulasi'], ['rekap', 'Rekap']], awal)}
-    ${zsrow('Konfirmasi sebelum hapus', 'konf')}${zsrow('Getar saat berhasil simpan', 'getar')}</div>
+    ${zsrow('Konfirmasi sebelum hapus', 'konf')}${zsrow('Getar saat berhasil simpan', 'getar')}
+    ${zsel('Pembulatan harga jual', 'bulat', [[1000, 'Rp1.000'], [5000, 'Rp5.000'], [10000, 'Rp10.000']], pref('bulat', 5000))}</div>
+  <div class="zh">PESAN WHATSAPP</div><div class="card zcard">
+    <div class="zr" onclick="tplTagihEdit()"><span class="zk">Pesan tagihan peserta</span><div class="zrt"><span class="zv ${pref('tplTagih', '') ? '' : 'zph'}">${pref('tplTagih', '') ? 'Kustom' : 'Bawaan'}</span><span class="zch">›</span></div></div></div>
   <div class="zh">PENGINGAT DI BERANDA</div><div class="card zcard">
     ${zsrow('Telat bayar', 'ingBayar')}${zsrow('Pendaftar menunggu', 'ingDaftar')}${zsrow('Checklist belum siap', 'ingCl')}
     ${zsel('Ingatkan cadangan', 'ingCad', [[0, 'Mati'], [3, 'Tiap 3 hari'], [7, 'Tiap 7 hari'], [14, 'Tiap 14 hari'], [30, 'Tiap 30 hari']], pref('ingCad', 7))}</div>
@@ -1473,9 +1700,9 @@ function renderPeng() {
     <div class="zr"><span class="zk">Ruang terpakai</span><div class="zrt"><span class="zv" id="zuse">...</span></div></div>
     <div class="zhint">Data hanya tersimpan di HP ini dan tidak dikirim ke server mana pun.</div></div>
   <div class="zh">TENTANG &amp; BANTUAN</div><div class="card zcard">
-    <div class="zr"><span class="zk">Versi</span><div class="zrt"><span class="zv">${APP_V}</span></div></div>
+    <div class="zr" onclick="cekUpdate()"><span class="zk">Versi ${APP_V} · Cek pembaruan</span><div class="zrt"><span class="zch">›</span></div></div>
     <div class="zr" onclick="listSheet('Yang baru di ${APP_V}', BARU)"><span class="zk">Yang baru di versi ini</span><div class="zrt"><span class="zch">›</span></div></div>
-    <div class="zr" onclick="listSheet('Panduan singkat', PANDUAN)"><span class="zk">Panduan singkat</span><div class="zrt"><span class="zch">›</span></div></div>
+    <div class="zr" onclick="pdBuka(-1)"><span class="zk">Panduan singkat (demo & langkah rinci)</span><div class="zrt"><span class="zch">›</span></div></div>
     <div class="zr" onclick="salinInfo()"><span class="zk">Salin info perangkat</span><div class="zrt"><span class="zch">›</span></div></div></div>
   <div class="zh">RESET</div><div class="card zcard">
     <div class="zr" onclick="resetPref()"><span class="zk zwarn">Reset pengaturan saja</span><div class="zrt"><span class="zch">›</span></div></div>
@@ -1490,6 +1717,156 @@ function catatKe(k) { const s = $('fsheet'); if (s) s.remove(); show(k); openShe
 
 function setThemeColor() { const m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', document.documentElement.dataset.t === 'light' ? '#f3f4f6' : '#0b0b0d'); }
 setThemeColor(); $('tg').addEventListener('click', () => setTimeout(setThemeColor, 0));
+/* ===== v19: Panduan demo (animasi di dalam aplikasi, tanpa internet) ===== */
+const mH = t => `<div class="mh">${t}</div>`;
+const mCard = (h, b) => `<div class="mc">${h ? `<b>${h}</b>` : ''}${b || ''}</div>`;
+const mBtn = (t, c) => `<div class="mbt ${c || ''}">${t}</div>`;
+const mRow = (l, v, c) => `<div class="mrw ${c || ''}"><span>${l}</span><b>${v}</b></div>`;
+const mIn = (l, v, c) => `<div class="min ${c || ''}"><small>${l}</small><div>${v}</div></div>`;
+const mNav = a => `<div class="mnv">${['🏠', '📈', '▦', '📄', '👤'].map((x, i) => `<i class="${i === a ? 'on' : ''}${i === 2 ? ' mid' : ''}">${x}</i>`).join('')}</div>`;
+const mTiles = (arr, hi) => `<div class="mtl">${arr.map((x, i) => `<div class="${i === hi ? 'hi tp' : ''}">${x}</div>`).join('')}</div>`;
+const mSheet = (t, b) => `<div class="msh"><b>${t}</b>${b}</div>`;
+const mHero = (a, b, c) => `<div class="mhero"><small>${a}</small><b>${b}</b><small>${c}</small></div>`;
+const mTog = (l, on, c) => `<div class="mrw ${c || ''}"><span>${l}</span><i class="mtg ${on ? 'on' : ''}"></i></div>`;
+
+const PAN = [
+  { ic: '🚀', t: 'Mulai dari nol', s: 'Urutan kerja dari trip baru sampai selesai', go: 'dashboard',
+    demo: [
+      { c: 'Di Beranda, isi kartu Data Trip: Destinasi dan Total Realisasi (total anggaran), lalu ketuk Simpan.', ui: mH('Beranda') + mCard('Data Trip', mIn('Destinasi', 'Gunung Semeru') + mIn('Total Realisasi (Rp)', '25.000.000') + mBtn('Simpan Data Trip', 'tp')) + mNav(0) },
+      { c: 'Buka Menu lalu Tamu untuk mendaftarkan peserta.', ui: mH('Menu') + mTiles(['👥 Tamu', '🗺️ Itinerary', '🎒 Perlengkapan', '✅ Checklist'], 0) + mNav(2) },
+      { c: 'Buka Simulasi untuk menghitung harga jual dan untung sebelum berangkat.', ui: mH('Simulasi') + mCard('Parameter', mIn('Jumlah peserta', '10') + mIn('Harga jual / peserta', '2.500.000')) + mBtn('Terapkan ke Anggaran', 'tp') + mNav(1) },
+      { c: 'Selama trip catat uang masuk dan keluar. Setelah selesai, buka Rekap untuk laporan PDF.', ui: mH('Rekap') + mCard('Rekapitulasi', mRow('Pemasukan', 'Rp 25.000.000') + mRow('Pengeluaran', 'Rp 21.300.000') + mRow('Sisa saldo', 'Rp 3.700.000')) + mBtn('📄 Unduh Laporan (PDF)', 'tp') + mNav(3) }],
+    st: ['Beranda › kartu Data Trip: isi Destinasi, Kode destinasi (dipakai di nomor kwitansi, boleh dikosongkan) dan Total Realisasi, lalu Simpan Data Trip.', 'Buka Simulasi: isi jumlah peserta, official, harga jual, dan komponen biaya. Lihat untung atau rugi sebelum berangkat, lalu ketuk Terapkan ke Anggaran Pengeluaran.', 'Menu › Tamu: tambahkan peserta, atau pakai Pendaftaran online supaya peserta mengisi sendiri.', 'Menu › Pembayaran: lihat tagihan dan sisa bayar tiap peserta, kirim tagihan lewat WhatsApp, cetak kwitansi.', 'Catat uang masuk dan keluar lewat tombol ＋ Catat transaksi di Beranda.', 'Sebelum berangkat siapkan Itinerary, Perlengkapan, dan Checklist.', 'Selesai trip: buka Rekap untuk untung atau rugi dan PDF laporan, lalu Bagi Hasil untuk pembagian ke official.', 'Menu › Trip & Arsip: arsipkan trip yang selesai, lalu mulai trip baru.', 'Cadangkan data secara berkala (Akun › Data & Cadangan).'],
+    tp: ['Urutan ini hanya saran. Semua tab bisa dibuka kapan saja dan data lama tetap aman.'] },
+  { ic: '🏠', t: 'Beranda', s: 'Saldo, pengingat, peringatan anggaran', go: 'dashboard',
+    demo: [
+      { c: 'Kartu besar menampilkan Sisa saldo = total pemasukan dikurangi pengeluaran.', ui: mH('Beranda') + mHero('Gunung Semeru', 'Rp 3.700.000', 'Sisa saldo') + mBtn('＋ Catat transaksi', 'tp') + mNav(0) },
+      { c: 'Cincin menunjukkan pemakaian anggaran dibanding Total Realisasi. Merah jika lewat 100%.', ui: mH('Beranda') + mCard('Pemakaian anggaran', mRow('Realisasi', 'Rp 25.000.000') + mRow('Terpakai', '85%', 'tp')) + mCard('Peringatan', mRow('🔔', 'Pemakaian 85%')) + mNav(0) },
+      { c: 'Pengingat muncul untuk telat bayar, pendaftar menunggu, checklist belum siap, dan cadangan. Ketuk Buka untuk langsung ke halamannya.', ui: mH('Beranda') + mCard('🔔 Pengingat', mRow('2 peserta telat bayar', '<span class="tp">Buka</span>') + mRow('Belum dicadangkan', 'Buka')) + mNav(0) }],
+    st: ['Kartu atas: nama destinasi, Sisa saldo, serta total Pemasukan dan Pengeluaran.', 'Tombol ＋ Catat transaksi: pilih Pemasukan atau Pengeluaran, formulir langsung terbuka.', 'Cincin Pemakaian anggaran membandingkan pengeluaran dengan Total Realisasi.', 'Pengingat: telat bayar, pendaftar menunggu, checklist belum siap, dan cadangan. Tiap jenis bisa dimatikan di Pengaturan.', 'Peringatan Anggaran: kuning saat pemakaian 80% atau lebih, merah jika satu kategori melebihi anggarannya atau total melebihi Realisasi.', 'Grafik Pemasukan vs Pengeluaran dan Pengeluaran per Kategori ada di bawahnya.', 'Kartu Data Trip di paling bawah untuk mengubah destinasi, kode destinasi, dan Total Realisasi.'],
+    tp: ['Halaman awal saat aplikasi dibuka bisa diganti di Pengaturan › Perilaku Input.'] },
+  { ic: '✍️', t: 'Catat uang masuk dan keluar', s: 'Pemasukan, pengeluaran, bukti nota, berulang', go: 'dashboard',
+    demo: [
+      { c: 'Ketuk ＋ Catat transaksi di Beranda, lalu pilih Pemasukan atau Pengeluaran.', ui: mH('Beranda') + mHero('Gunung Semeru', 'Rp 3.700.000', 'Sisa saldo') + mBtn('＋ Catat transaksi', 'tp') + mSheet('Catat transaksi', mTiles(['⬇️ Pemasukan', '⬆️ Pengeluaran'], 1)) },
+      { c: 'Isi Detail, Kategori, Anggaran, Biaya, Quantity, tanggal, dan Dibayar oleh. Totalnya dihitung otomatis.', ui: mSheet('Tambah Pengeluaran', mIn('Detail pengeluaran *', 'Sewa elf') + mIn('Biaya', '1.200.000') + mIn('Quantity', '2') + mIn('Dibayar oleh', 'Rani') + mBtn('📷 Kamera  📎 Unggah file') + mBtn('Simpan', 'tp')) },
+      { c: 'Entri tersimpan di daftar. Gunakan pencarian dan filter, atau ketuk Edit.', ui: mH('Pengeluaran') + mCard('Sewa elf', mRow('Total biaya', 'Rp 2.400.000') + mRow('Dibayar oleh', 'Rani') + `<div class="mrw"><span class="tp">📎 Bukti</span><b>Edit</b></div>`) + mNav(2) }],
+    st: ['Ketuk ＋ Catat transaksi di Beranda (atau Menu › Masuk / Keluar lalu tombol + bulat).', 'Isi Detail (wajib), Kategori, Biaya, Tanggal transaksi, Dibayar oleh, dan Catatan. Angka otomatis diberi titik ribuan.', 'Khusus Pengeluaran: Anggaran adalah rencana per satuan, Biaya adalah uang nyata per satuan. Total Anggaran dan Total Biaya = nilai × Quantity.', 'Bukti nota: ketuk 📷 Kamera atau 📎 Unggah file. Lihat lagi lewat tombol 📎 Bukti.', 'Dibayar oleh: untuk pemasukan peserta, tulis nama yang sama persis dengan di Tamu supaya status bayarnya terbaca. Untuk pengeluaran, tulis nama official yang menalangi, dipakai di Bagi Hasil.', 'Ulangi otomatis: pilih di formulir untuk transaksi rutin. Ditambahkan sendiri saat aplikasi dibuka.', 'Daftar di bawah formulir bisa dicari, difilter per kategori atau tanggal, dan diubah lewat Edit.', 'Entri yang dihapus masuk Tempat Sampah selama 30 hari (Menu › Trip & Arsip › Pulihkan).', 'Ekspor CSV atau Impor CSV tersedia di kartu Data.'],
+    tp: ['Pemasukan dengan kategori Peserta dipakai untuk menghitung siapa yang sudah bayar.', 'Kategori Panitia dipakai untuk setoran official, bukan pemasukan trip.'] },
+  { ic: '👥', t: 'Tamu dan pendaftaran online', s: 'Peserta, status, link pendaftaran', go: 'tamu',
+    demo: [
+      { c: 'Menu › Tamu › tombol +. Isi Nama (wajib), Meeting Point, Ponsel, Status, dan Tagihan.', ui: mSheet('Tambah Tamu', mIn('Nama *', 'Budi Santoso') + mIn('Ponsel', '0812xxxxxxx') + mIn('Status', 'Diterima') + mIn('Tagihan', 'DP') + mBtn('Simpan', 'tp')) },
+      { c: 'Pendaftaran online: bagikan link ke calon peserta lewat WhatsApp.', ui: mH('Pendaftaran') + mCard('Link Pendaftaran', mIn('', 'https://script.google.com/…') + `<div class="mrw"><span>Salin link</span><b class="tp">Bagikan WA</b></div>`) + mNav(2) },
+      { c: 'Ketuk Ambil pendaftar baru saat ada internet, lalu Terima atau Tolak.', ui: mH('Pendaftaran') + mBtn('⬇️ Ambil pendaftar baru') + mCard('Menunggu Respons (1)', mRow('Sinta', 'Daftar') + `<div class="mrw"><span class="tp">Terima</span><b>Tolak  💬 WA</b></div>`) + mNav(2) }],
+    st: ['Menu › Tamu › tombol + bulat: isi Nama (wajib), Meeting Point, Ponsel, Status (Diterima, Menunggu respons, Ditolak), Tagihan (Lunas, DP, Belum Lunas), Catatan.', 'Hanya tamu berstatus Diterima yang dihitung sebagai peserta untuk patungan, tagihan, dan statistik.', 'Pendaftaran online (Menu › Pendaftaran): pasang apps-script-pendaftaran.gs di Google Apps Script sekali saja, lalu tempel Link web app dan Kunci rahasia, ketuk Simpan.', 'Setelah tersimpan muncul Link Pendaftaran. Ketuk Salin link atau Bagikan WA.', 'Saat ada internet ketuk Ambil pendaftar baru. Pendaftar masuk dengan status Menunggu respons.', 'Di kartu Menunggu Respons ketuk Terima, Tolak, atau 💬 WA untuk membalas.', 'Tamu bisa diimpor atau diekspor dengan CSV, dan dicari lewat kolom pencarian.'],
+    tp: ['Tulis nama tamu konsisten agar cocok dengan kolom Dibayar oleh di Pemasukan.'] },
+  { ic: '🗺️', t: 'Itinerary, perlengkapan, checklist', s: 'Rundown, sewa alat, barang bawaan', go: 'itinerary',
+    demo: [
+      { c: 'Itinerary: isi Aktivitas, Jenis aktivitas, Waktu mulai dan berakhir, serta Lokasi.', ui: mSheet('Tambah Itinerary', mIn('Aktivitas *', 'Naik ke Pos 1') + mIn('Jenis aktivitas', 'BC - POS 1') + mIn('Waktu mulai', '05:00') + mBtn('Simpan', 'tp')) },
+      { c: 'Perlengkapan: Sewa dihitung otomatis dari Kebutuhan dikurangi Kesediaan.', ui: mH('Perlengkapan') + mCard('Tenda', mRow('Kebutuhan', '5') + mRow('Kesediaan', '2') + mRow('Sewa', '3')) + mBtn('➡️ Masukkan Total Sewa ke Pengeluaran', 'tp') + mNav(2) },
+      { c: 'Checklist: centang barang yang sudah siap.', ui: mH('Checklist') + mCard('Checklist Perlengkapan', mRow('☑ Tenda', 'Rani') + mRow('☐ Kompor', '<span class="tp">Budi</span>') + mRow('☑ Nesting', 'Sinta')) + mNav(2) }],
+    st: ['Itinerary: tambah tiap kegiatan dengan jenis (Mepo - BC sampai SUMMIT) dan waktunya. Kartu Rekap Rundown menyusunnya per hari, bisa jadi PDF atau dibagikan ke WhatsApp.', 'Perlengkapan: isi Kebutuhan, Kesediaan (yang sudah ada), dan Harga/Unit. Sewa dan Total Sewa terhitung sendiri.', 'Di Ringkasan Sewa ketuk ➡️ Masukkan Total Sewa ke Pengeluaran supaya biaya sewa ikut tercatat.', 'Checklist: tambah barang dan siapa yang membawa, lalu centang jika siap. Pakai filter untuk melihat yang belum siap saja.', 'Ketuk 📥 Impor barang dari tab Perlengkapan agar tidak mengetik dua kali.', 'Rekap Checklist bisa diunduh PDF atau dibagikan ke WhatsApp.'],
+    tp: ['Checklist yang belum siap muncul sebagai pengingat di Beranda.'] },
+  { ic: '📈', t: 'Simulasi', s: 'Harga jual, untung, dan terapkan ke anggaran', go: 'simulasi',
+    demo: [
+      { c: 'Isi jumlah peserta, official, harga jual, dan target untung per official.', ui: mH('Simulasi') + mCard('Parameter', mIn('Jumlah peserta', '10') + mIn('Jumlah official', '2') + mIn('Harga jual / peserta', '2.500.000', 'tp')) + mNav(1) },
+      { c: 'Tambahkan Komponen Biaya. Pilih jenis: per orang, sekali per trip, atau tenda.', ui: mH('Simulasi') + mCard('Komponen Biaya', mRow('Transport', 'Sekali per trip') + mRow('Simaksi', 'Per orang') + mBtn('+ Tambah komponen', 'tp')) + mNav(1) },
+      { c: 'Hasil Simulasi menampilkan untung, margin, dan harga balik modal. Ketuk Terapkan untuk mengisi anggaran.', ui: mH('Simulasi') + mCard('Hasil Simulasi', mRow('Pendapatan', 'Rp 25.000.000') + mRow('Untung', 'Rp 3.700.000')) + mBtn('Terapkan ke Anggaran Pengeluaran', 'tp') + mNav(1) }],
+    st: ['Parameter: nama simulasi, jumlah peserta, jumlah official, harga jual per peserta, target keuntungan per official. Centang Official ikut berangkat jika biayanya ikut ditanggung.', 'Komponen Biaya: Anggaran adalah bagian harga jual yang dibayar peserta, Biaya asli adalah uang yang benar-benar keluar ke pihak lain.', 'Hasil Simulasi: pendapatan, total biaya, untung, untung per official, margin, harga balik modal, harga untuk mencapai target, dan peringatan.', 'Simpan skenario dengan Simpan, buka lagi dengan Muat. Form baru mengosongkan formulir.', 'Terapkan ke Anggaran Pengeluaran: pilih kolom Anggaran diisi biaya asli atau anggaran komponen, opsional isi kolom Biaya, dan atur Total Realisasi.', 'Setelah diterapkan, kartu Simulasi vs Kenyataan membandingkan rencana dengan catatan nyata. Kartu yang sama ada di Rekap.', 'Kalkulator bantu sekarang ada di Menu › Kalkulator.'],
+    tp: ['Pembulatan harga jual (Rp1.000, 5.000, atau 10.000) diatur di Pengaturan › Perilaku Input.'] },
+  { ic: '🧮', t: 'Kalkulator', s: 'Kalkulator HP, memori, riwayat, hitung trip', go: 'kalk',
+    demo: [
+      { c: 'Ketik hitungan seperti di kalkulator HP. Hasil langsung terlihat sambil mengetik.', ui: mH('Kalkulator') + `<div class="mdisp"><small>1.500.000 + 250.000 ÷ 8</small><b>Rp 1.531.250</b></div>` + `<div class="mpad"><i>AC</i><i>( )</i><i>%</i><i>÷</i><i>7</i><i>8</i><i>9</i><i>×</i><i>0</i><i>,</i><i>⌫</i><i class="tp eqk">=</i></div>` },
+      { c: 'Chip cepat: Salin, ÷ Peserta (bagi dengan jumlah peserta Diterima), dan Bulat (bulatkan ke atas).', ui: mH('Kalkulator') + `<div class="mdisp"><small>18.750.000</small><b>18.750.000</b></div><div class="mchips"><span>📋 Salin</span><span class="tp">👥 ÷ Peserta</span><span>⬆ Bulat 5.000</span></div>` },
+      { c: 'Hitung Trip berisi 7 rumus siap pakai lengkap dengan langkahnya. Riwayat menyimpan hasil =.', ui: mH('Kalkulator') + `<div class="mseg"><span>Kalkulator</span><span class="tp on">Hitung Trip</span><span>Riwayat</span></div>` + mCard('Patungan per orang', mRow('Total biaya', '21.300.000') + mRow('Hasil', 'Rp 2.150.000')) }],
+    st: ['Buka Menu › Kalkulator. Tiga mode: Kalkulator, Hitung Trip, dan Riwayat.', 'Tombol angka, + − × ÷, koma desimal, dan ⌫ seperti kalkulator HP. AC menghapus semua.', 'Tombol ( ) pintar: menaruh kurung buka lalu kurung tutup sesuai kebutuhan.', 'Persen menyesuaikan angka di depannya: 200 + 10% = 220, 200 × 10% = 20, 50% = 0,5.', 'Ketuk = untuk menyimpan hitungan ke Riwayat. Hasil bisa dilanjutkan dengan operator berikutnya.', 'Angka bulat 1.000 ke atas otomatis dieja di bawah hasil (terbilang).', 'Chip 📋 Salin menyalin hasil. 👥 ÷ Peserta membagi hasil dengan jumlah peserta Diterima. ⬆ Bulat membulatkan ke atas sesuai Pengaturan.', 'Memori: M+ dan M− menambah atau mengurangi, MR memanggil, MC menghapus.', 'Hitung Trip: Patungan per orang, Harga jual dari target untung, Balik modal, DP dan sisa, Selisih dan persen, Diskon dan PPN, Konversi mata uang. Ketuk Salin hasil untuk membagikannya.', 'Riwayat: ketuk satu baris untuk memakai lagi hasilnya.'],
+    tp: ['Di komputer, keyboard juga bisa dipakai: angka, operator, Enter, Backspace, Esc.'] },
+  { ic: '💳', t: 'Pembayaran dan kwitansi', s: 'Tagihan peserta, tagih WhatsApp, kwitansi', go: 'bayar',
+    demo: [
+      { c: 'Isi rekening, QRIS, dan tenggat sekali saja. Dipakai di kwitansi dan pesan tagihan.', ui: mH('Pembayaran') + mCard('🏦 Rekening, QRIS & Tenggat', mIn('Rekening', 'BCA 1234567890') + mIn('Tenggat', '30/11/2026') + mBtn('Simpan', 'tp')) + mNav(2) },
+      { c: 'Status Pembayaran Peserta menampilkan dibayar dan sisa tiap orang. Ketuk 💬 Tagih untuk mengirim pesan WhatsApp.', ui: mH('Pembayaran') + mCard('Budi Santoso', mRow('Tagihan', 'Rp 2.500.000') + mRow('Sisa', 'Rp 1.500.000') + `<div class="mrw"><span class="tp">🧾 Kwitansi</span><b>💬 Tagih</b></div>`) + mNav(2) },
+      { c: 'Kwitansi bernomor otomatis, siap dicetak sebagai PDF.', ui: mH('Kwitansi') + mCard('KW/BWT/SMR/2026/001', mRow('Diterima dari', 'Budi Santoso') + mRow('Jumlah', 'Rp 1.000.000') + mBtn('Cetak / Simpan PDF', 'tp')) }],
+    st: ['Menu › Pembayaran. Isi kartu Rekening, QRIS & Tenggat dan ketuk Simpan.', 'Tagihan tiap peserta diambil dengan urutan: tagihan tetap, lalu harga jual simulasi, lalu Total Realisasi dibagi peserta Diterima. Pilih Dasar hitung tagihan di kartu Status Pembayaran.', 'Status bayar dihitung dari Pemasukan kategori Peserta yang Dibayar oleh atau Detailnya sama dengan nama tamu.', 'Ketuk 💬 Tagih untuk membuka WhatsApp berisi total, yang sudah dibayar, sisa, tenggat, dan rekening. Isi pesan bisa diubah di Pengaturan › Pesan tagihan.', 'Ketuk 🧾 Kwitansi untuk membuat kwitansi. Nomor berformat KW/kode penyelenggara/kode destinasi/tahun/urut.', 'Cetak ulang dengan jumlah bayar yang sama memakai nomor yang sama. Jumlah berbeda menghasilkan nomor baru.', 'Tanda tangan, stempel, nama penanda tangan, dan kode penyelenggara diatur di Akun › Kwitansi.', 'Ketuk 💬 Bagikan status pembayaran ke WhatsApp untuk mengirim daftar semua peserta ke grup.'],
+    tp: ['Rugi tidak ditagihkan ke peserta. Tagihan peserta tidak pernah dihitung dari biaya aktual.', 'Di dialog cetak HP, pilih Simpan sebagai PDF. PDF selalu bertema terang.'] },
+  { ic: '📄', t: 'Rekap dan laporan PDF', s: 'Untung rugi, statistik, laporan peserta', go: 'rekap',
+    demo: [
+      { c: 'Rekap menampilkan pemasukan, pengeluaran, sisa saldo, pemakaian, dan jumlah tamu.', ui: mH('Rekap') + mCard('Rekapitulasi', mRow('Total Pemasukan', 'Rp 25.000.000') + mRow('Total Pengeluaran', 'Rp 21.300.000') + mRow('Pemakaian', '85,2%', 'tp')) + mNav(3) },
+      { c: 'Unduh Laporan Lengkap Trip dalam PDF, atau bagikan ringkasan ke WhatsApp.', ui: mH('Rekap') + mBtn('📄 Unduh Laporan Lengkap Trip (PDF)', 'tp') + mBtn('💬 Bagikan ringkasan ke WhatsApp') + mNav(3) },
+      { c: 'Laporan untuk Peserta menunjukkan uang masuk dan penggunaannya tanpa data pribadi.', ui: mH('Rekap') + mCard('📣 Laporan untuk Peserta', mRow('Uang masuk', 'Rp 25.000.000') + mRow('Sisa dana', 'Rp 3.700.000')) + mBtn('📄 Unduh PDF laporan peserta', 'tp') + mNav(3) }],
+    st: ['Buka tab Rekap di navigasi bawah.', 'Kartu Rekapitulasi: total pemasukan, pengeluaran, sisa saldo, pemakaian, tamu diterima, dan tagihan atau patungan per orang, plus peringatan anggaran.', 'Ketuk 📄 Unduh Laporan Lengkap Trip (PDF). Dialog cetak terbuka, pilih Simpan sebagai PDF.', 'Ketuk 💬 Bagikan ringkasan ke WhatsApp untuk mengirim ringkasan teks.', 'Kartu Laporan untuk Peserta berisi uang masuk dan pemakaiannya, aman dibagikan karena tanpa data pribadi.', 'Simulasi vs Kenyataan muncul jika simulasi sudah diterapkan.', 'Tabel pemasukan dan pengeluaran per kategori serta perlengkapan disewa ada di bawahnya.', 'Statistik Antar-Trip membandingkan trip yang sudah diarsipkan: untung, rugi, biaya per peserta.'],
+    tp: ['Semua PDF memakai tema terang walau aplikasi sedang mode gelap.'] },
+  { ic: '💰', t: 'Bagi hasil official', s: 'Untung rugi, talangan, siapa membayar siapa', go: 'bagihasil',
+    demo: [
+      { c: 'Tambahkan nama semua official yang ikut.', ui: mH('Bagi Hasil') + mCard('Official / Panitia', mRow('Rani', '✕') + mRow('Dimas', '✕') + `<div class="mrw"><span class="tp">Nama official</span><b>+ Tambah</b></div>`) + mNav(2) },
+      { c: 'Aplikasi menghitung uang yang dikeluarkan tiap official dan bagian adil masing-masing.', ui: mH('Bagi Hasil') + mCard('Hasil Trip', mRow('✅ UNTUNG', 'Rp 3.700.000') + mRow('Untung tiap official', 'Rp 1.850.000', 'tp')) + mNav(2) },
+      { c: 'Daftar transfer menunjukkan siapa membayar siapa. Tandai dibayar setelah selesai.', ui: mH('Bagi Hasil') + mCard('Penyelesaian', mRow('Dimas → Rani', 'Rp 400.000') + `<div class="mrw"><span class="tp">Tandai dibayar</span><b>💬 Kirim rincian</b></div>`) + mNav(2) }],
+    st: ['Menu › Bagi Hasil. Kartu Hasil Trip menunjukkan UNTUNG atau RUGI. Setoran kategori Panitia tidak dihitung sebagai pemasukan agar rugi tidak tertutupi.', 'Tambahkan nama official di kartu Official / Panitia.', 'Isi kolom Dibayar oleh di Pengeluaran dengan nama official yang menalangi. Itu masuk ke Uang yang Dikeluarkan Tiap Official.', 'Pemakaian Kas untuk Pribadi: catat uang kas yang terpakai untuk keperluan pribadi official. Itu bukan biaya trip dan harus dikembalikan.', 'Penyelesaian menampilkan bagian adil tiap official, selisihnya, dan daftar transfer. Ketuk Tandai dibayar setelah transfer.', 'Ketuk 💬 Kirim rincian untuk mengirim rincian ke tiap official, atau 💬 Bagikan ke grup official.', 'Ketuk 📄 Unduh PDF Bagi Hasil untuk dokumennya.'],
+    tp: ['Jika trip rugi, kerugian dibagi ke official dan tidak ditagihkan ke peserta.'] },
+  { ic: '🗂️', t: 'Arsip, trip baru, cadangan', s: 'Menyimpan trip selesai dan mengamankan data', go: 'trip',
+    demo: [
+      { c: 'Arsipkan trip yang sudah selesai. Data yang berjalan tidak berubah.', ui: mH('Trip & Arsip') + mCard('Arsipkan Trip', mBtn('🗂️ Arsipkan sekarang', 'tp')) + mNav(2) },
+      { c: 'Mulai Trip Baru: ketik BARU untuk konfirmasi. Trip lama diarsipkan otomatis.', ui: mH('Trip & Arsip') + mCard('Mulai Trip Baru', mIn('Destinasi trip baru', 'Rinjani') + mIn('Ketik BARU', 'BARU') + mBtn('🚀 Arsipkan & mulai trip baru', 'tp')) + mNav(2) },
+      { c: 'Cadangkan lewat Drive atau WhatsApp. Pulihkan dari file cadangan di HP baru.', ui: mH('Trip & Arsip') + mCard('💾 Cadangan Data', mBtn('📤 Bagikan cadangan', 'tp') + mBtn('⬆️ Pulihkan dari cadangan')) + mNav(2) }],
+    st: ['Menu › Trip & Arsip › 🗂️ Arsipkan sekarang menyimpan salinan trip ke daftar arsip.', 'Mulai Trip Baru mengosongkan tamu, transaksi, itinerary, perlengkapan, checklist, dan simulasi. Isi destinasi baru (opsional), ketik BARU, lalu ketuk tombolnya.', 'Daftar Arsip: ketuk Buka untuk menjadikan arsip sebagai data aktif, atau Unduh untuk menyimpannya.', 'Tempat Sampah menyimpan entri yang dihapus selama 30 hari. Ketuk Pulihkan untuk mengembalikan.', 'Cadangan Data: 📤 Bagikan cadangan (Drive atau WhatsApp), atau ⬇️ Unduh cadangan (JSON).', '⬆️ Pulihkan dari cadangan akan MENIMPA data saat ini, jadi cadangkan dulu bila ragu.', 'Reset Total menghapus semua dan tidak bisa dibatalkan.'],
+    tp: ['Cadangkan sebelum ganti HP, uninstall aplikasi, atau menghapus data browser.'] },
+  { ic: '🏷️', t: 'Kategori dan transaksi berulang', s: 'Mengatur kategori dan tagihan rutin', go: 'kategori',
+    demo: [
+      { c: 'Tambahkan kategori sendiri untuk pemasukan atau pengeluaran.', ui: mH('Kategori') + mCard('Kategori Pengeluaran', mRow('Transportasi', '✕') + mRow('Konsumsi', '✕') + `<div class="mrw"><span class="tp">Tambah kategori</span><b>Tambah</b></div>`) + mNav(2) },
+      { c: 'Transaksi Berulang dibuat dari pilihan Ulangi otomatis di formulir, dan ditambahkan sendiri saat aplikasi dibuka.', ui: mH('Kategori') + mCard('🔁 Transaksi Berulang', mRow('Iuran kas', 'tiap 7 hari') + `<div class="mrw"><span>Berikutnya 03/11/2026</span><b class="tp">Hentikan</b></div>`) + mNav(2) }],
+    st: ['Menu › Kategori: ketik nama di Tambah kategori lalu ketuk Tambah. Ketuk ✕ untuk menghapus. Kategori Peserta pada pemasukan terkunci 🔒.', 'Transaksi Berulang: saat mencatat transaksi pilih Ulangi otomatis dan isi jarak harinya.', 'Daftar transaksi berulang beserta jadwal berikutnya ada di bawah kartu kategori, bisa dihentikan kapan saja.'],
+    tp: ['Kategori baru langsung muncul di pilihan formulir dan di Rekap.'] },
+  { ic: '👤', t: 'Akun', s: 'Profil, kontak, kwitansi, lisensi', go: 'akun',
+    demo: [
+      { c: 'Ketuk kartu profil untuk mengubah nama, tagline, dan logo. Strip Pengaturan di bawahnya membuka Pengaturan.', ui: mH('Akun') + `<div class="mc"><div class="mrw"><span>🏷️ bawaulin.trip</span><b>Ubah</b></div><div class="mrw tp"><span>⚙️ Pengaturan</span><b>Buka ›</b></div></div>` + mNav(4) },
+      { c: 'Lengkapi Kontak dan Kwitansi: tanda tangan digambar dengan jari, stempel dari foto.', ui: mH('Akun') + mCard('KWITANSI', mRow('Penanda tangan', 'Rani, Bendahara') + `<div class="mrw"><span class="tp">Tanda tangan</span><b>Gambar</b></div>` + mRow('Kode penyelenggara', 'BWT')) + mNav(4) },
+      { c: 'Data & Cadangan: lihat cadangan terakhir dan cadangkan sekarang.', ui: mH('Akun') + mCard('DATA & CADANGAN', mRow('Cadangan terakhir', '2 hari lalu') + `<div class="mrw"><span class="tp">Cadangkan sekarang</span><b>›</b></div>`) + mNav(4) }],
+    st: ['Kartu profil: ketuk untuk mengubah nama, tagline, dan logo yang dipakai di kop dokumen.', 'Strip Pengaturan di bagian bawah kartu profil memperlihatkan ringkasan PIN, tema, dan warna. Ketuk untuk membuka Pengaturan.', 'Ringkasan: peserta diterima, transaksi, trip diarsipkan, dan kelengkapan profil.', 'Kontak: WhatsApp, Instagram, Email, Kota atau alamat. Dipakai di kop PDF.', 'Kwitansi: nama dan jabatan penanda tangan, tanda tangan (gambar dengan jari), stempel (foto), dan kode penyelenggara untuk nomor kwitansi.', 'Data & Cadangan: lihat kapan terakhir dicadangkan dan cadangkan sekarang.', 'Lisensi: status aktif dan kode perangkat. Ketuk Salin bila diminta pembuat.', 'Tentang Pembuat: tombol Instagram dan WhatsApp pembuat aplikasi. Bagian ini dilindungi.'],
+    tp: ['Isi Kontak dan penanda tangan dulu supaya kop dan kwitansi PDF langsung rapi.'] },
+  { ic: '⚙️', t: 'Pengaturan', s: 'PIN, tampilan, warna, pesan, pengingat', go: 'pengaturan',
+    demo: [
+      { c: 'Keamanan: aktifkan PIN 4 sampai 8 angka, simpan kode pemulihan, dan atur kunci otomatis.', ui: mH('Pengaturan') + mCard('KEAMANAN', mRow('PIN aplikasi', 'Aktif') + mRow('Kunci otomatis', '1 menit') + mTog('Mode privasi', 1, 'tp')) + mNav(4) },
+      { c: 'Tampilan: tema, ukuran huruf, dan warna aplikasi (6 pilihan atau warna sendiri).', ui: mH('Pengaturan') + mCard('TAMPILAN', mRow('Tema', 'Gelap') + `<div class="mrw"><span>Warna aplikasi</span><span class="msw"><i style="background:#f97316"></i><i style="background:#2563eb"></i><i class="tp" style="background:#16a34a"></i><i style="background:#7c3aed"></i></span></div>`) + mNav(4) },
+      { c: 'Pesan tagihan WhatsApp dan pengingat Beranda bisa disesuaikan.', ui: mH('Pengaturan') + mCard('PESAN WHATSAPP', `<div class="mrw tp"><span>Pesan tagihan peserta</span><b>Kustom ›</b></div>`) + mCard('PENGINGAT', mTog('Telat bayar', 1) + mTog('Pendaftar menunggu', 1)) + mNav(4) }],
+    st: ['Buka dari Akun › strip Pengaturan.', 'PIN aplikasi: isi 4 sampai 8 angka. Kode pemulihan (XXXX-XXXX) dibuat otomatis, simpan baik-baik untuk fitur Lupa PIN.', 'Kunci otomatis: Langsung, 1, 5, 15 menit, atau Tidak pernah.', 'Mode privasi menyamarkan nominal Rp di layar. PDF tetap menampilkan angka asli.', 'Tampilan: tema Gelap, Terang, atau Ikuti HP; latar foto; ukuran huruf S, M, L; warna aplikasi.', 'Perilaku Input: halaman awal, konfirmasi sebelum hapus, getar saat simpan, dan pembulatan harga jual.', 'Pesan WhatsApp: ubah isi pesan tagihan dengan kata kunci seperti {nama}, {sisa}, {tenggat}.', 'Pengingat Beranda: pilih jenis pengingat dan seberapa sering diingatkan mencadangkan data.', 'Penyimpanan: minta penyimpanan permanen agar data tidak dibersihkan sistem.', 'Tentang & Bantuan: Cek pembaruan aplikasi, Yang baru, dan Salin info perangkat.', 'Reset pengaturan saja tidak menghapus data trip. Hapus semua data memerlukan ketikan HAPUS.'],
+    tp: ['Warna aplikasi hanya mengubah tampilan di layar. PDF tetap tema terang dan logo tidak berubah.'] },
+  { ic: '❓', t: 'Masalah umum', s: 'Jawaban cepat untuk kendala yang sering muncul', go: '', demo: null,
+    st: ['Data hilang? Data hanya tersimpan di HP ini. Menghapus data aplikasi atau browser ikut menghapusnya, jadi cadangkan rutin (Akun › Data & Cadangan).', 'Ganti HP: cadangkan di HP lama, lalu di HP baru buka Menu › Trip & Arsip › Pulihkan dari cadangan. Lisensi disimpan terpisah dari cadangan.', 'Lupa PIN: di layar kunci ketuk Lupa PIN? dan masukkan kode pemulihan. Jika tidak punya kodenya, pulihkan lewat file cadangan.', 'Tampilan belum berubah setelah update: Pengaturan › Tentang & Bantuan › Cek pembaruan aplikasi, lalu Muat ulang. Bila perlu tutup aplikasi sepenuhnya dan buka lagi.', 'PDF tidak muncul: dialog cetak harus dibuka. Pilih Simpan sebagai PDF. Jika tombol PDF terkunci, pasang ulang aplikasi asli.', 'Status bayar peserta salah: pastikan nama di kolom Dibayar oleh sama dengan nama di Tamu dan kategori pemasukannya Peserta.', 'Nominal tampil Rp •••: mode privasi aktif. Matikan di Pengaturan › Keamanan.', 'Salah menghapus entri: buka Menu › Trip & Arsip › Tempat Sampah dalam 30 hari dan ketuk Pulihkan.'],
+    tp: [] }
+];
+
+const PD = { ch: -1, f: 0, timer: null, play: true };
+function renderPanduan() {
+  clearInterval(PD.timer);
+  if (PD.ch < 0) {
+    $('main').innerHTML = `<div class="card"><h3>Panduan lengkap</h3><small class="mut">Pilih topik. Setiap topik punya demo bergerak, langkah rinci, dan tips. Semua jalan tanpa internet.</small></div>
+    <div class="pdl">${PAN.map((c, i) => `<button class="pdc" onclick="pdBuka(${i})"><span class="pdi">${c.ic}</span><span class="pdt"><b>${esc(c.t)}</b><small>${esc(c.s)}</small></span><span class="zch">›</span></button>`).join('')}</div>`;
+    return;
+  }
+  const c = PAN[PD.ch], n = c.demo ? c.demo.length : 0;
+  $('main').innerHTML = `<button class="back" onclick="pdBuka(-1)">‹ Semua topik</button>
+  <div class="card"><h3>${c.ic} ${esc(c.t)}</h3><small class="mut">${esc(c.s)}</small>
+  ${n ? `<div class="pd-phone" id="pdph" onclick="pdNext()"><div class="pd-scr">${c.demo.map((f, i) => `<div class="pd-f${i === 0 ? ' on' : ''}">${f.ui}</div>`).join('')}</div><div class="pd-tap" id="pdtap"></div></div>
+  <div class="pd-cap" id="pdcap"></div><div class="pd-dots" id="pdd">${c.demo.map((f, i) => `<button onclick="pdShow(${i})" aria-label="Langkah ${i + 1}"></button>`).join('')}</div>
+  <div class="kchips" style="justify-content:center"><button class="kchip" onclick="pdPrev()">⏮</button><button class="kchip" id="pdpl" onclick="pdToggle()">⏸ Jeda</button><button class="kchip" onclick="pdNext()">⏭</button></div>` : ''}</div>
+  <div class="card"><h3>Langkah rinci</h3>${c.st.map((x, i) => `<div class="pds"><span>${i + 1}</span><div>${esc(x)}</div></div>`).join('')}</div>
+  ${c.tp.length ? `<div class="card"><h3>💡 Tips</h3>${c.tp.map(x => `<div class="warn note">${esc(x)}</div>`).join('')}</div>` : ''}
+  ${c.go ? `<button class="btn" onclick="show('${c.go}')">Coba sekarang ›</button>` : ''}
+  <div class="flt" style="margin-top:6px">${PD.ch > 0 ? `<button class="btn alt" onclick="pdBuka(${PD.ch - 1})">‹ ${esc(PAN[PD.ch - 1].t)}</button>` : ''}${PD.ch < PAN.length - 1 ? `<button class="btn alt" onclick="pdBuka(${PD.ch + 1})">${esc(PAN[PD.ch + 1].t)} ›</button>` : ''}</div>`;
+  if (n) { PD.play = true; setTimeout(() => { pdShow(0); PD.timer = setInterval(() => { if (cur !== 'panduan' || !$('pdtap')) { clearInterval(PD.timer); return; } if (PD.play) pdShow((PD.f + 1) % PAN[PD.ch].demo.length); }, 3600); }, 60); }
+}
+function pdBuka(i) { PD.ch = i; PD.f = 0; PD.keep = true; show('panduan'); }
+function pdShow(i) {
+  const c = PAN[PD.ch]; if (!c || !c.demo || !$('pdph')) return; PD.f = i;
+  const fr = document.querySelectorAll('.pd-f'); fr.forEach((e, j) => e.classList.toggle('on', j === i));
+  document.querySelectorAll('#pdd button').forEach((e, j) => e.classList.toggle('on', j === i));
+  $('pdcap').innerHTML = `<b>${i + 1}/${c.demo.length}</b> ${esc(c.demo[i].c)}`;
+  const ph = $('pdph'), t = $('pdtap'), tg = fr[i].querySelector('.tp');
+  t.classList.remove('hit');
+  if (tg) { const a = ph.getBoundingClientRect(), b = tg.getBoundingClientRect(); t.style.display = 'block'; t.style.left = (b.left - a.left + Math.min(b.width * .6, 90)) + 'px'; t.style.top = (b.top - a.top + b.height * .55) + 'px'; setTimeout(() => t.classList.add('hit'), 650); } else t.style.display = 'none';
+}
+const pdNext = () => { const n = PAN[PD.ch].demo.length; pdShow((PD.f + 1) % n); };
+const pdPrev = () => { const n = PAN[PD.ch].demo.length; pdShow((PD.f + n - 1) % n); };
+function pdToggle() { PD.play = !PD.play; $('pdpl').textContent = PD.play ? '⏸ Jeda' : '▶ Putar'; }
+
 /* ===== Mulai ===== */
 async function mulai() {
   DB = Object.assign(blank(), await load() || {}); DB.pref = DB.pref || {}; DB.profil = DB.profil || {}; DB.kw = DB.kw || {}; DB.nomor = DB.nomor || {}; applyKat(); DB.trash = (DB.trash || []).filter(x => Date.now() - x.ts < 30 * 864e5); if (jalankanUlang()) { await save(); setTimeout(() => toast('Transaksi berulang ditambahkan'), 700); }
