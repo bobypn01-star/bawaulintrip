@@ -11,14 +11,14 @@
 <style>:root{--bg:#0b0b0d;--card:rgba(23,23,27,.86);--card2:rgba(255,255,255,.08);--tx:#fff7ed;--mut:#e0cfb0;--bd:rgba(251,191,36,.18);--h:#fbbf24;--pri:#f97316;--pri2:#fbbf24;--grn:#22c55e;--red:#ef4444;color-scheme:dark}
 html[data-t=light]{--bg:#f3f4f6;--card:rgba(255,255,255,.9);--card2:rgba(0,0,0,.05);--tx:#1c1917;--mut:#57534e;--bd:#e7e5e4;--h:#c2410c;color-scheme:light}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);margin:0;padding-bottom:90px}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);margin:0;padding-bottom:130px}
 header{position:sticky;top:0;z-index:20;background:var(--bg);display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--bd)}
 header img{width:36px;height:36px}header h1{margin:0;font-size:19px;font-weight:800;background:linear-gradient(90deg,var(--pri),var(--pri2));-webkit-background-clip:text;background-clip:text;color:transparent}
 #tg{margin-left:auto;border:1px solid var(--bd);background:var(--card);color:var(--tx);width:38px;height:38px;border-radius:50%;font-size:16px}
-nav{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;background:var(--bg);border-top:1px solid var(--bd);padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
-nav button{flex:1;border:0;background:none;color:var(--mut);display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;font-weight:600;padding:6px 0}
+nav{position:fixed;left:12px;right:12px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:30;display:flex;gap:2px;background:var(--card);background:color-mix(in srgb,var(--card) 78%,transparent);-webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);border:1px solid var(--bd);border-radius:30px;padding:7px;box-shadow:0 10px 34px rgba(0,0,0,.38)}
+nav button{flex:1;border:0;background:none;color:var(--mut);display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;font-weight:600;padding:7px 0;border-radius:22px;transition:background .2s,color .2s}
 nav button svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-nav button.active{color:var(--pri)}
+nav button.active{color:var(--pri);background:rgba(249,115,22,.16)}
 main{max-width:680px;margin:0 auto;padding:16px}
 .pgh{display:flex;align-items:center;gap:10px;margin-bottom:14px}.pgh h2{margin:0;font-size:24px;font-weight:800;color:var(--h)}
 .back{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:20px;padding:6px 12px;font-size:14px}
@@ -53,21 +53,21 @@ html[data-t=light] .warn.red{color:#b91c1c}html[data-t=light] .warn.yellow{color
 .av.in{color:var(--grn)}.av.out{color:var(--red)}.tm{flex:1;min-width:0}.tm b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tm small{color:var(--mut);display:block;font-size:12px}
 .ta{font-weight:800;white-space:nowrap}.ta.in{color:var(--grn)}.ta.out{color:var(--red)}
 .txw{border-bottom:1px solid var(--bd)}.txw:last-child{border:0}.acts{display:flex;gap:6px;padding:0 0 12px 56px}
-.fab{position:fixed;right:18px;bottom:94px;z-index:25;width:58px;height:58px;border-radius:50%;border:0;background:linear-gradient(135deg,#f97316,#fbbf24);color:#1a1000;font-size:32px;font-weight:700;box-shadow:0 8px 24px rgba(249,115,22,.45)}
+.fab{position:fixed;right:18px;bottom:calc(112px + env(safe-area-inset-bottom));z-index:25;width:58px;height:58px;border-radius:50%;border:0;background:linear-gradient(135deg,#f97316,#fbbf24);color:#1a1000;font-size:32px;font-weight:700;box-shadow:0 8px 24px rgba(249,115,22,.45)}
 .sheet{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:40;display:none;align-items:flex-end;justify-content:center}.sheet.on{display:flex}
 .sheetin{position:relative;background:var(--bg);width:100%;max-width:680px;max-height:90vh;overflow:auto;border-radius:26px 26px 0 0;padding:20px 18px 30px;animation:up .25s ease}
 @keyframes up{from{transform:translateY(60px);opacity:0}}
 .sheetin .x{position:absolute;right:14px;top:14px;border:0;background:var(--card2);color:var(--tx);width:34px;height:34px;border-radius:50%}
 .tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}.tile{background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:18px 14px;text-align:left;color:var(--tx);font-size:16px;font-weight:700}
 .tile span{display:block;font-size:28px;margin-bottom:8px}.tile small{display:block;color:var(--mut);font-weight:400;font-size:12px;margin-top:2px}
-#toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:10px 18px;border-radius:20px;z-index:60;font-weight:600;display:none}
+#toast{position:fixed;left:50%;bottom:calc(120px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:10px 18px;border-radius:20px;z-index:60;font-weight:600;display:none}
 .cl{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bd)}.cl .t{flex:1}.cl .t b{display:block}.cl .t small{color:var(--mut)}.cl.done .t b{text-decoration:line-through;color:var(--mut)}
 .rdday{background:linear-gradient(90deg,#166534,#22c55e);color:#fff;padding:7px 12px;border-radius:10px;margin:12px 0 6px;font-weight:700}
 .rdi{display:flex;gap:10px;padding:8px 0 8px 12px;border-left:3px solid #f97316;margin-left:8px;position:relative}.rdi:before{content:'';position:absolute;left:-8px;top:12px;width:11px;height:11px;border-radius:50%;background:#fbbf24;border:2px solid #f97316}
 .rdt{min-width:78px;font-weight:700;color:var(--pri2)}.rdx b{display:block}.rdx small{color:var(--mut)}
 .cgh{display:flex;justify-content:space-between;background:var(--card2);padding:8px 12px;border-radius:10px;margin-top:10px;font-weight:700}
 main{position:relative}
-.sheetin{padding-bottom:calc(130px + env(safe-area-inset-bottom))}
+.sheetin{padding-bottom:calc(170px + env(safe-area-inset-bottom))}
 :root{--pbg:#0b0b0d;--ptx:#f7f1e8;--pmut:#b8ada0;--pbd:#3a3a42;--pth:#33260f;--ptot:#12261a;--pbox:#17171b;--phd:#000;--pti:#fbbf24}
 html[data-t=light]{--pbg:#fff;--ptx:#111;--pmut:#555;--pbd:#c9c9c9;--pth:#fef3c7;--ptot:#ecfdf3;--pbox:#fafafa;--phd:#fff;--pti:#ea580c}
 #pdoc{display:none}
@@ -1141,11 +1141,52 @@ function bagiHasilPdf() {
   return docWrap('LAPORAN BAGI HASIL OFFICIAL', 'Destinasi: ' + (DB.set.destinasi || '-'), o);
 }
 
+/* ===== Lisensi (seumur hidup, offline). Disimpan di key terpisah, tidak ikut cadangan ===== */
+const LIC_PUB = {"kty":"EC","crv":"P-256","x":"28t6n9GOoAIzuRVz5AHfg02uJ4j1XHdWlGIGkCnni28","y":"QGF5YS8V4928En_C4z44es1-ekyXjoOE8J1wpk13yzY"};
+const LIC_AL = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+async function kvGet(k) { const d = await idb(); return new Promise(ok => { const q = d.transaction('kv').objectStore('kv').get(k); q.onsuccess = () => ok(q.result === undefined ? null : q.result); q.onerror = () => ok(null); }); }
+async function kvPut(k, v) { const d = await idb(); return new Promise(ok => { const t = d.transaction('kv', 'readwrite'); t.objectStore('kv').put(v, k); t.oncomplete = ok; t.onerror = ok; }); }
+async function devId() {
+  let id = await kvGet('devid'); try { id = id || localStorage.getItem('bu_id'); } catch (e) {}
+  if (!/^BU-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}$/.test(id || '')) { const a = crypto.getRandomValues(new Uint8Array(8)); const c = Array.from(a, x => LIC_AL[x % 32]).join(''); id = 'BU-' + c.slice(0, 4) + '-' + c.slice(4); }
+  await kvPut('devid', id); try { localStorage.setItem('bu_id', id); } catch (e) {}
+  return id;
+}
+async function licOk(id, key) {
+  try {
+    const sig = Uint8Array.from(atob(String(key).trim().replace(/\s/g, '').replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
+    if (sig.length !== 64) return false;
+    const k = await crypto.subtle.importKey('jwk', LIC_PUB, { name: 'ECDSA', namedCurve: 'P-256' }, false, ['verify']);
+    return await crypto.subtle.verify({ name: 'ECDSA', hash: 'SHA-256' }, k, sig, new TextEncoder().encode('bawaulin|' + id));
+  } catch (e) { return false; }
+}
+async function cekLisensi() { try { const id = await devId(), l = await kvGet('lic'); return !!l && await licOk(id, l); } catch (e) { return false; } }
+async function layarAktivasi(note) {
+  const id = await devId();
+  $('nav').innerHTML = ''; $('main').innerHTML = `<div class="card"><h3>🔑 Aktivasi Aplikasi</h3>
+  <div class="msg err">${note || ''}</div>
+  <p>Kode perangkat Anda:</p><input id="did" value="${id}" readonly>
+  <button class="btn alt" onclick="salinId()">Salin kode perangkat</button>
+  <p>Kirim kode ini ke penjual, lalu tempel kunci aktivasi dari penjual di bawah.</p>
+  <textarea id="lk" rows="4" placeholder="Tempel kunci aktivasi"></textarea>
+  <button class="btn" onclick="aktifkan()">Aktifkan</button></div>`;
+}
+function salinId() { const e = $('did'); e.select(); try { navigator.clipboard.writeText(e.value); } catch (x) { document.execCommand('copy'); } toast('Kode tersalin'); }
+async function aktifkan() {
+  const id = await devId(), k = $('lk').value.trim();
+  if (!k) return layarAktivasi('Tempel kunci aktivasi dulu.');
+  if (!await licOk(id, k)) return layarAktivasi('Kunci tidak cocok dengan perangkat ini.');
+  await kvPut('lic', k); toast('Aplikasi aktif'); await mulai();
+}
+
 /* ===== Mulai ===== */
-(async function () {
+async function mulai() {
   DB = Object.assign(blank(), await load() || {}); applyKat(); DB.trash = (DB.trash || []).filter(x => Date.now() - x.ts < 30 * 864e5); if (jalankanUlang()) { await save(); setTimeout(() => toast('Transaksi berulang ditambahkan'), 700); }
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
   if (DB.pin) lock(); else { buildNav(); show('dashboard'); }
+}
+(async function () {
+  if (await cekLisensi()) await mulai(); else await layarAktivasi();
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
 })();
 </script>
