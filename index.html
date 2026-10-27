@@ -274,6 +274,9 @@ function download(name, text, type) {
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: type || 'application/json' })); a.download = name;
   document.body.appendChild(a); a.click(); a.remove();
 }
+/* v1.0.1: rapikan nomor HP (angka 0 di depan sering hilang dari Google Sheet) */
+function normHP(v) { const s = String(v == null ? '' : v).trim(); if (!s || !/^[+\d\s().-]+$/.test(s)) return s; const d = s.replace(/\D/g, ''); if (/^62\d{8,13}$/.test(d)) return '0' + d.slice(2); if (/^8\d{8,11}$/.test(d)) return '0' + d; return s; }
+function waDigits(v) { let d = normHP(v).replace(/\D/g, ''); if (d.indexOf('0') === 0) d = '62' + d.slice(1); return d; }
 function openWA(t, no) { const a = document.createElement('a'); a.href = 'https://wa.me/' + (no || '') + '?text=' + encodeURIComponent(t); a.target = '_blank'; document.body.appendChild(a); a.click(); a.remove(); }
 function setMsg(id, text, ok) { const e = $(id); if (e) { e.textContent = text; e.className = 'msg ' + (ok ? 'ok' : 'err'); } }
 
@@ -783,7 +786,7 @@ function txRow(key, r) {
   const c = CFG[key], title = r[c.fields[0].h] || '?'; let amt = '', cls = '', sub = [], badges = '';
   if (key === 'pemasukan') { amt = '+ ' + rp(r['Biaya']); cls = 'in'; sub = [r['Kategori'], fmtDate(r['Tanggal transaksi']), r['Dibayar oleh']]; }
   else if (key === 'pengeluaran') { amt = '- ' + rp(r['Total Biaya']); cls = 'out'; sub = [r['Kategori'], r['Quantity'] + ' x ' + rp(r['Biaya']), fmtDate(r['Tanggal transaksi']), r['Dibayar oleh'], r.Bukti ? '' : '🧾 tanpa nota']; }
-  else if (key === 'tamu') { sub = [r['Meeting Point'], r['Ponsel']]; badges = badge(r['Status'] || '') + badge(r['Tagihan'] || ''); }
+  else if (key === 'tamu') { sub = [r['Meeting Point'], normHP(r['Ponsel'])]; badges = badge(r['Status'] || '') + badge(r['Tagihan'] || ''); }
   else if (key === 'itinerary') sub = [r['Jenis aktivitas'], fmtDate(r['Waktu mulai']) + (r['Waktu berakhir'] ? ' - ' + fmtDate(r['Waktu berakhir']).slice(-5) : ''), r['Lokasi']];
   else { sub = ['Butuh ' + r['Kebutuhan'] + ', punya ' + r['Kesediaan'] + ', sewa ' + r['Sewa']]; amt = rp(r['Total Sewa']); }
   const bk = (key === 'pemasukan' || key === 'pengeluaran') && r.Bukti ? `<button class="edt" onclick="viewBukti(${r.id},'${key}')">📎 Bukti</button>` : '';
@@ -848,7 +851,7 @@ function pesertaInfo(i) { const b = bayarData(), base = window._per[$('bsel').va
 function tagihWA(i) {
   const { base, p, s } = pesertaInfo(i), d = DB.set, late = s > 0 && d.tenggat && today() > d.tenggat;
   const t = tagihTpl(p, base, s, d, late) || 'Halo ' + p.nama + ', tagihan trip' + (d.destinasi ? ' ' + d.destinasi : '') + ':\nTotal tagihan: ' + rp(base) + '\nSudah dibayar: ' + rp(p.dibayar) + '\n*Sisa: ' + rp(s) + '*' + (d.tenggat ? '\nTenggat: ' + fmtDate(d.tenggat) + (late ? ' (sudah lewat)' : '') : '') + (d.rek ? '\n\nTransfer ke:\n' + d.rek : '') + (d.qris ? '\n(atau scan QRIS yang dikirim terpisah)' : '') + '\n\nMohon kirim bukti transfer. Terima kasih 🙏';
-  let no = String(p.ponsel || '').replace(/\D/g, ''); if (no.indexOf('0') === 0) no = '62' + no.slice(1); openWA(t, no);
+  openWA(t, waDigits(p.ponsel));
 }
 function terbilang(n) {
   const s = ['', 'satu', 'dua', 'tiga', 'empat', 'lima', 'enam', 'tujuh', 'delapan', 'sembilan', 'sepuluh', 'sebelas'];
@@ -944,7 +947,7 @@ function laporanHtml() {
 }
 
 /* ===== Pendaftaran online (hybrid) ===== */
-const noWA = p => { let n = String(p || '').replace(/\D/g, ''); if (n.indexOf('0') === 0) n = '62' + n.slice(1); return n; };
+const noWA = p => waDigits(p);
 function daftarLink() { const u = DB.set.daftarUrl; return u ? location.href.replace(/[^/]*([?#].*)?$/, '') + 'daftar.html?s=' + encodeURIComponent(u) + '&t=' + encodeURIComponent(DB.set.destinasi || '') : ''; }
 function renderDaftar() {
   const d = DB.set, link = daftarLink(), pend = DB.tamu.filter(t => t['Status'] === 'Menunggu respons');
@@ -954,7 +957,7 @@ function renderDaftar() {
   ${link ? `<div class="card"><h3>Link Pendaftaran</h3><small class="mut">Destinasi: ${esc(d.destinasi || '(belum diisi di Beranda)')}</small><input id="dl" readonly value="${esc(link)}" onclick="this.select()" style="margin-top:8px">
   <div class="flt"><button class="btn alt" style="margin:0" onclick="navigator.clipboard&&navigator.clipboard.writeText($('dl').value);toast('Link disalin')">Salin link</button><button class="btn" style="margin:0;background:#25d366" onclick="openWA('Daftar trip${esc(d.destinasi ? ' ' + d.destinasi : '')} di sini:\\n'+$('dl').value)">Bagikan WA</button></div></div>` : ''}
   <div class="card"><h3>Pendaftar Masuk</h3><button class="btn" onclick="ambilDaftar()">⬇️ Ambil pendaftar baru</button><div id="dmsg" class="msg"></div></div>
-  <div class="card"><h3>Menunggu Respons (${pend.length})</h3>${pend.length ? pend.map(t => `<div class="txw"><div class="tx"><div class="av">${esc(String(t['Nama']).charAt(0).toUpperCase())}</div><div class="tm"><b>${esc(t['Nama'])}</b><small>${esc(t['Ponsel'] || '')}</small><small>${esc(String(t['Catatan'] || '').slice(0, 90))}</small></div></div>
+  <div class="card"><h3>Menunggu Respons (${pend.length})</h3>${pend.length ? pend.map(t => `<div class="txw"><div class="tx"><div class="av">${esc(String(t['Nama']).charAt(0).toUpperCase())}</div><div class="tm"><b>${esc(t['Nama'])}</b><small>${esc(normHP(t['Ponsel']))}</small><small>${esc(String(t['Catatan'] || '').slice(0, 90))}</small></div></div>
   <div class="acts"><button class="edt" onclick="setStatusTamu(${t.id},'Diterima')">Terima</button><button class="del" onclick="setStatusTamu(${t.id},'Ditolak')">Tolak</button><button class="edt" onclick="openWA('Halo ${esc(t['Nama'])}, terima kasih sudah mendaftar.','${noWA(t['Ponsel'])}')">💬 WA</button></div></div>`).join('') : '<div>Tidak ada yang menunggu.</div>'}</div>`;
 }
 async function simpanDaftar() { DB.set.daftarUrl = $('du').value.trim(); DB.set.daftarKey = $('dk').value.trim(); await save(); renderDaftar(); toast('Tersimpan'); }
@@ -968,8 +971,8 @@ async function ambilDaftar() {
     let n = 0; DB.seen = DB.seen || {};
     j.data.forEach(x => {
       if (DB.seen[x.id] || (d.destinasi && x.trip && String(x.trip).toLowerCase() !== d.destinasi.toLowerCase())) return; DB.seen[x.id] = 1;
-      const c = [x.darurat && 'Darurat: ' + x.darurat, x.gol && 'Gol. darah: ' + x.gol, x.riwayat && 'Riwayat: ' + x.riwayat, x.catatan, 'Daftar online'].filter(Boolean).join(' | ');
-      DB.tamu.push({ id: DB.seq++, 'Nama': x.nama, 'Meeting Point': x.mp || '', 'Ponsel': x.ponsel, 'Status': 'Menunggu respons', 'Tagihan': '', 'Catatan': c }); n++;
+      const c = [x.darurat && 'Darurat: ' + normHP(x.darurat), x.gol && 'Gol. darah: ' + x.gol, x.riwayat && 'Riwayat: ' + x.riwayat, x.catatan, 'Daftar online'].filter(Boolean).join(' | ');
+      DB.tamu.push({ id: DB.seq++, 'Nama': x.nama, 'Meeting Point': x.mp || '', 'Ponsel': normHP(x.ponsel), 'Status': 'Menunggu respons', 'Tagihan': '', 'Catatan': c }); n++;
     });
     await save(); renderDaftar(); setMsg('dmsg', n ? n + ' pendaftar baru masuk ke daftar Tamu.' : 'Tidak ada pendaftar baru.', 1);
   } catch (e) { setMsg('dmsg', 'Gagal terhubung. Cek link Apps Script dan internet.', 0); }
@@ -1476,7 +1479,7 @@ async function cekLisensiSekarang() {
 }
 
 /* ===== v18: Akun, Pengaturan, warna aplikasi, nomor kwitansi, identitas pembuat ===== */
-const APP_V = 'v21.1';
+const APP_V = 'v1.0.1';
 const CR = Object.freeze({ nama: 'bawaulin.trip', tag: 'Lieur gawe, Bawa ulin', ig: 'https://www.instagram.com/bawaulin.trip?srtk=d29rcmh1YXVrajVz', igh: '@bawaulin.trip', wa: 'https://wa.me/6289618805100', wah: '+62 896-1880-5100' });
 const CR_H = 'bdaae993647f576cf92a364af7443befdce2ceefffe6c926d596f7e52a001b37', LOGO_H = '3763dd402cc104c4f9cebcce4a37a936cf2e0606bb1dd2d261e030f0a6ccc9bb';
 let CR_OK = null, LOCKED = false, hiddenAt = 0, PRIV_OBS = null;
@@ -1692,7 +1695,7 @@ async function salinInfo() {
   const id = await devId(), s = await infoStorage(), t = ['bawaulin.trip ' + APP_V, 'Kode perangkat: ' + id, 'Layar: ' + screen.width + 'x' + screen.height, 'Online: ' + navigator.onLine, 'Penyimpanan: ' + (s.used / 1048576).toFixed(1) + ' MB, permanen: ' + (s.p ? 'ya' : 'belum'), navigator.userAgent].join('\n');
   try { await navigator.clipboard.writeText(t); toast('Info perangkat disalin'); } catch (e) { toast('Gagal menyalin'); }
 }
-const BARU = ['Keamanan lisensi: aplikasi memeriksa status lisensi ke server (otomatis maks. tiap 1 jam, atau kapan saja lewat Pengaturan › Periksa status lisensi sekarang; tidak menahan aplikasi). Tanpa internet tetap jalan sampai 30 hari sejak pemeriksaan terakhir. Lisensi dicabut, versi terlalu lama, atau jam HP dimundurkan akan mengunci aplikasi. Kunci aktivasi lama diganti kunci baru.', 'Ikon Pengaturan (gerigi) pindah ke kanan judul Akun, di bawah tombol terang/gelap. Kartu Pengaturan di Akun dihapus.', 'Kalkulator pindah ke Menu › Kalkulator: tampilan seperti kalkulator HP, memori, riwayat, tombol ÷ Peserta dan Bulat, plus 7 rumus Hitung Trip.', 'Akun: kartu profil dan tombol Pengaturan menyatu, ada Ringkasan, kelengkapan profil, dan Data & Cadangan.', 'Tentang pembuat: tombol Instagram dan WhatsApp saja, tanpa tulisan nama atau nomor.', 'Pengaturan baru: pesan tagihan WhatsApp bisa diubah, pembulatan harga jual, dan Cek pembaruan aplikasi.', 'Panduan singkat kini berisi demo bergerak dan langkah rinci untuk semua fitur (Menu › Panduan).'];
+const BARU = ['Perbaikan: angka 0 di depan nomor WhatsApp tidak lagi hilang (tagihan WA, daftar Tamu, dan impor pendaftar online). Data lama tidak diubah.', 'Penomoran versi dimulai ulang dari v1.0.0. Tidak ada perubahan fitur.', 'Keamanan lisensi: aplikasi memeriksa status lisensi ke server (otomatis maks. tiap 1 jam, atau kapan saja lewat Pengaturan › Periksa status lisensi sekarang; tidak menahan aplikasi). Tanpa internet tetap jalan sampai 30 hari sejak pemeriksaan terakhir. Lisensi dicabut, versi terlalu lama, atau jam HP dimundurkan akan mengunci aplikasi. Kunci aktivasi lama diganti kunci baru.', 'Ikon Pengaturan (gerigi) pindah ke kanan judul Akun, di bawah tombol terang/gelap. Kartu Pengaturan di Akun dihapus.', 'Kalkulator pindah ke Menu › Kalkulator: tampilan seperti kalkulator HP, memori, riwayat, tombol ÷ Peserta dan Bulat, plus 7 rumus Hitung Trip.', 'Akun: kartu profil dan tombol Pengaturan menyatu, ada Ringkasan, kelengkapan profil, dan Data & Cadangan.', 'Tentang pembuat: tombol Instagram dan WhatsApp saja, tanpa tulisan nama atau nomor.', 'Pengaturan baru: pesan tagihan WhatsApp bisa diubah, pembulatan harga jual, dan Cek pembaruan aplikasi.', 'Panduan singkat kini berisi demo bergerak dan langkah rinci untuk semua fitur (Menu › Panduan).'];
 const listSheet = (t, a) => sheetOpen(`<h3>${t}</h3>${a.map(x => `<div class="zli">• ${esc(x)}</div>`).join('')}`);
 async function resetPref() {
   if (!confirm('Kembalikan semua pengaturan tampilan dan perilaku ke bawaan? Data trip tidak berubah.')) return;
