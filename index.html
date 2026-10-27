@@ -1379,7 +1379,7 @@ function bagiHasilPdf() {
 }
 
 /* ===== Lisensi (seumur hidup, offline). Disimpan di key terpisah, tidak ikut cadangan ===== */
-const LIC_PUB = {"kty":"EC","crv":"P-256","x":"28t6n9GOoAIzuRVz5AHfg02uJ4j1XHdWlGIGkCnni28","y":"QGF5YS8V4928En_C4z44es1-ekyXjoOE8J1wpk13yzY"};
+const LIC_PUB = {"kty":"EC","crv":"P-256","x":"mD6bhZjeFLyK40bL1ls_1Xvd3porPlmcp6oY4Eut1X0","y":"Eol83fbMSZCdEcwHF9_SJ5FbpRfz8j371PnFLnOwFHk"};
 const LIC_AL = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 async function kvGet(k) { const d = await idb(); return new Promise(ok => { const q = d.transaction('kv').objectStore('kv').get(k); q.onsuccess = () => ok(q.result === undefined ? null : q.result); q.onerror = () => ok(null); }); }
 async function kvPut(k, v) { const d = await idb(); return new Promise(ok => { const t = d.transaction('kv', 'readwrite'); t.objectStore('kv').put(v, k); t.oncomplete = ok; t.onerror = ok; }); }
@@ -1399,7 +1399,7 @@ async function licOk(id, key) {
 }
 async function cekLisensi() { try { const id = await devId(), l = await kvGet('lic'); return !!l && await licOk(id, l); } catch (e) { return false; } }
 async function layarAktivasi(note) {
-  const id = await devId();
+  const id = await devId(); if (Date.now() - licReg > 6e5) { licReg = Date.now(); licKirim('reg'); }
   $('nav').innerHTML = ''; $('main').innerHTML = `<div class="card"><h3>🔑 Aktivasi Aplikasi</h3>
   <div class="msg err">${note || ''}</div>
   <p>Kode perangkat Anda:</p><input id="did" value="${id}" readonly>
@@ -1413,11 +1413,58 @@ async function aktifkan() {
   const id = await devId(), k = $('lk').value.trim();
   if (!k) return layarAktivasi('Tempel kunci aktivasi dulu.');
   if (!await licOk(id, k)) return layarAktivasi('Kunci tidak cocok dengan perangkat ini.');
-  await kvPut('lic', k); toast('Aplikasi aktif'); await mulai();
+  await kvPut('lic', k); await kvPut('srv', null); await kvPut('seen', Date.now()); licKirim('reg'); toast('Aplikasi aktif'); await mulai(); licLatar();
+}
+
+/* ===== v21: pemantauan lisensi ke server. Dikirim HANYA: kode perangkat, versi, token pasang, asal alamat, hash kode, penanda kunci sah. Tidak ada data trip/uang. ===== */
+const LIC_URL = 'https://script.google.com/macros/s/AKfycbwheQyfz4A1jwJbOTAshlXRgDneXE1X4QD3wo91gDonVd0x1W4QnnSmUWx2c5Qowvk9/exec';
+const LIC_CEK_MS = 6 * 36e5, LIC_TOL_DEF = 30, LIC_JAM_TOL = 10 * 6e4;
+let licReg = 0;
+const vNum = v => String(v || '').replace(/^v/i, '').split('.').map(x => parseInt(x, 10) || 0);
+const vLebih = (a, b) => { const x = vNum(a), y = vNum(b); for (let i = 0; i < Math.max(x.length, y.length); i++) { const d = (x[i] || 0) - (y[i] || 0); if (d) return d < 0; } return false; };
+async function licTok() {
+  let t = await kvGet('tok'); try { t = t || localStorage.getItem('bu_tok'); } catch (e) {}
+  if (!t) t = [...crypto.getRandomValues(new Uint8Array(12))].map(b => b.toString(16).padStart(2, '0')).join('');
+  await kvPut('tok', t); try { localStorage.setItem('bu_tok', t); } catch (e) {} return t;
+}
+async function licKirim(a) {
+  try {
+    const id = await devId(), ok = await cekLisensi(), ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 8000);
+    const r = await fetch(LIC_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, signal: ctl.signal, body: JSON.stringify({ a, id, v: APP_V, tok: await licTok(), org: location.origin, h: await sha(licOk.toString() + '|' + JSON.stringify(LIC_PUB)), k: ok ? 1 : 0 }) });
+    clearTimeout(to); const j = await r.json(); return j && j.ok ? j : null;
+  } catch (e) { return null; }
+}
+async function licJam() {
+  const now = Date.now(); let seen = Number(await kvGet('seen')) || 0; try { seen = Math.max(seen, Number(localStorage.getItem('bu_seen')) || 0); } catch (e) {}
+  if (now < seen - LIC_JAM_TOL) return false;
+  seen = Math.max(seen, now); await kvPut('seen', seen); try { localStorage.setItem('bu_seen', String(seen)); } catch (e) {} return true;
+}
+function licAlasan(r) { if (r.st === 'DICABUT') return 'dicabut'; if (r.st === 'BELUM' && !r.mig) return 'belum'; if (r.vmin && vLebih(APP_V, r.vmin)) return 'versi'; return ''; }
+async function licSimpan(r) { const n = Date.now(), s = { st: r.st, vmin: r.vmin || '', tol: Number(r.tol) || LIC_TOL_DEF, mig: !!r.mig, t: n, c: n, blk: licAlasan(r) }; await kvPut('srv', s); return s; }
+async function licBlokir(alasan) {
+  const M = { dicabut: ['Lisensi dicabut', 'Lisensi perangkat ini sudah tidak aktif. Hubungi penjual.'], belum: ['Belum terdaftar', 'Perangkat ini belum terdaftar. Hubungi penjual dan kirim kode perangkat Anda.'], versi: ['Perlu pembaruan', 'Versi aplikasi ini sudah terlalu lama. Perbarui aplikasi untuk melanjutkan.'], jam: ['Jam HP tidak sesuai', 'Jam HP lebih mundur dari sebelumnya. Perbaiki tanggal dan jam HP, lalu buka lagi.'], tol: ['Perlu internet', 'Aplikasi perlu terhubung internet untuk memeriksa lisensi. Sambungkan internet lalu coba lagi.'] }[alasan] || ['Tidak dapat dibuka', 'Hubungi penjual.'];
+  LOCKED = true; const id = await devId(); $('nav').innerHTML = '';
+  $('main').innerHTML = `<div class="card"><h3>🔒 ${M[0]}</h3><div class="msg err">${M[1]}</div><p>Kode perangkat: <b>${id}</b></p><button class="btn" onclick="${alasan === 'versi' ? "navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(g=>g&&g.update()).finally(()=>location.reload())" : 'location.reload()'}">${alasan === 'versi' ? 'Perbarui sekarang' : 'Coba lagi'}</button><a class="btn alt" href="${CR.wa}" target="_blank" rel="noopener">Hubungi penjual</a></div>`;
+}
+async function licGerbang() {
+  if (!await licJam()) { await licBlokir('jam'); return false; }
+  let s = await kvGet('srv');
+  if (!s) { s = { st: 'AKTIF', vmin: '', tol: LIC_TOL_DEF, mig: true, t: Date.now(), c: 0, blk: '' }; await kvPut('srv', s); }
+  const lewat = Date.now() - s.t > s.tol * 864e5;
+  if (s.blk || lewat) {
+    const r = await licKirim('chk');
+    if (r) { s = await licSimpan(r); if (!s.blk) return true; await licBlokir(s.blk); return false; }
+    await licBlokir(s.blk || 'tol'); return false;
+  }
+  return true;
+}
+async function licLatar() {
+  if (!navigator.onLine) return; const s = await kvGet('srv'); if (s && Date.now() - s.c < LIC_CEK_MS) return;
+  const r = await licKirim('chk'); if (!r) return; const n = await licSimpan(r); if (n.blk) licBlokir(n.blk);
 }
 
 /* ===== v18: Akun, Pengaturan, warna aplikasi, nomor kwitansi, identitas pembuat ===== */
-const APP_V = 'v20.1';
+const APP_V = 'v21';
 const CR = Object.freeze({ nama: 'bawaulin.trip', tag: 'Lieur gawe, Bawa ulin', ig: 'https://www.instagram.com/bawaulin.trip?srtk=d29rcmh1YXVrajVz', igh: '@bawaulin.trip', wa: 'https://wa.me/6289618805100', wah: '+62 896-1880-5100' });
 const CR_H = 'bdaae993647f576cf92a364af7443befdce2ceefffe6c926d596f7e52a001b37', LOGO_H = '3763dd402cc104c4f9cebcce4a37a936cf2e0606bb1dd2d261e030f0a6ccc9bb';
 let CR_OK = null, LOCKED = false, hiddenAt = 0, PRIV_OBS = null;
@@ -1633,7 +1680,7 @@ async function salinInfo() {
   const id = await devId(), s = await infoStorage(), t = ['bawaulin.trip ' + APP_V, 'Kode perangkat: ' + id, 'Layar: ' + screen.width + 'x' + screen.height, 'Online: ' + navigator.onLine, 'Penyimpanan: ' + (s.used / 1048576).toFixed(1) + ' MB, permanen: ' + (s.p ? 'ya' : 'belum'), navigator.userAgent].join('\n');
   try { await navigator.clipboard.writeText(t); toast('Info perangkat disalin'); } catch (e) { toast('Gagal menyalin'); }
 }
-const BARU = ['Ikon Pengaturan (gerigi) pindah ke kanan judul Akun, di bawah tombol terang/gelap. Kartu Pengaturan di Akun dihapus.', 'Kalkulator pindah ke Menu › Kalkulator: tampilan seperti kalkulator HP, memori, riwayat, tombol ÷ Peserta dan Bulat, plus 7 rumus Hitung Trip.', 'Akun: kartu profil dan tombol Pengaturan menyatu, ada Ringkasan, kelengkapan profil, dan Data & Cadangan.', 'Tentang pembuat: tombol Instagram dan WhatsApp saja, tanpa tulisan nama atau nomor.', 'Pengaturan baru: pesan tagihan WhatsApp bisa diubah, pembulatan harga jual, dan Cek pembaruan aplikasi.', 'Panduan singkat kini berisi demo bergerak dan langkah rinci untuk semua fitur (Menu › Panduan).'];
+const BARU = ['Keamanan lisensi: aplikasi memeriksa status lisensi ke server (maks. tiap 6 jam, tidak menahan aplikasi). Tanpa internet tetap jalan sampai 30 hari sejak pemeriksaan terakhir. Lisensi dicabut, versi terlalu lama, atau jam HP dimundurkan akan mengunci aplikasi. Kunci aktivasi lama diganti kunci baru.', 'Ikon Pengaturan (gerigi) pindah ke kanan judul Akun, di bawah tombol terang/gelap. Kartu Pengaturan di Akun dihapus.', 'Kalkulator pindah ke Menu › Kalkulator: tampilan seperti kalkulator HP, memori, riwayat, tombol ÷ Peserta dan Bulat, plus 7 rumus Hitung Trip.', 'Akun: kartu profil dan tombol Pengaturan menyatu, ada Ringkasan, kelengkapan profil, dan Data & Cadangan.', 'Tentang pembuat: tombol Instagram dan WhatsApp saja, tanpa tulisan nama atau nomor.', 'Pengaturan baru: pesan tagihan WhatsApp bisa diubah, pembulatan harga jual, dan Cek pembaruan aplikasi.', 'Panduan singkat kini berisi demo bergerak dan langkah rinci untuk semua fitur (Menu › Panduan).'];
 const listSheet = (t, a) => sheetOpen(`<h3>${t}</h3>${a.map(x => `<div class="zli">• ${esc(x)}</div>`).join('')}`);
 async function resetPref() {
   if (!confirm('Kembalikan semua pengaturan tampilan dan perilaku ke bawaan? Data trip tidak berubah.')) return;
@@ -1695,7 +1742,7 @@ function renderPeng() {
   <div class="zh">PENYIMPANAN &amp; PRIVASI</div><div class="card zcard">
     <div class="zr" id="zpers"><span class="zk">Penyimpanan permanen</span><div class="zrt"><span class="zv zph" id="zpv">...</span></div></div>
     <div class="zr"><span class="zk">Ruang terpakai</span><div class="zrt"><span class="zv" id="zuse">...</span></div></div>
-    <div class="zhint">Data hanya tersimpan di HP ini dan tidak dikirim ke server mana pun.</div></div>
+    <div class="zhint">Data trip dan keuangan hanya tersimpan di HP ini. Pengecekan lisensi hanya mengirim kode perangkat, versi aplikasi, dan penanda teknis ke server penjual.</div></div>
   <div class="zh">TENTANG &amp; BANTUAN</div><div class="card zcard">
     <div class="zr" onclick="cekUpdate()"><span class="zk">Versi ${APP_V} · Cek pembaruan</span><div class="zrt"><span class="zch">›</span></div></div>
     <div class="zr" onclick="listSheet('Yang baru di ${APP_V}', BARU)"><span class="zk">Yang baru di versi ini</span><div class="zrt"><span class="zch">›</span></div></div>
@@ -1872,7 +1919,9 @@ async function mulai() {
   if (DB.pin) lock(); else { buildNav(); show(pref('awal', 'dashboard')); }
 }
 (async function () {
-  if (await cekLisensi()) await mulai(); else await layarAktivasi();
+  if (await cekLisensi()) {
+    if (await licGerbang()) { await mulai(); licLatar(); document.addEventListener('visibilitychange', async () => { if (document.hidden || LOCKED) return; if (await licJam()) licLatar(); else licBlokir('jam'); }); }
+  } else { const lama = await kvGet('lic'); await layarAktivasi(lama ? 'Kunci lama tidak berlaku. Minta kunci baru ke penjual dengan kode perangkat ini.' : ''); }
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
 })();
 </script>
