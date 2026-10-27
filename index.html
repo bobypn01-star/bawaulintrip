@@ -1418,7 +1418,7 @@ async function aktifkan() {
 
 /* ===== v21: pemantauan lisensi ke server. Dikirim HANYA: kode perangkat, versi, token pasang, asal alamat, hash kode, penanda kunci sah. Tidak ada data trip/uang. ===== */
 const LIC_URL = 'https://script.google.com/macros/s/AKfycbwheQyfz4A1jwJbOTAshlXRgDneXE1X4QD3wo91gDonVd0x1W4QnnSmUWx2c5Qowvk9/exec';
-const LIC_CEK_MS = 6 * 36e5, LIC_TOL_DEF = 30, LIC_JAM_TOL = 10 * 6e4;
+const LIC_CEK_MS = 36e5, LIC_TOL_DEF = 30, LIC_JAM_TOL = 10 * 6e4;
 let licReg = 0;
 const vNum = v => String(v || '').replace(/^v/i, '').split('.').map(x => parseInt(x, 10) || 0);
 const vLebih = (a, b) => { const x = vNum(a), y = vNum(b); for (let i = 0; i < Math.max(x.length, y.length); i++) { const d = (x[i] || 0) - (y[i] || 0); if (d) return d < 0; } return false; };
@@ -1462,9 +1462,21 @@ async function licLatar() {
   if (!navigator.onLine) return; const s = await kvGet('srv'); if (s && Date.now() - s.c < LIC_CEK_MS) return;
   const r = await licKirim('chk'); if (!r) return; const n = await licSimpan(r); if (n.blk) licBlokir(n.blk);
 }
+/* v21.1: tombol manual "Periksa status lisensi sekarang" (jeda 30 detik agar tidak membanjiri server) */
+let licManual = 0;
+async function cekLisensiSekarang() {
+  if (Date.now() - licManual < 30000) return toast('Tunggu sebentar, baru saja diperiksa');
+  if (!navigator.onLine) return toast('Tidak ada internet');
+  licManual = Date.now(); toast('Memeriksa status lisensi...');
+  const r = await licKirim('chk');
+  if (!r) return toast('Server tidak terjangkau. Coba lagi nanti.');
+  const n = await licSimpan(r);
+  if (n.blk) return licBlokir(n.blk);
+  toast(n.st === 'AKTIF' || n.st === 'LAMA' ? 'Lisensi aktif ✓' : 'Status lisensi: ' + n.st);
+}
 
 /* ===== v18: Akun, Pengaturan, warna aplikasi, nomor kwitansi, identitas pembuat ===== */
-const APP_V = 'v21';
+const APP_V = 'v21.1';
 const CR = Object.freeze({ nama: 'bawaulin.trip', tag: 'Lieur gawe, Bawa ulin', ig: 'https://www.instagram.com/bawaulin.trip?srtk=d29rcmh1YXVrajVz', igh: '@bawaulin.trip', wa: 'https://wa.me/6289618805100', wah: '+62 896-1880-5100' });
 const CR_H = 'bdaae993647f576cf92a364af7443befdce2ceefffe6c926d596f7e52a001b37', LOGO_H = '3763dd402cc104c4f9cebcce4a37a936cf2e0606bb1dd2d261e030f0a6ccc9bb';
 let CR_OK = null, LOCKED = false, hiddenAt = 0, PRIV_OBS = null;
@@ -1680,7 +1692,7 @@ async function salinInfo() {
   const id = await devId(), s = await infoStorage(), t = ['bawaulin.trip ' + APP_V, 'Kode perangkat: ' + id, 'Layar: ' + screen.width + 'x' + screen.height, 'Online: ' + navigator.onLine, 'Penyimpanan: ' + (s.used / 1048576).toFixed(1) + ' MB, permanen: ' + (s.p ? 'ya' : 'belum'), navigator.userAgent].join('\n');
   try { await navigator.clipboard.writeText(t); toast('Info perangkat disalin'); } catch (e) { toast('Gagal menyalin'); }
 }
-const BARU = ['Keamanan lisensi: aplikasi memeriksa status lisensi ke server (maks. tiap 6 jam, tidak menahan aplikasi). Tanpa internet tetap jalan sampai 30 hari sejak pemeriksaan terakhir. Lisensi dicabut, versi terlalu lama, atau jam HP dimundurkan akan mengunci aplikasi. Kunci aktivasi lama diganti kunci baru.', 'Ikon Pengaturan (gerigi) pindah ke kanan judul Akun, di bawah tombol terang/gelap. Kartu Pengaturan di Akun dihapus.', 'Kalkulator pindah ke Menu › Kalkulator: tampilan seperti kalkulator HP, memori, riwayat, tombol ÷ Peserta dan Bulat, plus 7 rumus Hitung Trip.', 'Akun: kartu profil dan tombol Pengaturan menyatu, ada Ringkasan, kelengkapan profil, dan Data & Cadangan.', 'Tentang pembuat: tombol Instagram dan WhatsApp saja, tanpa tulisan nama atau nomor.', 'Pengaturan baru: pesan tagihan WhatsApp bisa diubah, pembulatan harga jual, dan Cek pembaruan aplikasi.', 'Panduan singkat kini berisi demo bergerak dan langkah rinci untuk semua fitur (Menu › Panduan).'];
+const BARU = ['Keamanan lisensi: aplikasi memeriksa status lisensi ke server (otomatis maks. tiap 1 jam, atau kapan saja lewat Pengaturan › Periksa status lisensi sekarang; tidak menahan aplikasi). Tanpa internet tetap jalan sampai 30 hari sejak pemeriksaan terakhir. Lisensi dicabut, versi terlalu lama, atau jam HP dimundurkan akan mengunci aplikasi. Kunci aktivasi lama diganti kunci baru.', 'Ikon Pengaturan (gerigi) pindah ke kanan judul Akun, di bawah tombol terang/gelap. Kartu Pengaturan di Akun dihapus.', 'Kalkulator pindah ke Menu › Kalkulator: tampilan seperti kalkulator HP, memori, riwayat, tombol ÷ Peserta dan Bulat, plus 7 rumus Hitung Trip.', 'Akun: kartu profil dan tombol Pengaturan menyatu, ada Ringkasan, kelengkapan profil, dan Data & Cadangan.', 'Tentang pembuat: tombol Instagram dan WhatsApp saja, tanpa tulisan nama atau nomor.', 'Pengaturan baru: pesan tagihan WhatsApp bisa diubah, pembulatan harga jual, dan Cek pembaruan aplikasi.', 'Panduan singkat kini berisi demo bergerak dan langkah rinci untuk semua fitur (Menu › Panduan).'];
 const listSheet = (t, a) => sheetOpen(`<h3>${t}</h3>${a.map(x => `<div class="zli">• ${esc(x)}</div>`).join('')}`);
 async function resetPref() {
   if (!confirm('Kembalikan semua pengaturan tampilan dan perilaku ke bawaan? Data trip tidak berubah.')) return;
@@ -1745,6 +1757,7 @@ function renderPeng() {
     <div class="zhint">Data trip dan keuangan hanya tersimpan di HP ini. Pengecekan lisensi hanya mengirim kode perangkat, versi aplikasi, dan penanda teknis ke server penjual.</div></div>
   <div class="zh">TENTANG &amp; BANTUAN</div><div class="card zcard">
     <div class="zr" onclick="cekUpdate()"><span class="zk">Versi ${APP_V} · Cek pembaruan</span><div class="zrt"><span class="zch">›</span></div></div>
+    <div class="zr" onclick="cekLisensiSekarang()"><span class="zk">Periksa status lisensi sekarang</span><div class="zrt"><span class="zch">›</span></div></div>
     <div class="zr" onclick="listSheet('Yang baru di ${APP_V}', BARU)"><span class="zk">Yang baru di versi ini</span><div class="zrt"><span class="zch">›</span></div></div>
     <div class="zr" onclick="pdBuka(-1)"><span class="zk">Panduan singkat (demo & langkah rinci)</span><div class="zrt"><span class="zch">›</span></div></div>
     <div class="zr" onclick="salinInfo()"><span class="zk">Salin info perangkat</span><div class="zrt"><span class="zch">›</span></div></div></div>
