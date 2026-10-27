@@ -20,6 +20,7 @@ nav button{flex:1;border:0;background:none;color:var(--mut);display:flex;flex-di
 nav button svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 nav button.active{color:var(--pri);background:color-mix(in srgb,var(--pri) 16%,transparent)}
 main{max-width:680px;margin:0 auto;padding:16px}
+.pgear{margin-left:auto;border:1px solid var(--bd);background:var(--card);color:var(--pri);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer}.pgear:active{filter:brightness(1.2)}.pgear svg{width:20px;height:20px}
 .pgh{display:flex;align-items:center;gap:10px;margin-bottom:14px}.pgh h2{margin:0;font-size:24px;font-weight:800;color:var(--h)}
 .back{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:20px;padding:6px 12px;font-size:14px}
 .card{background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:16px;margin-bottom:14px}
@@ -154,7 +155,7 @@ html[data-fz=s] main{zoom:.92}html[data-fz=l] main{zoom:1.1}
 .zsh{padding-bottom:30px}
 @media (prefers-reduced-motion:reduce){.zsw:after{transition:none}}
 nav:empty{display:none}
-/* v19 */
+/* v20.1 */
 .tiles .tile:last-child:nth-child(odd){grid-column:1/-1}
 .kseg{display:flex;margin-bottom:12px}.kseg button{flex:1;padding:10px 4px;font-size:13px}
 .kdisp{text-align:right;min-height:150px;display:flex;flex-direction:column;justify-content:flex-end;gap:2px;padding:14px 16px}
@@ -175,8 +176,6 @@ nav:empty{display:none}
 .zid{padding:0;overflow:hidden}
 .zid-top{display:flex;gap:14px;align-items:center;padding:16px;cursor:pointer;background:radial-gradient(110% 100% at 0% 0%,color-mix(in srgb,var(--pri) 16%,transparent),transparent 60%)}
 .zid-top img{width:76px;height:auto;max-height:76px;object-fit:contain;flex:none}
-.zid-set{display:flex;align-items:center;gap:12px;width:100%;border:0;border-top:1px solid color-mix(in srgb,var(--pri) 35%,var(--bd));background:linear-gradient(90deg,color-mix(in srgb,var(--pri) 18%,transparent),color-mix(in srgb,var(--pri2) 6%,transparent));color:var(--tx);font-family:inherit;text-align:left;padding:11px 14px;cursor:pointer}
-.zid-set:active{filter:brightness(1.12)}
 .zgi2{flex:none;width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,var(--pri),var(--pri2));color:var(--onpri);display:flex;align-items:center;justify-content:center}.zgi2 svg{width:20px;height:20px}
 .zgt2{flex:1;min-width:0;display:flex;flex-direction:column}.zgt2 b{font-size:15px}.zgt2 small{color:var(--mut);font-size:12px}
 .zdot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
@@ -301,7 +300,7 @@ function show(k) {
   cur = k; editId = null;
   document.querySelectorAll('nav button').forEach(b => b.classList.toggle('active', b.dataset.k === (MAIN.includes(k) ? k : k === 'pengaturan' ? 'akun' : 'more')));
   if (k === 'dashboard') renderDash(); else if (k === 'more') renderMore(); else if (k === 'checklist') renderCl(); else if (k === 'trip') renderTrip(); else if (k === 'simulasi') renderSim(); else if (k === 'bayar') renderBayar(); else if (k === 'rekap') renderRekap(); else if (k === 'bagihasil') renderBagiHasil(); else if (k === 'kategori') renderKat(); else if (k === 'daftar') renderDaftar(); else if (k === 'akun') renderAkun(); else if (k === 'pengaturan') renderPeng(); else if (k === 'kalk') renderKalk(); else if (k === 'panduan') { if (!PD.keep) PD.ch = -1; PD.keep = false; renderPanduan(); } else renderSheet(k);
-  if (k !== 'dashboard' && k !== 'more') { const lb = (TABS.find(t => t[0] === k) || ['', ''])[1]; $('main').insertAdjacentHTML('afterbegin', `<div class="pgh">${MAIN.includes(k) ? '' : k === 'pengaturan' ? '<button class="back" onclick="show(\'akun\')">‹ Akun</button>' : '<button class="back" onclick="show(\'more\')">‹ Menu</button>'}<h2>${lb}</h2></div>`); }
+  if (k !== 'dashboard' && k !== 'more') { const lb = (TABS.find(t => t[0] === k) || ['', ''])[1]; $('main').insertAdjacentHTML('afterbegin', `<div class="pgh">${MAIN.includes(k) ? '' : k === 'pengaturan' ? '<button class="back" onclick="show(\'akun\')">‹ Akun</button>' : '<button class="back" onclick="show(\'more\')">‹ Menu</button>'}<h2>${lb}</h2>${k === 'akun' ? `<button class="pgear" onclick="show(\'pengaturan\')" aria-label="Buka Pengaturan">${SVG_GEAR}</button>` : ''}</div>`); }
   if (CR_OK === false) $('main').insertAdjacentHTML('afterbegin', '<div class="warn red">Identitas pembuat aplikasi berubah. Fitur PDF dikunci. Pasang ulang aplikasi asli.</div>');
   window.scrollTo(0, 0);
 }
@@ -1418,7 +1417,7 @@ async function aktifkan() {
 }
 
 /* ===== v18: Akun, Pengaturan, warna aplikasi, nomor kwitansi, identitas pembuat ===== */
-const APP_V = 'v19';
+const APP_V = 'v20.1';
 const CR = Object.freeze({ nama: 'bawaulin.trip', tag: 'Lieur gawe, Bawa ulin', ig: 'https://www.instagram.com/bawaulin.trip?srtk=d29rcmh1YXVrajVz', igh: '@bawaulin.trip', wa: 'https://wa.me/6289618805100', wah: '+62 896-1880-5100' });
 const CR_H = 'bdaae993647f576cf92a364af7443befdce2ceefffe6c926d596f7e52a001b37', LOGO_H = '3763dd402cc104c4f9cebcce4a37a936cf2e0606bb1dd2d261e030f0a6ccc9bb';
 let CR_OK = null, LOCKED = false, hiddenAt = 0, PRIV_OBS = null;
@@ -1563,11 +1562,9 @@ const warnaNama = () => { const w = pref('warna', null); if (!w) return 'Oranye'
 function renderAkun() {
   const p = prof(), pf = [['WhatsApp', p.wa], ['Instagram', p.ig], ['Email', p.email], ['Kota / alamat', p.kota], ['Nama penanda tangan', p.ttdNama], ['Tanda tangan', p.ttd], ['Stempel', p.stempel]];
   const ok = pf.filter(x => x[1]).length, kurang = pf.filter(x => !x[1]).map(x => x[0]), dit = DB.tamu.filter(t => t['Status'] === 'Diterima').length;
-  const w = pref('warna', null), dot = w ? w.a : '#f97316';
   $('main').innerHTML = `
   <div class="card zid">
     <div class="zid-top" onclick="editProfil()"><img src="${logoP()}" alt=""><div class="zpt"><div class="zpn">${esc(namaP())}</div><div class="zps">${esc(tagP())}</div><span class="zlnk">Ubah profil dan logo</span></div></div>
-    <button class="zid-set" onclick="show('pengaturan')" aria-label="Buka Pengaturan"><span class="zgi2">${SVG_GEAR}</span><span class="zgt2"><b>Pengaturan</b><small><i class="zdot" style="background:${dot}"></i>PIN ${DB.pin ? 'aktif' : 'mati'} · ${TEMA_N[temaNow()] || 'Gelap'} · ${warnaNama()}</small></span><span class="zpill">Buka ›</span></button>
   </div>
   <div class="zh">RINGKASAN</div><div class="card"><div class="grid">${stat('Peserta diterima', dit + ' orang')}${stat('Transaksi tercatat', DB.pemasukan.length + DB.pengeluaran.length)}${stat('Trip diarsipkan', DB.arsip.length)}${stat('Profil lengkap', ok + ' dari ' + pf.length)}</div>
     ${ok < pf.length ? `<div class="bar" style="margin-top:12px"><div style="width:${Math.round(ok / pf.length * 100)}%"></div></div><small class="mut" style="display:block;margin-top:6px">Belum diisi: ${esc(kurang.join(', '))}. Kop dan kwitansi PDF memakai data ini.</small>` : '<small class="mut" style="display:block;margin-top:10px">Profil sudah lengkap.</small>'}</div>
@@ -1636,7 +1633,7 @@ async function salinInfo() {
   const id = await devId(), s = await infoStorage(), t = ['bawaulin.trip ' + APP_V, 'Kode perangkat: ' + id, 'Layar: ' + screen.width + 'x' + screen.height, 'Online: ' + navigator.onLine, 'Penyimpanan: ' + (s.used / 1048576).toFixed(1) + ' MB, permanen: ' + (s.p ? 'ya' : 'belum'), navigator.userAgent].join('\n');
   try { await navigator.clipboard.writeText(t); toast('Info perangkat disalin'); } catch (e) { toast('Gagal menyalin'); }
 }
-const BARU = ['Kalkulator pindah ke Menu › Kalkulator: tampilan seperti kalkulator HP, memori, riwayat, tombol ÷ Peserta dan Bulat, plus 7 rumus Hitung Trip.', 'Akun: kartu profil dan tombol Pengaturan menyatu, ada Ringkasan, kelengkapan profil, dan Data & Cadangan.', 'Tentang pembuat: tombol Instagram dan WhatsApp saja, tanpa tulisan nama atau nomor.', 'Pengaturan baru: pesan tagihan WhatsApp bisa diubah, pembulatan harga jual, dan Cek pembaruan aplikasi.', 'Panduan singkat kini berisi demo bergerak dan langkah rinci untuk semua fitur (Menu › Panduan).'];
+const BARU = ['Ikon Pengaturan (gerigi) pindah ke kanan judul Akun, di bawah tombol terang/gelap. Kartu Pengaturan di Akun dihapus.', 'Kalkulator pindah ke Menu › Kalkulator: tampilan seperti kalkulator HP, memori, riwayat, tombol ÷ Peserta dan Bulat, plus 7 rumus Hitung Trip.', 'Akun: kartu profil dan tombol Pengaturan menyatu, ada Ringkasan, kelengkapan profil, dan Data & Cadangan.', 'Tentang pembuat: tombol Instagram dan WhatsApp saja, tanpa tulisan nama atau nomor.', 'Pengaturan baru: pesan tagihan WhatsApp bisa diubah, pembulatan harga jual, dan Cek pembaruan aplikasi.', 'Panduan singkat kini berisi demo bergerak dan langkah rinci untuk semua fitur (Menu › Panduan).'];
 const listSheet = (t, a) => sheetOpen(`<h3>${t}</h3>${a.map(x => `<div class="zli">• ${esc(x)}</div>`).join('')}`);
 async function resetPref() {
   if (!confirm('Kembalikan semua pengaturan tampilan dan perilaku ke bawaan? Data trip tidak berubah.')) return;
@@ -1816,7 +1813,7 @@ const PAN = [
     tp: ['Kategori baru langsung muncul di pilihan formulir dan di Rekap.'] },
   { ic: '👤', t: 'Akun', s: 'Profil, kontak, kwitansi, lisensi', go: 'akun',
     demo: [
-      { c: 'Ketuk kartu profil untuk mengubah nama, tagline, dan logo. Strip Pengaturan di bawahnya membuka Pengaturan.', ui: mH('Akun') + `<div class="mc"><div class="mrw"><span>🏷️ bawaulin.trip</span><b>Ubah</b></div><div class="mrw tp"><span>⚙️ Pengaturan</span><b>Buka ›</b></div></div>` + mNav(4) },
+      { c: 'Ketuk kartu profil untuk mengubah nama, tagline, dan logo. Ikon gerigi di kanan judul Akun membuka Pengaturan.', ui: mH('Akun') + `<div class="mc"><div class="mrw"><span>🏷️ bawaulin.trip</span><b>Ubah</b></div></div>` + mNav(4) },
       { c: 'Lengkapi Kontak dan Kwitansi: tanda tangan digambar dengan jari, stempel dari foto.', ui: mH('Akun') + mCard('KWITANSI', mRow('Penanda tangan', 'Rani, Bendahara') + `<div class="mrw"><span class="tp">Tanda tangan</span><b>Gambar</b></div>` + mRow('Kode penyelenggara', 'BWT')) + mNav(4) },
       { c: 'Data & Cadangan: lihat cadangan terakhir dan cadangkan sekarang.', ui: mH('Akun') + mCard('DATA & CADANGAN', mRow('Cadangan terakhir', '2 hari lalu') + `<div class="mrw"><span class="tp">Cadangkan sekarang</span><b>›</b></div>`) + mNav(4) }],
     st: ['Kartu profil: ketuk untuk mengubah nama, tagline, dan logo yang dipakai di kop dokumen.', 'Strip Pengaturan di bagian bawah kartu profil memperlihatkan ringkasan PIN, tema, dan warna. Ketuk untuk membuka Pengaturan.', 'Ringkasan: peserta diterima, transaksi, trip diarsipkan, dan kelengkapan profil.', 'Kontak: WhatsApp, Instagram, Email, Kota atau alamat. Dipakai di kop PDF.', 'Kwitansi: nama dan jabatan penanda tangan, tanda tangan (gambar dengan jari), stempel (foto), dan kode penyelenggara untuk nomor kwitansi.', 'Data & Cadangan: lihat kapan terakhir dicadangkan dan cadangkan sekarang.', 'Lisensi: status aktif dan kode perangkat. Ketuk Salin bila diminta pembuat.', 'Tentang Pembuat: tombol Instagram dan WhatsApp pembuat aplikasi. Bagian ini dilindungi.'],
@@ -1826,7 +1823,7 @@ const PAN = [
       { c: 'Keamanan: aktifkan PIN 4 sampai 8 angka, simpan kode pemulihan, dan atur kunci otomatis.', ui: mH('Pengaturan') + mCard('KEAMANAN', mRow('PIN aplikasi', 'Aktif') + mRow('Kunci otomatis', '1 menit') + mTog('Mode privasi', 1, 'tp')) + mNav(4) },
       { c: 'Tampilan: tema, ukuran huruf, dan warna aplikasi (6 pilihan atau warna sendiri).', ui: mH('Pengaturan') + mCard('TAMPILAN', mRow('Tema', 'Gelap') + `<div class="mrw"><span>Warna aplikasi</span><span class="msw"><i style="background:#f97316"></i><i style="background:#2563eb"></i><i class="tp" style="background:#16a34a"></i><i style="background:#7c3aed"></i></span></div>`) + mNav(4) },
       { c: 'Pesan tagihan WhatsApp dan pengingat Beranda bisa disesuaikan.', ui: mH('Pengaturan') + mCard('PESAN WHATSAPP', `<div class="mrw tp"><span>Pesan tagihan peserta</span><b>Kustom ›</b></div>`) + mCard('PENGINGAT', mTog('Telat bayar', 1) + mTog('Pendaftar menunggu', 1)) + mNav(4) }],
-    st: ['Buka dari Akun › strip Pengaturan.', 'PIN aplikasi: isi 4 sampai 8 angka. Kode pemulihan (XXXX-XXXX) dibuat otomatis, simpan baik-baik untuk fitur Lupa PIN.', 'Kunci otomatis: Langsung, 1, 5, 15 menit, atau Tidak pernah.', 'Mode privasi menyamarkan nominal Rp di layar. PDF tetap menampilkan angka asli.', 'Tampilan: tema Gelap, Terang, atau Ikuti HP; latar foto; ukuran huruf S, M, L; warna aplikasi.', 'Perilaku Input: halaman awal, konfirmasi sebelum hapus, getar saat simpan, dan pembulatan harga jual.', 'Pesan WhatsApp: ubah isi pesan tagihan dengan kata kunci seperti {nama}, {sisa}, {tenggat}.', 'Pengingat Beranda: pilih jenis pengingat dan seberapa sering diingatkan mencadangkan data.', 'Penyimpanan: minta penyimpanan permanen agar data tidak dibersihkan sistem.', 'Tentang & Bantuan: Cek pembaruan aplikasi, Yang baru, dan Salin info perangkat.', 'Reset pengaturan saja tidak menghapus data trip. Hapus semua data memerlukan ketikan HAPUS.'],
+    st: ['Buka dari Akun › ikon gerigi di kanan judul.', 'PIN aplikasi: isi 4 sampai 8 angka. Kode pemulihan (XXXX-XXXX) dibuat otomatis, simpan baik-baik untuk fitur Lupa PIN.', 'Kunci otomatis: Langsung, 1, 5, 15 menit, atau Tidak pernah.', 'Mode privasi menyamarkan nominal Rp di layar. PDF tetap menampilkan angka asli.', 'Tampilan: tema Gelap, Terang, atau Ikuti HP; latar foto; ukuran huruf S, M, L; warna aplikasi.', 'Perilaku Input: halaman awal, konfirmasi sebelum hapus, getar saat simpan, dan pembulatan harga jual.', 'Pesan WhatsApp: ubah isi pesan tagihan dengan kata kunci seperti {nama}, {sisa}, {tenggat}.', 'Pengingat Beranda: pilih jenis pengingat dan seberapa sering diingatkan mencadangkan data.', 'Penyimpanan: minta penyimpanan permanen agar data tidak dibersihkan sistem.', 'Tentang & Bantuan: Cek pembaruan aplikasi, Yang baru, dan Salin info perangkat.', 'Reset pengaturan saja tidak menghapus data trip. Hapus semua data memerlukan ketikan HAPUS.'],
     tp: ['Warna aplikasi hanya mengubah tampilan di layar. PDF tetap tema terang dan logo tidak berubah.'] },
   { ic: '❓', t: 'Masalah umum', s: 'Jawaban cepat untuk kendala yang sering muncul', go: '', demo: null,
     st: ['Data hilang? Data hanya tersimpan di HP ini. Menghapus data aplikasi atau browser ikut menghapusnya, jadi cadangkan rutin (Akun › Data & Cadangan).', 'Ganti HP: cadangkan di HP lama, lalu di HP baru buka Menu › Trip & Arsip › Pulihkan dari cadangan. Lisensi disimpan terpisah dari cadangan.', 'Lupa PIN: di layar kunci ketuk Lupa PIN? dan masukkan kode pemulihan. Jika tidak punya kodenya, pulihkan lewat file cadangan.', 'Tampilan belum berubah setelah update: Pengaturan › Tentang & Bantuan › Cek pembaruan aplikasi, lalu Muat ulang. Bila perlu tutup aplikasi sepenuhnya dan buka lagi.', 'PDF tidak muncul: dialog cetak harus dibuka. Pilih Simpan sebagai PDF. Jika tombol PDF terkunci, pasang ulang aplikasi asli.', 'Status bayar peserta salah: pastikan nama di kolom Dibayar oleh sama dengan nama di Tamu dan kategori pemasukannya Peserta.', 'Nominal tampil Rp •••: mode privasi aktif. Matikan di Pengaturan › Keamanan.', 'Salah menghapus entri: buka Menu › Trip & Arsip › Tempat Sampah dalam 30 hari dan ketuk Pulihkan.'],
