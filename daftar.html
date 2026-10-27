@@ -10,15 +10,16 @@ button{margin-top:18px;width:100%;padding:14px;border:0;border-radius:14px;backg
 <body><header><img src="logo.png" alt=""><h1>Pendaftaran Trip</h1><small>bawaulin.trip</small></header>
 <main><div class="card"><h2 id="tt">Formulir Pendaftaran</h2><div id="sub" style="color:#b8ada0;font-size:14px"></div><div id="f">
 <label>Nama lengkap *</label><input id="nama" autocomplete="name"><label>Nomor WhatsApp *</label><input id="hp" type="tel" inputmode="tel" placeholder="08xxxxxxxxxx">
-<label>Meeting point / kota asal</label><input id="mp"><label>Kontak darurat (nama & nomor)</label><input id="dr" placeholder="Nama - 08xxxxxxxxxx">
-<label>Golongan darah</label><select id="gol"><option value="">Pilih</option><option>A</option><option>B</option><option>AB</option><option>O</option><option>Tidak tahu</option></select>
-<label>Riwayat penyakit / alergi</label><textarea id="rw" rows="2" placeholder="Kosongkan jika tidak ada"></textarea><label>Catatan lain</label><textarea id="ct" rows="2"></textarea>
+<label>Meeting point / kota asal</label><input id="mp">
+<label>Alergi makanan *</label><select id="al"><option value="">Pilih</option><option>Ya</option><option>Tidak</option></select><div style="color:#b8ada0;font-size:12px;margin-top:5px">Untuk menyiapkan menu. Jika Ya, tulis jenis alerginya di Catatan.</div>
+<label>Catatan</label><textarea id="ct" rows="2" placeholder="Opsional (mis. jenis alergi)"></textarea>
 <button id="b" onclick="kirim()">Kirim Pendaftaran</button></div><div id="m" class="m"></div></div></main>
 <script>const q=new URLSearchParams(location.search),S=q.get('s'),T=q.get('t')||'';const $=i=>document.getElementById(i);
 if(T){$('sub').textContent='Trip: '+T}if(!S){$('f').style.display='none';msg('Link pendaftaran tidak valid. Minta link baru ke panitia.',0)}
 function msg(t,ok){const m=$('m');m.style.display='block';m.className='m '+(ok?'ok':'er');m.textContent=t}
 async function kirim(){const nama=$('nama').value.trim(),hp=$('hp').value.trim();if(!nama||hp.replace(/\D/g,'').length<9)return msg('Isi nama dan nomor WhatsApp dengan benar.',0);
+if(!$('al').value)return msg('Pilih alergi makanan: Ya atau Tidak.',0);
 $('b').disabled=true;$('b').textContent='Mengirim...';
-try{const r=await fetch(S,{method:'POST',body:JSON.stringify({nama,ponsel:hp,mp:$('mp').value.trim(),darurat:$('dr').value.trim(),gol:$('gol').value,riwayat:$('rw').value.trim(),catatan:$('ct').value.trim(),trip:T})});const j=await r.json();
+try{const r=await fetch(S,{method:'POST',body:JSON.stringify({nama,ponsel:hp,mp:$('mp').value.trim(),alergi:$('al').value,catatan:$('ct').value.trim(),trip:T})});const j=await r.json();
 if(!j.ok)throw new Error(j.error||'gagal');$('f').style.display='none';msg('Terima kasih, '+nama+'! Pendaftaranmu sudah terkirim dan menunggu konfirmasi panitia.',1)}
 catch(e){$('b').disabled=false;$('b').textContent='Kirim Pendaftaran';msg('Gagal mengirim. Periksa internet lalu coba lagi.',0)}}</script></body></html>

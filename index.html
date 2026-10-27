@@ -737,6 +737,11 @@ function renderTrip() {
     <label>Total Realisasi trip baru (Rp, opsional)</label><input id="nr" type="number" inputmode="decimal">
     <label>Ketik BARU untuk konfirmasi</label><input id="kf" placeholder="BARU">
     <button class="btn red" onclick="arsipkan(true)">🚀 Arsipkan & mulai trip baru</button><div id="t2msg" class="msg"></div></div>
+  <div class="card"><h3>📑 Salin Trip sebagai Template</h3><div class="warn yellow">Trip yang berjalan diarsipkan otomatis, lalu trip baru dimulai dengan itinerary (${DB.itinerary.length} kegiatan), checklist (${DB.checklist.length} barang, semua belum siap, tanpa nama pembawa), dan kategori yang sama. Tamu, pemasukan, pengeluaran, perlengkapan, dan simulasi dikosongkan.</div>
+    <label>Destinasi trip baru (opsional)</label><input id="sd">
+    <label>Tanggal mulai trip baru (opsional)</label><input id="st" type="date"><small class="mut">Bila diisi, tanggal itinerary digeser mengikuti tanggal ini (jam tetap). Bila kosong, tanggal dan jam itinerary dikosongkan.</small>
+    <label>Ketik SALIN untuk konfirmasi</label><input id="sk" placeholder="SALIN">
+    <button class="btn red" onclick="salinTemplate()">📑 Arsipkan & salin sebagai template</button><div id="t3msg" class="msg"></div></div>
   <div class="card"><h3>Daftar Arsip (${DB.arsip.length})</h3>
     ${DB.arsip.length ? DB.arsip.slice().reverse().map(a => `<div style="padding:8px 0;border-bottom:1px solid var(--bd)"><b>${esc(a.destinasi || '(tanpa nama)')} - ${esc(a.tanggal)}</b>${a.auto ? ' <span class="badge y">backup otomatis</span>' : ''}<div>${esc(a.ringkasan)}</div>
       <button class="edt" onclick="arsipBuka(${a.id})">Buka</button><button class="edt" onclick="arsipUnduh(${a.id})">Unduh</button><button class="del" onclick="arsipHapus(${a.id})">Hapus</button></div>`).join('') : '<div>Belum ada arsip.</div>'}
@@ -755,6 +760,25 @@ async function arsipkan(baru) {
   KEYS.forEach(k => DB[k] = []); DB.checklist = []; DB.simAktif = null; SIM = null;
   DB.set = Object.assign({}, DB.set, { destinasi: $('nd').value.trim(), realisasi: Number($('nr').value) || 0, tenggat: '', lunasTf: {}, kodeDest: '' }); DB.ganti = {}; DB.ulang = []; DB.pribadi = [];
   await save(); renderTrip(); setMsg('t2msg', 'Trip baru siap. Semua data sudah kosong; trip lama ada di arsip.', 1);
+}
+/* v1.2.0: trip baru dari template (itinerary, checklist, kategori terbawa; peserta dan uang kosong) */
+function geserTgl(v, diff) { const m = /^(\d{4})-(\d{2})-(\d{2})(.*)$/.exec(String(v || '')); if (!m) return ''; return new Date(Date.UTC(+m[1], +m[2] - 1, +m[3] + diff)).toISOString().slice(0, 10) + m[4]; }
+function templateItin(src, tglBaru) {
+  const awal = src.map(r => String(r['Waktu mulai'] || '').slice(0, 10)).filter(x => /^\d{4}-\d{2}-\d{2}$/.test(x)).sort()[0];
+  let diff = 0; if (tglBaru && awal) { const a = awal.split('-'), b = tglBaru.split('-'); diff = Math.round((Date.UTC(+b[0], +b[1] - 1, +b[2]) - Date.UTC(+a[0], +a[1] - 1, +a[2])) / 86400000); }
+  return src.map(r => { const o = JSON.parse(JSON.stringify(r)); o.id = DB.seq++;
+    if (tglBaru && awal) { o['Waktu mulai'] = geserTgl(r['Waktu mulai'], diff); o['Waktu berakhir'] = geserTgl(r['Waktu berakhir'], diff); }
+    else { o['Waktu mulai'] = ''; o['Waktu berakhir'] = ''; } return o; });
+}
+function templateCl(src) { return src.map(x => ({ id: DB.seq++, barang: x.barang, oleh: '', catatan: x.catatan || '', siap: false })); }
+async function salinTemplate() {
+  if ($('sk').value.trim().toUpperCase() !== 'SALIN') return setMsg('t3msg', 'Ketik SALIN dulu untuk konfirmasi.', 0);
+  if (!confirm('Trip saat ini diarsipkan, lalu trip baru dibuat dari itinerary dan checklist-nya. Lanjut?')) return;
+  const diarsip = hasData(); if (diarsip) DB.arsip.push(snapshot());
+  const itin = templateItin(DB.itinerary, $('st').value), cl = templateCl(DB.checklist);
+  KEYS.forEach(k => DB[k] = []); DB.itinerary = itin; DB.checklist = cl; DB.simAktif = null; SIM = null;
+  DB.set = Object.assign({}, DB.set, { destinasi: $('sd').value.trim(), realisasi: 0, tenggat: '', lunasTf: {}, kodeDest: '' }); DB.ganti = {}; DB.ulang = []; DB.pribadi = [];
+  await save(); renderTrip(); setMsg('t3msg', 'Trip baru dari template siap: ' + itin.length + ' kegiatan dan ' + cl.length + ' barang checklist.' + (diarsip ? ' Trip lama ada di arsip.' : ''), 1);
 }
 async function arsipBuka(id) {
   const a = DB.arsip.find(x => x.id === id); if (!a || !confirm('Buka arsip ini? Trip yang sedang berjalan (jika berisi data) disimpan otomatis ke daftar arsip.')) return;
@@ -971,7 +995,7 @@ async function ambilDaftar() {
     let n = 0; DB.seen = DB.seen || {};
     j.data.forEach(x => {
       if (DB.seen[x.id] || (d.destinasi && x.trip && String(x.trip).toLowerCase() !== d.destinasi.toLowerCase())) return; DB.seen[x.id] = 1;
-      const c = [x.darurat && 'Darurat: ' + normHP(x.darurat), x.gol && 'Gol. darah: ' + x.gol, x.riwayat && 'Riwayat: ' + x.riwayat, x.catatan, 'Daftar online'].filter(Boolean).join(' | ');
+      const c = [x.alergi === 'Ya' && 'Alergi makanan: Ya', x.catatan, 'Daftar online'].filter(Boolean).join(' | ');
       DB.tamu.push({ id: DB.seq++, 'Nama': x.nama, 'Meeting Point': x.mp || '', 'Ponsel': normHP(x.ponsel), 'Status': 'Menunggu respons', 'Tagihan': '', 'Catatan': c }); n++;
     });
     await save(); renderDaftar(); setMsg('dmsg', n ? n + ' pendaftar baru masuk ke daftar Tamu.' : 'Tidak ada pendaftar baru.', 1);
@@ -1479,7 +1503,7 @@ async function cekLisensiSekarang() {
 }
 
 /* ===== v18: Akun, Pengaturan, warna aplikasi, nomor kwitansi, identitas pembuat ===== */
-const APP_V = 'v1.0.1';
+const APP_V = 'v1.3.0';
 const CR = Object.freeze({ nama: 'bawaulin.trip', tag: 'Lieur gawe, Bawa ulin', ig: 'https://www.instagram.com/bawaulin.trip?srtk=d29rcmh1YXVrajVz', igh: '@bawaulin.trip', wa: 'https://wa.me/6289618805100', wah: '+62 896-1880-5100' });
 const CR_H = 'bdaae993647f576cf92a364af7443befdce2ceefffe6c926d596f7e52a001b37', LOGO_H = '3763dd402cc104c4f9cebcce4a37a936cf2e0606bb1dd2d261e030f0a6ccc9bb';
 let CR_OK = null, LOCKED = false, hiddenAt = 0, PRIV_OBS = null;
@@ -1622,14 +1646,11 @@ const TEMA_N = { dark: 'Gelap', light: 'Terang', auto: 'Ikuti HP' };
 const temaNow = () => { try { return localStorage.getItem('t') || 'dark'; } catch (e) { return 'dark'; } };
 const warnaNama = () => { const w = pref('warna', null); if (!w) return 'Oranye'; const p = PRESET.find(x => x[1] === w.a); return p ? p[0] : 'Kustom'; };
 function renderAkun() {
-  const p = prof(), pf = [['WhatsApp', p.wa], ['Instagram', p.ig], ['Email', p.email], ['Kota / alamat', p.kota], ['Nama penanda tangan', p.ttdNama], ['Tanda tangan', p.ttd], ['Stempel', p.stempel]];
-  const ok = pf.filter(x => x[1]).length, kurang = pf.filter(x => !x[1]).map(x => x[0]), dit = DB.tamu.filter(t => t['Status'] === 'Diterima').length;
+  const p = prof();
   $('main').innerHTML = `
   <div class="card zid">
     <div class="zid-top" onclick="editProfil()"><img src="${logoP()}" alt=""><div class="zpt"><div class="zpn">${esc(namaP())}</div><div class="zps">${esc(tagP())}</div><span class="zlnk">Ubah profil dan logo</span></div></div>
   </div>
-  <div class="zh">RINGKASAN</div><div class="card"><div class="grid">${stat('Peserta diterima', dit + ' orang')}${stat('Transaksi tercatat', DB.pemasukan.length + DB.pengeluaran.length)}${stat('Trip diarsipkan', DB.arsip.length)}${stat('Profil lengkap', ok + ' dari ' + pf.length)}</div>
-    ${ok < pf.length ? `<div class="bar" style="margin-top:12px"><div style="width:${Math.round(ok / pf.length * 100)}%"></div></div><small class="mut" style="display:block;margin-top:6px">Belum diisi: ${esc(kurang.join(', '))}. Kop dan kwitansi PDF memakai data ini.</small>` : '<small class="mut" style="display:block;margin-top:10px">Profil sudah lengkap.</small>'}</div>
   <div class="zh">KONTAK</div><div class="card zcard">${zrow('WhatsApp', p.wa, "editProf('wa')")}${zrow('Instagram', p.ig, "editProf('ig')")}${zrow('Email', p.email, "editProf('email')")}${zrow('Kota / alamat', p.kota, "editProf('kota')")}<div class="zhint">Kop dokumen memakai format bawaan. Logo dan informasinya diambil dari profil dan kontak ini.</div></div>
   <div class="zh">KWITANSI</div><div class="card zcard">${zrow('Nama &amp; jabatan penanda tangan', p.ttdNama, "editProf('ttdNama')", 'Bendahara')}${zrow('Tanda tangan', p.ttd ? 'Sudah ada' : '', 'ttdPad()', 'Gambar')}${zrow('Stempel', p.stempel ? 'Sudah ada' : '', 'stempelMenu()', 'Tambah foto')}${zrow('Kode penyelenggara', kodeP(), "editProf('kode')")}${zrow('Contoh nomor', contohNo(), '')}<div class="zhint">Nomor kwitansi dan catatan kaki dibuat otomatis, tidak perlu diisi. Kode destinasi diambil dari trip (ubah di Beranda, kartu Data Trip).</div></div>
   <div class="zh">DATA &amp; CADANGAN</div><div class="card zcard">
@@ -1695,7 +1716,16 @@ async function salinInfo() {
   const id = await devId(), s = await infoStorage(), t = ['bawaulin.trip ' + APP_V, 'Kode perangkat: ' + id, 'Layar: ' + screen.width + 'x' + screen.height, 'Online: ' + navigator.onLine, 'Penyimpanan: ' + (s.used / 1048576).toFixed(1) + ' MB, permanen: ' + (s.p ? 'ya' : 'belum'), navigator.userAgent].join('\n');
   try { await navigator.clipboard.writeText(t); toast('Info perangkat disalin'); } catch (e) { toast('Gagal menyalin'); }
 }
-const BARU = ['Perbaikan: angka 0 di depan nomor WhatsApp tidak lagi hilang (tagihan WA, daftar Tamu, dan impor pendaftar online). Data lama tidak diubah.', 'Penomoran versi dimulai ulang dari v1.0.0. Tidak ada perubahan fitur.', 'Keamanan lisensi: aplikasi memeriksa status lisensi ke server (otomatis maks. tiap 1 jam, atau kapan saja lewat Pengaturan › Periksa status lisensi sekarang; tidak menahan aplikasi). Tanpa internet tetap jalan sampai 30 hari sejak pemeriksaan terakhir. Lisensi dicabut, versi terlalu lama, atau jam HP dimundurkan akan mengunci aplikasi. Kunci aktivasi lama diganti kunci baru.', 'Ikon Pengaturan (gerigi) pindah ke kanan judul Akun, di bawah tombol terang/gelap. Kartu Pengaturan di Akun dihapus.', 'Kalkulator pindah ke Menu › Kalkulator: tampilan seperti kalkulator HP, memori, riwayat, tombol ÷ Peserta dan Bulat, plus 7 rumus Hitung Trip.', 'Akun: kartu profil dan tombol Pengaturan menyatu, ada Ringkasan, kelengkapan profil, dan Data & Cadangan.', 'Tentang pembuat: tombol Instagram dan WhatsApp saja, tanpa tulisan nama atau nomor.', 'Pengaturan baru: pesan tagihan WhatsApp bisa diubah, pembulatan harga jual, dan Cek pembaruan aplikasi.', 'Panduan singkat kini berisi demo bergerak dan langkah rinci untuk semua fitur (Menu › Panduan).'];
+/* v1.1.0: Lapor masalah (hanya info teknis, dikirim bila pengguna menekan kirim di WhatsApp) */
+async function laporMasalah() {
+  const id = await devId(), sv = await kvGet('srv'), lic = await cekLisensi();
+  const st = !lic ? 'kunci tidak sah' : (sv && sv.st ? String(sv.st).toLowerCase() : 'aktif');
+  const t = ['Halo, saya ingin melaporkan masalah di aplikasi bawaulin.trip.', '', 'Masalah: (tulis di sini)', '', '--- Info teknis ---', 'Versi: ' + APP_V, 'Kode perangkat: ' + id, 'Status lisensi: ' + st, 'Layar: ' + screen.width + 'x' + screen.height, 'Perangkat: ' + navigator.userAgent].join('\n');
+  sheetOpen(`<h3>Lapor masalah</h3><div class="zli">WhatsApp penjual akan terbuka dengan pesan di bawah. Yang ikut hanya info teknis, tanpa data trip, peserta, atau uang. Pesan baru terkirim bila Anda menekan kirim di WhatsApp. Tulis masalahnya di bagian "Masalah".</div><div class="warn note" style="white-space:pre-wrap;word-break:break-word;font-size:12px">${esc(t)}</div><button class="btn" onclick="laporKirim()">Buka WhatsApp</button>`);
+  window._lapor = t;
+}
+function laporKirim() { const s = $('fsheet'); if (s) s.remove(); openWA(window._lapor || '', CR.wa.replace(/\D/g, '')); }
+const BARU = ['Formulir pendaftaran online disederhanakan: Nama, Nomor WhatsApp, Meeting point, Alergi makanan (Ya/Tidak), dan Catatan. Golongan darah, riwayat penyakit, dan kontak darurat tidak lagi diminta. Pendaftar dengan alergi ditandai "Alergi makanan: Ya" di Catatan tamu. Data tamu lama tidak diubah. Pasang ulang skrip Apps Script pendaftaran yang baru.', 'Baru: Menu › Trip & Arsip › Salin Trip sebagai Template. Trip baru langsung berisi itinerary, checklist (belum siap, tanpa pembawa), dan kategori dari trip sebelumnya; tamu dan uang kosong. Tanggal itinerary bisa digeser otomatis.', 'Baru: Pengaturan › Tentang & Bantuan › Lapor masalah. Membuka WhatsApp penjual dengan info teknis siap kirim (versi, kode perangkat, status lisensi, perangkat), tanpa data trip, peserta, atau uang. Terkirim hanya bila Anda menekan kirim di WhatsApp.', 'Baru: panduan Pindah ke HP baru (Menu › Panduan).', 'Kartu Ringkasan di Akun dihapus.', 'Perbaikan: angka 0 di depan nomor WhatsApp tidak lagi hilang (tagihan WA, daftar Tamu, dan impor pendaftar online). Data lama tidak diubah.', 'Penomoran versi dimulai ulang dari v1.0.0. Tidak ada perubahan fitur.', 'Keamanan lisensi: aplikasi memeriksa status lisensi ke server (otomatis maks. tiap 1 jam, atau kapan saja lewat Pengaturan › Periksa status lisensi sekarang; tidak menahan aplikasi). Tanpa internet tetap jalan sampai 30 hari sejak pemeriksaan terakhir. Lisensi dicabut, versi terlalu lama, atau jam HP dimundurkan akan mengunci aplikasi. Kunci aktivasi lama diganti kunci baru.', 'Ikon Pengaturan (gerigi) pindah ke kanan judul Akun, di bawah tombol terang/gelap. Kartu Pengaturan di Akun dihapus.', 'Kalkulator pindah ke Menu › Kalkulator: tampilan seperti kalkulator HP, memori, riwayat, tombol ÷ Peserta dan Bulat, plus 7 rumus Hitung Trip.', 'Akun: kartu profil dan tombol Pengaturan menyatu, serta ada Data & Cadangan.', 'Tentang pembuat: tombol Instagram dan WhatsApp saja, tanpa tulisan nama atau nomor.', 'Pengaturan baru: pesan tagihan WhatsApp bisa diubah, pembulatan harga jual, dan Cek pembaruan aplikasi.', 'Panduan singkat kini berisi demo bergerak dan langkah rinci untuk semua fitur (Menu › Panduan).'];
 const listSheet = (t, a) => sheetOpen(`<h3>${t}</h3>${a.map(x => `<div class="zli">• ${esc(x)}</div>`).join('')}`);
 async function resetPref() {
   if (!confirm('Kembalikan semua pengaturan tampilan dan perilaku ke bawaan? Data trip tidak berubah.')) return;
@@ -1763,7 +1793,8 @@ function renderPeng() {
     <div class="zr" onclick="cekLisensiSekarang()"><span class="zk">Periksa status lisensi sekarang</span><div class="zrt"><span class="zch">›</span></div></div>
     <div class="zr" onclick="listSheet('Yang baru di ${APP_V}', BARU)"><span class="zk">Yang baru di versi ini</span><div class="zrt"><span class="zch">›</span></div></div>
     <div class="zr" onclick="pdBuka(-1)"><span class="zk">Panduan singkat (demo & langkah rinci)</span><div class="zrt"><span class="zch">›</span></div></div>
-    <div class="zr" onclick="salinInfo()"><span class="zk">Salin info perangkat</span><div class="zrt"><span class="zch">›</span></div></div></div>
+    <div class="zr" onclick="salinInfo()"><span class="zk">Salin info perangkat</span><div class="zrt"><span class="zch">›</span></div></div>
+    <div class="zr" onclick="laporMasalah()"><span class="zk">Lapor masalah</span><div class="zrt"><span class="zch">›</span></div></div></div>
   <div class="zh">RESET</div><div class="card zcard">
     <div class="zr" onclick="resetPref()"><span class="zk zwarn">Reset pengaturan saja</span><div class="zrt"><span class="zch">›</span></div></div>
     <div class="zr" onclick="togHapus()"><span class="zk zbad">Hapus semua data</span><div class="zrt"><span class="zch">›</span></div></div>
@@ -1865,8 +1896,9 @@ const PAN = [
     demo: [
       { c: 'Arsipkan trip yang sudah selesai. Data yang berjalan tidak berubah.', ui: mH('Trip & Arsip') + mCard('Arsipkan Trip', mBtn('🗂️ Arsipkan sekarang', 'tp')) + mNav(2) },
       { c: 'Mulai Trip Baru: ketik BARU untuk konfirmasi. Trip lama diarsipkan otomatis.', ui: mH('Trip & Arsip') + mCard('Mulai Trip Baru', mIn('Destinasi trip baru', 'Rinjani') + mIn('Ketik BARU', 'BARU') + mBtn('🚀 Arsipkan & mulai trip baru', 'tp')) + mNav(2) },
+      { c: 'Salin Trip sebagai Template: itinerary, checklist, dan kategori terbawa ke trip baru. Ketik SALIN untuk konfirmasi.', ui: mH('Trip & Arsip') + mCard('Salin Trip sebagai Template', mIn('Destinasi trip baru', 'Rinjani') + mIn('Ketik SALIN', 'SALIN') + mBtn('📑 Arsipkan & salin sebagai template', 'tp')) + mNav(2) },
       { c: 'Cadangkan lewat Drive atau WhatsApp. Pulihkan dari file cadangan di HP baru.', ui: mH('Trip & Arsip') + mCard('💾 Cadangan Data', mBtn('📤 Bagikan cadangan', 'tp') + mBtn('⬆️ Pulihkan dari cadangan')) + mNav(2) }],
-    st: ['Menu › Trip & Arsip › 🗂️ Arsipkan sekarang menyimpan salinan trip ke daftar arsip.', 'Mulai Trip Baru mengosongkan tamu, transaksi, itinerary, perlengkapan, checklist, dan simulasi. Isi destinasi baru (opsional), ketik BARU, lalu ketuk tombolnya.', 'Daftar Arsip: ketuk Buka untuk menjadikan arsip sebagai data aktif, atau Unduh untuk menyimpannya.', 'Tempat Sampah menyimpan entri yang dihapus selama 30 hari. Ketuk Pulihkan untuk mengembalikan.', 'Cadangan Data: 📤 Bagikan cadangan (Drive atau WhatsApp), atau ⬇️ Unduh cadangan (JSON).', '⬆️ Pulihkan dari cadangan akan MENIMPA data saat ini, jadi cadangkan dulu bila ragu.', 'Reset Total menghapus semua dan tidak bisa dibatalkan.'],
+    st: ['Menu › Trip & Arsip › 🗂️ Arsipkan sekarang menyimpan salinan trip ke daftar arsip.', 'Mulai Trip Baru mengosongkan tamu, transaksi, itinerary, perlengkapan, checklist, dan simulasi. Isi destinasi baru (opsional), ketik BARU, lalu ketuk tombolnya.', 'Salin Trip sebagai Template: untuk trip serupa (mis. gunung yang sama). Itinerary, checklist (semua belum siap, tanpa nama pembawa), dan kategori ikut terbawa; tamu, pemasukan, pengeluaran, perlengkapan, dan simulasi kosong. Isi Tanggal mulai agar tanggal itinerary bergeser otomatis (jam tetap); bila dikosongkan, tanggal dan jam itinerary dikosongkan. Ketik SALIN, lalu ketuk tombolnya. Trip lama diarsipkan otomatis.', 'Daftar Arsip: ketuk Buka untuk menjadikan arsip sebagai data aktif, atau Unduh untuk menyimpannya.', 'Tempat Sampah menyimpan entri yang dihapus selama 30 hari. Ketuk Pulihkan untuk mengembalikan.', 'Cadangan Data: 📤 Bagikan cadangan (Drive atau WhatsApp), atau ⬇️ Unduh cadangan (JSON).', '⬆️ Pulihkan dari cadangan akan MENIMPA data saat ini, jadi cadangkan dulu bila ragu.', 'Reset Total menghapus semua dan tidak bisa dibatalkan.'],
     tp: ['Cadangkan sebelum ganti HP, uninstall aplikasi, atau menghapus data browser.'] },
   { ic: '🏷️', t: 'Kategori dan transaksi berulang', s: 'Mengatur kategori dan tagihan rutin', go: 'kategori',
     demo: [
@@ -1879,7 +1911,7 @@ const PAN = [
       { c: 'Ketuk kartu profil untuk mengubah nama, tagline, dan logo. Ikon gerigi di kanan judul Akun membuka Pengaturan.', ui: mH('Akun') + `<div class="mc"><div class="mrw"><span>🏷️ bawaulin.trip</span><b>Ubah</b></div></div>` + mNav(4) },
       { c: 'Lengkapi Kontak dan Kwitansi: tanda tangan digambar dengan jari, stempel dari foto.', ui: mH('Akun') + mCard('KWITANSI', mRow('Penanda tangan', 'Rani, Bendahara') + `<div class="mrw"><span class="tp">Tanda tangan</span><b>Gambar</b></div>` + mRow('Kode penyelenggara', 'BWT')) + mNav(4) },
       { c: 'Data & Cadangan: lihat cadangan terakhir dan cadangkan sekarang.', ui: mH('Akun') + mCard('DATA & CADANGAN', mRow('Cadangan terakhir', '2 hari lalu') + `<div class="mrw"><span class="tp">Cadangkan sekarang</span><b>›</b></div>`) + mNav(4) }],
-    st: ['Kartu profil: ketuk untuk mengubah nama, tagline, dan logo yang dipakai di kop dokumen.', 'Strip Pengaturan di bagian bawah kartu profil memperlihatkan ringkasan PIN, tema, dan warna. Ketuk untuk membuka Pengaturan.', 'Ringkasan: peserta diterima, transaksi, trip diarsipkan, dan kelengkapan profil.', 'Kontak: WhatsApp, Instagram, Email, Kota atau alamat. Dipakai di kop PDF.', 'Kwitansi: nama dan jabatan penanda tangan, tanda tangan (gambar dengan jari), stempel (foto), dan kode penyelenggara untuk nomor kwitansi.', 'Data & Cadangan: lihat kapan terakhir dicadangkan dan cadangkan sekarang.', 'Lisensi: status aktif dan kode perangkat. Ketuk Salin bila diminta pembuat.', 'Tentang Pembuat: tombol Instagram dan WhatsApp pembuat aplikasi. Bagian ini dilindungi.'],
+    st: ['Kartu profil: ketuk untuk mengubah nama, tagline, dan logo yang dipakai di kop dokumen.', 'Strip Pengaturan di bagian bawah kartu profil memperlihatkan ringkasan PIN, tema, dan warna. Ketuk untuk membuka Pengaturan.', 'Kontak: WhatsApp, Instagram, Email, Kota atau alamat. Dipakai di kop PDF.', 'Kwitansi: nama dan jabatan penanda tangan, tanda tangan (gambar dengan jari), stempel (foto), dan kode penyelenggara untuk nomor kwitansi.', 'Data & Cadangan: lihat kapan terakhir dicadangkan dan cadangkan sekarang.', 'Lisensi: status aktif dan kode perangkat. Ketuk Salin bila diminta pembuat.', 'Tentang Pembuat: tombol Instagram dan WhatsApp pembuat aplikasi. Bagian ini dilindungi.'],
     tp: ['Isi Kontak dan penanda tangan dulu supaya kop dan kwitansi PDF langsung rapi.'] },
   { ic: '⚙️', t: 'Pengaturan', s: 'PIN, tampilan, warna, pesan, pengingat', go: 'pengaturan',
     demo: [
@@ -1888,6 +1920,14 @@ const PAN = [
       { c: 'Pesan tagihan WhatsApp dan pengingat Beranda bisa disesuaikan.', ui: mH('Pengaturan') + mCard('PESAN WHATSAPP', `<div class="mrw tp"><span>Pesan tagihan peserta</span><b>Kustom ›</b></div>`) + mCard('PENGINGAT', mTog('Telat bayar', 1) + mTog('Pendaftar menunggu', 1)) + mNav(4) }],
     st: ['Buka dari Akun › ikon gerigi di kanan judul.', 'PIN aplikasi: isi 4 sampai 8 angka. Kode pemulihan (XXXX-XXXX) dibuat otomatis, simpan baik-baik untuk fitur Lupa PIN.', 'Kunci otomatis: Langsung, 1, 5, 15 menit, atau Tidak pernah.', 'Mode privasi menyamarkan nominal Rp di layar. PDF tetap menampilkan angka asli.', 'Tampilan: tema Gelap, Terang, atau Ikuti HP; latar foto; ukuran huruf S, M, L; warna aplikasi.', 'Perilaku Input: halaman awal, konfirmasi sebelum hapus, getar saat simpan, dan pembulatan harga jual.', 'Pesan WhatsApp: ubah isi pesan tagihan dengan kata kunci seperti {nama}, {sisa}, {tenggat}.', 'Pengingat Beranda: pilih jenis pengingat dan seberapa sering diingatkan mencadangkan data.', 'Penyimpanan: minta penyimpanan permanen agar data tidak dibersihkan sistem.', 'Tentang & Bantuan: Cek pembaruan aplikasi, Yang baru, dan Salin info perangkat.', 'Reset pengaturan saja tidak menghapus data trip. Hapus semua data memerlukan ketikan HAPUS.'],
     tp: ['Warna aplikasi hanya mengubah tampilan di layar. PDF tetap tema terang dan logo tidak berubah.'] },
+  { ic: '📲', t: 'Pindah ke HP baru', s: 'Memindahkan data trip dan mengaktifkan ulang lisensi', go: 'trip',
+    demo: [
+      { c: 'Di HP lama: Menu › Trip & Arsip, lalu bagikan atau unduh cadangan dan simpan ke Drive atau WhatsApp.', ui: mH('Trip & Arsip') + mCard('💾 Cadangan Data', mBtn('📤 Bagikan cadangan', 'tp') + mBtn('⬇️ Unduh cadangan (JSON)')) + mNav(2) },
+      { c: 'Di HP baru: pasang aplikasi. Layar aktivasi menampilkan kode perangkat baru. Ketuk Salin kode perangkat dan kirim ke penjual.', ui: mH('Aktivasi') + mCard('', mRow('Kode perangkat', 'BU-XXXX-XXXX') + mBtn('Salin kode perangkat', 'tp')) },
+      { c: 'Tempel kunci aktivasi baru dari penjual (gratis), lalu ketuk Aktifkan.', ui: mH('Aktivasi') + mCard('', mIn('Tempel kunci aktivasi', 'kunci dari penjual') + mBtn('Aktifkan', 'tp')) },
+      { c: 'Setelah aktif, buka Menu › Trip & Arsip › Pulihkan dari cadangan dan pilih file cadangan.', ui: mH('Trip & Arsip') + mCard('💾 Cadangan Data', mBtn('📤 Bagikan cadangan') + mBtn('⬆️ Pulihkan dari cadangan', 'tp')) + mNav(2) }],
+    st: ['Di HP lama: Menu › Trip & Arsip › Bagikan cadangan (Drive / WhatsApp) atau Unduh cadangan (JSON). Pastikan file cadangan tersimpan di tempat yang bisa dibuka dari HP baru.', 'Di HP baru: pasang aplikasi. Setiap HP punya kode perangkat sendiri (BU-XXXX-XXXX), jadi aplikasi meminta aktivasi.', 'Ketuk Salin kode perangkat dan kirim kodenya ke penjual. Aktivasi ulang karena ganti HP gratis.', 'Tempel kunci aktivasi baru dari penjual, lalu ketuk Aktifkan.', 'Setelah aplikasi aktif: Menu › Trip & Arsip › Pulihkan dari cadangan, pilih file cadangan, lalu konfirmasi. Data di HP baru akan ditimpa isi cadangan.', 'Lisensi tidak ikut cadangan dan tidak tersentuh saat memulihkan, jadi aktivasi di HP baru tetap aman.', 'Bila HP baru dipulihkan otomatis oleh akun Google (cadangan Android), data dan lisensi bisa ikut kembali tanpa aktivasi. Itu wajar. Bila tidak, ikuti langkah di atas.'],
+    tp: ['Cadangkan dulu sebelum menyerahkan atau mereset HP lama.', 'Kunci aktivasi hanya cocok untuk satu HP. Jangan dibagikan ke orang lain.'] },
   { ic: '❓', t: 'Masalah umum', s: 'Jawaban cepat untuk kendala yang sering muncul', go: '', demo: null,
     st: ['Data hilang? Data hanya tersimpan di HP ini. Menghapus data aplikasi atau browser ikut menghapusnya, jadi cadangkan rutin (Akun › Data & Cadangan).', 'Ganti HP: cadangkan di HP lama, lalu di HP baru buka Menu › Trip & Arsip › Pulihkan dari cadangan. Lisensi disimpan terpisah dari cadangan.', 'Lupa PIN: di layar kunci ketuk Lupa PIN? dan masukkan kode pemulihan. Jika tidak punya kodenya, pulihkan lewat file cadangan.', 'Tampilan belum berubah setelah update: Pengaturan › Tentang & Bantuan › Cek pembaruan aplikasi, lalu Muat ulang. Bila perlu tutup aplikasi sepenuhnya dan buka lagi.', 'PDF tidak muncul: dialog cetak harus dibuka. Pilih Simpan sebagai PDF. Jika tombol PDF terkunci, pasang ulang aplikasi asli.', 'Status bayar peserta salah: pastikan nama di kolom Dibayar oleh sama dengan nama di Tamu dan kategori pemasukannya Peserta.', 'Nominal tampil Rp •••: mode privasi aktif. Matikan di Pengaturan › Keamanan.', 'Salah menghapus entri: buka Menu › Trip & Arsip › Tempat Sampah dalam 30 hari dan ketuk Pulihkan.'],
     tp: [] }
