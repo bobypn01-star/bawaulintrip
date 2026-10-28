@@ -1775,7 +1775,95 @@ async function cekLisensiSekarang() {
 }
 
 /* ===== v18: Akun, Pengaturan, warna aplikasi, nomor kwitansi, identitas pembuat ===== */
-const APP_V = 'v1.7.2';
+/* ===== v1.8.0 Bahasa Indonesia / English: kamus + penerjemah teks (Indonesia = sumber, teks tak dikenal tetap Indonesia) ===== */
+const EN = {
+'Budgeting Pendakian':'Hiking Budget','Memuat...':'Loading...','Beranda':'Home','Simulasi':'Simulation','Menu':'Menu','Rekap':'Summary','Akun':'Account',
+'Tamu':'Guests','Daftar peserta':'Participant list','Itinerary':'Itinerary','Rundown perjalanan':'Trip rundown','Perlengkapan':'Gear','Kebutuhan & sewa':'Needs & rentals','Checklist':'Checklist','Barang bawaan':'Items to bring',
+'Masuk':'Income','Catat pemasukan':'Record income','Keluar':'Expenses','Catat pengeluaran':'Record expenses','Pembayaran':'Payments','Patungan peserta':'Participant payments','Trip & Arsip':'Trip & Archive','Arsip & cadangan':'Archive & backup',
+'Bagi Hasil':'Profit Sharing','Untung/rugi & penyelesaian official':'Profit/loss & official settlement','Kategori':'Categories','Kategori & berulang':'Categories & recurring','Pendaftaran':'Registration','Link & pendaftar online':'Link & online registrants',
+'Kalkulator':'Calculator','Hitung, memori, riwayat':'Calculate, memory, history','Panduan':'Guide','Demo & langkah rinci':'Demos & detailed steps',
+'Pemasukan':'Income','Pengeluaran':'Expenses','Catat transaksi':'Record transaction','Uang masuk':'Money in','Uang keluar':'Money out',
+'Simpan':'Save','Batal':'Cancel','Hapus':'Delete','Ubah':'Edit','Tambah':'Add','Tutup':'Close','Kembali':'Back','Lanjut':'Next','Salin':'Copy','Cari':'Search','Muat':'Load','Form baru':'New form','Batal edit':'Cancel edit','Ya':'Yes','Tidak':'No',
+'Simpan Data Trip':'Save Trip Data','Data Trip':'Trip Data','Destinasi':'Destination','Kode destinasi':'Destination code','Total Realisasi':'Total Actual',
+'Nama':'Name','Ponsel':'Phone','Status':'Status','Tagihan':'Bill','Catatan':'Notes','Meeting Point':'Meeting Point','Diterima':'Accepted','Menunggu respons':'Awaiting response','Ditolak':'Declined','Lunas':'Paid','Belum Lunas':'Unpaid','Belum bayar':'Not paid','Sebagian':'Partial','Telat':'Overdue','Semua':'All',
+'Detail pemasukan':'Income detail','Detail pengeluaran':'Expense detail','Biaya':'Amount','Tanggal transaksi':'Transaction date','Dibayar oleh':'Paid by','Peserta':'Participant','Panitia':'Committee','Sponsor':'Sponsor',
+'Transportasi':'Transport','Konsumsi':'Meals','Peralatan':'Equipment','Darurat':'Emergency','Lainnya':'Other','Bukti nota':'Receipt proof','📷 Kamera':'📷 Camera','📎 Unggah file':'📎 Upload file','Ulangi otomatis':'Repeat automatically','Tidak berulang':'No repeat','Tiap 7 hari':'Every 7 days','Tiap 30 hari':'Every 30 days',
+'Ringkasan Sewa':'Rental Summary','Checklist Perlengkapan':'Gear Checklist','📋 Rekap Checklist':'📋 Checklist Summary','Rekapitulasi':'Summary','Pendaftar Masuk':'Incoming Registrants','Link Pendaftaran':'Registration Link',
+'🔎 Cari nama peserta':'🔎 Search participant name','🔎 Cari barang / pembawa':'🔎 Search item / carrier','📊 Patungan Otomatis':'📊 Automatic Split','Komponen Biaya':'Cost Components','Terapkan ke Anggaran Pengeluaran':'Apply to Expense Budget',
+'🔒 Tutup Buku Trip':'🔒 Close Trip Books','🔒 Tutup buku trip':'🔒 Close trip books','🔓 Buka kunci':'🔓 Unlock','🧾 Riwayat Perubahan':'🧾 Change History','🧹 Reset Total':'🧹 Total Reset','Kosongkan semua data':'Erase all data','Ketik HAPUS untuk konfirmasi':'Type HAPUS to confirm',
+'🗂️ Arsipkan sekarang':'🗂️ Archive now','🚀 Arsipkan & mulai trip baru':'🚀 Archive & start new trip','📑 Arsipkan & salin sebagai template':'📑 Archive & copy as template','⬇️ Ambil pendaftar baru':'⬇️ Fetch new registrants',
+'Salin hasil':'Copy result','Memori':'Memory',
+'Mulai':'Start','Pengaturan':'Settings','‹ Akun':'‹ Account',
+'KEAMANAN':'SECURITY','TAMPILAN':'DISPLAY','PERILAKU INPUT':'INPUT BEHAVIOR','PENGINGAT DI BERANDA':'HOME REMINDERS','PENYIMPANAN & PRIVASI':'STORAGE & PRIVACY','TENTANG & BANTUAN':'ABOUT & HELP','RESET':'RESET','DATA & CADANGAN':'DATA & BACKUP','KONTAK':'CONTACT','KWITANSI':'RECEIPT','LISENSI':'LICENSE','PESAN WHATSAPP':'WHATSAPP MESSAGE','TENTANG PEMBUAT':'ABOUT THE CREATOR',
+'PIN aplikasi':'App PIN','Kode pemulihan PIN':'PIN recovery code','Cara buka aplikasi':'Ways to open the app','Pola 3x3':'3x3 pattern','Sidik jari':'Fingerprint','Matikan semua kunci':'Turn off all locks','Kunci otomatis':'Auto-lock','Langsung':'Immediately','1 menit':'1 minute','5 menit':'5 minutes','15 menit':'15 minutes','Tidak pernah':'Never','Mode privasi (sembunyikan nominal)':'Privacy mode (hide amounts)',
+'Tema':'Theme','Gelap':'Dark','Terang':'Light','HP':'Phone','Bahasa':'Language','Latar foto':'Background photo','Ukuran huruf':'Font size','Warna aplikasi':'App color','Warna sendiri':'Custom color','Bawaan':'Default','Kustom':'Custom','Ganti':'Change',
+'Warna dipakai di tombol, sakelar, dan judul. PDF tetap tema terang.':'The color is used on buttons, switches, and titles. PDFs stay in the light theme.',
+'Halaman awal':'Start page','Konfirmasi sebelum hapus':'Confirm before deleting','Getar saat berhasil simpan':'Vibrate on successful save','Telat bayar':'Late payments','Pendaftar menunggu':'Pending registrants','Checklist belum siap':'Checklist not ready','Ingatkan cadangan':'Backup reminder','Pembulatan harga jual':'Selling price rounding',
+'Cadangan terakhir':'Last backup','Cadangkan sekarang (Drive / WhatsApp)':'Back up now (Drive / WhatsApp)','Pulihkan, arsip, dan trip baru':'Restore, archive, and new trip','Penyimpanan permanen':'Persistent storage','Ruang terpakai':'Space used',
+'Yang baru di versi ini':'What\'s new in this version','Panduan singkat (demo & langkah rinci)':'Quick guide (demos & detailed steps)','Salin info perangkat':'Copy device info','Lapor masalah':'Report a problem','Periksa status lisensi sekarang':'Check license status now','Pesan tagihan peserta':'Participant bill message','Kode perangkat':'Device code',
+'Email':'Email','Instagram':'Instagram','WhatsApp':'WhatsApp','Kota / alamat':'City / address','Nama & jabatan penanda tangan':'Signer name & title','Tanda tangan':'Signature','Stempel':'Stamp','Kode penyelenggara':'Organizer code','Contoh nomor':'Number example','Bendahara':'Treasurer','Sudah ada':'Already set',
+'Ketuk untuk memindai':'Tap to scan','Pakai PIN':'Use PIN','Pakai pola':'Use pattern','Pakai sidik jari':'Use fingerprint','Lupa PIN?':'Forgot PIN?','Data trip hanya tersimpan di HP ini':'Trip data is stored only on this phone','BUDGETING PENDAKIAN':'HIKING BUDGET',
+'Simpan PIN':'Save PIN','PIN lama':'Old PIN','PIN baru':'New PIN','Pulihkan':'Restore','Pindai sidik jari':'Scan fingerprint','Atur pola':'Set pattern','Gambar pola (minimal 4 titik).':'Draw a pattern (at least 4 dots).',
+'Tersimpan':'Saved','Tidak ada internet':'No internet','Lisensi aktif':'License active','Semua kunci dimatikan':'All locks turned off','Aplikasi dikosongkan':'App erased','Pengaturan dikembalikan':'Settings restored','Batalkan':'Undo',
+'Buku trip sudah ditutup. Buka kunci dulu di Menu › Trip & Arsip.':'The trip books are closed. Unlock first in Menu › Trip & Archive.',
+'Aplikasi hanya menyimpan data di HP ini.':'The app stores data only on this phone.','Terkunci':'Locked','Dicabut':'Revoked','Aktif':'Active','Belum aktif':'Not active',
+'Terkumpul':'Collected','Tagih berikutnya':'Bill next','🧾 Kwitansi':'🧾 Receipt','💬 Tagih':'💬 Bill','＋ Catat bayar':'＋ Record payment','Cara bayar':'Payment methods','Tagihan & tenggat':'Bills & deadlines',
+'Unduh CSV':'Download CSV','Belum diisi':'Not set','Gambar':'Draw','Tambah foto':'Add photo','Belum pernah':'Never','Ubah profil dan logo':'Edit profile and logo','Buka':'Open','Salin kode':'Copy code','Kosongkan':'Clear','Tampilkan lebih banyak':'Show more','Tambah':'Add'
+};
+const EN_PAT = [
+ [/^Versi (v[\d.]+) · Cek pembaruan$/, (m) => 'Version ' + m[1] + ' · Check for updates'],
+ [/^(\d+) peserta$/, (m) => m[1] + ' participants'], [/^(\d+) orang$/, (m) => m[1] + ' people'],
+ [/^(\d+) hari$/, (m) => m[1] + ' days'], [/^(\d+) menit$/, (m) => m[1] + ' minutes'],
+ [/^Per (.+)$/, (m) => 'As of ' + m[1]]
+];
+let LANG = 'id';
+try { LANG = localStorage.getItem('bhs') === 'en' ? 'en' : 'id'; } catch (e) {}
+const I18N_ATTR = ['placeholder', 'aria-label', 'title'], I18N_ORI = new WeakMap(), I18N_AORI = new WeakMap();
+let I18N_MO = null;
+function tr(s) {
+  if (LANG !== 'en' || typeof s !== 'string') return s;
+  const m = s.match(/^(\s*)([\s\S]*?)(\s*)$/); if (!m[2]) return s;
+  let o = EN[m[2]];
+  if (o === undefined) for (const [re, f] of EN_PAT) { const x = m[2].match(re); if (x) { o = f(x); break; } }
+  return o === undefined ? s : m[1] + o + m[3];
+}
+function i18nNode(n) {
+  if (n.nodeType === 3) {
+    const p = n.parentNode && n.parentNode.nodeName; if (p === 'SCRIPT' || p === 'STYLE' || p === 'TEXTAREA') return;
+    if (LANG === 'en') { const o = I18N_ORI.has(n) ? I18N_ORI.get(n) : n.nodeValue, t = tr(o); if (t !== o) { if (!I18N_ORI.has(n)) I18N_ORI.set(n, o); if (n.nodeValue !== t) n.nodeValue = t; } }
+    else if (I18N_ORI.has(n)) { n.nodeValue = I18N_ORI.get(n); I18N_ORI.delete(n); }
+    return;
+  }
+  if (n.nodeType !== 1 || /^(SCRIPT|STYLE)$/.test(n.nodeName)) return;
+  for (const a of I18N_ATTR) if (n.hasAttribute(a)) {
+    const k = I18N_AORI.get(n) || {}, v = n.getAttribute(a);
+    if (LANG === 'en') { const o = k[a] !== undefined ? k[a] : v, t = tr(o); if (t !== o) { k[a] = o; I18N_AORI.set(n, k); if (v !== t) n.setAttribute(a, t); } }
+    else if (k[a] !== undefined) { n.setAttribute(a, k[a]); delete k[a]; }
+  }
+  for (let c = n.firstChild; c; c = c.nextSibling) i18nNode(c);
+}
+function i18nRun(root) { if (I18N_MO) I18N_MO.disconnect(); try { i18nNode(root || document.body); } catch (e) {} i18nWatch(); }
+function i18nWatch() {
+  if (LANG !== 'en' || !document.body) return;
+  if (!I18N_MO) I18N_MO = new MutationObserver(ms => {
+    I18N_MO.disconnect();
+    try { for (const m of ms) { if (m.type === 'childList') m.addedNodes.forEach(i18nNode); else if (m.type === 'characterData') { I18N_ORI.delete(m.target); i18nNode(m.target); } else if (m.type === 'attributes') { const k = I18N_AORI.get(m.target); if (k) delete k[m.attributeName]; i18nNode(m.target); } } } catch (e) {}
+    I18N_MO.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: I18N_ATTR });
+  });
+  I18N_MO.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: I18N_ATTR });
+}
+function setBahasa(v) {
+  LANG = v === 'en' ? 'en' : 'id'; try { localStorage.setItem('bhs', LANG); } catch (e) {}
+  document.documentElement.lang = LANG;
+  if (LANG === 'id') { if (I18N_MO) I18N_MO.disconnect(); i18nNode(document.body); }
+  else i18nRun();
+}
+const _cf = window.confirm.bind(window), _al = window.alert.bind(window);
+window.confirm = s => _cf(tr(s)); window.alert = s => _al(tr(s));
+document.documentElement.lang = LANG;
+if (LANG === 'en') { if (document.body) i18nRun(); }
+
+const APP_V = 'v1.8.0';
 const CR = Object.freeze({ nama: 'bawaulin.trip', tag: 'Lieur gawe, Bawa ulin', ig: 'https://www.instagram.com/bawaulin.trip?srtk=d29rcmh1YXVrajVz', igh: '@bawaulin.trip', wa: 'https://wa.me/6289618805100', wah: '+62 896-1880-5100' });
 const CR_H = 'bdaae993647f576cf92a364af7443befdce2ceefffe6c926d596f7e52a001b37', LOGO_H = '3763dd402cc104c4f9cebcce4a37a936cf2e0606bb1dd2d261e030f0a6ccc9bb';
 let CR_OK = null, LOCKED = false, hiddenAt = 0, PRIV_OBS = null;
@@ -1975,7 +2063,7 @@ const zseg = (l, g, opts, cv) => `<div class="zr"><span class="zk">${l}</span><d
 async function swTap(id) { const [k, d] = SW[id], v = !pref(k, d); await setPref(k, v); const e = $('sw_' + id); if (e) e.setAttribute('aria-checked', v); if (id === 'priv') { applyPriv(); if (!v) rerender(); } }
 async function selTap(k, v) { if (k === 'kunci' || k === 'ingCad' || k === 'bulat') v = Number(v); await setPref(k, v); toast('Tersimpan'); }
 async function segTap(g, v) {
-  if (g === 'tema') setTema(v); else { await setPref('fz', v); try { localStorage.setItem('fz', v); } catch (e) {} applyFz(); }
+  if (g === 'bhs') { await setPref('bahasa', v); setBahasa(v); } else if (g === 'tema') setTema(v); else { await setPref('fz', v); try { localStorage.setItem('fz', v); } catch (e) {} applyFz(); }
   rerender();
 }
 async function warnaPilih(i) { const p = PRESET[i]; await setPref('warna', p[1] ? { a: p[1], b: p[2] } : null); applyWarna(); rerender(); }
@@ -1997,7 +2085,7 @@ async function laporMasalah() {
   window._lapor = t;
 }
 function laporKirim() { const s = $('fsheet'); if (s) s.remove(); openWA(window._lapor || '', CR.wa.replace(/\D/g, '')); }
-const BARU = ['Baru: tombol Matikan semua kunci (Pengaturan › Keamanan) mematikan PIN, pola, dan sidik jari sekaligus setelah konfirmasi PIN. Baru juga panduan Keamanan buka aplikasi (Menu › Panduan).', 'Layar kunci didesain ulang: tanpa header, dengan logo besar bercahaya, kartu kaca, pola dan sidik jari lebih jelas, serta tombol pindah cara buka berbentuk pil. Cara kerjanya tidak berubah.', 'Baru: Cara buka aplikasi (Pengaturan › Keamanan). Selain PIN, buka dengan pola 3x3 atau sidik jari. PIN tetap jadi cadangan dan dipakai untuk mengatur. Pola salah 5 kali menunggu 30 detik. Sidik jari bergantung HP dan belum tentu jalan di semua perangkat; bila tidak didukung, opsinya tidak muncul. Cadangan membawa pola, sidik jari didaftarkan ulang.', 'Baru: Riwayat perubahan (Menu › Trip & Arsip, di bawah kartu Tutup Buku). Setiap transaksi uang yang ditambah, diubah (nilai sebelum dan sesudah), dihapus, atau dipulihkan dicatat dengan waktunya, begitu juga saat buku trip ditutup dan dibuka. Isi Nama pencatat bila beberapa panitia memakai HP yang sama. Bisa difilter dan diunduh sebagai CSV. Perubahan sebelum v1.6.0 tidak punya riwayat.', 'Baru: Tutup buku trip (Menu › Trip & Arsip). Setelah trip selesai, transaksi uang dikunci: Pemasukan, Pengeluaran, Catat bayar, penggantian Talangan, transaksi berulang, simulasi dan sewa yang masuk ke Pengeluaran. Arsip cadangan dibuat otomatis, dan kunci hanya bisa dibuka dengan mengetik BUKA. Tamu, Itinerary, Checklist, kwitansi, PDF, dan Rekap tetap bebas.', 'Tab Pembayaran dirombak. Paling atas ringkasan (terkumpul dari target, jumlah Lunas/Sebagian/Belum bayar/Telat, tenggat), lalu daftar peserta dengan pencarian dan filter. Tombol ＋ Catat bayar di tiap peserta mengisi sisa tagihan otomatis dan menyimpannya sebagai Pemasukan kategori Peserta. Tombol Tagih berikutnya membuka WhatsApp peserta yang belum ditagih satu per satu. Pengaturan cara bayar dan tagihan dilipat di bawah. Data lama aman.', 'Cara bayar kini berupa daftar: beberapa rekening bank dan e-wallet (DANA, SeaBank, ShopeePay, GoPay, OVO, LinkAja, atau nama lain), tombol Salin nomor, serta sakelar aktif. Semua yang aktif ikut di pesan tagihan WhatsApp, kwitansi, dan kata kunci {rekening}. Teks rekening lama tetap dipakai sebagai catatan.', 'Baru: Kartu cara bayar (PDF) dan Cara bayar ke grup WhatsApp, berisi semua rekening, e-wallet, QRIS, dan tenggat. Dasar hitung tagihan disederhanakan jadi satu baris (ketuk Ubah); aturan hitungnya tidak berubah.', 'Formulir pendaftaran online disederhanakan: Nama, Nomor WhatsApp, Meeting point, Alergi makanan (Ya/Tidak), dan Catatan. Golongan darah, riwayat penyakit, dan kontak darurat tidak lagi diminta. Pendaftar dengan alergi ditandai "Alergi makanan: Ya" di Catatan tamu. Data tamu lama tidak diubah. Pasang ulang skrip Apps Script pendaftaran yang baru.', 'Baru: Menu › Trip & Arsip › Salin Trip sebagai Template. Trip baru langsung berisi itinerary, checklist (belum siap, tanpa pembawa), dan kategori dari trip sebelumnya; tamu dan uang kosong. Tanggal itinerary bisa digeser otomatis.', 'Baru: Pengaturan › Tentang & Bantuan › Lapor masalah. Membuka WhatsApp penjual dengan info teknis siap kirim (versi, kode perangkat, status lisensi, perangkat), tanpa data trip, peserta, atau uang. Terkirim hanya bila Anda menekan kirim di WhatsApp.', 'Baru: panduan Pindah ke HP baru (Menu › Panduan).', 'Kartu Ringkasan di Akun dihapus.', 'Perbaikan: angka 0 di depan nomor WhatsApp tidak lagi hilang (tagihan WA, daftar Tamu, dan impor pendaftar online). Data lama tidak diubah.', 'Penomoran versi dimulai ulang dari v1.0.0. Tidak ada perubahan fitur.', 'Keamanan lisensi: aplikasi memeriksa status lisensi ke server (otomatis maks. tiap 1 jam, atau kapan saja lewat Pengaturan › Periksa status lisensi sekarang; tidak menahan aplikasi). Tanpa internet tetap jalan sampai 30 hari sejak pemeriksaan terakhir. Lisensi dicabut, versi terlalu lama, atau jam HP dimundurkan akan mengunci aplikasi. Kunci aktivasi lama diganti kunci baru.', 'Ikon Pengaturan (gerigi) pindah ke kanan judul Akun, di bawah tombol terang/gelap. Kartu Pengaturan di Akun dihapus.', 'Kalkulator pindah ke Menu › Kalkulator: tampilan seperti kalkulator HP, memori, riwayat, tombol ÷ Peserta dan Bulat, plus 7 rumus Hitung Trip.', 'Akun: kartu profil dan tombol Pengaturan menyatu, serta ada Data & Cadangan.', 'Tentang pembuat: tombol Instagram dan WhatsApp saja, tanpa tulisan nama atau nomor.', 'Pengaturan baru: pesan tagihan WhatsApp bisa diubah, pembulatan harga jual, dan Cek pembaruan aplikasi.', 'Panduan singkat kini berisi demo bergerak dan langkah rinci untuk semua fitur (Menu › Panduan).'];
+const BARU = ['Baru: pilihan Bahasa (Pengaturan › Tampilan): Indonesia atau English. Tahap awal: menu, tab, Pengaturan, tombol, dan pesan utama sudah berbahasa Inggris; teks yang belum diterjemahkan tetap Indonesia. Pesan WhatsApp, kwitansi, dan PDF untuk peserta tetap Indonesia. Panduan dan daftar Yang baru menyusul.', 'Baru: tombol Matikan semua kunci (Pengaturan › Keamanan) mematikan PIN, pola, dan sidik jari sekaligus setelah konfirmasi PIN. Baru juga panduan Keamanan buka aplikasi (Menu › Panduan).', 'Layar kunci didesain ulang: tanpa header, dengan logo besar bercahaya, kartu kaca, pola dan sidik jari lebih jelas, serta tombol pindah cara buka berbentuk pil. Cara kerjanya tidak berubah.', 'Baru: Cara buka aplikasi (Pengaturan › Keamanan). Selain PIN, buka dengan pola 3x3 atau sidik jari. PIN tetap jadi cadangan dan dipakai untuk mengatur. Pola salah 5 kali menunggu 30 detik. Sidik jari bergantung HP dan belum tentu jalan di semua perangkat; bila tidak didukung, opsinya tidak muncul. Cadangan membawa pola, sidik jari didaftarkan ulang.', 'Baru: Riwayat perubahan (Menu › Trip & Arsip, di bawah kartu Tutup Buku). Setiap transaksi uang yang ditambah, diubah (nilai sebelum dan sesudah), dihapus, atau dipulihkan dicatat dengan waktunya, begitu juga saat buku trip ditutup dan dibuka. Isi Nama pencatat bila beberapa panitia memakai HP yang sama. Bisa difilter dan diunduh sebagai CSV. Perubahan sebelum v1.6.0 tidak punya riwayat.', 'Baru: Tutup buku trip (Menu › Trip & Arsip). Setelah trip selesai, transaksi uang dikunci: Pemasukan, Pengeluaran, Catat bayar, penggantian Talangan, transaksi berulang, simulasi dan sewa yang masuk ke Pengeluaran. Arsip cadangan dibuat otomatis, dan kunci hanya bisa dibuka dengan mengetik BUKA. Tamu, Itinerary, Checklist, kwitansi, PDF, dan Rekap tetap bebas.', 'Tab Pembayaran dirombak. Paling atas ringkasan (terkumpul dari target, jumlah Lunas/Sebagian/Belum bayar/Telat, tenggat), lalu daftar peserta dengan pencarian dan filter. Tombol ＋ Catat bayar di tiap peserta mengisi sisa tagihan otomatis dan menyimpannya sebagai Pemasukan kategori Peserta. Tombol Tagih berikutnya membuka WhatsApp peserta yang belum ditagih satu per satu. Pengaturan cara bayar dan tagihan dilipat di bawah. Data lama aman.', 'Cara bayar kini berupa daftar: beberapa rekening bank dan e-wallet (DANA, SeaBank, ShopeePay, GoPay, OVO, LinkAja, atau nama lain), tombol Salin nomor, serta sakelar aktif. Semua yang aktif ikut di pesan tagihan WhatsApp, kwitansi, dan kata kunci {rekening}. Teks rekening lama tetap dipakai sebagai catatan.', 'Baru: Kartu cara bayar (PDF) dan Cara bayar ke grup WhatsApp, berisi semua rekening, e-wallet, QRIS, dan tenggat. Dasar hitung tagihan disederhanakan jadi satu baris (ketuk Ubah); aturan hitungnya tidak berubah.', 'Formulir pendaftaran online disederhanakan: Nama, Nomor WhatsApp, Meeting point, Alergi makanan (Ya/Tidak), dan Catatan. Golongan darah, riwayat penyakit, dan kontak darurat tidak lagi diminta. Pendaftar dengan alergi ditandai "Alergi makanan: Ya" di Catatan tamu. Data tamu lama tidak diubah. Pasang ulang skrip Apps Script pendaftaran yang baru.', 'Baru: Menu › Trip & Arsip › Salin Trip sebagai Template. Trip baru langsung berisi itinerary, checklist (belum siap, tanpa pembawa), dan kategori dari trip sebelumnya; tamu dan uang kosong. Tanggal itinerary bisa digeser otomatis.', 'Baru: Pengaturan › Tentang & Bantuan › Lapor masalah. Membuka WhatsApp penjual dengan info teknis siap kirim (versi, kode perangkat, status lisensi, perangkat), tanpa data trip, peserta, atau uang. Terkirim hanya bila Anda menekan kirim di WhatsApp.', 'Baru: panduan Pindah ke HP baru (Menu › Panduan).', 'Kartu Ringkasan di Akun dihapus.', 'Perbaikan: angka 0 di depan nomor WhatsApp tidak lagi hilang (tagihan WA, daftar Tamu, dan impor pendaftar online). Data lama tidak diubah.', 'Penomoran versi dimulai ulang dari v1.0.0. Tidak ada perubahan fitur.', 'Keamanan lisensi: aplikasi memeriksa status lisensi ke server (otomatis maks. tiap 1 jam, atau kapan saja lewat Pengaturan › Periksa status lisensi sekarang; tidak menahan aplikasi). Tanpa internet tetap jalan sampai 30 hari sejak pemeriksaan terakhir. Lisensi dicabut, versi terlalu lama, atau jam HP dimundurkan akan mengunci aplikasi. Kunci aktivasi lama diganti kunci baru.', 'Ikon Pengaturan (gerigi) pindah ke kanan judul Akun, di bawah tombol terang/gelap. Kartu Pengaturan di Akun dihapus.', 'Kalkulator pindah ke Menu › Kalkulator: tampilan seperti kalkulator HP, memori, riwayat, tombol ÷ Peserta dan Bulat, plus 7 rumus Hitung Trip.', 'Akun: kartu profil dan tombol Pengaturan menyatu, serta ada Data & Cadangan.', 'Tentang pembuat: tombol Instagram dan WhatsApp saja, tanpa tulisan nama atau nomor.', 'Pengaturan baru: pesan tagihan WhatsApp bisa diubah, pembulatan harga jual, dan Cek pembaruan aplikasi.', 'Panduan singkat kini berisi demo bergerak dan langkah rinci untuk semua fitur (Menu › Panduan).'];
 const listSheet = (t, a) => sheetOpen(`<h3>${t}</h3>${a.map(x => `<div class="zli">• ${esc(x)}</div>`).join('')}`);
 async function resetPref() {
   if (!confirm('Kembalikan semua pengaturan tampilan dan perilaku ke bawaan? Data trip tidak berubah.')) return;
@@ -2085,6 +2173,7 @@ function renderPeng() {
     ${zsrow('Mode privasi (sembunyikan nominal)', 'priv')}</div>
   <div class="zh">TAMPILAN</div><div class="card zcard">
     ${zseg('Tema', 'tema', [['dark', 'Gelap'], ['light', 'Terang'], ['auto', 'HP']], tema)}
+    ${zseg('Bahasa', 'bhs', [['id', 'Indonesia'], ['en', 'English']], LANG)}
     <div class="zr"><span class="zk">Latar foto</span><div class="zrt"><span class="zv zph">${pref('latar', '') ? 'Kustom' : 'Bawaan'}</span><button class="zmini" onclick="$('platar').click()">Ganti</button>${pref('latar', '') ? '<button class="zmini" onclick="latarReset()">Bawaan</button>' : ''}</div></div><input type="file" id="platar" accept="image/*" hidden onchange="pickImg(this,'latar')">
     ${zseg('Ukuran huruf', 'fz', [['s', 'S'], ['m', 'M'], ['l', 'L']], pref('fz', 'm'))}
     <div class="zr zwr"><span class="zk">Warna aplikasi</span><div class="zrt"><div class="zsats">${sw}</div></div></div>
@@ -2308,7 +2397,7 @@ function pdToggle() { PD.play = !PD.play; $('pdpl').textContent = PD.play ? '⏸
 async function mulai() {
   DB = Object.assign(blank(), await load() || {}); DB.pref = DB.pref || {}; DB.profil = DB.profil || {}; DB.kw = DB.kw || {}; DB.nomor = DB.nomor || {}; applyKat(); DB.trash = (DB.trash || []).filter(x => Date.now() - x.ts < 30 * 864e5); if (jalankanUlang()) { await save(); setTimeout(() => toast('Transaksi berulang ditambahkan'), 700); }
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
-  applyAll(); cekPembuat().then(ok => { CR_OK = ok; if (!ok && !LOCKED) rerender(); });
+  if (DB.pref.bahasa && DB.pref.bahasa !== LANG) setBahasa(DB.pref.bahasa); applyAll(); cekPembuat().then(ok => { CR_OK = ok; if (!ok && !LOCKED) rerender(); });
   BIO_OK = await bioTersedia();
   if (DB.pin) lock(); else { buildNav(); show(pref('awal', 'dashboard')); }
 }
