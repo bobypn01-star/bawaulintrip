@@ -523,7 +523,7 @@ function renderSim() {
   ${[['Jumlah peserta', 'peserta'], ['Jumlah official', 'official'], ['Harga jual per peserta (Rp)', 'harga', 1], ['Target keuntungan per official (Rp)', 'target', 1]].map(([l, k, m]) => `<label>${l}</label>` + (m ? `<input type="text" inputmode="numeric" value="${fmtN(SIM[k])}" oninput="fmtNum(this);SIM.${k}=numVal(this.value);drawSim()">` : `<input type="number" inputmode="decimal" value="${SIM[k]}" oninput="SIM.${k}=+this.value||0;drawSim()">`)).join('')}
   <div style="margin-top:10px"><input type="checkbox" ${SIM.ikut ? 'checked' : ''} onchange="SIM.ikut=this.checked;drawSim()"> Official ikut berangkat (biaya ikut ditanggung)</div></div>
   <div class="card"><h3>Komponen Biaya</h3><small class="mut">Anggaran = bagian harga jual yang dibayar tiap peserta (rencana). Biaya asli = uang yang benar-benar kamu keluarkan ke pihak lain.</small><div id="sitems"></div>
-  <button class="btn alt" onclick="SIM.items.push({n:'Komponen baru',t:'orang',std:0,sim:0,kap:4,stok:0,kat:'Lainnya'});drawItems();drawSim()">+ Tambah komponen</button></div>
+  <button class="btn alt" onclick="SIM.items.push({n:tr('Komponen baru'),t:'orang',std:0,sim:0,kap:4,stok:0,kat:'Lainnya'});drawItems();drawSim()">+ Tambah komponen</button></div>
   <div class="card"><h3>Terapkan ke Anggaran Pengeluaran</h3><small class="mut">Mengisi tab Pengeluaran dari komponen simulasi. Simulasi yang diterapkan menjadi acuan perbandingan dengan kenyataan.</small>
   <label>Kolom Anggaran diisi dengan</label><select id="ap_d"><option value="sim">Biaya asli (anggaran ditekan)</option><option value="std">Anggaran komponen (bagian harga jual)</option></select>
   <div style="margin-top:10px"><input type="checkbox" id="ap_b"> Isi juga kolom Biaya sesuai biaya simulasi</div>
@@ -1817,7 +1817,308 @@ const EN = {
 'v1.8.4: langkah rinci dan tips Panduan kini tersedia dalam English.':'v1.8.4: Panduan detailed steps and tips are now available in English.','v1.8.3: tanggal mengikuti bahasa dan demo Panduan diterjemahkan ke English. Langkah rinci Panduan menyusul.':'v1.8.3: dates follow the language and the Guide demos are translated to English. The Guide\'s detailed steps follow.','Baru: tombol Matikan semua kunci (Pengaturan › Keamanan) mematikan PIN, pola, dan sidik jari sekaligus setelah konfirmasi PIN. Baru juga panduan Keamanan buka aplikasi (Menu › Panduan).':'New: the Turn off all locks button (Settings › Security) turns off PIN, pattern, and fingerprint at once after PIN confirmation. Also new is the App unlock security guide (Menu › Guide).','Layar kunci didesain ulang: tanpa header, dengan logo besar bercahaya, kartu kaca, pola dan sidik jari lebih jelas, serta tombol pindah cara buka berbentuk pil. Cara kerjanya tidak berubah.':'The lock screen was redesigned: no header, a large glowing logo, a glass card, clearer pattern and fingerprint, and pill-shaped buttons to switch unlock methods. How it works is unchanged.','Baru: Cara buka aplikasi (Pengaturan › Keamanan). Selain PIN, buka dengan pola 3x3 atau sidik jari. PIN tetap jadi cadangan dan dipakai untuk mengatur. Pola salah 5 kali menunggu 30 detik. Sidik jari bergantung HP dan belum tentu jalan di semua perangkat; bila tidak didukung, opsinya tidak muncul. Cadangan membawa pola, sidik jari didaftarkan ulang.':'New: Ways to open the app (Settings › Security). Besides the PIN, open with a 3x3 pattern or fingerprint. The PIN stays as the fallback and is used for settings. A wrong pattern 5 times waits 30 seconds. Fingerprint depends on the phone and may not work on every device; if unsupported, the option does not appear. Backups carry the pattern, fingerprints are registered again.','Baru: Riwayat perubahan (Menu › Trip & Arsip, di bawah kartu Tutup Buku). Setiap transaksi uang yang ditambah, diubah (nilai sebelum dan sesudah), dihapus, atau dipulihkan dicatat dengan waktunya, begitu juga saat buku trip ditutup dan dibuka. Isi Nama pencatat bila beberapa panitia memakai HP yang sama. Bisa difilter dan diunduh sebagai CSV. Perubahan sebelum v1.6.0 tidak punya riwayat.':'New: Change history (Menu › Trip & Archive, below the Close Books card). Every money transaction that is added, edited (values before and after), deleted, or restored is recorded with its time, and so is closing and opening the trip books. Fill in Recorder name if several committee members use the same phone. It can be filtered and downloaded as CSV. Changes before v1.6.0 have no history.','Baru: Tutup buku trip (Menu › Trip & Arsip). Setelah trip selesai, transaksi uang dikunci: Pemasukan, Pengeluaran, Catat bayar, penggantian Talangan, transaksi berulang, simulasi dan sewa yang masuk ke Pengeluaran. Arsip cadangan dibuat otomatis, dan kunci hanya bisa dibuka dengan mengetik BUKA. Tamu, Itinerary, Checklist, kwitansi, PDF, dan Rekap tetap bebas.':'New: Close trip books (Menu › Trip & Archive). After the trip is done, money transactions are locked: Income, Expenses, Record payment, advance repayment, recurring transactions, simulation and rental going into Expenses. A backup archive is created automatically, and the lock can only be opened by typing BUKA. Guests, Itinerary, Checklist, receipts, PDFs, and Summary stay free.','Tab Pembayaran dirombak. Paling atas ringkasan (terkumpul dari target, jumlah Lunas/Sebagian/Belum bayar/Telat, tenggat), lalu daftar peserta dengan pencarian dan filter. Tombol ＋ Catat bayar di tiap peserta mengisi sisa tagihan otomatis dan menyimpannya sebagai Pemasukan kategori Peserta. Tombol Tagih berikutnya membuka WhatsApp peserta yang belum ditagih satu per satu. Pengaturan cara bayar dan tagihan dilipat di bawah. Data lama aman.':'The Payments tab was reworked. At the top is a summary (collected against target, count of Paid/Partial/Not paid/Overdue, deadline), then the participant list with search and filters. The ＋ Record payment button on each participant fills in the remaining bill automatically and saves it as Income in the Participant category. The Bill next button opens WhatsApp for participants not yet billed, one by one. Payment method and bill settings are folded below. Old data is safe.','Cara bayar kini berupa daftar: beberapa rekening bank dan e-wallet (DANA, SeaBank, ShopeePay, GoPay, OVO, LinkAja, atau nama lain), tombol Salin nomor, serta sakelar aktif. Semua yang aktif ikut di pesan tagihan WhatsApp, kwitansi, dan kata kunci {rekening}. Teks rekening lama tetap dipakai sebagai catatan.':'Payment methods are now a list: several bank accounts and e-wallets (DANA, SeaBank, ShopeePay, GoPay, OVO, LinkAja, or another name), a Copy number button, and an active switch. All active ones appear in the WhatsApp bill message, receipts, and the {rekening} keyword. The old account text is still used as a note.','Baru: Kartu cara bayar (PDF) dan Cara bayar ke grup WhatsApp, berisi semua rekening, e-wallet, QRIS, dan tenggat. Dasar hitung tagihan disederhanakan jadi satu baris (ketuk Ubah); aturan hitungnya tidak berubah.':'New: Payment info card (PDF) and Payment info to WhatsApp group, containing all accounts, e-wallets, QRIS, and the deadline. The bill calculation basis was simplified into one row (tap Edit); the calculation rules are unchanged.','Formulir pendaftaran online disederhanakan: Nama, Nomor WhatsApp, Meeting point, Alergi makanan (Ya/Tidak), dan Catatan. Golongan darah, riwayat penyakit, dan kontak darurat tidak lagi diminta. Pendaftar dengan alergi ditandai "Alergi makanan: Ya" di Catatan tamu. Data tamu lama tidak diubah. Pasang ulang skrip Apps Script pendaftaran yang baru.':'The online registration form was simplified: Name, WhatsApp number, Meeting point, Food allergy (Yes/No), and Notes. Blood type, medical history, and emergency contact are no longer asked. Registrants with an allergy are marked "Alergi makanan: Ya" in the guest Notes. Old guest data is unchanged. Reinstall the new registration Apps Script.','Baru: Menu › Trip & Arsip › Salin Trip sebagai Template. Trip baru langsung berisi itinerary, checklist (belum siap, tanpa pembawa), dan kategori dari trip sebelumnya; tamu dan uang kosong. Tanggal itinerary bisa digeser otomatis.':'New: Menu › Trip & Archive › Copy Trip as Template. The new trip starts with the itinerary, checklist (not ready, no carriers), and categories from the previous trip; guests and money are empty. Itinerary dates can shift automatically.','Baru: Pengaturan › Tentang & Bantuan › Lapor masalah. Membuka WhatsApp penjual dengan info teknis siap kirim (versi, kode perangkat, status lisensi, perangkat), tanpa data trip, peserta, atau uang. Terkirim hanya bila Anda menekan kirim di WhatsApp.':'New: Settings › About & Help › Report a problem. Opens the seller\'s WhatsApp with technical info ready to send (version, device code, license status, device), without trip, participant, or money data. It is sent only when you press send in WhatsApp.','Baru: panduan Pindah ke HP baru (Menu › Panduan).':'New: Move to a new phone guide (Menu › Guide).','Kartu Ringkasan di Akun dihapus.':'The Summary card in Account was removed.','Perbaikan: angka 0 di depan nomor WhatsApp tidak lagi hilang (tagihan WA, daftar Tamu, dan impor pendaftar online). Data lama tidak diubah.':'Fix: the leading 0 in WhatsApp numbers is no longer lost (WA bills, Guest list, and online registrant import). Old data is unchanged.','Penomoran versi dimulai ulang dari v1.0.0. Tidak ada perubahan fitur.':'Version numbering restarted from v1.0.0. No feature changes.','Keamanan lisensi: aplikasi memeriksa status lisensi ke server (otomatis maks. tiap 1 jam, atau kapan saja lewat Pengaturan › Periksa status lisensi sekarang; tidak menahan aplikasi). Tanpa internet tetap jalan sampai 30 hari sejak pemeriksaan terakhir. Lisensi dicabut, versi terlalu lama, atau jam HP dimundurkan akan mengunci aplikasi. Kunci aktivasi lama diganti kunci baru.':'License security: the app checks the license status with the server (automatically at most every 1 hour, or anytime via Settings › Check license status now; it does not hold up the app). Without internet it keeps working up to 30 days after the last check. A revoked license, a version that is too old, or the phone clock being set back will lock the app. The old activation key was replaced with a new one.','Ikon Pengaturan (gerigi) pindah ke kanan judul Akun, di bawah tombol terang/gelap. Kartu Pengaturan di Akun dihapus.':'The Settings icon (gear) moved to the right of the Account title, below the light/dark button. The Settings card in Account was removed.','Kalkulator pindah ke Menu › Kalkulator: tampilan seperti kalkulator HP, memori, riwayat, tombol ÷ Peserta dan Bulat, plus 7 rumus Hitung Trip.':'The Calculator moved to Menu › Calculator: phone-calculator look, memory, history, ÷ Participants and Round buttons, plus 7 Trip Calculator formulas.','Akun: kartu profil dan tombol Pengaturan menyatu, serta ada Data & Cadangan.':'Account: the profile card and Settings button are merged, and Data & Backup was added.','Tentang pembuat: tombol Instagram dan WhatsApp saja, tanpa tulisan nama atau nomor.':'About the creator: only Instagram and WhatsApp buttons, with no name or number text.','Pengaturan baru: pesan tagihan WhatsApp bisa diubah, pembulatan harga jual, dan Cek pembaruan aplikasi.':'New settings: the WhatsApp bill message can be edited, selling price rounding, and Check for app updates.','Panduan singkat kini berisi demo bergerak dan langkah rinci untuk semua fitur (Menu › Panduan).':'The quick Guide now has animated demos and detailed steps for all features (Menu › Guide).','Anggaran = bagian harga jual yang dibayar tiap peserta (rencana). Biaya asli = uang yang benar-benar kamu keluarkan ke pihak lain.':'Budget = the share of the selling price each participant pays (plan). Actual cost = the money you really pay out to other parties.','Mengisi tab Pengeluaran dari komponen simulasi. Simulasi yang diterapkan menjadi acuan perbandingan dengan kenyataan.':'Fills the Expenses tab from the simulation components. The applied simulation becomes the reference for comparison with reality.','Belum ada simulasi yang diterapkan. Gunakan tombol "Terapkan ke Anggaran Pengeluaran" di atas.':'No simulation has been applied yet. Use the "Apply to Expense Budget" button above.','Atur tagihan: buka kartu "Tagihan & tenggat" di bawah, terapkan simulasi, atau isi Total Realisasi di Beranda.':'Set the bill: open the "Bills & deadlines" card below, apply a simulation, or fill in Total Actual on Home.','Rekening bank dan e-wallet. Yang aktif tampil di kwitansi, pesan tagihan WhatsApp, dan kartu cara bayar.':'Bank accounts and e-wallets. Active ones appear on receipts, WhatsApp bill messages, and the payment info card.','Tagihan tetap menggantikan hitungan otomatis. Kosongkan untuk memakai simulasi atau rencana patungan.':'A fixed bill replaces the automatic calculation. Leave empty to use the simulation or split plan.','Menyimpan salinan seluruh data trip ini ke daftar arsip. Data yang berjalan tidak berubah.':'Saves a copy of all this trip\'s data to the archive list. The running data is not changed.','Bila diisi, tanggal itinerary digeser mengikuti tanggal ini (jam tetap). Bila kosong, tanggal dan jam itinerary dikosongkan.':'If filled in, itinerary dates shift to follow this date (times stay). If empty, itinerary dates and times are cleared.','Data tersimpan di HP ini. Unduh cadangan berkala (atau sebelum uninstall / ganti HP), simpan ke Google Drive atau WhatsApp.':'Data is stored on this phone. Download a backup regularly (or before uninstalling / changing phones), and save it to Google Drive or WhatsApp.','Dibuat lewat pilihan "Ulangi otomatis" di form Pemasukan / Pengeluaran. Ditambahkan otomatis saat aplikasi dibuka.':'Created via the "Repeat automatically" option in the Income / Expenses form. Added automatically when the app opens.','Setup sekali lewat Apps Script (lihat panduan). Setelah itu peserta mendaftar lewat link, dan kamu mengambil datanya saat ada internet.':'Set up once through Apps Script (see the guide). After that participants register via the link, and you fetch the data when online.','Tips: 200 + 10% = 220 (persen menyesuaikan angka di depannya). Ketuk ( ) untuk kurung buka dan tutup otomatis.':'Tip: 200 + 10% = 220 (percent adjusts the number before it). Tap ( ) for automatic opening and closing brackets.','Peserta 🔒':'Participant 🔒','Menampilkan 0 dari 0 data':'Showing 0 of 0 data',
 'Masukkan total sewa ke Pengeluaran (kategori Peralatan)? Jika baris "Sewa perlengkapan" sudah ada, nilainya diperbarui.':'Add the total rental to Expenses (Equipment category)? If a "Sewa perlengkapan" row already exists, its value is updated.'
 };
+Object.assign(EN, {
+ 'Nama komponen':'Component name',
+ 'Jenis biaya':'Cost type',
+ 'Per orang':'Per person',
+ 'Sekali per trip':'Once per trip',
+ 'Tenda (sewa jika stok kurang)':'Tent (rent if stock is short)',
+ 'Kategori di Pengeluaran':'Category in Expenses',
+ 'Anggaran per peserta (Rp), bagian dari harga jual':'Budget per participant (Rp), part of the selling price',
+ 'Biaya asli per orang (Rp), yang benar-benar dikeluarkan':'Actual cost per person (Rp), what you really spend',
+ 'Biaya asli total per trip (Rp)':'Actual total cost per trip (Rp)',
+ 'Biaya sewa per tenda (Rp)':'Rental cost per tent (Rp)',
+ 'Kapasitas per tenda (orang)':'Capacity per tent (people)',
+ 'Tenda milik sendiri (stok)':'Own tents (stock)',
+ 'Hapus komponen':'Delete component',
+ 'Komponen baru':'New component',
+ 'Simulasi ini rugi. Naikkan harga atau tekan biaya.':'This simulation runs at a loss. Raise the price or cut costs.',
+ 'Harga min. capai target':'Min. price to reach target',
+ 'Komponen':'Component',
+ 'Biaya asli':'Actual cost',
+ 'Selisih':'Difference',
+ 'Rencana':'Plan',
+ 'Nyata':'Actual',
+ 'Belum dicatat':'Not recorded yet',
+ 'Penyebab selisih':'Causes of the difference',
+ 'Tidak ada selisih berarti.':'No significant difference.',
+ 'Pendapatan rencana':'Planned revenue',
+ 'Pemasukan nyata':'Actual income',
+ 'Biaya rencana':'Planned cost',
+ 'Biaya nyata':'Actual cost',
+ 'Keuntungan rencana':'Planned profit',
+ 'Keuntungan nyata':'Actual profit',
+ 'UNTUNG':'PROFIT',
+ 'RUGI':'LOSS',
+ 'IMPAS':'BREAK-EVEN',
+ 'Biaya per peserta':'Cost per participant',
+ '(tanpa nama)':'(no name)',
+ '(Tanpa kategori)':'(No category)',
+ 'Arsipkan trip yang selesai (Menu → Trip & Arsip) supaya bisa dibandingkan dengan trip lain.':'Archive finished trips (Menu → Trip & Archive) so they can be compared with other trips.',
+ '🔎 Cari kata kunci':'🔎 Search keywords',
+ 'Harga jual simulasi':'Simulation selling price',
+ 'Rencana patungan (Total Realisasi ÷ peserta)':'Split plan (Total Actual ÷ participants)',
+ 'Belum ditetapkan':'Not set yet',
+ 'Tagihan tetap (manual)':'Fixed bill (manual)',
+ 'Tagihan memakai tagihan tetap (manual).':'The bill uses the fixed bill (manual).',
+ 'Tagihan memakai harga jual dari simulasi yang diterapkan.':'The bill uses the selling price from the applied simulation.',
+ 'Tagihan memakai rencana patungan (Total Realisasi dibagi peserta Diterima). Biaya yang melebihi rencana tidak ditagihkan ke peserta.':'The bill uses the split plan (Total Actual divided by Accepted participants). Costs above the plan are not billed to participants.',
+ 'Tagihan belum ditetapkan: isi Total Realisasi di Beranda, isi tagihan tetap, atau terapkan simulasi. Biaya yang melebihi rencana tidak ditagihkan ke peserta.':'The bill is not set yet: fill in Total Actual on Home, set a fixed bill, or apply a simulation. Costs above the plan are not billed to participants.',
+ 'v1.8.6: Simulasi, Statistik Antar-Trip, kolom pencarian, dan penjelasan Patungan Otomatis kini tersedia dalam English.':'v1.8.6: Simulation, Cross-Trip Statistics, the search box, and the Automatic Split explanation are now available in English.'
+});
+Object.assign(EN, {
+ 'Per komponen':'Per component',
+ 'Atur tagihan':'Set bill',
+ 'Per official':'Per official',
+ 'Per orang (realisasi)':'Per person (actual)',
+ 'Per orang (anggaran)':'Per person (budget)',
+ 'Simulasi vs Kenyataan':'Simulation vs Reality',
+ 'Tagihan / peserta':'Bill / participant',
+ 'Contoh: Transfer antar bank tambah kode unik':'Example: Interbank transfers add a unique code',
+ 'Contoh: 400.000':'Example: 400.000'
+});
+Object.assign(EN, {
+ 'Arsip dibuka. Seluruh isinya sekarang menjadi data aktif.':'Archive opened. All of its contents are now the active data.',
+ 'Arsip dibuat.':'Archive created.',
+ 'Ketik BARU dulu untuk konfirmasi.':'Type BARU first to confirm.',
+ 'Trip baru siap. Semua data sudah kosong; trip lama ada di arsip.':'The new trip is ready. All data is empty; the old trip is in the archive.',
+ 'Ketik BUKA dulu untuk konfirmasi.':'Type BUKA first to confirm.',
+ 'Kunci dibuka.':'Lock opened.',
+ 'Cadangan diunduh.':'Backup downloaded.',
+ 'Cadangan berhasil dipulihkan.':'Backup restored successfully.',
+ 'File cadangan tidak valid.':'The backup file is not valid.',
+ 'Ketik HAPUS dulu.':'Type HAPUS first.',
+ 'Ketik SALIN dulu untuk konfirmasi.':'Type SALIN first to confirm.',
+ 'Buku trip ditutup. Arsip cadangan sudah dibuat.':'Trip books closed. A backup archive has been created.',
+ 'Ketik TUTUP dulu untuk konfirmasi.':'Type TUTUP first to confirm.',
+ 'v1.8.7: Trip & Arsip, Riwayat Perubahan, dan Bagi Hasil kini tersedia dalam English.':'v1.8.7: Trips & Archive, Change History, and Profit Sharing are now available in English.',
+ '"Buka" memuat seluruh isi arsip ke aplikasi. Jika trip yang sedang berjalan berisi data, ia disimpan otomatis sebagai backup di daftar arsip.':'"Open" loads the whole archive into the app. If the trip in progress contains data, it is saved automatically as a backup in the archive list.',
+ 'Mencatat kapan transaksi uang ditambah, diubah, dihapus, dipulihkan, dan kapan buku trip ditutup atau dibuka. Tersimpan di HP ini saja dan ikut dalam cadangan dan arsip.':'Records when money transactions are added, edited, deleted, or restored, and when the trip books are closed or unlocked. Stored on this phone only and included in backups and archives.',
+ 'Setelah trip selesai dan uang sudah dihitung, kunci transaksi uang agar laporan dan bagi hasil tidak berubah tanpa sengaja. Arsip cadangan dibuat otomatis sebelum dikunci. Kunci bisa dibuka lagi dengan sengaja.':'After the trip is over and the money has been counted, lock money transactions so the report and profit sharing do not change by accident. A backup archive is created automatically before locking. The lock can be opened again on purpose.',
+ 'Terkunci: tambah, ubah, hapus, dan impor Pemasukan dan Pengeluaran; Catat bayar; Catat penggantian Talangan; transaksi berulang; terapkan simulasi; masukkan sewa. Tetap bebas: Tamu, Itinerary, Checklist, kwitansi dan PDF, Rekap, arsip, cadangan.':'Locked: add, edit, delete, and import Income and Expenses; Record payment; Record advance repayment; recurring transactions; apply simulation; add rental. Still free: Guests, Itinerary, Checklist, receipts and PDFs, Summary, archive, backup.',
+ 'Menghapus SEMUA data di aplikasi ini (data aktif, arsip, simulasi tersimpan, bukti nota). Tidak bisa dibatalkan. Unduh cadangan dulu jika perlu.':'Deletes ALL data in this app (active data, archives, saved simulations, receipt proofs). This cannot be undone. Download a backup first if needed.',
+ 'Trip yang sedang berjalan diarsipkan otomatis, lalu SEMUA data (tamu, pemasukan, pengeluaran, itinerary, perlengkapan, checklist, simulasi) dikosongkan.':'The trip in progress is archived automatically, then ALL data (guests, income, expenses, itinerary, gear, checklist, simulation) is cleared.',
+ 'Ketik BUKA untuk membuka kunci':'Type BUKA to unlock',
+ '🔒 Buku Trip Ditutup':'🔒 Trip Books Closed',
+ 'Buka kunci':'Unlock',
+ '🔓 Buka kunci':'🔓 Unlock',
+ 'Hapus permanen':'Delete permanently',
+ 'Kosongkan tempat sampah':'Empty trash',
+ 'Unduh':'Download',
+ 'backup otomatis':'automatic backup',
+ '⬇️ Unduh CSV':'⬇️ Download CSV',
+ '🗑️ Kosongkan':'🗑️ Clear',
+ 'Jumlah (Rp)':'Amount (Rp)',
+ 'Keterangan':'Description',
+ 'mis. rokok, makan pribadi':'e.g. cigarettes, own meals',
+ 'Nama official':'Official name',
+ 'Mis. Bobi':'E.g. Bobi',
+ '+ Catat pemakaian pribadi':'+ Record personal use',
+ 'Pemakaian Kas untuk Pribadi':'Cash Used for Personal Purposes',
+ 'Uang kas yang terpakai untuk keperluan pribadi official (rokok, makan sendiri, dll). Ini bukan biaya trip, jadi harus dikembalikan.':'Cash that was used for an official\'s personal needs (cigarettes, own meals, etc). This is not a trip cost, so it must be paid back.',
+ 'Uang yang Dikeluarkan Tiap Official':'Money Spent by Each Official',
+ 'Setoran kategori Panitia + pengeluaran yang ditalangi (kolom "Dibayar oleh").':'Committee-category deposits + expenses that were advanced (the "Paid by" column).',
+ 'Belum ada catatan uang keluar.':'No money-out records yet.',
+ 'Memakai uang kas untuk pribadi':'Used cash for personal needs',
+ 'Penyelesaian: Siapa Membayar Siapa':'Settlement: Who Pays Whom',
+ 'Beban adil tiap official':'Fair burden per official',
+ 'Untung tiap official':'Profit per official',
+ 'Selisih tiap official':'Difference per official',
+ 'Tandai dibayar':'Mark as paid',
+ '✅ Sudah (batalkan)':'✅ Done (undo)',
+ 'Semua sudah pas, tidak ada transfer.':'Everything is even, no transfers needed.',
+ '✅ Selesai. Semua transfer sudah dibayar.':'✅ Done. All transfers have been paid.',
+ 'Pas':'Even',
+ 'Rugi':'Loss',
+ '💬 Kirim rincian':'💬 Send details',
+ '💬 Bagikan ke grup official':'💬 Share to officials group',
+ '📄 Unduh PDF Bagi Hasil':'📄 Download Profit Sharing PDF',
+ '📘 Cara menghitung (langkah demi langkah)':'📘 How it is calculated (step by step)',
+ '3. Uang keluar tiap official = setoran Panitia + pengeluaran yang ditalangi.':'3. Money out per official = Committee deposits + expenses advanced.',
+ '4. Selisih = uang keluar − bagian adil − pemakaian kas pribadi. Positif berarti menerima, negatif berarti membayar.':'4. Difference = money out − fair share − personal cash use. Positive means receiving, negative means paying.',
+ '5. Transfer disusun sesedikit mungkin supaya tidak bolak-balik.':'5. Transfers are arranged as few as possible to avoid back-and-forth.',
+ 'Reset catatan penggantian':'Reset repayment records'
+});
+Object.assign(EN, {
+ 'Data trip dan keuangan hanya tersimpan di HP ini dan tidak pernah dikirim ke pembuat aplikasi.':'Trip and financial data are stored only on this phone and are never sent to the app maker.',
+ 'v1.8.8: kalimat privasi di Pengaturan disederhanakan dan judul topik Panduan kini tersedia dalam English.':'v1.8.8: the privacy sentence in Settings is simplified and Panduan topic titles are now available in English.'
+});
+Object.assign(EN, {
+ 'Barang':'Items',
+ 'Butuh':'Need',
+ 'Punya':'Have',
+ 'Sewa':'Rent',
+ 'Barang siap':'Items ready',
+ 'Progres':'Progress',
+ 'Belum ada pembawa':'No one assigned yet',
+ 'Langkah rinci':'Detailed steps',
+ 'Semua topik':'All topics',
+ 'Tips':'Tips',
+ 'Jeda':'Pause',
+ 'Putar':'Play',
+ 'Coba sekarang':'Try it now',
+ 'Pindai':'Scan',
+ 'Cadangkan sekarang':'Back up now',
+ 'Bagikan cadangan':'Share backup',
+ 'Unduh Laporan (PDF)':'Download Report (PDF)',
+ 'Kwitansi':'Receipt',
+ 'Hasil':'Result',
+ 'Sisa':'Remaining',
+ 'Sisa dana':'Remaining funds',
+ 'Waktu':'Time',
+ 'Riwayat':'History',
+ 'Penyelesaian':'Settlement',
+ 'Terima':'Accept',
+ 'Daftar':'Register',
+ 'Salin link':'Copy link',
+ 'Bagikan WA':'Share on WA',
+ 'Hentikan':'Stop',
+ 'Jumlah':'Amount',
+ 'Nama pencatat':'Recorder name',
+ 'PENGINGAT':'REMINDERS',
+ 'Mode privasi':'Privacy mode',
+ 'Penanda tangan':'Signer',
+ 'Patungan per orang':'Contribution per person',
+ 'Pemakaian 85%':'Usage 85%',
+ 'Iuran kas':'Cash dues',
+ 'Diterima dari':'Received from',
+ 'Entri tercatat':'Entry recorded',
+ 'Arsipkan Trip':'Archive Trip',
+ 'Destinasi trip baru':'New trip destination',
+ 'Ketik BARU':'Type BARU',
+ 'Ketik BUKA':'Type BUKA',
+ 'Ketik SALIN':'Type SALIN',
+ 'Ketik TUTUP':'Type TUTUP',
+ 'Salin Trip sebagai Template':'Copy Trip as Template',
+ 'Naik ke Pos 1':'Climb to Post 1',
+ 'kunci dari penjual':'key from the seller',
+ 'tiap 7 hari':'every 7 days',
+ 'Cetak / Simpan PDF':'Print / Save PDF',
+ 'Aktivasi':'Activation',
+ 'PIN + pola':'PIN + pattern'
+});
+Object.assign(EN, {
+ 'Data belum pernah dicadangkan':'Data has never been backed up',
+ 'Pindai sidik jari Anda':'Scan your fingerprint',
+ 'Hitung Trip':'Trip Calc'
+});
+Object.assign(EN, {
+ '+ Catat penggantian':'+ Record repayment',
+ 'Belum ada biaya sewa (Total Sewa = 0).':'No rental cost yet (Total Rent = 0).',
+ 'Belum ada. Hasil dari tombol = akan tersimpan di sini. Ketuk salah satu untuk memakainya lagi.':'None yet. Results from the = button will be saved here. Tap one to use it again.',
+ 'Data simulasi kosong':'Simulation data is empty',
+ 'Data trip disimpan.':'Trip data saved.',
+ 'Dihitung dari kolom "Dibayar oleh" di Pengeluaran. Nama "Kas" atau "Bendahara" dianggap dari kas, bukan talangan.':'Calculated from the "Paid by" column in Expenses. The names "Kas" or "Bendahara" count as coming from cash, not a bailout.',
+ 'Gagal mengambil data':'Failed to fetch data',
+ 'Gagal terhubung. Cek link Apps Script dan internet.':'Connection failed. Check the Apps Script link and your internet.',
+ 'Hapus riwayat':'Clear history',
+ 'Isi link Apps Script dan kunci dulu, lalu Simpan.':'Enter the Apps Script link and key first, then Save.',
+ 'Isi nama simulasi dulu':'Enter a simulation name first',
+ 'Mengambil data...':'Fetching data...',
+ 'Nama barang wajib diisi':'Item name is required',
+ 'PIN harus 4-8 angka.':'PIN must be 4-8 digits.',
+ 'PIN lama salah.':'Old PIN is incorrect.',
+ 'Perlu internet untuk mengambil pendaftar.':'Internet is needed to fetch registrants.',
+ 'Pilih jenis hitungan. Hasil dan langkahnya langsung muncul, tanpa internet.':'Choose a calculation type. The result and steps appear right away, no internet needed.',
+ 'Pilih skenario dulu':'Choose a scenario first',
+ 'Simpan pembayaran':'Save payment',
+ '✅ Semua barang sudah siap.':'✅ All items are ready.',
+ 'Tidak ada peserta yang cocok.':'No matching participants.',
+ 'Tidak ada pendaftar baru.':'No new registrants.',
+ 'Tidak ada entri untuk filter ini.':'No entries for this filter.',
+ 'Belum ada simulasi yang diterapkan.':'No simulation has been applied yet.',
+ '✅ Semua kategori sesuai anggaran.':'✅ All categories are within budget.',
+ 'Versi aplikasi ini sudah terlalu lama. Perbarui aplikasi untuk melanjutkan.':'This app version is too old. Update the app to continue.',
+ 'Kunci tidak cocok dengan perangkat ini.':'The key does not match this device.',
+ 'Jam HP tidak sesuai':'Phone clock is incorrect',
+ 'Lisensi perangkat ini sudah tidak aktif. Hubungi penjual.':"This device's license is no longer active. Contact the seller.",
+ 'Sidik jari dibatalkan atau gagal':'Fingerprint cancelled or failed',
+ 'Gambar pola Anda':'Draw your pattern',
+ 'Perangkat ini belum terdaftar. Hubungi penjual dan kirim kode perangkat Anda.':'This device is not registered yet. Contact the seller and send your device code.',
+ 'Aplikasi perlu terhubung internet untuk memeriksa lisensi. Sambungkan internet lalu coba lagi.':'The app needs an internet connection to check the license. Connect to the internet and try again.',
+ 'Kunci lama tidak berlaku. Minta kunci baru ke penjual dengan kode perangkat ini.':'The old key is no longer valid. Ask the seller for a new key using this device code.',
+ 'Jam HP lebih mundur dari sebelumnya. Perbaiki tanggal dan jam HP, lalu buka lagi.':'The phone clock is earlier than before. Fix the phone date and time, then reopen.',
+ 'Data diperbarui':'Data updated',
+ 'Data tersimpan':'Data saved',
+ 'Lisensi dicabut':'License revoked','Perlu pembaruan':'Update required','Belum terdaftar':'Not registered','Perlu internet':'Internet required','Perbarui sekarang':'Update now',
+ 'v1.8.9: pesan kosong, galat, layar kunci dan lisensi kini tersedia dalam English.':'v1.8.9: empty-state messages, errors, and the lock and license screens are now available in English.'
+});
 const EN_PAT = [
+  [/^(\d+) pendaftar baru masuk ke daftar Tamu\.$/, (m) => m[1] + (m[1] === '1' ? ' new registrant was' : ' new registrants were') + ' added to the Guests list.'],
+  [/^(\d+) dari (\d+) barang checklist belum siap$/, (m) => m[1] + ' of ' + m[2] + ' checklist items not ready'],
+  [/^(\d+) pengeluaran belum ada bukti nota$/, (m) => m[1] + (m[1] === '1' ? ' expense has' : ' expenses have') + ' no receipt'],
+  [/^Tenggat bayar (.+), (\d+) peserta belum lunas$/, (m) => 'Payment due ' + m[1] + ', ' + m[2] + (m[2] === '1' ? ' participant' : ' participants') + ' not fully paid'],
+  [/^(\d+) peserta belum lunas$/, (m) => m[1] + (m[1] === '1' ? ' participant' : ' participants') + ' not fully paid'],
+  [/^(\d+) peserta telat bayar$/, (m) => m[1] + (m[1] === '1' ? ' participant' : ' participants') + ' late paying'],
+  [/^Hari (\d+) - (.+)$/, (m) => 'Day ' + m[1] + ' - ' + m[2]],
+  [/^s\/d (.+)$/, (m) => 'to ' + m[1]],
+  [/^Butuh (\d+), punya (\d+), sewa (\d+)$/, (m) => 'Need ' + m[1] + ', have ' + m[2] + ', rent ' + m[3]],
+  [/^(\d+)\/(\d+) siap$/, (m) => m[1] + '/' + m[2] + ' ready'],
+  [/^Belum siap \((\d+)\):$/, (m) => 'Not ready (' + m[1] + '):'],
+  [/^Dibawa: (.+)$/, (m) => 'Brought by: ' + m[1]],
+  [/^(.*) \| 🧾 tanpa nota$/, (m) => m[1] + ' | 🧾 no receipt'],
+  [/^(\d+) hari lalu$/, (m) => m[1] + (m[1] === '1' ? ' day ago' : ' days ago')],
+  [/^Berikutnya (.+)$/, (m) => 'Next ' + m[1]],
+  [/^🔒 Buku trip ditutup (.+)$/, (m) => '🔒 Trip book closed ' + m[1]],
+  [/^Tolak\s+💬 WA$/, () => 'Decline 💬 WA'],
+  [/^📷 Kamera\s+📎 Unggah file$/, () => '📷 Camera  📎 Upload file'],
+  [/^(.+), Bendahara$/, (m) => m[1] + ', Treasurer'],
+  [/^Cadangan terakhir: (.+) \((\d+) hari lalu\)$/, (m) => 'Last backup: ' + m[1] + ' (' + m[2] + (m[2] === '1' ? ' day ago)' : ' days ago)')],
+  [/^Trip baru dari template siap: (\d+) kegiatan dan (\d+) barang checklist\.( Trip lama ada di arsip\.)?$/, (m) => 'The new trip from the template is ready: ' + m[1] + (m[1] === '1' ? ' activity' : ' activities') + ' and ' + m[2] + ' checklist ' + (m[2] === '1' ? 'item' : 'items') + '.' + (m[3] ? ' The old trip is in the archive.' : '')],
+  [/^Untung (Rp -?[\d.]+)$/, (m) => 'Profit ' + m[1]],
+  [/^(Tambah|Ubah|Hapus|Kunci) (\d+)$/, (m) => ({ Tambah: 'Add ', Ubah: 'Edit ', Hapus: 'Delete ', Kunci: 'Lock ' })[m[1]] + m[2]],
+  [/^(➕|✏️|🗑️|♻️|📥|🔁|🔒|🔓) (Ditambah|Diubah|Dihapus|Dipulihkan|Impor|Talangan|Ditutup|Dibuka)(?: · (.+))?$/, (m) => m[1] + ' ' + ({ Ditambah: 'Added', Diubah: 'Edited', Dihapus: 'Deleted', Dipulihkan: 'Restored', Impor: 'Import', Talangan: 'Advance', Ditutup: 'Closed', Dibuka: 'Unlocked' })[m[2]] + (m[3] ? ' · ' + ({ Pemasukan: 'Income', Pengeluaran: 'Expenses', Talangan: 'Advance' })[m[3]] || m[3] : '')],
+  [/^(\d{1,2} \S+ \d{4}, \d{2}[:.]\d{2})(?: \| oleh (.+?))?(?: \| (Manual|Catat bayar|Berulang|Sewa|Simulasi|CSV|Talangan))?$/, (m) => m[1] + (m[2] ? ' | by ' + m[2] : '') + (m[3] ? ' | ' + ({ Manual: 'Manual', 'Catat bayar': 'Record payment', Berulang: 'Recurring', Sewa: 'Rental', Simulasi: 'Simulation', CSV: 'CSV', Talangan: 'Advance' })[m[3]] : '')],
+  [/^(.+): (.*) → (.*)$/, (m) => tr(m[1]) + ': ' + m[2] + ' → ' + m[3]],
+  [/^(.+) \| dihapus (.+)$/, (m) => tr(m[1]) + ' | deleted ' + m[2]],
+  [/^\(tanpa nama\) - (.+)$/, (m) => '(no name) - ' + m[1]],
+  [/^Pemasukan (Rp -?[\d.]+); Pengeluaran (Rp -?[\d.]+); Saldo (Rp -?[\d.]+); Tamu diterima (\d+)$/, (m) => 'Income ' + m[1] + '; Expenses ' + m[2] + '; Balance ' + m[3] + '; Guests accepted ' + m[4]],
+  [/^Ditutup (.+?)(?:\. Sudah pernah dibuka (\d+) kali)?\.$/, (m) => 'Closed ' + m[1] + (m[2] ? '. Has been unlocked ' + m[2] + (m[2] === '1' ? ' time' : ' times') : '') + '.'],
+  [/^🔒 Buku trip ditutup (.+?)\. Transaksi uang tidak bisa diubah\.$/, (m) => '🔒 Trip books closed ' + m[1] + '. Money transactions cannot be changed.'],
+  [/^Trip yang berjalan diarsipkan otomatis, lalu trip baru dimulai dengan itinerary \((\d+) kegiatan\), checklist \((\d+) barang, semua belum siap, tanpa nama pembawa\), dan kategori yang sama\. Tamu, pemasukan, pengeluaran, perlengkapan, dan simulasi dikosongkan\.$/, (m) => 'The trip in progress is archived automatically, then a new trip starts with the same itinerary (' + m[1] + (m[1] === '1' ? ' activity' : ' activities') + '), checklist (' + m[2] + (m[2] === '1' ? ' item' : ' items') + ', all not ready, without carrier names), and categories. Guests, income, expenses, gear, and simulation are cleared.'],
+  [/^(✅ UNTUNG|⚠️ RUGI) (Rp -?[\d.]+)$/, (m) => (m[1] === '✅ UNTUNG' ? '✅ PROFIT ' : '⚠️ LOSS ') + m[2]],
+  [/^Setoran kategori Panitia \((Rp [\d.]+)\) tidak dihitung sebagai pemasukan supaya kerugian tidak tertutupi\.( Kerugian ditanggung official dan tidak ditagihkan ke peserta\.)?$/, (m) => 'Committee-category deposits (' + m[1] + ') are not counted as income so a loss is not hidden.' + (m[2] ? ' The loss is borne by the officials and is not billed to participants.' : '')],
+  [/^1\. Hasil trip = pemasukan tanpa setoran panitia (Rp -?[\d.]+) − pengeluaran (Rp -?[\d.]+) = (untung|rugi) (Rp -?[\d.]+)\.$/, (m) => '1. Trip result = income without committee deposits ' + m[1] + ' − expenses ' + m[2] + ' = ' + (m[3] === 'untung' ? 'profit ' : 'loss ') + m[4] + '.'],
+  [/^2\. Bagian adil tiap official = (Rp [\d.]+) ÷ (\d+) orang = (Rp [\d.]+)\.$/, (m) => '2. Fair share per official = ' + m[1] + ' ÷ ' + m[2] + (m[2] === '1' ? ' person' : ' people') + ' = ' + m[3] + '.'],
+  [/^(Rp -?[\d.]+) \(uang keluar\) − ((?:Untung )?Rp [\d.]+) \(bagian adil\)(?: − (Rp [\d.]+) \(kas pribadi\))? = (−?Rp [\d.]+)$/, (m) => m[1] + ' (money out) − ' + m[2].replace(/^Untung /, 'Profit ') + ' (fair share)' + (m[3] ? ' − ' + m[3] + ' (personal cash)' : '') + ' = ' + m[4]],
+  [/^Menerima (Rp [\d.]+)$/, (m) => 'Receives ' + m[1]],
+  [/^Membayar (Rp [\d.]+)$/, (m) => 'Pays ' + m[1]],
+  [/^(Setoran ke kas|Talangan): (.*)$/, (m) => (m[1] === 'Talangan' ? 'Advance: ' : 'Deposit to cash: ') + m[2]],
+  [/^Transfer \((\d+) dari (\d+) sudah dibayar\)$/, (m) => 'Transfers (' + m[1] + ' of ' + m[2] + ' paid)'],
+  [/^(.+) → (.+)$/, (m) => m[1].replace(/^Kas$/, 'Cash') + ' → ' + m[2].replace(/^Kas$/, 'Cash')],
+  [/^Ada selisih (Rp [\d.]+) yang belum ada catatannya \(uang masuk dikurangi uang keluar tidak sama dengan catatan official\)\. Cek apakah ada pengeluaran, setoran, atau pemakaian pribadi yang belum dicatat\. Transfer ke "Kas" di atas adalah selisih ini\.$/, (m) => 'There is a difference of ' + m[1] + ' with no record (money in minus money out does not match the officials\' records). Check whether any expenses, deposits, or personal use have not been recorded. The transfer to "Cash" above is this difference.'],
+  [/^Sisa uang kas (Rp [\d.]+) diberikan ke official yang berhak menerima\.$/, (m) => 'The remaining cash of ' + m[1] + ' goes to the officials who are entitled to receive it.'],
+  [/^Nama yang tidak ada di daftar official: (.+)\. Samakan namanya\.$/, (m) => 'Names not in the officials list: ' + m[1] + '. Make the names match.'],
+  [/^Mungkin tercatat dobel \(setoran dan talangan bernominal sama\): (.+)\.$/, (m) => 'Possibly recorded twice (deposit and advance with the same amount): ' + m[1] + '.'],
+ [/^Rekapitulasi - (.+)$/, (m) => 'Summary - ' + m[1]],
+ [/^(.+) \(berjalan\)$/, (m) => tr(m[1]) + ' (current)'],
+ [/^(.+) \(backup\)$/, (m) => tr(m[1]) + ' (backup)'],
+ [/^(Untung|Rugi|Impas) ([\d.]+)% dari pemasukan$/, (m) => ({ Untung: 'Profit ', Rugi: 'Loss ', Impas: 'Break-even ' })[m[1]] + m[2] + '% of income'],
+ [/^Trip ini untung (Rp -?[\d.]+)\.$/, (m) => 'This trip made a profit of ' + m[1] + '.'],
+ [/^Trip ini rugi (Rp -?[\d.]+)\.$/, (m) => 'This trip made a loss of ' + m[1] + '.'],
+ [/^Trip ini impas \(tidak untung, tidak rugi\)\.$/, () => 'This trip broke even (no profit, no loss).'],
+ [/^Dari (\d+) trip: (\d+) untung dan (\d+) rugi\. Secara keseluruhan (untung (Rp -?[\d.]+)|rugi (Rp -?[\d.]+)|impas \(tidak untung, tidak rugi\)), rata-rata (Rp -?[\d.]+) per trip\.$/, (m) => 'Of ' + m[1] + ' trips: ' + m[2] + ' made a profit and ' + m[3] + ' made a loss. Overall ' + (m[5] ? 'a profit of ' + m[5] : m[6] ? 'a loss of ' + m[6] : 'break-even (no profit, no loss)') + ', an average of ' + m[7] + ' per trip.'],
+ [/^Paling menguntungkan: (.+) \(untung (Rp -?[\d.]+)\)\.$/, (m) => 'Most profitable: ' + tr(m[1]) + ' (profit ' + m[2] + ').'],
+ [/^Paling merugi: (.+) \(rugi (Rp -?[\d.]+)\)\.$/, (m) => 'Biggest loss: ' + tr(m[1]) + ' (loss ' + m[2] + ').'],
+ [/^Dibanding trip sebelumnya \((.+)\): hasil (lebih baik (Rp -?[\d.]+)|lebih buruk (Rp -?[\d.]+)|sama), biaya per peserta (naik (Rp -?[\d.]+)|turun (Rp -?[\d.]+)|sama)\.$/, (m) => 'Compared with the previous trip (' + tr(m[1]) + '): the result is ' + (m[3] ? 'better by ' + m[3] : m[4] ? 'worse by ' + m[4] : 'the same') + ', cost per participant ' + (m[6] ? 'rose by ' + m[6] : m[7] ? 'fell by ' + m[7] : 'is the same') + '.'],
+ [/^Biaya terbesar: (.+)\.$/, (m) => 'Largest costs: ' + m[1].replace(/% dari seluruh biaya\)/g, '% of all costs)') + '.'],
+ [/^Acuan: simulasi "(.*)" \(diterapkan (.*)\)$/, (m) => 'Reference: simulation "' + m[1] + '" (applied ' + m[2] + ')'],
+ [/^Keuntungan rencana (Rp -?[\d.]+), nyata saat ini (Rp -?[\d.]+) \((lebih tinggi|lebih rendah) (Rp -?[\d.]+)\)\. Per official: rencana (Rp -?[\d.]+), nyata (Rp -?[\d.]+) \((\d+) official\)\.$/, (m) => 'Planned profit ' + m[1] + ', actual right now ' + m[2] + ' (' + (m[3] === 'lebih tinggi' ? 'higher' : 'lower') + ' by ' + m[4] + '). Per official: planned ' + m[5] + ', actual ' + m[6] + ' (' + m[7] + ' officials).'],
+ [/^Sisa saldo saat ini negatif \((Rp -?[\d.]+)\)\.$/, (m) => 'The current remaining balance is negative (' + m[1] + ').'],
+ [/^Hemat (Rp -?[\d.]+)$/, (m) => 'Saved ' + m[1]],
+ [/^Lebih (Rp -?[\d.]+)$/, (m) => 'Over ' + m[1]],
+ [/^(.+) belum dicatat di Pengeluaran\.$/, (m) => m[1] + ' has not been recorded in Expenses yet.'],
+ [/^(.+) lebih mahal (Rp -?[\d.]+) dari rencana\.$/, (m) => m[1] + ' cost ' + m[2] + ' more than planned.'],
+ [/^(.+) lebih hemat (Rp -?[\d.]+) dari rencana\.$/, (m) => m[1] + ' came in ' + m[2] + ' under plan.'],
+ [/^Ada biaya di luar komponen simulasi sebesar (Rp -?[\d.]+)\.$/, (m) => 'There are costs outside the simulation components totalling ' + m[1] + '.'],
+ [/^Rugi (Rp -?[\d.]+)\. Agar balik modal, harga minimal (Rp -?[\d.]+) per peserta\.$/, (m) => 'Loss of ' + m[1] + '. To break even, the minimum price is ' + m[2] + ' per participant.'],
+ [/^Perlu menyewa (\d+) tenda tambahan\.$/, (m) => 'You need to rent ' + m[1] + ' extra tent' + (m[1] === '1' ? '' : 's') + '.'],
+ [/^\(dari: (.+)\)$/, (m) => '(from: ' + tr(m[1]) + ')'],
+ [/^dari (Rp -?[\d.]+)$/, (m) => 'of ' + m[1]],
+ [/^Bayar (Rp -?[\d.]+) dari (Rp -?[\d.]+)$/, (m) => 'Paid ' + m[1] + ' of ' + m[2]],
+ [/^Tenggat (.+?) - (\d+) peserta telat bayar$/, (m) => 'Due ' + m[1] + ' - ' + m[2] + ' participant' + (m[2] === '1' ? ' is' : 's are') + ' late paying'],
+ [/^Tenggat (.+)$/, (m) => 'Due ' + m[1]],
+ [/^(Tagihan tetap \(manual\)|Harga jual simulasi|Rencana patungan \(Total Realisasi ÷ peserta\)|Belum ditetapkan|Anggaran): (Rp -?[\d.]+)$/, (m) => tr(m[1]) + ': ' + m[2]],
  [/^Hapus kategori "(.+)"\? Data lama tetap menyimpan nama kategorinya\.$/, (m) => 'Delete category "' + m[1] + '"? Old data keeps the category name.'],
  [/^Hapus (.+) dari daftar official\?$/, (m) => 'Remove ' + m[1] + ' from the officials list?'],
  [/^Reset catatan penggantian (.+)\?$/, (m) => 'Reset repayment record for ' + m[1] + '?'],
@@ -1835,11 +2136,11 @@ const EN_PAT = [
  [/^(💬 )Tagih berikutnya \((\d+) belum ditagih\)$/, (m) => m[1] + 'Bill next (' + m[2] + ' not yet billed)'], [/^(🏦 )Cara bayar \((\d+) aktif\)$/, (m) => m[1] + 'Payment methods (' + m[2] + ' active)'],
  [/^Keuntungan (Rp [^(]+) \((.+)%\)\. Tiap official mendapat (Rp .+)\.$/, (m) => 'Profit ' + m[1] + ' (' + m[2] + '%). Each official gets ' + m[3] + '.'],
  [/^Versi (v[\d.]+) · Cek pembaruan$/, (m) => 'Version ' + m[1] + ' · Check for updates'],
- [/^(\d+) peserta$/, (m) => m[1] + ' participants'], [/^(\d+) orang$/, (m) => m[1] + ' people'],
+ [/^(\d+) peserta$/, (m) => m[1] + (m[1] === '1' ? ' participant' : ' participants')], [/^(\d+) orang$/, (m) => m[1] + (m[1] === '1' ? ' person' : ' people')],
  [/^(\d+) hari$/, (m) => m[1] + ' days'], [/^(\d+) menit$/, (m) => m[1] + ' minutes'],
  [/^Sudah versi terbaru \((.+)\)$/, (m) => 'Already the latest version (' + m[1] + ')'], [/^Tidak ada baris baru \((.+)\)$/, (m) => 'No new rows (' + m[1] + ')'],
  [/^Hapus (.+)\?$/, (m) => 'Delete ' + m[1] + '?'], [/^Pembayaran (.+)$/, (m) => 'Payment ' + m[1]], [/^Impor (\d+) (.+)$/, (m) => 'Import ' + m[1] + ' ' + m[2]],
- [/^Per (.+)$/, (m) => 'As of ' + m[1]]
+ [/^Per (\d.*)$/, (m) => 'As of ' + m[1]]
 ];
 let LANG = 'id'; const LOCD = () => LANG === 'en' ? 'en-GB' : 'id-ID';
 try { LANG = localStorage.getItem('bhs') === 'en' ? 'en' : 'id'; } catch (e) {}
@@ -1850,6 +2151,7 @@ function tr(s) {
   const m = s.match(/^(\s*)([\s\S]*?)(\s*)$/); if (!m[2]) return s;
   let o = EN[m[2]];
   if (o === undefined) for (const [re, f] of EN_PAT) { const x = m[2].match(re); if (x) { o = f(x); break; } }
+  if (o === undefined) { const q = m[2].match(/^([^\p{L}\p{N}\s]+\s+)?(.+?)(\s+[^\p{L}\p{N}\s]+)?$/u); if (q && (q[1] || q[3]) && EN[q[2]] !== undefined) o = (q[1] || '') + EN[q[2]] + (q[3] || ''); }
   return o === undefined ? s : m[1] + o + m[3];
 }
 function i18nNode(n) {
@@ -1888,7 +2190,7 @@ window.confirm = s => _cf(tr(s)); window.alert = s => _al(tr(s));
 document.documentElement.lang = LANG;
 if (LANG === 'en') { if (document.body) i18nRun(); }
 
-const APP_V = 'v1.8.5';
+const APP_V = 'v1.8.9';
 const CR = Object.freeze({ nama: 'bawaulin.trip', tag: 'Lieur gawe, Bawa ulin', ig: 'https://www.instagram.com/bawaulin.trip?srtk=d29rcmh1YXVrajVz', igh: '@bawaulin.trip', wa: 'https://wa.me/6289618805100', wah: '+62 896-1880-5100' });
 const CR_H = 'bdaae993647f576cf92a364af7443befdce2ceefffe6c926d596f7e52a001b37', LOGO_H = '3763dd402cc104c4f9cebcce4a37a936cf2e0606bb1dd2d261e030f0a6ccc9bb';
 let CR_OK = null, LOCKED = false, hiddenAt = 0, PRIV_OBS = null;
@@ -2110,7 +2412,7 @@ async function laporMasalah() {
   window._lapor = t;
 }
 function laporKirim() { const s = $('fsheet'); if (s) s.remove(); openWA(window._lapor || '', CR.wa.replace(/\D/g, '')); }
-const BARU = ['v1.8.5: daftar Yang baru, pesan hapus/impor, dan sisa teks halaman diterjemahkan ke English.', 'v1.8.4: langkah rinci dan tips Panduan kini tersedia dalam English.', 'v1.8.3: tanggal mengikuti bahasa dan demo Panduan diterjemahkan ke English. Langkah rinci Panduan menyusul.', 'v1.8.2: terjemahan English diperluas ke Pengaturan, lembar, layar aktivasi dan kunci. Pesan WhatsApp tetap Indonesia.', 'v1.8.1: terjemahan English diperluas ke semua tab utama, toast, dan pesan konfirmasi. Panduan dan Yang baru menyusul.', 'Baru: pilihan Bahasa (Pengaturan › Tampilan): Indonesia atau English. Tahap awal: menu, tab, Pengaturan, tombol, dan pesan utama sudah berbahasa Inggris; teks yang belum diterjemahkan tetap Indonesia. Pesan WhatsApp, kwitansi, dan PDF untuk peserta tetap Indonesia. Panduan dan daftar Yang baru menyusul.', 'Baru: tombol Matikan semua kunci (Pengaturan › Keamanan) mematikan PIN, pola, dan sidik jari sekaligus setelah konfirmasi PIN. Baru juga panduan Keamanan buka aplikasi (Menu › Panduan).', 'Layar kunci didesain ulang: tanpa header, dengan logo besar bercahaya, kartu kaca, pola dan sidik jari lebih jelas, serta tombol pindah cara buka berbentuk pil. Cara kerjanya tidak berubah.', 'Baru: Cara buka aplikasi (Pengaturan › Keamanan). Selain PIN, buka dengan pola 3x3 atau sidik jari. PIN tetap jadi cadangan dan dipakai untuk mengatur. Pola salah 5 kali menunggu 30 detik. Sidik jari bergantung HP dan belum tentu jalan di semua perangkat; bila tidak didukung, opsinya tidak muncul. Cadangan membawa pola, sidik jari didaftarkan ulang.', 'Baru: Riwayat perubahan (Menu › Trip & Arsip, di bawah kartu Tutup Buku). Setiap transaksi uang yang ditambah, diubah (nilai sebelum dan sesudah), dihapus, atau dipulihkan dicatat dengan waktunya, begitu juga saat buku trip ditutup dan dibuka. Isi Nama pencatat bila beberapa panitia memakai HP yang sama. Bisa difilter dan diunduh sebagai CSV. Perubahan sebelum v1.6.0 tidak punya riwayat.', 'Baru: Tutup buku trip (Menu › Trip & Arsip). Setelah trip selesai, transaksi uang dikunci: Pemasukan, Pengeluaran, Catat bayar, penggantian Talangan, transaksi berulang, simulasi dan sewa yang masuk ke Pengeluaran. Arsip cadangan dibuat otomatis, dan kunci hanya bisa dibuka dengan mengetik BUKA. Tamu, Itinerary, Checklist, kwitansi, PDF, dan Rekap tetap bebas.', 'Tab Pembayaran dirombak. Paling atas ringkasan (terkumpul dari target, jumlah Lunas/Sebagian/Belum bayar/Telat, tenggat), lalu daftar peserta dengan pencarian dan filter. Tombol ＋ Catat bayar di tiap peserta mengisi sisa tagihan otomatis dan menyimpannya sebagai Pemasukan kategori Peserta. Tombol Tagih berikutnya membuka WhatsApp peserta yang belum ditagih satu per satu. Pengaturan cara bayar dan tagihan dilipat di bawah. Data lama aman.', 'Cara bayar kini berupa daftar: beberapa rekening bank dan e-wallet (DANA, SeaBank, ShopeePay, GoPay, OVO, LinkAja, atau nama lain), tombol Salin nomor, serta sakelar aktif. Semua yang aktif ikut di pesan tagihan WhatsApp, kwitansi, dan kata kunci {rekening}. Teks rekening lama tetap dipakai sebagai catatan.', 'Baru: Kartu cara bayar (PDF) dan Cara bayar ke grup WhatsApp, berisi semua rekening, e-wallet, QRIS, dan tenggat. Dasar hitung tagihan disederhanakan jadi satu baris (ketuk Ubah); aturan hitungnya tidak berubah.', 'Formulir pendaftaran online disederhanakan: Nama, Nomor WhatsApp, Meeting point, Alergi makanan (Ya/Tidak), dan Catatan. Golongan darah, riwayat penyakit, dan kontak darurat tidak lagi diminta. Pendaftar dengan alergi ditandai "Alergi makanan: Ya" di Catatan tamu. Data tamu lama tidak diubah. Pasang ulang skrip Apps Script pendaftaran yang baru.', 'Baru: Menu › Trip & Arsip › Salin Trip sebagai Template. Trip baru langsung berisi itinerary, checklist (belum siap, tanpa pembawa), dan kategori dari trip sebelumnya; tamu dan uang kosong. Tanggal itinerary bisa digeser otomatis.', 'Baru: Pengaturan › Tentang & Bantuan › Lapor masalah. Membuka WhatsApp penjual dengan info teknis siap kirim (versi, kode perangkat, status lisensi, perangkat), tanpa data trip, peserta, atau uang. Terkirim hanya bila Anda menekan kirim di WhatsApp.', 'Baru: panduan Pindah ke HP baru (Menu › Panduan).', 'Kartu Ringkasan di Akun dihapus.', 'Perbaikan: angka 0 di depan nomor WhatsApp tidak lagi hilang (tagihan WA, daftar Tamu, dan impor pendaftar online). Data lama tidak diubah.', 'Penomoran versi dimulai ulang dari v1.0.0. Tidak ada perubahan fitur.', 'Keamanan lisensi: aplikasi memeriksa status lisensi ke server (otomatis maks. tiap 1 jam, atau kapan saja lewat Pengaturan › Periksa status lisensi sekarang; tidak menahan aplikasi). Tanpa internet tetap jalan sampai 30 hari sejak pemeriksaan terakhir. Lisensi dicabut, versi terlalu lama, atau jam HP dimundurkan akan mengunci aplikasi. Kunci aktivasi lama diganti kunci baru.', 'Ikon Pengaturan (gerigi) pindah ke kanan judul Akun, di bawah tombol terang/gelap. Kartu Pengaturan di Akun dihapus.', 'Kalkulator pindah ke Menu › Kalkulator: tampilan seperti kalkulator HP, memori, riwayat, tombol ÷ Peserta dan Bulat, plus 7 rumus Hitung Trip.', 'Akun: kartu profil dan tombol Pengaturan menyatu, serta ada Data & Cadangan.', 'Tentang pembuat: tombol Instagram dan WhatsApp saja, tanpa tulisan nama atau nomor.', 'Pengaturan baru: pesan tagihan WhatsApp bisa diubah, pembulatan harga jual, dan Cek pembaruan aplikasi.', 'Panduan singkat kini berisi demo bergerak dan langkah rinci untuk semua fitur (Menu › Panduan).'];
+const BARU = ['v1.8.9: pesan kosong, galat, layar kunci dan lisensi kini tersedia dalam English.', 'v1.8.8: kalimat privasi di Pengaturan disederhanakan dan judul topik Panduan kini tersedia dalam English.', 'v1.8.7: Trip & Arsip, Riwayat Perubahan, dan Bagi Hasil kini tersedia dalam English.', 'v1.8.6: Simulasi, Statistik Antar-Trip, kolom pencarian, dan penjelasan Patungan Otomatis kini tersedia dalam English.', 'v1.8.5: daftar Yang baru, pesan hapus/impor, dan sisa teks halaman diterjemahkan ke English.', 'v1.8.4: langkah rinci dan tips Panduan kini tersedia dalam English.', 'v1.8.3: tanggal mengikuti bahasa dan demo Panduan diterjemahkan ke English. Langkah rinci Panduan menyusul.', 'v1.8.2: terjemahan English diperluas ke Pengaturan, lembar, layar aktivasi dan kunci. Pesan WhatsApp tetap Indonesia.', 'v1.8.1: terjemahan English diperluas ke semua tab utama, toast, dan pesan konfirmasi. Panduan dan Yang baru menyusul.', 'Baru: pilihan Bahasa (Pengaturan › Tampilan): Indonesia atau English. Tahap awal: menu, tab, Pengaturan, tombol, dan pesan utama sudah berbahasa Inggris; teks yang belum diterjemahkan tetap Indonesia. Pesan WhatsApp, kwitansi, dan PDF untuk peserta tetap Indonesia. Panduan dan daftar Yang baru menyusul.', 'Baru: tombol Matikan semua kunci (Pengaturan › Keamanan) mematikan PIN, pola, dan sidik jari sekaligus setelah konfirmasi PIN. Baru juga panduan Keamanan buka aplikasi (Menu › Panduan).', 'Layar kunci didesain ulang: tanpa header, dengan logo besar bercahaya, kartu kaca, pola dan sidik jari lebih jelas, serta tombol pindah cara buka berbentuk pil. Cara kerjanya tidak berubah.', 'Baru: Cara buka aplikasi (Pengaturan › Keamanan). Selain PIN, buka dengan pola 3x3 atau sidik jari. PIN tetap jadi cadangan dan dipakai untuk mengatur. Pola salah 5 kali menunggu 30 detik. Sidik jari bergantung HP dan belum tentu jalan di semua perangkat; bila tidak didukung, opsinya tidak muncul. Cadangan membawa pola, sidik jari didaftarkan ulang.', 'Baru: Riwayat perubahan (Menu › Trip & Arsip, di bawah kartu Tutup Buku). Setiap transaksi uang yang ditambah, diubah (nilai sebelum dan sesudah), dihapus, atau dipulihkan dicatat dengan waktunya, begitu juga saat buku trip ditutup dan dibuka. Isi Nama pencatat bila beberapa panitia memakai HP yang sama. Bisa difilter dan diunduh sebagai CSV. Perubahan sebelum v1.6.0 tidak punya riwayat.', 'Baru: Tutup buku trip (Menu › Trip & Arsip). Setelah trip selesai, transaksi uang dikunci: Pemasukan, Pengeluaran, Catat bayar, penggantian Talangan, transaksi berulang, simulasi dan sewa yang masuk ke Pengeluaran. Arsip cadangan dibuat otomatis, dan kunci hanya bisa dibuka dengan mengetik BUKA. Tamu, Itinerary, Checklist, kwitansi, PDF, dan Rekap tetap bebas.', 'Tab Pembayaran dirombak. Paling atas ringkasan (terkumpul dari target, jumlah Lunas/Sebagian/Belum bayar/Telat, tenggat), lalu daftar peserta dengan pencarian dan filter. Tombol ＋ Catat bayar di tiap peserta mengisi sisa tagihan otomatis dan menyimpannya sebagai Pemasukan kategori Peserta. Tombol Tagih berikutnya membuka WhatsApp peserta yang belum ditagih satu per satu. Pengaturan cara bayar dan tagihan dilipat di bawah. Data lama aman.', 'Cara bayar kini berupa daftar: beberapa rekening bank dan e-wallet (DANA, SeaBank, ShopeePay, GoPay, OVO, LinkAja, atau nama lain), tombol Salin nomor, serta sakelar aktif. Semua yang aktif ikut di pesan tagihan WhatsApp, kwitansi, dan kata kunci {rekening}. Teks rekening lama tetap dipakai sebagai catatan.', 'Baru: Kartu cara bayar (PDF) dan Cara bayar ke grup WhatsApp, berisi semua rekening, e-wallet, QRIS, dan tenggat. Dasar hitung tagihan disederhanakan jadi satu baris (ketuk Ubah); aturan hitungnya tidak berubah.', 'Formulir pendaftaran online disederhanakan: Nama, Nomor WhatsApp, Meeting point, Alergi makanan (Ya/Tidak), dan Catatan. Golongan darah, riwayat penyakit, dan kontak darurat tidak lagi diminta. Pendaftar dengan alergi ditandai "Alergi makanan: Ya" di Catatan tamu. Data tamu lama tidak diubah. Pasang ulang skrip Apps Script pendaftaran yang baru.', 'Baru: Menu › Trip & Arsip › Salin Trip sebagai Template. Trip baru langsung berisi itinerary, checklist (belum siap, tanpa pembawa), dan kategori dari trip sebelumnya; tamu dan uang kosong. Tanggal itinerary bisa digeser otomatis.', 'Baru: Pengaturan › Tentang & Bantuan › Lapor masalah. Membuka WhatsApp penjual dengan info teknis siap kirim (versi, kode perangkat, status lisensi, perangkat), tanpa data trip, peserta, atau uang. Terkirim hanya bila Anda menekan kirim di WhatsApp.', 'Baru: panduan Pindah ke HP baru (Menu › Panduan).', 'Kartu Ringkasan di Akun dihapus.', 'Perbaikan: angka 0 di depan nomor WhatsApp tidak lagi hilang (tagihan WA, daftar Tamu, dan impor pendaftar online). Data lama tidak diubah.', 'Penomoran versi dimulai ulang dari v1.0.0. Tidak ada perubahan fitur.', 'Keamanan lisensi: aplikasi memeriksa status lisensi ke server (otomatis maks. tiap 1 jam, atau kapan saja lewat Pengaturan › Periksa status lisensi sekarang; tidak menahan aplikasi). Tanpa internet tetap jalan sampai 30 hari sejak pemeriksaan terakhir. Lisensi dicabut, versi terlalu lama, atau jam HP dimundurkan akan mengunci aplikasi. Kunci aktivasi lama diganti kunci baru.', 'Ikon Pengaturan (gerigi) pindah ke kanan judul Akun, di bawah tombol terang/gelap. Kartu Pengaturan di Akun dihapus.', 'Kalkulator pindah ke Menu › Kalkulator: tampilan seperti kalkulator HP, memori, riwayat, tombol ÷ Peserta dan Bulat, plus 7 rumus Hitung Trip.', 'Akun: kartu profil dan tombol Pengaturan menyatu, serta ada Data & Cadangan.', 'Tentang pembuat: tombol Instagram dan WhatsApp saja, tanpa tulisan nama atau nomor.', 'Pengaturan baru: pesan tagihan WhatsApp bisa diubah, pembulatan harga jual, dan Cek pembaruan aplikasi.', 'Panduan singkat kini berisi demo bergerak dan langkah rinci untuk semua fitur (Menu › Panduan).'];
 const listSheet = (t, a) => sheetOpen(`<h3>${t}</h3>${a.map(x => `<div class="zli">• ${esc(x)}</div>`).join('')}`);
 async function resetPref() {
   if (!confirm('Kembalikan semua pengaturan tampilan dan perilaku ke bawaan? Data trip tidak berubah.')) return;
@@ -2216,7 +2518,7 @@ function renderPeng() {
   <div class="zh">PENYIMPANAN &amp; PRIVASI</div><div class="card zcard">
     <div class="zr" id="zpers"><span class="zk">Penyimpanan permanen</span><div class="zrt"><span class="zv zph" id="zpv">...</span></div></div>
     <div class="zr"><span class="zk">Ruang terpakai</span><div class="zrt"><span class="zv" id="zuse">...</span></div></div>
-    <div class="zhint">Data trip dan keuangan hanya tersimpan di HP ini. Pola disimpan sebagai hash di HP, dan sidik jari ditangani sistem HP, tidak pernah dibaca atau dikirim aplikasi. Pengecekan lisensi hanya mengirim kode perangkat, versi aplikasi, dan penanda teknis ke server penjual.</div></div>
+    <div class="zhint">Data trip dan keuangan hanya tersimpan di HP ini dan tidak pernah dikirim ke pembuat aplikasi.</div></div>
   <div class="zh">TENTANG &amp; BANTUAN</div><div class="card zcard">
     <div class="zr" onclick="cekUpdate()"><span class="zk">Versi ${APP_V} · Cek pembaruan</span><div class="zrt"><span class="zch">›</span></div></div>
     <div class="zr" onclick="cekLisensiSekarang()"><span class="zk">Periksa status lisensi sekarang</span><div class="zrt"><span class="zch">›</span></div></div>
@@ -2383,6 +2685,7 @@ const PAN = [
     st: ['Data hilang? Data hanya tersimpan di HP ini. Menghapus data aplikasi atau browser ikut menghapusnya, jadi cadangkan rutin (Akun › Data & Cadangan).', 'Ganti HP: cadangkan di HP lama, lalu di HP baru buka Menu › Trip & Arsip › Pulihkan dari cadangan. Lisensi disimpan terpisah dari cadangan.', 'Lupa PIN: di layar kunci ketuk Lupa PIN? dan masukkan kode pemulihan. Jika tidak punya kodenya, pulihkan lewat file cadangan.', 'Tampilan belum berubah setelah update: Pengaturan › Tentang & Bantuan › Cek pembaruan aplikasi, lalu Muat ulang. Bila perlu tutup aplikasi sepenuhnya dan buka lagi.', 'PDF tidak muncul: dialog cetak harus dibuka. Pilih Simpan sebagai PDF. Jika tombol PDF terkunci, pasang ulang aplikasi asli.', 'Status bayar peserta salah: pastikan nama di kolom Dibayar oleh sama dengan nama di Tamu dan kategori pemasukannya Peserta.', 'Nominal tampil Rp •••: mode privasi aktif. Matikan di Pengaturan › Keamanan.', 'Salah menghapus entri: buka Menu › Trip & Arsip › Tempat Sampah dalam 30 hari dan ketuk Pulihkan.'],
     tp: [] }
 ];
+PAN.forEach(c => { const e = EN[c.t]; if (e) { EN[c.ic + ' ' + c.t] = c.ic + ' ' + e; EN['‹ ' + c.t] = '‹ ' + e; EN[c.t + ' ›'] = e + ' ›'; } });
 
 const PD = { ch: -1, f: 0, timer: null, play: true };
 function renderPanduan() {
