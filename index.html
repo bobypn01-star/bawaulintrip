@@ -167,6 +167,8 @@ nav:empty{display:none}
 .krs{font-weight:800;line-height:1.15;overflow-wrap:anywhere}
 .ktb{font-size:12px;color:var(--h);min-height:16px}
 .kchips{display:flex;gap:8px;margin:10px 0;overflow-x:auto}
+.kopl{font-size:12px;color:var(--mut);align-self:center;white-space:nowrap}
+.kchip.on{background:var(--pri);color:var(--onpri);border-color:var(--pri)}
 .kchip{border:1px solid var(--bd);background:var(--card2);color:var(--h);border-radius:20px;padding:8px 14px;font-size:13px;font-weight:700;white-space:nowrap;font-family:inherit}
 .kpad{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 .kb{height:clamp(52px,14vw,64px);border:0;border-radius:18px;font-size:22px;font-weight:700;background:var(--card2);color:var(--tx);font-family:inherit}
@@ -738,7 +740,7 @@ function lock(note, mode) {
   if (LOCK_MODE === 'pola') { polaPad('polaPad', polaCek); polaTick(); }
   if (LOCK_MODE === 'bio' && auto) bioLogin();
 }
-function bukaOk() { LOCKED = false; document.body.classList.remove('lockon'); POLA_SALAH = 0; buildNav(); show(pref('awal', 'dashboard')); setTimeout(updAuto, 1500); }
+function bukaOk() { LOCKED = false; document.body.classList.remove('lockon'); POLA_SALAH = 0; buildNav(); show('dashboard'); setTimeout(updAuto, 1500); }
 async function unlock() { if (await sha(DB.pin.salt + ':' + $('pin').value) === DB.pin.hash) bukaOk(); else lock('PIN salah', 'pin'); }
 /* pola 3x3 */
 function polaPad(id, done) {
@@ -1378,7 +1380,8 @@ function kDraw() {
   const rows = [['ac', '()', '%', '/'], ['7', '8', '9', '*'], ['4', '5', '6', '-'], ['1', '2', '3', '+'], ['0', ',', 'del', '=']];
   const lbl = { ac: 'AC', '()': '( )', '/': '÷', '*': '×', '-': '−', del: '⌫' }, cls = k => k === '=' ? 'eq' : /^[-+*\/]$/.test(k) ? 'op' : (k === 'ac' || k === '()' || k === '%' || k === 'del') ? 'fn' : '';
   $('kbody').innerHTML = `<div class="card kdisp"><div class="kmem" id="kmem"></div><div class="kex" id="kex"></div><div class="krs" id="krs">0</div><div class="ktb" id="ktb"></div></div>
-  <div class="kchips"><button class="kchip" onclick="kSalin()">📋 Salin</button><button class="kchip" onclick="kBagi()">👥 ÷ Peserta</button><button class="kchip" onclick="kBulat()">⬆ Bulat ${kFmtNum(pulBulat())}</button></div>
+  <div class="kchips"><button class="kchip" onclick="kSalin()">📋 Salin</button><button class="kchip" onclick="kBagi()">👥 ÷ Peserta</button><button class="kchip" onclick="kBulat()">⬆ Bulat</button></div>
+  <div class="kchips"><span class="kopl">Pembulatan</span>${[1000, 5000, 10000].map(v => `<button class="kchip${pulBulat() === v ? ' on' : ''}" aria-pressed="${pulBulat() === v}" onclick="kPilihBulat(${v})">${kFmtNum(v)}</button>`).join('')}</div>
   <div class="kpad">${[['MC', 'mc'], ['MR', 'mr'], ['M+', 'm+'], ['M−', 'm-']].map(([l, k]) => `<button class="kb kmm" onclick="kMem('${k}')">${l}</button>`).join('')}${rows.map(r => r.map(k => `<button class="kb ${cls(k)}" onclick="kTap('${k}')">${lbl[k] || k}</button>`).join('')).join('')}</div>
   <small class="mut" style="display:block;margin-top:12px">Tips: 200 + 10% = 220 (persen menyesuaikan angka di depannya). Ketuk ( ) untuk kurung buka dan tutup otomatis.</small>`;
   kUpd();
@@ -1403,6 +1406,7 @@ function kEq() {
 function kApply(lb, r) { if (Math.abs(r) >= 1e15) return toast('Angka terlalu besar'); kPush('', r, kShow(KT.e) + ' ' + lb); KT.e = kNumStr(r); KT.done = true; kUpd(); }
 function kSalin() { const v = kVal(KT.e); if (v == null) return toast('Belum ada hasil'); try { navigator.clipboard.writeText(kNumStr(v).replace('.', ',')); toast('Hasil disalin'); } catch (e) { toast('Gagal menyalin'); } }
 function kBagi() { const v = kVal(KT.e), n = DB.tamu.filter(t => t['Status'] === 'Diterima').length; if (v == null) return toast('Hitung dulu'); if (!n) return toast('Belum ada peserta berstatus Diterima'); kApply('÷ ' + n + ' peserta', v / n); }
+async function kPilihBulat(v) { await setPref('bulat', v); kDraw(); }
 function kBulat() { const v = kVal(KT.e), b = pulBulat(); if (v == null) return toast('Hitung dulu'); kApply('dibulatkan ke atas ' + kFmtNum(b), Math.ceil(v / b) * b); }
 async function kMem(op) {
   const v = kVal(KT.e);
@@ -1416,7 +1420,7 @@ function kHistDraw() {
   $('kbody').innerHTML = `<div class="card"><h3>Riwayat hitungan</h3>${h.length ? h.map((x, i) => `<div class="khi" onclick="kLoad(${i})"><div class="khe">${esc(x.lb || kShow(x.e))}</div><div class="khr">= ${kFmtNum(x.r)}</div></div>`).join('') + '<button class="btn alt" onclick="kHistClear()">Hapus riwayat</button>' : '<small class="mut">Belum ada. Hasil dari tombol = akan tersimpan di sini. Ketuk salah satu untuk memakainya lagi.</small>'}</div>`;
 }
 function kLoad(i) { const x = kHist()[i]; if (!x) return; KT.e = kNumStr(x.r); KT.done = true; KT.mode = 'k'; renderKalk(); }
-async function kHistClear() { if (pref('konf', true) && !confirm('Hapus semua riwayat hitungan?')) return; await setPref('khist', []); kHistDraw(); }
+async function kHistClear() { if (!confirm('Hapus semua riwayat hitungan?')) return; await setPref('khist', []); kHistDraw(); }
 document.addEventListener('keydown', ev => {
   if (cur !== 'kalk' || KT.mode !== 'k' || /INPUT|TEXTAREA|SELECT/.test((ev.target || {}).tagName || '') || ev.ctrlKey || ev.metaKey) return;
   const k = ev.key;
@@ -1484,15 +1488,15 @@ const hariLalu = ts => Math.floor((Date.now() - ts) / 864e5);
 const tlab = k => k === 'checklist' ? 'Checklist' : CFG[k].label;
 function pengingat() {
   const L = [], b = bayarData(), base = baseTagihan(b), td = today(), tg = DB.set.tenggat;
-  if (pref('ingBayar', true) && base > 0 && b.ps.length) { const bl = b.ps.filter(p => base - p.dibayar > 0).length;
+  if (base > 0 && b.ps.length) { const bl = b.ps.filter(p => base - p.dibayar > 0).length;
     if (bl) { if (tg && td > tg) L.push(['red', bl + ' peserta telat bayar (tenggat ' + fmtDate(tg) + ')', 'bayar']);
       else if (tg && addDays(td, 3) >= tg) L.push(['yellow', 'Tenggat bayar ' + fmtDate(tg) + ', ' + bl + ' peserta belum lunas', 'bayar']);
       else L.push(['note', bl + ' peserta belum lunas', 'bayar']); } }
-  const pend = DB.tamu.filter(t => t['Status'] === 'Menunggu respons').length; if (pend && pref('ingDaftar', true)) L.push(['yellow', pend + ' pendaftar menunggu respons', 'daftar']);
-  const cb = DB.checklist.filter(x => !x.siap).length; if (cb && pref('ingCl', true)) L.push(['yellow', cb + ' dari ' + DB.checklist.length + ' barang checklist belum siap', 'checklist']);
+  const pend = DB.tamu.filter(t => t['Status'] === 'Menunggu respons').length; if (pend) L.push(['yellow', pend + ' pendaftar menunggu respons', 'daftar']);
+  const cb = DB.checklist.filter(x => !x.siap).length; if (cb) L.push(['yellow', cb + ' dari ' + DB.checklist.length + ' barang checklist belum siap', 'checklist']);
   const st = settle(); if (st && st.tf.length && !st.selesai) L.push(['yellow', 'Penyelesaian official: ' + st.tf.filter(t => !t.lunas).length + ' transfer belum dibayar', 'bagihasil']);
   const nn = DB.pengeluaran.filter(r => !r.Bukti).length; if (nn) L.push(['note', nn + ' pengeluaran belum ada bukti nota', 'pengeluaran']);
-  if (hasData() && pref('ingCad', 7) > 0) { if (!DB.lastBackup) L.push(['red', 'Data belum pernah dicadangkan', 'trip']); else if (hariLalu(DB.lastBackup) >= pref('ingCad', 7)) L.push(['yellow', 'Cadangan terakhir ' + hariLalu(DB.lastBackup) + ' hari lalu', 'trip']); }
+  if (hasData()) { if (!DB.lastBackup) L.push(['red', 'Data belum pernah dicadangkan', 'trip']); else if (hariLalu(DB.lastBackup) >= 7) L.push(['yellow', 'Cadangan terakhir ' + hariLalu(DB.lastBackup) + ' hari lalu', 'trip']); }
   return L;
 }
 function pengingatCard() {
@@ -1526,16 +1530,16 @@ function trashCard() {
 }
 async function delRow(key, id) {
   if (UANG(key) && bukuTutup()) return;
-  const r = DB[key].find(x => x.id === id); if (!r || (pref('konf', true) && !confirm('Hapus data ini? Bisa dipulihkan dari tempat sampah.'))) return;
+  const r = DB[key].find(x => x.id === id); if (!r || (!confirm('Hapus data ini? Bisa dipulihkan dari tempat sampah.'))) return;
   const tid = buang(key, r); if (UANG(key)) logAdd('hapus', key, r, { s: 'manual' }); DB[key] = DB[key].filter(x => x.id !== id); await save(); drawList(key); if (key === 'perlengkapan') drawSewa();
   toast('Dipindah ke tempat sampah', () => pulihTrash(tid));
 }
 async function clDel(id) {
-  const r = DB.checklist.find(x => x.id === id); if (!r || (pref('konf', true) && !confirm('Hapus barang ini? Bisa dipulihkan dari tempat sampah.'))) return;
+  const r = DB.checklist.find(x => x.id === id); if (!r || (!confirm('Hapus barang ini? Bisa dipulihkan dari tempat sampah.'))) return;
   const tid = buang('checklist', r); DB.checklist = DB.checklist.filter(x => x.id !== id); await save(); drawCl(); toast('Dipindah ke tempat sampah', () => pulihTrash(tid));
 }
 function toast(t, undo) {
-  try { if (DB && pref('getar', true) && /tersimpan|diperbarui|Tercatat|disimpan|ditambah/i.test(t) && navigator.vibrate) navigator.vibrate(25); } catch (e) {}
+  try { if (DB && /tersimpan|diperbarui|Tercatat|disimpan|ditambah/i.test(t) && navigator.vibrate) navigator.vibrate(25); } catch (e) {}
   let e = $('toast'); if (!e) { e = document.createElement('div'); e.id = 'toast'; document.body.appendChild(e); }
   e.innerHTML = esc(t) + (undo ? ' <b id="tundo" style="margin-left:10px;color:#f97316;text-decoration:underline;cursor:pointer">Batalkan</b>' : ''); e.style.display = 'block';
   if (undo) $('tundo').onclick = () => { e.style.display = 'none'; undo(); };
@@ -2083,6 +2087,16 @@ Object.assign(EN, {
  'v1.9.0: tanda Offline saat tidak ada internet, dan pembaruan aplikasi kini muncul otomatis.':'v1.9.0: an Offline badge when there is no internet, and app updates now appear automatically.',
  'Kembali online':'Back online','Apa yang baru':"What's new",'Perbarui sekarang':'Update now','Nanti':'Later','Data Anda tidak terhapus.':'Your data will not be deleted.'
 });
+Object.assign(EN, {
+ 'v1.10.0: Pengaturan dirapikan. Perilaku Input dan Pengingat dihapus (selalu aktif), pembulatan harga jual pindah ke Kalkulator, Tentang dan Bantuan dipisah.':'v1.10.0: Settings tidied up. Input Behavior and Reminders removed (always on), selling-price rounding moved to the Calculator, About and Help split.',
+ 'TENTANG':'ABOUT','BANTUAN':'HELP','Pembulatan':'Rounding','⬆ Bulat':'⬆ Round up',
+ 'Pengingat: telat bayar, pendaftar menunggu, checklist belum siap, dan cadangan (sekali per 7 hari). Semuanya selalu aktif.':'Reminders: late payments, pending registrants, checklist not ready, and backups (once every 7 days). All are always on.',
+ 'Aplikasi selalu dibuka di Beranda.':'The app always opens on Home.',
+ 'Pembulatan harga jual (Rp1.000, 5.000, atau 10.000) dipilih di Menu › Kalkulator, di bawah tombol Bulat.':'Selling-price rounding (Rp1,000, 5,000 or 10,000) is chosen in Menu › Calculator, below the Round up button.',
+ 'Tentang: versi, Cek pembaruan, Yang baru, dan Periksa status lisensi. Bantuan: Lapor masalah dan Salin info perangkat.':'About: version, Check for updates, What\'s new, and Check license status. Help: Report a problem and Copy device info.',
+ 'Chip 📋 Salin menyalin hasil. 👥 ÷ Peserta membagi hasil dengan jumlah peserta Diterima. ⬆ Bulat membulatkan ke atas sesuai pilihan Pembulatan (Rp1.000, 5.000, atau 10.000) di bawahnya.':'Chips: 📋 Copy copies the result. 👥 ÷ Participants divides the result by the number of Accepted participants. ⬆ Round up rounds up using the Rounding choice (Rp1,000, 5,000 or 10,000) below it.',
+ 'PIN, tampilan, warna, pesan, bantuan':'PIN, display, colors, messages, help'
+});
 const EN_PAT = [
   [/^Versi baru (v[\d.]+) tersedia$/, (m) => 'New version ' + m[1] + ' available'],
   [/^(-?Rp\s?-?[\d.,]+) per orang$/, (m) => m[1] + ' per person'],
@@ -2253,7 +2267,7 @@ window.confirm = s => _cf(tr(s)); window.alert = s => _al(tr(s));
 document.documentElement.lang = LANG;
 if (LANG === 'en') { if (document.body) i18nRun(); }
 
-const APP_V = 'v1.9.0';
+const APP_V = 'v1.10.0';
 const CR = Object.freeze({ nama: 'bawaulin.trip', tag: 'Lieur gawe, Bawa ulin', ig: 'https://www.instagram.com/bawaulin.trip?srtk=d29rcmh1YXVrajVz', igh: '@bawaulin.trip', wa: 'https://wa.me/6289618805100', wah: '+62 896-1880-5100' });
 const CR_H = 'bdaae993647f576cf92a364af7443befdce2ceefffe6c926d596f7e52a001b37', LOGO_H = '3763dd402cc104c4f9cebcce4a37a936cf2e0606bb1dd2d261e030f0a6ccc9bb';
 let CR_OK = null, LOCKED = false, hiddenAt = 0, PRIV_OBS = null;
@@ -2443,8 +2457,8 @@ async function cekUpdate() {
 }
 
 /* v1.9.0: tanda Offline + pembaruan otomatis */
-const APP_NOTE = ["Tanda Offline muncul di atas layar saat tidak ada internet.", "Pembaruan aplikasi kini muncul otomatis, tidak perlu cek manual."];
-const APP_NOTE_EN = ["An Offline badge appears at the top when there is no internet.", "App updates now appear automatically, no manual check needed."];
+const APP_NOTE = ["Pengaturan dirapikan: Perilaku Input dan Pengingat dihapus, semuanya kini selalu aktif.", "Pilihan pembulatan harga jual pindah ke Kalkulator.", "Tentang dan Bantuan dipisah."];
+const APP_NOTE_EN = ["Settings tidied up: Input Behavior and Reminders removed, everything is now always on.", "The selling-price rounding choice moved to the Calculator.", "About and Help are now separate."];
 let APP_SIAP = false;
 const lsGet = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
 const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
@@ -2478,7 +2492,7 @@ async function salinDev()
  { const id = await devId(); try { await navigator.clipboard.writeText(id); toast('Kode tersalin'); } catch (e) { toast(id); } }
 
 /* ===== Tab Pengaturan ===== */
-const SW = { priv: ['priv', false], konf: ['konf', true], getar: ['getar', true], ingBayar: ['ingBayar', true], ingDaftar: ['ingDaftar', true], ingCl: ['ingCl', true] };
+const SW = { priv: ['priv', false] };
 const zsw = id => `<button class="zsw" id="sw_${id}" role="switch" aria-checked="${pref(SW[id][0], SW[id][1])}" aria-label="${id}" onclick="swTap('${id}')"></button>`;
 const zsrow = (l, id) => `<div class="zr"><span class="zk">${l}</span><div class="zrt">${zsw(id)}</div></div>`;
 const zsel = (l, key, opts, cv) => `<div class="zr"><span class="zk">${l}</span><div class="zrt"><select class="zsel" onchange="selTap('${key}',this.value)">${opts.map(([v, t]) => `<option value="${v}"${String(v) === String(cv) ? ' selected' : ''}>${t}</option>`).join('')}</select></div></div>`;
@@ -2508,7 +2522,7 @@ async function laporMasalah() {
   window._lapor = t;
 }
 function laporKirim() { const s = $('fsheet'); if (s) s.remove(); openWA(window._lapor || '', CR.wa.replace(/\D/g, '')); }
-const BARU = ['v1.9.0: tanda Offline saat tidak ada internet, dan pembaruan aplikasi kini muncul otomatis.', 'v1.8.11: pemeriksaan lisensi dipindah ke server baru.', 'v1.8.10: Hitung Trip (kalkulator), banner, dan label kecil kini tersedia dalam English.', 'v1.8.9: pesan kosong, galat, layar kunci dan lisensi kini tersedia dalam English.', 'v1.8.8: kalimat privasi di Pengaturan disederhanakan dan judul topik Panduan kini tersedia dalam English.', 'v1.8.7: Trip & Arsip, Riwayat Perubahan, dan Bagi Hasil kini tersedia dalam English.', 'v1.8.6: Simulasi, Statistik Antar-Trip, kolom pencarian, dan penjelasan Patungan Otomatis kini tersedia dalam English.', 'v1.8.5: daftar Yang baru, pesan hapus/impor, dan sisa teks halaman diterjemahkan ke English.', 'v1.8.4: langkah rinci dan tips Panduan kini tersedia dalam English.', 'v1.8.3: tanggal mengikuti bahasa dan demo Panduan diterjemahkan ke English. Langkah rinci Panduan menyusul.', 'v1.8.2: terjemahan English diperluas ke Pengaturan, lembar, layar aktivasi dan kunci. Pesan WhatsApp tetap Indonesia.', 'v1.8.1: terjemahan English diperluas ke semua tab utama, toast, dan pesan konfirmasi. Panduan dan Yang baru menyusul.', 'Baru: pilihan Bahasa (Pengaturan › Tampilan): Indonesia atau English. Tahap awal: menu, tab, Pengaturan, tombol, dan pesan utama sudah berbahasa Inggris; teks yang belum diterjemahkan tetap Indonesia. Pesan WhatsApp, kwitansi, dan PDF untuk peserta tetap Indonesia. Panduan dan daftar Yang baru menyusul.', 'Baru: tombol Matikan semua kunci (Pengaturan › Keamanan) mematikan PIN, pola, dan sidik jari sekaligus setelah konfirmasi PIN. Baru juga panduan Keamanan buka aplikasi (Menu › Panduan).', 'Layar kunci didesain ulang: tanpa header, dengan logo besar bercahaya, kartu kaca, pola dan sidik jari lebih jelas, serta tombol pindah cara buka berbentuk pil. Cara kerjanya tidak berubah.', 'Baru: Cara buka aplikasi (Pengaturan › Keamanan). Selain PIN, buka dengan pola 3x3 atau sidik jari. PIN tetap jadi cadangan dan dipakai untuk mengatur. Pola salah 5 kali menunggu 30 detik. Sidik jari bergantung HP dan belum tentu jalan di semua perangkat; bila tidak didukung, opsinya tidak muncul. Cadangan membawa pola, sidik jari didaftarkan ulang.', 'Baru: Riwayat perubahan (Menu › Trip & Arsip, di bawah kartu Tutup Buku). Setiap transaksi uang yang ditambah, diubah (nilai sebelum dan sesudah), dihapus, atau dipulihkan dicatat dengan waktunya, begitu juga saat buku trip ditutup dan dibuka. Isi Nama pencatat bila beberapa panitia memakai HP yang sama. Bisa difilter dan diunduh sebagai CSV. Perubahan sebelum v1.6.0 tidak punya riwayat.', 'Baru: Tutup buku trip (Menu › Trip & Arsip). Setelah trip selesai, transaksi uang dikunci: Pemasukan, Pengeluaran, Catat bayar, penggantian Talangan, transaksi berulang, simulasi dan sewa yang masuk ke Pengeluaran. Arsip cadangan dibuat otomatis, dan kunci hanya bisa dibuka dengan mengetik BUKA. Tamu, Itinerary, Checklist, kwitansi, PDF, dan Rekap tetap bebas.', 'Tab Pembayaran dirombak. Paling atas ringkasan (terkumpul dari target, jumlah Lunas/Sebagian/Belum bayar/Telat, tenggat), lalu daftar peserta dengan pencarian dan filter. Tombol ＋ Catat bayar di tiap peserta mengisi sisa tagihan otomatis dan menyimpannya sebagai Pemasukan kategori Peserta. Tombol Tagih berikutnya membuka WhatsApp peserta yang belum ditagih satu per satu. Pengaturan cara bayar dan tagihan dilipat di bawah. Data lama aman.', 'Cara bayar kini berupa daftar: beberapa rekening bank dan e-wallet (DANA, SeaBank, ShopeePay, GoPay, OVO, LinkAja, atau nama lain), tombol Salin nomor, serta sakelar aktif. Semua yang aktif ikut di pesan tagihan WhatsApp, kwitansi, dan kata kunci {rekening}. Teks rekening lama tetap dipakai sebagai catatan.', 'Baru: Kartu cara bayar (PDF) dan Cara bayar ke grup WhatsApp, berisi semua rekening, e-wallet, QRIS, dan tenggat. Dasar hitung tagihan disederhanakan jadi satu baris (ketuk Ubah); aturan hitungnya tidak berubah.', 'Formulir pendaftaran online disederhanakan: Nama, Nomor WhatsApp, Meeting point, Alergi makanan (Ya/Tidak), dan Catatan. Golongan darah, riwayat penyakit, dan kontak darurat tidak lagi diminta. Pendaftar dengan alergi ditandai "Alergi makanan: Ya" di Catatan tamu. Data tamu lama tidak diubah. Pasang ulang skrip Apps Script pendaftaran yang baru.', 'Baru: Menu › Trip & Arsip › Salin Trip sebagai Template. Trip baru langsung berisi itinerary, checklist (belum siap, tanpa pembawa), dan kategori dari trip sebelumnya; tamu dan uang kosong. Tanggal itinerary bisa digeser otomatis.', 'Baru: Pengaturan › Tentang & Bantuan › Lapor masalah. Membuka WhatsApp penjual dengan info teknis siap kirim (versi, kode perangkat, status lisensi, perangkat), tanpa data trip, peserta, atau uang. Terkirim hanya bila Anda menekan kirim di WhatsApp.', 'Baru: panduan Pindah ke HP baru (Menu › Panduan).', 'Kartu Ringkasan di Akun dihapus.', 'Perbaikan: angka 0 di depan nomor WhatsApp tidak lagi hilang (tagihan WA, daftar Tamu, dan impor pendaftar online). Data lama tidak diubah.', 'Penomoran versi dimulai ulang dari v1.0.0. Tidak ada perubahan fitur.', 'Keamanan lisensi: aplikasi memeriksa status lisensi ke server (otomatis maks. tiap 1 jam, atau kapan saja lewat Pengaturan › Periksa status lisensi sekarang; tidak menahan aplikasi). Tanpa internet tetap jalan sampai 30 hari sejak pemeriksaan terakhir. Lisensi dicabut, versi terlalu lama, atau jam HP dimundurkan akan mengunci aplikasi. Kunci aktivasi lama diganti kunci baru.', 'Ikon Pengaturan (gerigi) pindah ke kanan judul Akun, di bawah tombol terang/gelap. Kartu Pengaturan di Akun dihapus.', 'Kalkulator pindah ke Menu › Kalkulator: tampilan seperti kalkulator HP, memori, riwayat, tombol ÷ Peserta dan Bulat, plus 7 rumus Hitung Trip.', 'Akun: kartu profil dan tombol Pengaturan menyatu, serta ada Data & Cadangan.', 'Tentang pembuat: tombol Instagram dan WhatsApp saja, tanpa tulisan nama atau nomor.', 'Pengaturan baru: pesan tagihan WhatsApp bisa diubah, pembulatan harga jual, dan Cek pembaruan aplikasi.', 'Panduan singkat kini berisi demo bergerak dan langkah rinci untuk semua fitur (Menu › Panduan).'];
+const BARU = ['v1.10.0: Pengaturan dirapikan. Perilaku Input dan Pengingat dihapus (selalu aktif), pembulatan harga jual pindah ke Kalkulator, Tentang dan Bantuan dipisah.', 'v1.9.0: tanda Offline saat tidak ada internet, dan pembaruan aplikasi kini muncul otomatis.', 'v1.8.11: pemeriksaan lisensi dipindah ke server baru.', 'v1.8.10: Hitung Trip (kalkulator), banner, dan label kecil kini tersedia dalam English.', 'v1.8.9: pesan kosong, galat, layar kunci dan lisensi kini tersedia dalam English.', 'v1.8.8: kalimat privasi di Pengaturan disederhanakan dan judul topik Panduan kini tersedia dalam English.', 'v1.8.7: Trip & Arsip, Riwayat Perubahan, dan Bagi Hasil kini tersedia dalam English.', 'v1.8.6: Simulasi, Statistik Antar-Trip, kolom pencarian, dan penjelasan Patungan Otomatis kini tersedia dalam English.', 'v1.8.5: daftar Yang baru, pesan hapus/impor, dan sisa teks halaman diterjemahkan ke English.', 'v1.8.4: langkah rinci dan tips Panduan kini tersedia dalam English.', 'v1.8.3: tanggal mengikuti bahasa dan demo Panduan diterjemahkan ke English. Langkah rinci Panduan menyusul.', 'v1.8.2: terjemahan English diperluas ke Pengaturan, lembar, layar aktivasi dan kunci. Pesan WhatsApp tetap Indonesia.', 'v1.8.1: terjemahan English diperluas ke semua tab utama, toast, dan pesan konfirmasi. Panduan dan Yang baru menyusul.', 'Baru: pilihan Bahasa (Pengaturan › Tampilan): Indonesia atau English. Tahap awal: menu, tab, Pengaturan, tombol, dan pesan utama sudah berbahasa Inggris; teks yang belum diterjemahkan tetap Indonesia. Pesan WhatsApp, kwitansi, dan PDF untuk peserta tetap Indonesia. Panduan dan daftar Yang baru menyusul.', 'Baru: tombol Matikan semua kunci (Pengaturan › Keamanan) mematikan PIN, pola, dan sidik jari sekaligus setelah konfirmasi PIN. Baru juga panduan Keamanan buka aplikasi (Menu › Panduan).', 'Layar kunci didesain ulang: tanpa header, dengan logo besar bercahaya, kartu kaca, pola dan sidik jari lebih jelas, serta tombol pindah cara buka berbentuk pil. Cara kerjanya tidak berubah.', 'Baru: Cara buka aplikasi (Pengaturan › Keamanan). Selain PIN, buka dengan pola 3x3 atau sidik jari. PIN tetap jadi cadangan dan dipakai untuk mengatur. Pola salah 5 kali menunggu 30 detik. Sidik jari bergantung HP dan belum tentu jalan di semua perangkat; bila tidak didukung, opsinya tidak muncul. Cadangan membawa pola, sidik jari didaftarkan ulang.', 'Baru: Riwayat perubahan (Menu › Trip & Arsip, di bawah kartu Tutup Buku). Setiap transaksi uang yang ditambah, diubah (nilai sebelum dan sesudah), dihapus, atau dipulihkan dicatat dengan waktunya, begitu juga saat buku trip ditutup dan dibuka. Isi Nama pencatat bila beberapa panitia memakai HP yang sama. Bisa difilter dan diunduh sebagai CSV. Perubahan sebelum v1.6.0 tidak punya riwayat.', 'Baru: Tutup buku trip (Menu › Trip & Arsip). Setelah trip selesai, transaksi uang dikunci: Pemasukan, Pengeluaran, Catat bayar, penggantian Talangan, transaksi berulang, simulasi dan sewa yang masuk ke Pengeluaran. Arsip cadangan dibuat otomatis, dan kunci hanya bisa dibuka dengan mengetik BUKA. Tamu, Itinerary, Checklist, kwitansi, PDF, dan Rekap tetap bebas.', 'Tab Pembayaran dirombak. Paling atas ringkasan (terkumpul dari target, jumlah Lunas/Sebagian/Belum bayar/Telat, tenggat), lalu daftar peserta dengan pencarian dan filter. Tombol ＋ Catat bayar di tiap peserta mengisi sisa tagihan otomatis dan menyimpannya sebagai Pemasukan kategori Peserta. Tombol Tagih berikutnya membuka WhatsApp peserta yang belum ditagih satu per satu. Pengaturan cara bayar dan tagihan dilipat di bawah. Data lama aman.', 'Cara bayar kini berupa daftar: beberapa rekening bank dan e-wallet (DANA, SeaBank, ShopeePay, GoPay, OVO, LinkAja, atau nama lain), tombol Salin nomor, serta sakelar aktif. Semua yang aktif ikut di pesan tagihan WhatsApp, kwitansi, dan kata kunci {rekening}. Teks rekening lama tetap dipakai sebagai catatan.', 'Baru: Kartu cara bayar (PDF) dan Cara bayar ke grup WhatsApp, berisi semua rekening, e-wallet, QRIS, dan tenggat. Dasar hitung tagihan disederhanakan jadi satu baris (ketuk Ubah); aturan hitungnya tidak berubah.', 'Formulir pendaftaran online disederhanakan: Nama, Nomor WhatsApp, Meeting point, Alergi makanan (Ya/Tidak), dan Catatan. Golongan darah, riwayat penyakit, dan kontak darurat tidak lagi diminta. Pendaftar dengan alergi ditandai "Alergi makanan: Ya" di Catatan tamu. Data tamu lama tidak diubah. Pasang ulang skrip Apps Script pendaftaran yang baru.', 'Baru: Menu › Trip & Arsip › Salin Trip sebagai Template. Trip baru langsung berisi itinerary, checklist (belum siap, tanpa pembawa), dan kategori dari trip sebelumnya; tamu dan uang kosong. Tanggal itinerary bisa digeser otomatis.', 'Baru: Pengaturan › Tentang & Bantuan › Lapor masalah. Membuka WhatsApp penjual dengan info teknis siap kirim (versi, kode perangkat, status lisensi, perangkat), tanpa data trip, peserta, atau uang. Terkirim hanya bila Anda menekan kirim di WhatsApp.', 'Baru: panduan Pindah ke HP baru (Menu › Panduan).', 'Kartu Ringkasan di Akun dihapus.', 'Perbaikan: angka 0 di depan nomor WhatsApp tidak lagi hilang (tagihan WA, daftar Tamu, dan impor pendaftar online). Data lama tidak diubah.', 'Penomoran versi dimulai ulang dari v1.0.0. Tidak ada perubahan fitur.', 'Keamanan lisensi: aplikasi memeriksa status lisensi ke server (otomatis maks. tiap 1 jam, atau kapan saja lewat Pengaturan › Periksa status lisensi sekarang; tidak menahan aplikasi). Tanpa internet tetap jalan sampai 30 hari sejak pemeriksaan terakhir. Lisensi dicabut, versi terlalu lama, atau jam HP dimundurkan akan mengunci aplikasi. Kunci aktivasi lama diganti kunci baru.', 'Ikon Pengaturan (gerigi) pindah ke kanan judul Akun, di bawah tombol terang/gelap. Kartu Pengaturan di Akun dihapus.', 'Kalkulator pindah ke Menu › Kalkulator: tampilan seperti kalkulator HP, memori, riwayat, tombol ÷ Peserta dan Bulat, plus 7 rumus Hitung Trip.', 'Akun: kartu profil dan tombol Pengaturan menyatu, serta ada Data & Cadangan.', 'Tentang pembuat: tombol Instagram dan WhatsApp saja, tanpa tulisan nama atau nomor.', 'Pengaturan baru: pesan tagihan WhatsApp bisa diubah, pembulatan harga jual, dan Cek pembaruan aplikasi.', 'Panduan singkat kini berisi demo bergerak dan langkah rinci untuk semua fitur (Menu › Panduan).'];
 const listSheet = (t, a) => sheetOpen(`<h3>${t}</h3>${a.map(x => `<div class="zli">• ${esc(x)}</div>`).join('')}`);
 async function resetPref() {
   if (!confirm('Kembalikan semua pengaturan tampilan dan perilaku ke bawaan? Data trip tidak berubah.')) return;
@@ -2579,10 +2593,10 @@ async function pulihPin() {
   const n = s => String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
   if (!DB.pin || !DB.pin.rc) return setMsg('lmsg', 'Kode pemulihan belum pernah dibuat. Pulihkan lewat file cadangan.', 0);
   if (n($('lrc').value) !== n(DB.pin.rc)) return setMsg('lmsg', 'Kode pemulihan salah.', 0);
-  DB.pin = null; await save(); LOCKED = false; document.body.classList.remove('lockon'); buildNav(); show(pref('awal', 'dashboard')); toast('PIN dimatikan. Atur PIN baru di Pengaturan.');
+  DB.pin = null; await save(); LOCKED = false; document.body.classList.remove('lockon'); buildNav(); show('dashboard'); toast('PIN dimatikan. Atur PIN baru di Pengaturan.');
 }
 function renderPeng() {
-  const tema = (() => { try { return localStorage.getItem('t') || 'dark'; } catch (e) { return 'dark'; } })(), w = pref('warna', null), awal = pref('awal', 'dashboard');
+  const tema = (() => { try { return localStorage.getItem('t') || 'dark'; } catch (e) { return 'dark'; } })(), w = pref('warna', null);
   const sw = PRESET.map((p, i) => { const on = p[1] ? (w && w.a === p[1]) : !w; return `<button class="zsat${on ? ' on' : ''}" style="background:linear-gradient(135deg,${p[1] || '#f97316'},${p[2] || '#fbbf24'})" aria-label="Warna ${p[0]}" aria-pressed="${!!on}" onclick="warnaPilih(${i})"></button>`; }).join('');
   const custom = w && !PRESET.some(p => p[1] === w.a);
   $('main').innerHTML = `
@@ -2602,26 +2616,19 @@ function renderPeng() {
     <div class="zr zwr"><span class="zk">Warna aplikasi</span><div class="zrt"><div class="zsats">${sw}</div></div></div>
     <div class="zr"><span class="zk">Warna sendiri</span><div class="zrt"><input type="color" class="zcol" id="zcol" value="${w ? w.a : '#f97316'}" oninput="warnaLive(this.value)" onchange="warnaSimpan()" aria-label="Pilih warna sendiri">${custom ? '<span class="zv zmono">' + esc(w.a.toUpperCase()) + '</span>' : ''}</div></div>
     <div class="zhint">Warna dipakai di tombol, sakelar, dan judul. PDF tetap tema terang.</div></div>
-  <div class="zh">PERILAKU INPUT</div><div class="card zcard">
-    ${zsel('Halaman awal', 'awal', [['dashboard', 'Beranda'], ['pemasukan', 'Masuk'], ['pengeluaran', 'Keluar'], ['simulasi', 'Simulasi'], ['rekap', 'Rekap']], awal)}
-    ${zsrow('Konfirmasi sebelum hapus', 'konf')}${zsrow('Getar saat berhasil simpan', 'getar')}
-    ${zsel('Pembulatan harga jual', 'bulat', [[1000, 'Rp1.000'], [5000, 'Rp5.000'], [10000, 'Rp10.000']], pref('bulat', 5000))}</div>
   <div class="zh">PESAN WHATSAPP</div><div class="card zcard">
     <div class="zr" onclick="tplTagihEdit()"><span class="zk">Pesan tagihan peserta</span><div class="zrt"><span class="zv ${pref('tplTagih', '') ? '' : 'zph'}">${pref('tplTagih', '') ? 'Kustom' : 'Bawaan'}</span><span class="zch">›</span></div></div></div>
-  <div class="zh">PENGINGAT DI BERANDA</div><div class="card zcard">
-    ${zsrow('Telat bayar', 'ingBayar')}${zsrow('Pendaftar menunggu', 'ingDaftar')}${zsrow('Checklist belum siap', 'ingCl')}
-    ${zsel('Ingatkan cadangan', 'ingCad', [[0, 'Mati'], [3, 'Tiap 3 hari'], [7, 'Tiap 7 hari'], [14, 'Tiap 14 hari'], [30, 'Tiap 30 hari']], pref('ingCad', 7))}</div>
   <div class="zh">PENYIMPANAN &amp; PRIVASI</div><div class="card zcard">
     <div class="zr" id="zpers"><span class="zk">Penyimpanan permanen</span><div class="zrt"><span class="zv zph" id="zpv">...</span></div></div>
     <div class="zr"><span class="zk">Ruang terpakai</span><div class="zrt"><span class="zv" id="zuse">...</span></div></div>
     <div class="zhint">Data trip dan keuangan hanya tersimpan di HP ini dan tidak pernah dikirim ke pembuat aplikasi.</div></div>
-  <div class="zh">TENTANG &amp; BANTUAN</div><div class="card zcard">
+  <div class="zh">TENTANG</div><div class="card zcard">
     <div class="zr" onclick="cekUpdate()"><span class="zk">Versi ${APP_V} · Cek pembaruan</span><div class="zrt"><span class="zch">›</span></div></div>
-    <div class="zr" onclick="cekLisensiSekarang()"><span class="zk">Periksa status lisensi sekarang</span><div class="zrt"><span class="zch">›</span></div></div>
     <div class="zr" onclick="listSheet('Yang baru di ${APP_V}', BARU)"><span class="zk">Yang baru di versi ini</span><div class="zrt"><span class="zch">›</span></div></div>
-    <div class="zr" onclick="pdBuka(-1)"><span class="zk">Panduan singkat (demo & langkah rinci)</span><div class="zrt"><span class="zch">›</span></div></div>
-    <div class="zr" onclick="salinInfo()"><span class="zk">Salin info perangkat</span><div class="zrt"><span class="zch">›</span></div></div>
-    <div class="zr" onclick="laporMasalah()"><span class="zk">Lapor masalah</span><div class="zrt"><span class="zch">›</span></div></div></div>
+    <div class="zr" onclick="cekLisensiSekarang()"><span class="zk">Periksa status lisensi sekarang</span><div class="zrt"><span class="zch">›</span></div></div></div>
+  <div class="zh">BANTUAN</div><div class="card zcard">
+    <div class="zr" onclick="laporMasalah()"><span class="zk">Lapor masalah</span><div class="zrt"><span class="zch">›</span></div></div>
+    <div class="zr" onclick="salinInfo()"><span class="zk">Salin info perangkat</span><div class="zrt"><span class="zch">›</span></div></div></div>
   <div class="zh">RESET</div><div class="card zcard">
     <div class="zr" onclick="resetPref()"><span class="zk zwarn">Reset pengaturan saja</span><div class="zrt"><span class="zch">›</span></div></div>
     <div class="zr" onclick="togHapus()"><span class="zk zbad">Hapus semua data</span><div class="zrt"><span class="zch">›</span></div></div>
@@ -2661,8 +2668,8 @@ const PAN = [
       { c: 'Kartu besar menampilkan Sisa saldo = total pemasukan dikurangi pengeluaran.', ui: mH('Beranda') + mHero('Gunung Semeru', 'Rp 3.700.000', 'Sisa saldo') + mBtn('＋ Catat transaksi', 'tp') + mNav(0) },
       { c: 'Cincin menunjukkan pemakaian anggaran dibanding Total Realisasi. Merah jika lewat 100%.', ui: mH('Beranda') + mCard('Pemakaian anggaran', mRow('Realisasi', 'Rp 25.000.000') + mRow('Terpakai', '85%', 'tp')) + mCard('Peringatan', mRow('🔔', 'Pemakaian 85%')) + mNav(0) },
       { c: 'Pengingat muncul untuk telat bayar, pendaftar menunggu, checklist belum siap, dan cadangan. Ketuk Buka untuk langsung ke halamannya.', ui: mH('Beranda') + mCard('🔔 Pengingat', mRow('2 peserta telat bayar', '<span class="tp">Buka</span>') + mRow('Belum dicadangkan', 'Buka')) + mNav(0) }],
-    st: ['Kartu atas: nama destinasi, Sisa saldo, serta total Pemasukan dan Pengeluaran.', 'Tombol ＋ Catat transaksi: pilih Pemasukan atau Pengeluaran, formulir langsung terbuka.', 'Cincin Pemakaian anggaran membandingkan pengeluaran dengan Total Realisasi.', 'Pengingat: telat bayar, pendaftar menunggu, checklist belum siap, dan cadangan. Tiap jenis bisa dimatikan di Pengaturan.', 'Peringatan Anggaran: kuning saat pemakaian 80% atau lebih, merah jika satu kategori melebihi anggarannya atau total melebihi Realisasi.', 'Grafik Pemasukan vs Pengeluaran dan Pengeluaran per Kategori ada di bawahnya.', 'Kartu Data Trip di paling bawah untuk mengubah destinasi, kode destinasi, dan Total Realisasi.'],
-    tp: ['Halaman awal saat aplikasi dibuka bisa diganti di Pengaturan › Perilaku Input.'] },
+    st: ['Kartu atas: nama destinasi, Sisa saldo, serta total Pemasukan dan Pengeluaran.', 'Tombol ＋ Catat transaksi: pilih Pemasukan atau Pengeluaran, formulir langsung terbuka.', 'Cincin Pemakaian anggaran membandingkan pengeluaran dengan Total Realisasi.', 'Pengingat: telat bayar, pendaftar menunggu, checklist belum siap, dan cadangan (sekali per 7 hari). Semuanya selalu aktif.', 'Peringatan Anggaran: kuning saat pemakaian 80% atau lebih, merah jika satu kategori melebihi anggarannya atau total melebihi Realisasi.', 'Grafik Pemasukan vs Pengeluaran dan Pengeluaran per Kategori ada di bawahnya.', 'Kartu Data Trip di paling bawah untuk mengubah destinasi, kode destinasi, dan Total Realisasi.'],
+    tp: ['Aplikasi selalu dibuka di Beranda.'] },
   { ic: '✍️', t: 'Catat uang masuk dan keluar', s: 'Pemasukan, pengeluaran, bukti nota, berulang', go: 'dashboard',
     demo: [
       { c: 'Ketuk ＋ Catat transaksi di Beranda, lalu pilih Pemasukan atau Pengeluaran.', ui: mH('Beranda') + mHero('Gunung Semeru', 'Rp 3.700.000', 'Sisa saldo') + mBtn('＋ Catat transaksi', 'tp') + mSheet('Catat transaksi', mTiles(['⬇️ Pemasukan', '⬆️ Pengeluaran'], 1)) },
@@ -2690,13 +2697,13 @@ const PAN = [
       { c: 'Tambahkan Komponen Biaya. Pilih jenis: per orang, sekali per trip, atau tenda.', ui: mH('Simulasi') + mCard('Komponen Biaya', mRow('Transport', 'Sekali per trip') + mRow('Simaksi', 'Per orang') + mBtn('+ Tambah komponen', 'tp')) + mNav(1) },
       { c: 'Hasil Simulasi menampilkan untung, margin, dan harga balik modal. Ketuk Terapkan untuk mengisi anggaran.', ui: mH('Simulasi') + mCard('Hasil Simulasi', mRow('Pendapatan', 'Rp 25.000.000') + mRow('Untung', 'Rp 3.700.000')) + mBtn('Terapkan ke Anggaran Pengeluaran', 'tp') + mNav(1) }],
     st: ['Parameter: nama simulasi, jumlah peserta, jumlah official, harga jual per peserta, target keuntungan per official. Centang Official ikut berangkat jika biayanya ikut ditanggung.', 'Komponen Biaya: Anggaran adalah bagian harga jual yang dibayar peserta, Biaya asli adalah uang yang benar-benar keluar ke pihak lain.', 'Hasil Simulasi: pendapatan, total biaya, untung, untung per official, margin, harga balik modal, harga untuk mencapai target, dan peringatan.', 'Simpan skenario dengan Simpan, buka lagi dengan Muat. Form baru mengosongkan formulir.', 'Terapkan ke Anggaran Pengeluaran: pilih kolom Anggaran diisi biaya asli atau anggaran komponen, opsional isi kolom Biaya, dan atur Total Realisasi.', 'Setelah diterapkan, kartu Simulasi vs Kenyataan membandingkan rencana dengan catatan nyata. Kartu yang sama ada di Rekap.', 'Kalkulator bantu sekarang ada di Menu › Kalkulator.'],
-    tp: ['Pembulatan harga jual (Rp1.000, 5.000, atau 10.000) diatur di Pengaturan › Perilaku Input.'] },
+    tp: ['Pembulatan harga jual (Rp1.000, 5.000, atau 10.000) dipilih di Menu › Kalkulator, di bawah tombol Bulat.'] },
   { ic: '🧮', t: 'Kalkulator', s: 'Kalkulator HP, memori, riwayat, hitung trip', go: 'kalk',
     demo: [
       { c: 'Ketik hitungan seperti di kalkulator HP. Hasil langsung terlihat sambil mengetik.', ui: mH('Kalkulator') + `<div class="mdisp"><small>1.500.000 + 250.000 ÷ 8</small><b>Rp 1.531.250</b></div>` + `<div class="mpad"><i>AC</i><i>( )</i><i>%</i><i>÷</i><i>7</i><i>8</i><i>9</i><i>×</i><i>0</i><i>,</i><i>⌫</i><i class="tp eqk">=</i></div>` },
       { c: 'Chip cepat: Salin, ÷ Peserta (bagi dengan jumlah peserta Diterima), dan Bulat (bulatkan ke atas).', ui: mH('Kalkulator') + `<div class="mdisp"><small>18.750.000</small><b>18.750.000</b></div><div class="mchips"><span>📋 Salin</span><span class="tp">👥 ÷ Peserta</span><span>⬆ Bulat 5.000</span></div>` },
       { c: 'Hitung Trip berisi 7 rumus siap pakai lengkap dengan langkahnya. Riwayat menyimpan hasil =.', ui: mH('Kalkulator') + `<div class="mseg"><span>Kalkulator</span><span class="tp on">Hitung Trip</span><span>Riwayat</span></div>` + mCard('Patungan per orang', mRow('Total biaya', '21.300.000') + mRow('Hasil', 'Rp 2.150.000')) }],
-    st: ['Buka Menu › Kalkulator. Tiga mode: Kalkulator, Hitung Trip, dan Riwayat.', 'Tombol angka, + − × ÷, koma desimal, dan ⌫ seperti kalkulator HP. AC menghapus semua.', 'Tombol ( ) pintar: menaruh kurung buka lalu kurung tutup sesuai kebutuhan.', 'Persen menyesuaikan angka di depannya: 200 + 10% = 220, 200 × 10% = 20, 50% = 0,5.', 'Ketuk = untuk menyimpan hitungan ke Riwayat. Hasil bisa dilanjutkan dengan operator berikutnya.', 'Angka bulat 1.000 ke atas otomatis dieja di bawah hasil (terbilang).', 'Chip 📋 Salin menyalin hasil. 👥 ÷ Peserta membagi hasil dengan jumlah peserta Diterima. ⬆ Bulat membulatkan ke atas sesuai Pengaturan.', 'Memori: M+ dan M− menambah atau mengurangi, MR memanggil, MC menghapus.', 'Hitung Trip: Patungan per orang, Harga jual dari target untung, Balik modal, DP dan sisa, Selisih dan persen, Diskon dan PPN, Konversi mata uang. Ketuk Salin hasil untuk membagikannya.', 'Riwayat: ketuk satu baris untuk memakai lagi hasilnya.'],
+    st: ['Buka Menu › Kalkulator. Tiga mode: Kalkulator, Hitung Trip, dan Riwayat.', 'Tombol angka, + − × ÷, koma desimal, dan ⌫ seperti kalkulator HP. AC menghapus semua.', 'Tombol ( ) pintar: menaruh kurung buka lalu kurung tutup sesuai kebutuhan.', 'Persen menyesuaikan angka di depannya: 200 + 10% = 220, 200 × 10% = 20, 50% = 0,5.', 'Ketuk = untuk menyimpan hitungan ke Riwayat. Hasil bisa dilanjutkan dengan operator berikutnya.', 'Angka bulat 1.000 ke atas otomatis dieja di bawah hasil (terbilang).', 'Chip 📋 Salin menyalin hasil. 👥 ÷ Peserta membagi hasil dengan jumlah peserta Diterima. ⬆ Bulat membulatkan ke atas sesuai pilihan Pembulatan (Rp1.000, 5.000, atau 10.000) di bawahnya.', 'Memori: M+ dan M− menambah atau mengurangi, MR memanggil, MC menghapus.', 'Hitung Trip: Patungan per orang, Harga jual dari target untung, Balik modal, DP dan sisa, Selisih dan persen, Diskon dan PPN, Konversi mata uang. Ketuk Salin hasil untuk membagikannya.', 'Riwayat: ketuk satu baris untuk memakai lagi hasilnya.'],
     tp: ['Di komputer, keyboard juga bisa dipakai: angka, operator, Enter, Backspace, Esc.'] },
   { ic: '💳', t: 'Pembayaran dan kwitansi', s: 'Cara bayar, catat bayar, tagih WhatsApp, kwitansi', go: 'bayar',
     demo: [
@@ -2755,12 +2762,12 @@ const PAN = [
       { c: 'Data & Cadangan: lihat cadangan terakhir dan cadangkan sekarang.', ui: mH('Akun') + mCard('DATA & CADANGAN', mRow('Cadangan terakhir', '2 hari lalu') + `<div class="mrw"><span class="tp">Cadangkan sekarang</span><b>›</b></div>`) + mNav(4) }],
     st: ['Kartu profil: ketuk untuk mengubah nama, tagline, dan logo yang dipakai di kop dokumen.', 'Strip Pengaturan di bagian bawah kartu profil memperlihatkan ringkasan PIN, tema, dan warna. Ketuk untuk membuka Pengaturan.', 'Kontak: WhatsApp, Instagram, Email, Kota atau alamat. Dipakai di kop PDF.', 'Kwitansi: nama dan jabatan penanda tangan, tanda tangan (gambar dengan jari), stempel (foto), dan kode penyelenggara untuk nomor kwitansi.', 'Data & Cadangan: lihat kapan terakhir dicadangkan dan cadangkan sekarang.', 'Lisensi: status aktif dan kode perangkat. Ketuk Salin bila diminta pembuat.', 'Tentang Pembuat: tombol Instagram dan WhatsApp pembuat aplikasi. Bagian ini dilindungi.'],
     tp: ['Isi Kontak dan penanda tangan dulu supaya kop dan kwitansi PDF langsung rapi.'] },
-  { ic: '⚙️', t: 'Pengaturan', s: 'PIN, tampilan, warna, pesan, pengingat', go: 'pengaturan',
+  { ic: '⚙️', t: 'Pengaturan', s: 'PIN, tampilan, warna, pesan, bantuan', go: 'pengaturan',
     demo: [
       { c: 'Keamanan: aktifkan PIN 4 sampai 8 angka, tambah pola atau sidik jari, simpan kode pemulihan, dan atur kunci otomatis.', ui: mH('Pengaturan') + mCard('KEAMANAN', mRow('PIN aplikasi', 'Aktif') + mRow('Cara buka aplikasi', 'PIN + pola') + mRow('Kunci otomatis', '1 menit') + mTog('Mode privasi', 1, 'tp')) + mNav(4) },
       { c: 'Tampilan: tema, ukuran huruf, dan warna aplikasi (6 pilihan atau warna sendiri).', ui: mH('Pengaturan') + mCard('TAMPILAN', mRow('Tema', 'Gelap') + `<div class="mrw"><span>Warna aplikasi</span><span class="msw"><i style="background:#f97316"></i><i style="background:#2563eb"></i><i class="tp" style="background:#16a34a"></i><i style="background:#7c3aed"></i></span></div>`) + mNav(4) },
       { c: 'Pesan tagihan WhatsApp dan pengingat Beranda bisa disesuaikan.', ui: mH('Pengaturan') + mCard('PESAN WHATSAPP', `<div class="mrw tp"><span>Pesan tagihan peserta</span><b>Kustom ›</b></div>`) + mCard('PENGINGAT', mTog('Telat bayar', 1) + mTog('Pendaftar menunggu', 1)) + mNav(4) }],
-    st: ['Buka dari Akun › ikon gerigi di kanan judul.', 'PIN aplikasi: isi 4 sampai 8 angka. Kode pemulihan (XXXX-XXXX) dibuat otomatis, simpan baik-baik untuk fitur Lupa PIN.', 'Cara buka aplikasi (muncul setelah PIN aktif): Atur pola 3x3 (minimal 4 titik, gambar dua kali) atau Aktifkan sidik jari. Mengubahnya meminta PIN. PIN tetap bisa dipakai kapan saja lewat tombol Pakai PIN di layar kunci.', 'Pola salah 5 kali berturut-turut menunggu 30 detik. Lupa PIN lewat kode pemulihan mematikan PIN, pola, dan sidik jari sekaligus.', 'Kunci otomatis: Langsung, 1, 5, 15 menit, atau Tidak pernah.', 'Mode privasi menyamarkan nominal Rp di layar. PDF tetap menampilkan angka asli.', 'Tampilan: tema Gelap, Terang, atau Ikuti HP; latar foto; ukuran huruf S, M, L; warna aplikasi.', 'Perilaku Input: halaman awal, konfirmasi sebelum hapus, getar saat simpan, dan pembulatan harga jual.', 'Pesan WhatsApp: ubah isi pesan tagihan dengan kata kunci seperti {nama}, {sisa}, {tenggat}.', 'Pengingat Beranda: pilih jenis pengingat dan seberapa sering diingatkan mencadangkan data.', 'Penyimpanan: minta penyimpanan permanen agar data tidak dibersihkan sistem.', 'Tentang & Bantuan: Cek pembaruan aplikasi, Yang baru, dan Salin info perangkat.', 'Reset pengaturan saja tidak menghapus data trip. Hapus semua data memerlukan ketikan HAPUS.'],
+    st: ['Buka dari Akun › ikon gerigi di kanan judul.', 'PIN aplikasi: isi 4 sampai 8 angka. Kode pemulihan (XXXX-XXXX) dibuat otomatis, simpan baik-baik untuk fitur Lupa PIN.', 'Cara buka aplikasi (muncul setelah PIN aktif): Atur pola 3x3 (minimal 4 titik, gambar dua kali) atau Aktifkan sidik jari. Mengubahnya meminta PIN. PIN tetap bisa dipakai kapan saja lewat tombol Pakai PIN di layar kunci.', 'Pola salah 5 kali berturut-turut menunggu 30 detik. Lupa PIN lewat kode pemulihan mematikan PIN, pola, dan sidik jari sekaligus.', 'Kunci otomatis: Langsung, 1, 5, 15 menit, atau Tidak pernah.', 'Mode privasi menyamarkan nominal Rp di layar. PDF tetap menampilkan angka asli.', 'Tampilan: tema Gelap, Terang, atau Ikuti HP; latar foto; ukuran huruf S, M, L; warna aplikasi.', 'Pesan WhatsApp: ubah isi pesan tagihan dengan kata kunci seperti {nama}, {sisa}, {tenggat}.', 'Penyimpanan: minta penyimpanan permanen agar data tidak dibersihkan sistem.', 'Tentang: versi, Cek pembaruan, Yang baru, dan Periksa status lisensi. Bantuan: Lapor masalah dan Salin info perangkat.', 'Reset pengaturan saja tidak menghapus data trip. Hapus semua data memerlukan ketikan HAPUS.'],
     tp: ['Warna aplikasi hanya mengubah tampilan di layar. PDF tetap tema terang dan logo tidak berubah.'] },
   { ic: '🔐', t: 'Keamanan buka aplikasi', s: 'PIN, pola 3x3, sidik jari, dan mematikan kunci', go: 'pengaturan',
     demo: [
@@ -2823,7 +2830,7 @@ async function mulai() {
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
   if (DB.pref.bahasa && DB.pref.bahasa !== LANG) setBahasa(DB.pref.bahasa); applyAll(); cekPembuat().then(ok => { CR_OK = ok; if (!ok && !LOCKED) rerender(); });
   BIO_OK = await bioTersedia();
-  if (DB.pin) lock(); else { buildNav(); show(pref('awal', 'dashboard')); }
+  if (DB.pin) lock(); else { buildNav(); show('dashboard'); }
 }
 (async function () {
   if (await cekLisensi()) {
