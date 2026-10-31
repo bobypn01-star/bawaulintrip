@@ -350,6 +350,8 @@ header{grid-template-columns:64px 1fr 64px;align-items:center;column-gap:8px;pad
 .v3 .kb3{height:5px;border-radius:3px;background:rgba(255,255,255,.08);margin-top:5px;overflow:hidden}.v3 .kb3 div{height:100%;background:linear-gradient(90deg,#f97316,#fbbf24)}
 .v3 .imp{width:100%;margin-top:14px;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border-radius:16px;background:rgba(23,23,27,.9);border:1px dashed rgba(251,191,36,.45);color:#fde68a;font-size:14px;font-weight:700;font-family:inherit}
 .v3 .box{margin-top:14px;padding:6px 16px;border-radius:18px;background:rgba(23,23,27,.9);border:1px solid rgba(251,191,36,.18)}
+.tile span.tic{display:block;margin-bottom:10px}.tile span.tic svg{width:32px;height:32px;stroke:var(--pri);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.hico{display:inline-flex;vertical-align:-5px;margin-right:8px;color:var(--pri)}.hico svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 </style>
 
 </head>
@@ -363,8 +365,8 @@ header{grid-template-columns:64px 1fr 64px;align-items:center;column-gap:8px;pad
 const CFG = {
   tamu: { label: 'Tamu', fields: [
     { h: 'Nama', type: 'text', req: 1 }, { h: 'Meeting Point', type: 'text' }, { h: 'Ponsel', type: 'tel' },
-    { h: 'Status', type: 'select', options: ['Diterima', 'Menunggu respons', 'Ditolak'] },
-    { h: 'Tagihan', type: 'select', options: ['Lunas', 'DP', 'Belum Lunas'] }, { h: 'Catatan', type: 'textarea' }] },
+    { h: 'Status', type: 'select', options: ['Diterima', 'Menunggu respons', 'Ditolak'], xo: ['Daftar tunggu', 'Batal'] },
+    { h: 'Tagihan', type: 'select', options: ['Lunas', 'DP', 'Belum Lunas'] }, { h: 'Grup', type: 'text', om: 1 }, { h: 'Catatan', type: 'textarea' }] },
   pemasukan: { label: 'Pemasukan', fields: [
     { h: 'Detail pemasukan', type: 'text', req: 1 }, { h: 'Kategori', type: 'select', options: ['Peserta', 'Panitia', 'Sponsor'] },
     { h: 'Biaya', type: 'number', rp: 1 }, { h: 'Tanggal transaksi', type: 'date' }, { h: 'Dibayar oleh', type: 'text' }, { h: 'Catatan', type: 'textarea' }] },
@@ -380,16 +382,19 @@ const CFG = {
     { h: 'Jenis aktivitas', type: 'select', options: ['Mepo - BC', 'BC - POS 1', 'POS 1 - POS 2', 'POS 2 - POS 3', 'POS 3 - POS 4', 'POS 4 - POS 5', 'POS 5 - POS 6', 'ISHOMA', 'CAMP GROUND', 'CAMP - BC', 'BC - MEPO', 'SUMMIT'] },
     { h: 'Waktu mulai', type: 'datetime-local' }, { h: 'Waktu berakhir', type: 'datetime-local' }, { h: 'Lokasi', type: 'text' }, { h: 'Catatan', type: 'textarea' }] },
   perlengkapan: { label: 'Perlengkapan', fields: [
-    { h: 'Perlengkapan', type: 'text', req: 1 }, { h: 'Kebutuhan', type: 'number' }, { h: 'Kesediaan', type: 'number' },
-    { h: 'Sewa', ro: 1, f: r => Math.max(0, (+r['Kebutuhan'] || 0) - (+r['Kesediaan'] || 0)) },
+    { h: 'Perlengkapan', type: 'text', req: 1 }, { h: 'Jenis', type: 'select', options: ['Kelompok', 'Pribadi'], om: 1 }, { h: 'Kebutuhan', type: 'number' }, { h: 'Kesediaan', type: 'number' },
+    { h: 'Sewa', ro: 1, f: r => r['Jenis'] === 'Pribadi' ? 0 : Math.max(0, (+r['Kebutuhan'] || 0) - (+r['Kesediaan'] || 0)) },
     { h: 'Harga/Unit', type: 'number', rp: 1 },
-    { h: 'Total Sewa', ro: 1, rp: 1, f: r => Math.max(0, (+r['Kebutuhan'] || 0) - (+r['Kesediaan'] || 0)) * (+r['Harga/Unit'] || 0) }] }
+    { h: 'Total Sewa', ro: 1, rp: 1, f: r => r['Jenis'] === 'Pribadi' ? 0 : Math.max(0, (+r['Kebutuhan'] || 0) - (+r['Kesediaan'] || 0)) * (+r['Harga/Unit'] || 0) }] },
+  kru: { label: 'Kru Panitia', fields: [
+    { h: 'Nama', type: 'text', req: 1 }, { h: 'Peran', type: 'select', options: ['Leader', 'Guide', 'Porter', 'Sweeper', 'Chef', 'Dokumentasi', 'Medis', 'Lainnya'] },
+    { h: 'Upah', type: 'number', rp: 1 }, { h: 'Catatan', type: 'textarea' }] }
 };
 const KEYS = Object.keys(CFG);
 
 /* ===== Penyimpanan lokal (IndexedDB) ===== */
 let DB, cur = 'dashboard', editId = null;
-const blank = () => ({ set: { destinasi: '', realisasi: 0 }, tamu: [], pemasukan: [], pengeluaran: [], itinerary: [], perlengkapan: [], checklist: [], arsip: [], sim: [], simAktif: null, pin: null, ganti: {}, kat: {}, ulang: [], seen: {}, trash: [], log: [], pribadi: [], lastBackup: 0, seq: 1, pref: {}, profil: {}, kw: {}, nomor: {}, slot: {} });
+const blank = () => ({ set: { destinasi: '', realisasi: 0 }, tamu: [], pemasukan: [], pengeluaran: [], itinerary: [], perlengkapan: [], kru: [], checklist: [], arsip: [], sim: [], simAktif: null, pin: null, ganti: {}, kat: {}, ulang: [], seen: {}, trash: [], log: [], pribadi: [], lastBackup: 0, seq: 1, pref: {}, profil: {}, kw: {}, nomor: {}, slot: {} });
 function idb() { return new Promise((ok, no) => { const r = indexedDB.open('budgeting', 1); r.onupgradeneeded = () => r.result.createObjectStore('kv'); r.onsuccess = () => ok(r.result); r.onerror = () => no(r.error); }); }
 async function load() { const d = await idb(); return new Promise(ok => { const q = d.transaction('kv').objectStore('kv').get('db'); q.onsuccess = () => ok(q.result || null); q.onerror = () => ok(null); }); }
 async function save() { const d = await idb(); return new Promise(ok => { const t = d.transaction('kv', 'readwrite'); t.objectStore('kv').put(DB, 'db'); t.oncomplete = ok; t.onerror = ok; }); }
@@ -440,7 +445,7 @@ function show(k) {
   cur = k; editId = null;
   document.querySelectorAll('nav button').forEach(b => b.classList.toggle('active', b.dataset.k === (MAIN.includes(k) ? k : k === 'pengaturan' ? 'akun' : 'more')));
   if (k === 'dashboard') renderDash(); else if (k === 'more') renderMore(); else if (k === 'checklist') renderCl(); else if (k === 'trip') renderTrip(); else if (k === 'simulasi') renderSim(); else if (k === 'bayar') renderBayar(); else if (k === 'rekap') renderRekap(); else if (k === 'bagihasil') renderBagiHasil(); else if (k === 'kategori') renderKat(); else if (k === 'daftar') renderDaftar(); else if (k === 'akun') renderAkun(); else if (k === 'pengaturan') renderPeng(); else if (k === 'kalk') renderKalk(); else if (k === 'panduan') { if (!PD.keep) PD.ch = -1; PD.keep = false; renderPanduan(); } else renderSheet(k);
-  if (k !== 'dashboard' && k !== 'more') { const lb = (TABS.find(t => t[0] === k) || ['', ''])[1]; $('main').insertAdjacentHTML('afterbegin', `<div class="pgh">${MAIN.includes(k) ? '' : k === 'pengaturan' ? '<button class="back" onclick="show(\'akun\')">‹ Akun</button>' : '<button class="back" onclick="show(\'more\')">‹ Menu</button>'}<h2>${lb}</h2>${k === 'akun' ? `<button class="pgear" onclick="show(\'pengaturan\')" aria-label="Buka Pengaturan">${SVG_GEAR}</button>` : ''}</div>`); }
+  if (k !== 'dashboard' && k !== 'more') { const lb = (TABS.find(t => t[0] === k) || ['', ''])[1]; $('main').insertAdjacentHTML('afterbegin', `<div class="pgh">${MAIN.includes(k) ? '' : k === 'pengaturan' ? '<button class="back" onclick="show(\'akun\')">‹ Akun</button>' : '<button class="back" onclick="show(\'more\')">‹ Menu</button>'}<h2>${otHi(k)}${lb}</h2>${k === 'akun' ? `<button class="pgear" onclick="show(\'pengaturan\')" aria-label="Buka Pengaturan">${SVG_GEAR}</button>` : ''}</div>`); }
   if (tutupOn() && ['dashboard', 'pemasukan', 'pengeluaran', 'bayar', 'bagihasil'].indexOf(k) >= 0) { const h = $('main').querySelector('.pgh'); if (h) h.insertAdjacentHTML('afterend', tutupBanner()); else $('main').insertAdjacentHTML('afterbegin', tutupBanner()); }
   if (CR_OK === false) $('main').insertAdjacentHTML('afterbegin', '<div class="warn red">Identitas pembuat aplikasi berubah. Fitur PDF dikunci. Pasang ulang aplikasi asli.</div>');
   chipMode();
@@ -473,18 +478,20 @@ async function saveSet() { DB.set.destinasi = $('sDest').value.trim(); DB.set.ko
 function renderSheet(key) {
   const c = CFG[key];
   const inputs = c.fields.map((f, i) => {
-    if (f.ro) return '';
+    if (f.ro || (f.om && !isOT())) return '';
     let inp;
-    if (f.type === 'select') inp = `<select id="f${i}"><option value="">-- Pilih --</option>${f.options.map(o => `<option>${esc(o)}</option>`).join('')}</select>`;
+    if (f.type === 'select') inp = `<select id="f${i}"><option value="">-- Pilih --</option>${optsOf(f).map(o => `<option>${esc(o)}</option>`).join('')}</select>`;
     else if (f.type === 'textarea') inp = `<textarea id="f${i}" rows="2"></textarea>`;
     else inp = `<input id="f${i}" ${f.h === 'Dibayar oleh' ? 'list="dlby" autocomplete="off" ' : ''}type="${f.rp ? 'text' : f.type}" ${f.rp ? 'inputmode="numeric" oninput="fmtNum(this)"' : f.type === 'number' ? 'step="any" inputmode="decimal"' : ''} value="${f.def !== undefined ? f.def : ''}">`;
     return `<label>${esc(f.h)}${f.req ? ' *' : ''}</label>${inp}`;
   }).join('');
-  const filters = c.fields.map((f, i) => f.type === 'select' ? `<select id="flt${i}" onchange="drawList('${key}')"><option value="">Semua ${esc(f.h)}</option>${f.options.map(o => `<option>${esc(o)}</option>`).join('')}</select>` : '').join('');
+  const filters = c.fields.map((f, i) => f.type === 'select' && !(f.om && !isOT()) ? `<select id="flt${i}" onchange="drawList('${key}')"><option value="">Semua ${esc(f.h)}</option>${optsOf(f).map(o => `<option>${esc(o)}</option>`).join('')}</select>` : '').join('');
   const hasDate = c.fields.some(f => f.type === 'date');
   const bukti = (key === 'pemasukan' || key === 'pengeluaran') ? `<label>Bukti nota</label><div class="flt"><button class="btn alt" style="margin:0" onclick="$('bcam').click()">📷 Kamera</button><button class="btn alt" style="margin:0" onclick="$('bfile').click()">📎 Unggah file</button></div><input type="file" id="bcam" accept="image/*" capture="environment" hidden onchange="pickBukti(this)"><input type="file" id="bfile" accept="image/*,application/pdf" hidden onchange="pickBukti(this)"><div id="bprev"></div><datalist id="dlby">${dlOpts()}</datalist><label>Ulangi otomatis</label><select id="frep"><option value="">Tidak berulang</option><option value="7">Tiap 7 hari</option><option value="30">Tiap 30 hari</option></select>` : '';
   let extra = '';
-  if (key === 'perlengkapan') extra = `<div class="card"><h3>Ringkasan Sewa</h3><div id="sewa"></div><button class="btn" onclick="pushSewa()">➡️ Masukkan Total Sewa ke Pengeluaran</button><div id="sewaMsg" class="msg"></div></div>`;
+  if (key === 'tamu' && isOT()) extra = tamuCard();
+  if (key === 'kru') extra = kruCard();
+  if (key === 'perlengkapan') extra = `<div class="card"><h3>Ringkasan Sewa</h3><div id="sewa"></div><button class="btn" onclick="pushSewa()">➡️ Masukkan Total Sewa ke Pengeluaran</button><div id="sewaMsg" class="msg"></div></div>${isOT() ? otPriCard() : ''}`;
   $('main').innerHTML = `${extra}
   <button class="fab" onclick="${UANG(key) && tutupOn() ? 'bukuTutup()' : 'openSheet()'}">+</button><div class="sheet" id="sheet" onclick="if(event.target===this)closeSheet()"><div class="sheetin"><button class="x" onclick="closeSheet()">✕</button><h3 id="ftitle">Tambah ${c.label}</h3>${inputs}${bukti}
     <button class="btn" id="fbtn" onclick="submitRow('${key}')">Simpan</button>
@@ -495,7 +502,7 @@ function renderSheet(key) {
     <div id="tblbox"></div></div><div id="rkp"></div>`;
   drawList(key); if (key === 'perlengkapan') drawSewa();
 }
-function drawSewa() {
+function drawSewa() { otPri();
   const rows = rowsOf('perlengkapan'), sw = rows.filter(r => r['Sewa'] > 0);
   $('sewa').innerHTML = `<div>${sw.length} jenis barang perlu disewa (${sum(sw, r => r['Sewa'])} unit)</div><b>Total biaya sewa: ${rp(sum(rows, r => r['Total Sewa']))}</b>`;
 }
@@ -516,8 +523,9 @@ function resetForm(key) {
 async function submitRow(key) {
   if (UANG(key) && bukuTutup()) return;
   const c = CFG[key], data = {};
-  c.fields.forEach((f, i) => { if (!f.ro) data[f.h] = $('f' + i).value; });
+  c.fields.forEach((f, i) => { if (!f.ro && $('f' + i)) data[f.h] = $('f' + i).value; });
   if (!String(data[c.fields[0].h]).trim()) return setMsg('fmsg', c.fields[0].h + ' wajib diisi', 0);
+  if (key === 'tamu' && data['Status'] === 'Diterima' && kuotaPenuh(editId)) { if (confirm('Kuota ' + kuotaN() + ' peserta sudah penuh. Masukkan ' + data['Nama'] + ' ke Daftar tunggu?')) data['Status'] = 'Daftar tunggu'; else return; }
   c.fields.forEach(f => { if (f.type === 'number' && data[f.h] !== '') data[f.h] = Number(f.rp ? String(data[f.h]).replace(/\./g, '') : data[f.h]); });
   if (BUKTI !== null) data['Bukti'] = BUKTI;
   let nrow, before = null;
@@ -536,7 +544,7 @@ function editRow(key, id) {
 }
 function drawList(key) {
   const c = CFG[key], box = $('tblbox'); if (!box) return;
-  const HB = key === 'pemasukan' || key === 'pengeluaran'; if (key === 'itinerary') drawRundown();
+  const HB = key === 'pemasukan' || key === 'pengeluaran'; if (key === 'itinerary') drawRundown(); if (key === 'kru') otKru();
   const q = ($('q').value || '').toLowerCase().trim(), d1 = $('d1') ? $('d1').value : '', d2 = $('d2') ? $('d2').value : '';
   const di = c.fields.find(f => f.type === 'date');
   const all = rowsOf(key).reverse();
@@ -692,7 +700,7 @@ function renderSim() {
   ${[['Jumlah peserta', 'peserta'], ['Jumlah official', 'official'], ['Harga jual per peserta (Rp)', 'harga', 1], ['Target keuntungan per official (Rp)', 'target', 1]].map(([l, k, m]) => `<label>${l}</label>` + (m ? `<input type="text" inputmode="numeric" value="${fmtN(SIM[k])}" oninput="fmtNum(this);SIM.${k}=numVal(this.value);drawSim()">` : `<input type="number" inputmode="decimal" value="${SIM[k]}" oninput="SIM.${k}=+this.value||0;drawSim()">`)).join('')}
   <div style="margin-top:10px"><input type="checkbox" ${SIM.ikut ? 'checked' : ''} onchange="SIM.ikut=this.checked;drawSim()"> Official ikut berangkat (biaya ikut ditanggung)</div></div>
   <div class="card"><h3>Komponen Biaya</h3><small class="mut">Anggaran = bagian harga jual yang dibayar tiap peserta (rencana). Biaya asli = uang yang benar-benar kamu keluarkan ke pihak lain.</small><div id="sitems"></div>
-  <button class="btn alt" onclick="SIM.items.push({n:tr('Komponen baru'),t:'orang',std:0,sim:0,kap:4,stok:0,kat:'Lainnya'});drawItems();drawSim()">+ Tambah komponen</button></div>
+  <button class="btn alt" onclick="SIM.items.push({n:tr('Komponen baru'),t:'orang',std:0,sim:0,kap:4,stok:0,kat:'Lainnya'});drawItems();drawSim()">+ Tambah komponen</button>${otSimBtn()}</div>
   <div class="card"><h3>Terapkan ke Anggaran Pengeluaran</h3><small class="mut">Mengisi tab Pengeluaran dari komponen simulasi. Simulasi yang diterapkan menjadi acuan perbandingan dengan kenyataan.</small>
   <label>Kolom Anggaran diisi dengan</label><select id="ap_d"><option value="sim">Biaya asli (anggaran ditekan)</option><option value="std">Anggaran komponen (bagian harga jual)</option></select>
   <div style="margin-top:10px"><input type="checkbox" id="ap_b"> Isi juga kolom Biaya sesuai biaya simulasi</div>
@@ -798,7 +806,7 @@ function bayarData() {
   const n = x => String(x || '').trim().toLowerCase(), paid = {};
   DB.pemasukan.forEach(r => { if (r['Kategori'] !== 'Peserta') return; const w0 = n(r['Dibayar oleh']) || n(r['Detail pemasukan']), w = matchNama(w0, DB.tamu.filter(t => t['Status'] === 'Diterima').map(t => n(t['Nama']))); paid[w] = (paid[w] || 0) + (+r['Biaya'] || 0); });
   const pr = rowsOf('pengeluaran'), ang = sum(pr, r => r['Total Anggaran']), bi = sum(pr, r => r['Total Biaya']);
-  const ps = DB.tamu.filter(t => t['Status'] === 'Diterima').map(t => ({ nama: t['Nama'], tagihan: t['Tagihan'] || '', dibayar: paidFor(paid, n(t['Nama'])), ponsel: t['Ponsel'] })), k = ps.length;
+  const ps = DB.tamu.filter(t => t['Status'] === 'Diterima').map(t => ({ nama: t['Nama'], tagihan: t['Tagihan'] || '', dibayar: paidFor(paid, n(t['Nama'])), ponsel: t['Ponsel'], grup: t['Grup'] || '' })), k = ps.length;
   const tg = { 'Lunas': 0, 'DP': 0, 'Belum Lunas': 0, 'Belum diisi': 0 }; ps.forEach(p => tg[tg[p.tagihan] !== undefined ? p.tagihan : 'Belum diisi']++);
   return { k, ang, bi, perA: k ? Math.ceil(ang / k) : 0, perB: k ? Math.ceil(bi / k) : 0, plan: k && (+DB.set.realisasi) > 0 ? Math.ceil(DB.set.realisasi / k) : 0, harga: DB.simAktif ? +DB.simAktif.harga || 0 : 0, tg, ps, iuran: Object.values(paid).reduce((a, b) => a + b, 0) };
 }
@@ -830,7 +838,7 @@ function renderBayar() {
   <div class="card"><h3>Peserta</h3><input id="bq" placeholder="🔎 Cari nama peserta" oninput="drawBayar()"><div class="fchips" id="bchips"></div><div id="bbox"></div>
   <button class="btn" id="bnext" style="background:#25d366" onclick="bayarNext()">💬 Tagih berikutnya</button></div>
   <div class="card"><h3>Bagikan</h3><button class="btn" onclick="caraKartu()">🧾 Kartu cara bayar (PDF)</button><button class="btn" style="background:#25d366" onclick="openWA(caraTeks())">💬 Cara bayar ke grup WhatsApp</button><button class="btn" style="background:#25d366" onclick="waBayar()">💬 Status pembayaran ke WhatsApp</button></div>
-  ${caraCard()}${tagCard()}
+  ${caraCard()}${tagCard()}${isOT() ? otGrupCard() + otIncCard() : ''}
   <details class="card fold" id="dpat"${bOpen('dpat')} ontoggle="bTog('dpat',this.open)"><summary>📊 Patungan Otomatis</summary><small class="mut">${DB.set.tagihan > 0 ? 'Tagihan memakai tagihan tetap (manual).' : b.harga > 0 ? 'Tagihan memakai harga jual dari simulasi yang diterapkan.' : b.plan > 0 ? 'Tagihan memakai rencana patungan (Total Realisasi dibagi peserta Diterima). Biaya yang melebihi rencana tidak ditagihkan ke peserta.' : 'Tagihan belum ditetapkan: isi Total Realisasi di Beranda, isi tagihan tetap, atau terapkan simulasi. Biaya yang melebihi rencana tidak ditagihkan ke peserta.'}</small>
   <div class="grid" style="margin-top:10px">${stat('Peserta Diterima', b.k + ' orang')}${stat('Total Pengeluaran', rp(b.bi))}${stat('Total Anggaran', rp(b.ang))}${stat('Iuran terkumpul', rp(b.iuran))}${stat('Per orang (realisasi)', rp(b.perB))}${stat('Per orang (anggaran)', rp(b.perA))}</div></details>`;
   drawBayar();
@@ -1067,7 +1075,7 @@ function clText() {
 const hasData = () => KEYS.some(k => DB[k].length) || DB.checklist.length;
 /* ===== v4.0.0: tiga trip sekaligus (satu per mode). DB.slot menyimpan trip mode NON-aktif; data tingkat atas = trip mode aktif ===== */
 const TRIP_TOP = KEYS.concat(['checklist', 'simAktif', 'ganti', 'ulang', 'pribadi', 'log']);
-const SET_PER = ['destinasi', 'realisasi', 'tenggat', 'tagihan', 'lunasTf', 'kodeDest', 'tutup', 'jenis', 'uid'];
+const SET_PER = ['destinasi', 'realisasi', 'tenggat', 'tagihan', 'lunasTf', 'kodeDest', 'tutup', 'jenis', 'uid', 'kuota', 'batal', 'inc', 'exc'];
 const SET_PRIV = ['cara', 'qris', 'rek', 'pencatat', 'daftarUrl', 'daftarKey'];
 const SET_DEF = () => ({ destinasi: '', realisasi: 0, tenggat: '', tagihan: 0, lunasTf: {}, kodeDest: '', tutup: null });
 const TRIP_DEF = k => k === 'simAktif' ? null : k === 'ganti' ? {} : [];
@@ -1246,9 +1254,10 @@ async function arsipBuka(id) {
 const MAIN = ['dashboard', 'simulasi', 'rekap', 'akun'];
 const ICO = { dashboard: '<path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>', pemasukan: '<circle cx="12" cy="12" r="9"/><path d="M12 7v10M8 13l4 4 4-4"/>', pengeluaran: '<circle cx="12" cy="12" r="9"/><path d="M12 17V7M8 11l4-4 4 4"/>', rekap: '<path d="M5 3h10l4 4v14H5z"/><path d="M9 9h2M9 13h6M9 17h6"/>', simulasi: '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h2M12 12h2M8 16h2M12 16h2"/>', akun: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>', more: '<rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/>' };
 function buildNav() {
-  $('nav').innerHTML = [['dashboard', 'Beranda'], ['simulasi', 'Simulasi'], ['more', 'Menu'], ['rekap', 'Rekap'], ['akun', 'Akun']].map(([k, l]) => k === 'more' ? `<button class="mid" data-k="more" onclick="show('more')"><span class="mic"><svg viewBox="0 0 24 24">${ICO.more}</svg></span>${l}</button>` : `<button data-k="${k}" onclick="show('${k}')"><svg viewBox="0 0 24 24">${ICO[k]}</svg>${l}</button>`).join('');
+  $('nav').innerHTML = [['dashboard', 'Beranda'], ['simulasi', 'Simulasi'], ['more', 'Menu'], ['rekap', 'Rekap'], ['akun', 'Akun']].map(([k, l]) => k === 'more' ? `<button class="mid" data-k="more" onclick="show('more')"><span class="mic"><svg viewBox="0 0 24 24">${(isOT() ? ICO_OT : ICO).more}</svg></span>${l}</button>` : `<button data-k="${k}" onclick="show('${k}')"><svg viewBox="0 0 24 24">${(isOT() ? ICO_OT : ICO)[k]}</svg>${l}</button>`).join('');
 }
 function renderMore() {
+  if (isOT()) return renderMoreOT();
   const T = [['tamu', '👥', 'Tamu', 'Daftar peserta'], ['itinerary', '🗺️', 'Itinerary', 'Rundown perjalanan'], ['perlengkapan', '🎒', 'Perlengkapan', 'Kebutuhan & sewa'], ['checklist', '✅', 'Checklist', 'Barang bawaan'], ['pemasukan', '⬇️', 'Masuk', 'Catat pemasukan'], ['pengeluaran', '⬆️', 'Keluar', 'Catat pengeluaran'], ['bayar', '💳', 'Pembayaran', 'Patungan peserta'], ['trip', '🗂️', 'Trip & Arsip', 'Arsip & cadangan'], ['bagihasil', '💰', 'Bagi Hasil', 'Untung/rugi & penyelesaian official'], ['kategori', '🏷️', 'Kategori', 'Kategori & berulang'], ['daftar', '📝', 'Pendaftaran', 'Link & pendaftar online'], ['kalk', '🧮', 'Kalkulator', 'Hitung, memori, riwayat'], ['panduan', '📖', 'Panduan', 'Demo & langkah rinci']];
   $('main').innerHTML = `<div class="pgh"><h2>Menu</h2></div><div class="tiles">${T.filter(t => !(t[0] === 'bagihasil' && modeAktif() === 'bersama')).map(t => `<button class="tile" onclick="show('${t[0]}')"><span>${t[1]}</span>${t[2]}<small>${t[3]}</small></button>`).join('')}</div>`;
 }
@@ -1365,7 +1374,7 @@ const normN = x => String(x || '').trim().toLowerCase();
 function pesertaInfo(i) { const b = bayarData(), base = bayarBase(), p = b.ps[i]; return { base, p, s: base - p.dibayar }; }
 function tagihWA(i) {
   const { base, p, s } = pesertaInfo(i), d = DB.set, late = s > 0 && d.tenggat && today() > d.tenggat;
-  const t = tagihTpl(p, base, s, d, late) || 'Halo ' + p.nama + ', tagihan trip' + (d.destinasi ? ' ' + d.destinasi : '') + ':\nTotal tagihan: ' + rp(base) + '\nSudah dibayar: ' + rp(p.dibayar) + '\n*Sisa: ' + rp(s) + '*' + (d.tenggat ? '\nTenggat: ' + fmtDate(d.tenggat) + (late ? ' (sudah lewat)' : '') : '') + (caraText(d) ? '\n\nTransfer ke:\n' + caraText(d) : '') + (d.qris ? '\n(atau scan QRIS yang dikirim terpisah)' : '') + '\n\nMohon kirim bukti transfer. Terima kasih 🙏';
+  const t = tagihTpl(p, base, s, d, late) || 'Halo ' + p.nama + ', tagihan trip' + (d.destinasi ? ' ' + d.destinasi : '') + ':\nTotal tagihan: ' + rp(base) + '\nSudah dibayar: ' + rp(p.dibayar) + '\n*Sisa: ' + rp(s) + '*' + (d.tenggat ? '\nTenggat: ' + fmtDate(d.tenggat) + (late ? ' (sudah lewat)' : '') : '') + otIncTeks() + (caraText(d) ? '\n\nTransfer ke:\n' + caraText(d) : '') + (d.qris ? '\n(atau scan QRIS yang dikirim terpisah)' : '') + '\n\nMohon kirim bukti transfer. Terima kasih 🙏';
   window._tg = window._tg || {}; window._tg[p.nama] = 1; openWA(t, waDigits(p.ponsel)); if ($('bbox')) drawBayar();
 }
 function terbilang(n) {
@@ -1469,7 +1478,7 @@ function renderDaftar() {
   <div class="acts"><button class="edt" onclick="setStatusTamu(${t.id},'Diterima')">Terima</button><button class="del" onclick="setStatusTamu(${t.id},'Ditolak')">Tolak</button><button class="edt" onclick="openWA('Halo ${esc(t['Nama'])}, terima kasih sudah mendaftar.','${noWA(t['Ponsel'])}')">💬 WA</button></div></div>`).join('') : '<div>Tidak ada yang menunggu.</div>'}</div>`;
 }
 async function simpanDaftar() { DB.set.daftarUrl = $('du').value.trim(); DB.set.daftarKey = $('dk').value.trim(); await save(); renderDaftar(); toast('Tersimpan'); }
-async function setStatusTamu(id, s) { DB.tamu.find(t => t.id === id)['Status'] = s; await save(); renderDaftar(); }
+async function setStatusTamu(id, s) { if (s === 'Diterima' && kuotaPenuh(id)) { if (!confirm('Kuota ' + kuotaN() + ' peserta sudah penuh. Masukkan ke Daftar tunggu?')) return; s = 'Daftar tunggu'; } DB.tamu.find(t => t.id === id)['Status'] = s; await save(); renderDaftar(); }
 async function ambilDaftar() {
   const d = DB.set; if (!d.daftarUrl || !d.daftarKey) return setMsg('dmsg', 'Isi link Apps Script dan kunci dulu, lalu Simpan.', 0);
   if (!navigator.onLine) return setMsg('dmsg', 'Perlu internet untuk mengambil pendaftar.', 0);
@@ -2721,7 +2730,7 @@ window.confirm = s => _cf(tr(s)); window.alert = s => _al(tr(s));
 document.documentElement.lang = LANG;
 if (LANG === 'en') { if (document.body) i18nRun(); }
 
-const APP_V = 'v4.0.0';
+const APP_V = 'v4.1.0';
 const CR = Object.freeze({ nama: 'bawaulin.trip', tag: 'Lieur gawe, Bawa ulin', ig: 'https://www.instagram.com/bawaulin.trip?srtk=d29rcmh1YXVrajVz', igh: '@bawaulin.trip', wa: 'https://wa.me/6289618805100', wah: '+62 896-1880-5100' });
 const CR_H = 'bdaae993647f576cf92a364af7443befdce2ceefffe6c926d596f7e52a001b37', LOGO_H = '3763dd402cc104c4f9cebcce4a37a936cf2e0606bb1dd2d261e030f0a6ccc9bb';
 let CR_OK = null, LOCKED = false, hiddenAt = 0, PRIV_OBS = null;
@@ -2890,11 +2899,11 @@ function renderAkun() {
 /* Pesan tagihan WhatsApp yang bisa diatur */
 const TPL_DEF = 'Halo {nama}, tagihan trip {destinasi}:\nTotal tagihan: {total}\nSudah dibayar: {dibayar}\n*Sisa: {sisa}*\nTenggat: {tenggat}\n\nTransfer ke:\n{rekening}\n\nMohon kirim bukti transfer. Terima kasih 🙏';
 function tplIsi(tpl, o) {
-  return String(tpl).replace(/\{(nama|destinasi|total|dibayar|sisa|tenggat|rekening)\}/g, (m, k) => o[k]).replace(/ {2,}/g, ' ').replace(/ :/g, ':');
+  return String(tpl).replace(/\{(nama|destinasi|total|dibayar|sisa|tenggat|rekening|termasuk|belum_termasuk)\}/g, (m, k) => o[k] === undefined ? '' : o[k]).replace(/ {2,}/g, ' ').replace(/ :/g, ':');
 }
 function tagihTpl(p, base, s, d, late) {
   const t = pref('tplTagih', ''); if (!String(t).trim()) return '';
-  return tplIsi(t, { nama: p.nama, destinasi: d.destinasi || '', total: rp(base), dibayar: rp(p.dibayar), sisa: rp(s), tenggat: d.tenggat ? fmtDate(d.tenggat) + (late ? ' (sudah lewat)' : '') : '-', rekening: caraText(d) || '-' });
+  return tplIsi(t, { nama: p.nama, destinasi: d.destinasi || '', total: rp(base), dibayar: rp(p.dibayar), sisa: rp(s), tenggat: d.tenggat ? fmtDate(d.tenggat) + (late ? ' (sudah lewat)' : '') : '-', rekening: caraText(d) || '-', termasuk: otLines(d.inc).join('\n'), belum_termasuk: otLines(d.exc).join('\n') });
 }
 function tplPrev() { const e = $('tplx'), o = $('tplp'); if (e && o) o.textContent = tplIsi(e.value, { nama: 'Budi', destinasi: DB.set.destinasi || 'Semeru', total: rp(750000), dibayar: rp(250000), sisa: rp(500000), tenggat: '30/11/2026', rekening: caraText(DB.set) || 'BCA 1234567890 a.n. Nama' }); }
 function tplIns(k) { const e = $('tplx'), a = e.selectionStart || 0, b = e.selectionEnd || 0; e.value = e.value.slice(0, a) + k + e.value.slice(b); e.focus(); e.selectionStart = e.selectionEnd = a + k.length; tplPrev(); }
@@ -2919,9 +2928,11 @@ async function cekUpdate() {
 
 /* v1.9.0: tanda Offline + pembaruan otomatis */
 const APP_NOTE_OLD = ["Kartu di halaman Mode kini ikut warna pilihanmu untuk mode itu.", "Header dirapikan: logo lebih besar dan semua bagian sejajar presisi.", "Data dan lisensi kamu tidak berubah."];
-const APP_NOTE = ["Tiga trip bisa berjalan sekaligus, satu per mode. Ganti mode tanpa kehilangan data.", "Simulasi kini per mode, dengan kartu Rekap Simulasi. Ekspor rekap trip lalu impor di HP lain, bisa diedit kembali.", "Data dan lisensi kamu tidak berubah."];
+const APP_NOTE = ["Open trip kini punya isi sendiri: perlengkapan Kelompok dan Pribadi, Kru Panitia dengan upah, kuota dan daftar tunggu, peserta batal dengan pengembalian, tagihan per grup, serta Sudah termasuk / Belum termasuk.", "Menu dan navigasi Open trip memakai ikon baru. Mode lain tidak berubah.", "Data dan lisensi kamu tidak berubah."];
+const APP_NOTE_V400 = ["Tiga trip bisa berjalan sekaligus, satu per mode. Ganti mode tanpa kehilangan data.", "Simulasi kini per mode, dengan kartu Rekap Simulasi. Ekspor rekap trip lalu impor di HP lain, bisa diedit kembali.", "Data dan lisensi kamu tidak berubah."];
 const APP_NOTE_EN_OLD = ["Cards on the Mode page now follow the color you chose for that mode.", "Header tidied up: bigger logo and everything precisely aligned.", "Your data and license are unchanged."];
-const APP_NOTE_EN = ["Three trips can now run at once, one per mode. Switch modes without losing data.", "Simulation is now per mode, with a Simulation Recap card. Export a trip recap and import it on another phone, editable again.", "Your data and license are unchanged."];
+const APP_NOTE_EN = ["Open trip now has its own content: Group and Personal gear, Crew with wages, quota and waiting list, cancelled participants with refunds, per-group billing, and Included / Not included.", "Open trip menu and navigation use new icons. Other modes are unchanged.", "Your data and license are unchanged."];
+const APP_NOTE_EN_V400 = ["Three trips can now run at once, one per mode. Switch modes without losing data.", "Simulation is now per mode, with a Simulation Recap card. Export a trip recap and import it on another phone, editable again.", "Your data and license are unchanged."];
 let APP_SIAP = false;
 const lsGet = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
 const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
@@ -3004,7 +3015,7 @@ async function laporMasalah() {
   window._lapor = t;
 }
 function laporKirim() { const s = $('fsheet'); if (s) s.remove(); openWA(window._lapor || '', CR.wa.replace(/\D/g, '')); }
-const BARU = ["v4.0.0: tiga trip bisa berjalan sekaligus, satu per mode (Open trip, Tektok, Pendakian bersama); ganti mode tanpa mengarsipkan dan tanpa kehilangan data. Simulasi kini per mode dengan kartu Rekap Simulasi, dan Rekap menampilkan trip berjalan di semua mode. Ekspor rekap trip (gratis) dan Impor rekap trip (Puncak): file rekap bisa dikirim ke HP lain, masuk ke Arsip, dan bisa dibuka kembali untuk diedit sesuai hasil nyata. Catatan: cadangan dari v4 yang dipulihkan di aplikasi versi lama hanya membawa trip mode yang sedang aktif. Data dan lisensi tidak berubah.", "v3.1.1: kartu di halaman Pilih Mode, chip, dan Rekap kini ikut warna yang Anda pilih untuk mode itu (misalnya merah). Header dirapikan: logo lebih besar dan semua bagian sejajar presisi. Data dan lisensi tidak berubah.", "v3.1.0: warna aplikasi kini ikut mode (Open trip ungu, Tektok biru, Pendakian bersama hijau); warna pilihan sendiri di Pengaturan berlaku per mode, dan Otomatis mengembalikan warna mode. Logo di bagian atas kini tetap logo bawaulin.cash dan bisa diketuk untuk ke halaman awal dan Rekap (tulisan bawaulin.trip di bagian atas dihapus); ganti logo di Akun hanya mengubah logo di Akun, PDF, dan kwitansi. Data dan lisensi tidak berubah.", "v3.0.0: tiga mode dalam satu aplikasi (Open trip, Tektok, Pendakian bersama) dengan layar awal baru: tombol Mode di atas dan Rekap di bawah. Rekap semua jenis bisa diketuk sampai rekap lengkap tiap trip. Arsip kini ditandai jenisnya dan bisa disaring. Trip lama otomatis menjadi Open trip. Data dan lisensi tidak berubah.", "v2.2.2: lencana mini di header (ikon saja; ketuk untuk melihat keuntungan) dan indikator koneksi kini berupa titik hijau (online) atau merah (offline). Data dan lisensi tidak berubah. v2.2.1: ketuk lencana di Akun untuk melihat keuntungannya (VIP kini juga dapat akses awal fitur baru); pasal pengembalian uang di Syarat & Ketentuan (dokumen versi 1.2); pengecek gelar untuk akses awal fitur (belum ada fitur yang disembunyikan). Data dan lisensi tidak berubah.", "v2.1.0: lencana baru di Akun: tampilan khusus untuk Developer, VVIP, VIP, Puncak, dan Rintis. Lencana hanya penanda, tidak mengubah fitur. Data dan lisensi tidak berubah.", "v2.0.0: logo dan tagline \"Lieur ngitung, bawa santai\" bawaulin.cash tampil di layar aktivasi dan layar sambutan, dan ikon aplikasi diganti. Data dan lisensi tidak berubah.", 'v1.14.6: Info Umum kini menjelaskan paket Rintis dan Puncak (Syarat & Ketentuan dan Kebijakan Privasi dokumen versi 1.1), dan Panduan punya topik Paket Rintis dan Puncak.', 'v1.14.5: tanda air bawaulin.cash di PDF paket Rintis dikembalikan ke tampilan besar yang jelas terlihat.', 'v1.14.0: paket Rintis: setelah trip pertama selesai, fitur Puncak terkunci (Simulasi, Bagi Hasil, Pendaftaran online, Salin Template, Statistik Antar-Trip, dan PDF tanpa tanda bawaulin.cash). Data tetap aman dan terbuka lagi di Puncak. Ada peringatan sebelum masa trip pertama habis.', 'v1.13.0: lencana status paket di Akun (Latihan, Trip pertama, Rintis, atau Puncak). Belum ada fitur yang dikunci.', 'v1.12.0: halaman Info Umum berisi Syarat & Ketentuan dan Kebijakan Privasi (Pengaturan › Bantuan).', 'v1.11.1: Panduan disesuaikan dengan tombol Batalkan, layar sambutan, dan ajakan cadangkan.', 'v1.11.0: hapus kini bisa dibatalkan (tombol Batalkan 7 detik) tanpa konfirmasi; layar sambutan 3 langkah untuk pengguna baru (Pengaturan > Bantuan > Lihat panduan awal); ajakan mencadangkan data setelah buku trip ditutup.', 'v1.10.1: indikator Online (titik hijau) dan Offline (titik merah) kini selalu tampil di pojok kanan atas, menggantikan tombol tema yang sudah ada di Pengaturan.', 'v1.10.0: Pengaturan dirapikan. Perilaku Input dan Pengingat dihapus (selalu aktif), pembulatan harga jual pindah ke Kalkulator, Tentang dan Bantuan dipisah.', 'v1.9.0: tanda Offline saat tidak ada internet, dan pembaruan aplikasi kini muncul otomatis.', 'v1.8.11: pemeriksaan lisensi dipindah ke server baru.', 'v1.8.10: Hitung Trip (kalkulator), banner, dan label kecil kini tersedia dalam English.', 'v1.8.9: pesan kosong, galat, layar kunci dan lisensi kini tersedia dalam English.', 'v1.8.8: kalimat privasi di Pengaturan disederhanakan dan judul topik Panduan kini tersedia dalam English.', 'v1.8.7: Trip & Arsip, Riwayat Perubahan, dan Bagi Hasil kini tersedia dalam English.', 'v1.8.6: Simulasi, Statistik Antar-Trip, kolom pencarian, dan penjelasan Patungan Otomatis kini tersedia dalam English.', 'v1.8.5: daftar Yang baru, pesan hapus/impor, dan sisa teks halaman diterjemahkan ke English.', 'v1.8.4: langkah rinci dan tips Panduan kini tersedia dalam English.', 'v1.8.3: tanggal mengikuti bahasa dan demo Panduan diterjemahkan ke English. Langkah rinci Panduan menyusul.', 'v1.8.2: terjemahan English diperluas ke Pengaturan, lembar, layar aktivasi dan kunci. Pesan WhatsApp tetap Indonesia.', 'v1.8.1: terjemahan English diperluas ke semua tab utama, toast, dan pesan konfirmasi. Panduan dan Yang baru menyusul.', 'Baru: pilihan Bahasa (Pengaturan › Tampilan): Indonesia atau English. Tahap awal: menu, tab, Pengaturan, tombol, dan pesan utama sudah berbahasa Inggris; teks yang belum diterjemahkan tetap Indonesia. Pesan WhatsApp, kwitansi, dan PDF untuk peserta tetap Indonesia. Panduan dan daftar Yang baru menyusul.', 'Baru: tombol Matikan semua kunci (Pengaturan › Keamanan) mematikan PIN, pola, dan sidik jari sekaligus setelah konfirmasi PIN. Baru juga panduan Keamanan buka aplikasi (Menu › Panduan).', 'Layar kunci didesain ulang: tanpa header, dengan logo besar bercahaya, kartu kaca, pola dan sidik jari lebih jelas, serta tombol pindah cara buka berbentuk pil. Cara kerjanya tidak berubah.', 'Baru: Cara buka aplikasi (Pengaturan › Keamanan). Selain PIN, buka dengan pola 3x3 atau sidik jari. PIN tetap jadi cadangan dan dipakai untuk mengatur. Pola salah 5 kali menunggu 30 detik. Sidik jari bergantung HP dan belum tentu jalan di semua perangkat; bila tidak didukung, opsinya tidak muncul. Cadangan membawa pola, sidik jari didaftarkan ulang.', 'Baru: Riwayat perubahan (Menu › Trip & Arsip, di bawah kartu Tutup Buku). Setiap transaksi uang yang ditambah, diubah (nilai sebelum dan sesudah), dihapus, atau dipulihkan dicatat dengan waktunya, begitu juga saat buku trip ditutup dan dibuka. Isi Nama pencatat bila beberapa panitia memakai HP yang sama. Bisa difilter dan diunduh sebagai CSV. Perubahan sebelum v1.6.0 tidak punya riwayat.', 'Baru: Tutup buku trip (Menu › Trip & Arsip). Setelah trip selesai, transaksi uang dikunci: Pemasukan, Pengeluaran, Catat bayar, penggantian Talangan, transaksi berulang, simulasi dan sewa yang masuk ke Pengeluaran. Arsip cadangan dibuat otomatis, dan kunci hanya bisa dibuka dengan mengetik BUKA. Tamu, Itinerary, Checklist, kwitansi, PDF, dan Rekap tetap bebas.', 'Tab Pembayaran dirombak. Paling atas ringkasan (terkumpul dari target, jumlah Lunas/Sebagian/Belum bayar/Telat, tenggat), lalu daftar peserta dengan pencarian dan filter. Tombol ＋ Catat bayar di tiap peserta mengisi sisa tagihan otomatis dan menyimpannya sebagai Pemasukan kategori Peserta. Tombol Tagih berikutnya membuka WhatsApp peserta yang belum ditagih satu per satu. Pengaturan cara bayar dan tagihan dilipat di bawah. Data lama aman.', 'Cara bayar kini berupa daftar: beberapa rekening bank dan e-wallet (DANA, SeaBank, ShopeePay, GoPay, OVO, LinkAja, atau nama lain), tombol Salin nomor, serta sakelar aktif. Semua yang aktif ikut di pesan tagihan WhatsApp, kwitansi, dan kata kunci {rekening}. Teks rekening lama tetap dipakai sebagai catatan.', 'Baru: Kartu cara bayar (PDF) dan Cara bayar ke grup WhatsApp, berisi semua rekening, e-wallet, QRIS, dan tenggat. Dasar hitung tagihan disederhanakan jadi satu baris (ketuk Ubah); aturan hitungnya tidak berubah.', 'Formulir pendaftaran online disederhanakan: Nama, Nomor WhatsApp, Meeting point, Alergi makanan (Ya/Tidak), dan Catatan. Golongan darah, riwayat penyakit, dan kontak darurat tidak lagi diminta. Pendaftar dengan alergi ditandai "Alergi makanan: Ya" di Catatan tamu. Data tamu lama tidak diubah. Pasang ulang skrip Apps Script pendaftaran yang baru.', 'Baru: Menu › Trip & Arsip › Salin Trip sebagai Template. Trip baru langsung berisi itinerary, checklist (belum siap, tanpa pembawa), dan kategori dari trip sebelumnya; tamu dan uang kosong. Tanggal itinerary bisa digeser otomatis.', 'Baru: Pengaturan › Tentang & Bantuan › Lapor masalah. Membuka WhatsApp penjual dengan info teknis siap kirim (versi, kode perangkat, status lisensi, perangkat), tanpa data trip, peserta, atau uang. Terkirim hanya bila Anda menekan kirim di WhatsApp.', 'Baru: panduan Pindah ke HP baru (Menu › Panduan).', 'Kartu Ringkasan di Akun dihapus.', 'Perbaikan: angka 0 di depan nomor WhatsApp tidak lagi hilang (tagihan WA, daftar Tamu, dan impor pendaftar online). Data lama tidak diubah.', 'Penomoran versi dimulai ulang dari v1.0.0. Tidak ada perubahan fitur.', 'Keamanan lisensi: aplikasi memeriksa status lisensi ke server (otomatis maks. tiap 1 jam, atau kapan saja lewat Pengaturan › Periksa status lisensi sekarang; tidak menahan aplikasi). Tanpa internet tetap jalan sampai 30 hari sejak pemeriksaan terakhir. Lisensi dicabut, versi terlalu lama, atau jam HP dimundurkan akan mengunci aplikasi. Kunci aktivasi lama diganti kunci baru.', 'Ikon Pengaturan (gerigi) pindah ke kanan judul Akun, di bawah tombol terang/gelap. Kartu Pengaturan di Akun dihapus.', 'Kalkulator pindah ke Menu › Kalkulator: tampilan seperti kalkulator HP, memori, riwayat, tombol ÷ Peserta dan Bulat, plus 7 rumus Hitung Trip.', 'Akun: kartu profil dan tombol Pengaturan menyatu, serta ada Data & Cadangan.', 'Tentang pembuat: tombol Instagram dan WhatsApp saja, tanpa tulisan nama atau nomor.', 'Pengaturan baru: pesan tagihan WhatsApp bisa diubah, pembulatan harga jual, dan Cek pembaruan aplikasi.', 'Panduan singkat kini berisi demo bergerak dan langkah rinci untuk semua fitur (Menu › Panduan).'];
+const BARU = ["v4.1.0: mode Open trip kini punya isi sendiri. Perlengkapan dibagi Kelompok (panitia, masuk biaya) dan Pribadi (dibawa peserta, daftar bisa dibagikan lewat WhatsApp atau PDF). Tab baru Kru Panitia dengan upah per orang yang bisa masuk ke Pengeluaran dan Simulasi. Kuota peserta dengan daftar tunggu otomatis, status Batal dengan hitungan pengembalian, tagihan per grup, dan kartu Sudah termasuk / Belum termasuk di pesan tagihan. Menu, navigasi bawah, dan judul halaman Open trip memakai ikon baru bertema pendakian. Mode lain tidak berubah. Data dan lisensi tidak berubah.", "v4.0.0: tiga trip bisa berjalan sekaligus, satu per mode (Open trip, Tektok, Pendakian bersama); ganti mode tanpa mengarsipkan dan tanpa kehilangan data. Simulasi kini per mode dengan kartu Rekap Simulasi, dan Rekap menampilkan trip berjalan di semua mode. Ekspor rekap trip (gratis) dan Impor rekap trip (Puncak): file rekap bisa dikirim ke HP lain, masuk ke Arsip, dan bisa dibuka kembali untuk diedit sesuai hasil nyata. Catatan: cadangan dari v4 yang dipulihkan di aplikasi versi lama hanya membawa trip mode yang sedang aktif. Data dan lisensi tidak berubah.", "v3.1.1: kartu di halaman Pilih Mode, chip, dan Rekap kini ikut warna yang Anda pilih untuk mode itu (misalnya merah). Header dirapikan: logo lebih besar dan semua bagian sejajar presisi. Data dan lisensi tidak berubah.", "v3.1.0: warna aplikasi kini ikut mode (Open trip ungu, Tektok biru, Pendakian bersama hijau); warna pilihan sendiri di Pengaturan berlaku per mode, dan Otomatis mengembalikan warna mode. Logo di bagian atas kini tetap logo bawaulin.cash dan bisa diketuk untuk ke halaman awal dan Rekap (tulisan bawaulin.trip di bagian atas dihapus); ganti logo di Akun hanya mengubah logo di Akun, PDF, dan kwitansi. Data dan lisensi tidak berubah.", "v3.0.0: tiga mode dalam satu aplikasi (Open trip, Tektok, Pendakian bersama) dengan layar awal baru: tombol Mode di atas dan Rekap di bawah. Rekap semua jenis bisa diketuk sampai rekap lengkap tiap trip. Arsip kini ditandai jenisnya dan bisa disaring. Trip lama otomatis menjadi Open trip. Data dan lisensi tidak berubah.", "v2.2.2: lencana mini di header (ikon saja; ketuk untuk melihat keuntungan) dan indikator koneksi kini berupa titik hijau (online) atau merah (offline). Data dan lisensi tidak berubah. v2.2.1: ketuk lencana di Akun untuk melihat keuntungannya (VIP kini juga dapat akses awal fitur baru); pasal pengembalian uang di Syarat & Ketentuan (dokumen versi 1.2); pengecek gelar untuk akses awal fitur (belum ada fitur yang disembunyikan). Data dan lisensi tidak berubah.", "v2.1.0: lencana baru di Akun: tampilan khusus untuk Developer, VVIP, VIP, Puncak, dan Rintis. Lencana hanya penanda, tidak mengubah fitur. Data dan lisensi tidak berubah.", "v2.0.0: logo dan tagline \"Lieur ngitung, bawa santai\" bawaulin.cash tampil di layar aktivasi dan layar sambutan, dan ikon aplikasi diganti. Data dan lisensi tidak berubah.", 'v1.14.6: Info Umum kini menjelaskan paket Rintis dan Puncak (Syarat & Ketentuan dan Kebijakan Privasi dokumen versi 1.1), dan Panduan punya topik Paket Rintis dan Puncak.', 'v1.14.5: tanda air bawaulin.cash di PDF paket Rintis dikembalikan ke tampilan besar yang jelas terlihat.', 'v1.14.0: paket Rintis: setelah trip pertama selesai, fitur Puncak terkunci (Simulasi, Bagi Hasil, Pendaftaran online, Salin Template, Statistik Antar-Trip, dan PDF tanpa tanda bawaulin.cash). Data tetap aman dan terbuka lagi di Puncak. Ada peringatan sebelum masa trip pertama habis.', 'v1.13.0: lencana status paket di Akun (Latihan, Trip pertama, Rintis, atau Puncak). Belum ada fitur yang dikunci.', 'v1.12.0: halaman Info Umum berisi Syarat & Ketentuan dan Kebijakan Privasi (Pengaturan › Bantuan).', 'v1.11.1: Panduan disesuaikan dengan tombol Batalkan, layar sambutan, dan ajakan cadangkan.', 'v1.11.0: hapus kini bisa dibatalkan (tombol Batalkan 7 detik) tanpa konfirmasi; layar sambutan 3 langkah untuk pengguna baru (Pengaturan > Bantuan > Lihat panduan awal); ajakan mencadangkan data setelah buku trip ditutup.', 'v1.10.1: indikator Online (titik hijau) dan Offline (titik merah) kini selalu tampil di pojok kanan atas, menggantikan tombol tema yang sudah ada di Pengaturan.', 'v1.10.0: Pengaturan dirapikan. Perilaku Input dan Pengingat dihapus (selalu aktif), pembulatan harga jual pindah ke Kalkulator, Tentang dan Bantuan dipisah.', 'v1.9.0: tanda Offline saat tidak ada internet, dan pembaruan aplikasi kini muncul otomatis.', 'v1.8.11: pemeriksaan lisensi dipindah ke server baru.', 'v1.8.10: Hitung Trip (kalkulator), banner, dan label kecil kini tersedia dalam English.', 'v1.8.9: pesan kosong, galat, layar kunci dan lisensi kini tersedia dalam English.', 'v1.8.8: kalimat privasi di Pengaturan disederhanakan dan judul topik Panduan kini tersedia dalam English.', 'v1.8.7: Trip & Arsip, Riwayat Perubahan, dan Bagi Hasil kini tersedia dalam English.', 'v1.8.6: Simulasi, Statistik Antar-Trip, kolom pencarian, dan penjelasan Patungan Otomatis kini tersedia dalam English.', 'v1.8.5: daftar Yang baru, pesan hapus/impor, dan sisa teks halaman diterjemahkan ke English.', 'v1.8.4: langkah rinci dan tips Panduan kini tersedia dalam English.', 'v1.8.3: tanggal mengikuti bahasa dan demo Panduan diterjemahkan ke English. Langkah rinci Panduan menyusul.', 'v1.8.2: terjemahan English diperluas ke Pengaturan, lembar, layar aktivasi dan kunci. Pesan WhatsApp tetap Indonesia.', 'v1.8.1: terjemahan English diperluas ke semua tab utama, toast, dan pesan konfirmasi. Panduan dan Yang baru menyusul.', 'Baru: pilihan Bahasa (Pengaturan › Tampilan): Indonesia atau English. Tahap awal: menu, tab, Pengaturan, tombol, dan pesan utama sudah berbahasa Inggris; teks yang belum diterjemahkan tetap Indonesia. Pesan WhatsApp, kwitansi, dan PDF untuk peserta tetap Indonesia. Panduan dan daftar Yang baru menyusul.', 'Baru: tombol Matikan semua kunci (Pengaturan › Keamanan) mematikan PIN, pola, dan sidik jari sekaligus setelah konfirmasi PIN. Baru juga panduan Keamanan buka aplikasi (Menu › Panduan).', 'Layar kunci didesain ulang: tanpa header, dengan logo besar bercahaya, kartu kaca, pola dan sidik jari lebih jelas, serta tombol pindah cara buka berbentuk pil. Cara kerjanya tidak berubah.', 'Baru: Cara buka aplikasi (Pengaturan › Keamanan). Selain PIN, buka dengan pola 3x3 atau sidik jari. PIN tetap jadi cadangan dan dipakai untuk mengatur. Pola salah 5 kali menunggu 30 detik. Sidik jari bergantung HP dan belum tentu jalan di semua perangkat; bila tidak didukung, opsinya tidak muncul. Cadangan membawa pola, sidik jari didaftarkan ulang.', 'Baru: Riwayat perubahan (Menu › Trip & Arsip, di bawah kartu Tutup Buku). Setiap transaksi uang yang ditambah, diubah (nilai sebelum dan sesudah), dihapus, atau dipulihkan dicatat dengan waktunya, begitu juga saat buku trip ditutup dan dibuka. Isi Nama pencatat bila beberapa panitia memakai HP yang sama. Bisa difilter dan diunduh sebagai CSV. Perubahan sebelum v1.6.0 tidak punya riwayat.', 'Baru: Tutup buku trip (Menu › Trip & Arsip). Setelah trip selesai, transaksi uang dikunci: Pemasukan, Pengeluaran, Catat bayar, penggantian Talangan, transaksi berulang, simulasi dan sewa yang masuk ke Pengeluaran. Arsip cadangan dibuat otomatis, dan kunci hanya bisa dibuka dengan mengetik BUKA. Tamu, Itinerary, Checklist, kwitansi, PDF, dan Rekap tetap bebas.', 'Tab Pembayaran dirombak. Paling atas ringkasan (terkumpul dari target, jumlah Lunas/Sebagian/Belum bayar/Telat, tenggat), lalu daftar peserta dengan pencarian dan filter. Tombol ＋ Catat bayar di tiap peserta mengisi sisa tagihan otomatis dan menyimpannya sebagai Pemasukan kategori Peserta. Tombol Tagih berikutnya membuka WhatsApp peserta yang belum ditagih satu per satu. Pengaturan cara bayar dan tagihan dilipat di bawah. Data lama aman.', 'Cara bayar kini berupa daftar: beberapa rekening bank dan e-wallet (DANA, SeaBank, ShopeePay, GoPay, OVO, LinkAja, atau nama lain), tombol Salin nomor, serta sakelar aktif. Semua yang aktif ikut di pesan tagihan WhatsApp, kwitansi, dan kata kunci {rekening}. Teks rekening lama tetap dipakai sebagai catatan.', 'Baru: Kartu cara bayar (PDF) dan Cara bayar ke grup WhatsApp, berisi semua rekening, e-wallet, QRIS, dan tenggat. Dasar hitung tagihan disederhanakan jadi satu baris (ketuk Ubah); aturan hitungnya tidak berubah.', 'Formulir pendaftaran online disederhanakan: Nama, Nomor WhatsApp, Meeting point, Alergi makanan (Ya/Tidak), dan Catatan. Golongan darah, riwayat penyakit, dan kontak darurat tidak lagi diminta. Pendaftar dengan alergi ditandai "Alergi makanan: Ya" di Catatan tamu. Data tamu lama tidak diubah. Pasang ulang skrip Apps Script pendaftaran yang baru.', 'Baru: Menu › Trip & Arsip › Salin Trip sebagai Template. Trip baru langsung berisi itinerary, checklist (belum siap, tanpa pembawa), dan kategori dari trip sebelumnya; tamu dan uang kosong. Tanggal itinerary bisa digeser otomatis.', 'Baru: Pengaturan › Tentang & Bantuan › Lapor masalah. Membuka WhatsApp penjual dengan info teknis siap kirim (versi, kode perangkat, status lisensi, perangkat), tanpa data trip, peserta, atau uang. Terkirim hanya bila Anda menekan kirim di WhatsApp.', 'Baru: panduan Pindah ke HP baru (Menu › Panduan).', 'Kartu Ringkasan di Akun dihapus.', 'Perbaikan: angka 0 di depan nomor WhatsApp tidak lagi hilang (tagihan WA, daftar Tamu, dan impor pendaftar online). Data lama tidak diubah.', 'Penomoran versi dimulai ulang dari v1.0.0. Tidak ada perubahan fitur.', 'Keamanan lisensi: aplikasi memeriksa status lisensi ke server (otomatis maks. tiap 1 jam, atau kapan saja lewat Pengaturan › Periksa status lisensi sekarang; tidak menahan aplikasi). Tanpa internet tetap jalan sampai 30 hari sejak pemeriksaan terakhir. Lisensi dicabut, versi terlalu lama, atau jam HP dimundurkan akan mengunci aplikasi. Kunci aktivasi lama diganti kunci baru.', 'Ikon Pengaturan (gerigi) pindah ke kanan judul Akun, di bawah tombol terang/gelap. Kartu Pengaturan di Akun dihapus.', 'Kalkulator pindah ke Menu › Kalkulator: tampilan seperti kalkulator HP, memori, riwayat, tombol ÷ Peserta dan Bulat, plus 7 rumus Hitung Trip.', 'Akun: kartu profil dan tombol Pengaturan menyatu, serta ada Data & Cadangan.', 'Tentang pembuat: tombol Instagram dan WhatsApp saja, tanpa tulisan nama atau nomor.', 'Pengaturan baru: pesan tagihan WhatsApp bisa diubah, pembulatan harga jual, dan Cek pembaruan aplikasi.', 'Panduan singkat kini berisi demo bergerak dan langkah rinci untuk semua fitur (Menu › Panduan).'];
 Object.assign(EN, {"v4.0.0: tiga trip bisa berjalan sekaligus, satu per mode (Open trip, Tektok, Pendakian bersama); ganti mode tanpa mengarsipkan dan tanpa kehilangan data. Simulasi kini per mode dengan kartu Rekap Simulasi, dan Rekap menampilkan trip berjalan di semua mode. Ekspor rekap trip (gratis) dan Impor rekap trip (Puncak): file rekap bisa dikirim ke HP lain, masuk ke Arsip, dan bisa dibuka kembali untuk diedit sesuai hasil nyata. Catatan: cadangan dari v4 yang dipulihkan di aplikasi versi lama hanya membawa trip mode yang sedang aktif. Data dan lisensi tidak berubah.": "v4.0.0: three trips can now run at once, one per mode (Open trip, Tektok, Group hike); switch modes without archiving and without losing data. Simulation is now per mode with a Simulation Recap card, and Recap shows trips in progress across all modes. Export trip recap (free) and Import trip recap (Puncak): a recap file can be sent to another phone, added to the Archive, and reopened for editing to match actual results. Note: a v4 backup restored in an older app version only brings the trip of the active mode. Your data and license are unchanged."});
 Object.assign(EN, {"v3.1.1: kartu di halaman Pilih Mode, chip, dan Rekap kini ikut warna yang Anda pilih untuk mode itu (misalnya merah). Header dirapikan: logo lebih besar dan semua bagian sejajar presisi. Data dan lisensi tidak berubah.": "v3.1.1: cards on the Choose Mode page, the chip, and Recap now follow the color you chose for that mode (for example red). Header tidied up: bigger logo and everything precisely aligned. Data and license are unchanged."});
 Object.assign(EN, {"v3.1.0: warna aplikasi kini ikut mode (Open trip ungu, Tektok biru, Pendakian bersama hijau); warna pilihan sendiri di Pengaturan berlaku per mode, dan Otomatis mengembalikan warna mode. Logo di bagian atas kini tetap logo bawaulin.cash dan bisa diketuk untuk ke halaman awal dan Rekap (tulisan bawaulin.trip di bagian atas dihapus); ganti logo di Akun hanya mengubah logo di Akun, PDF, dan kwitansi. Data dan lisensi tidak berubah.": "v3.1.0: the app color now follows the mode (Open trip purple, Tektok blue, Group hike green); a custom color chosen in Settings applies per mode, and Automatic restores the mode color. The logo at the top is now always the bawaulin.cash logo and can be tapped to open the start screen and Recap (the bawaulin.trip text at the top was removed); changing the logo in Account only changes the logo in Account, PDFs, and receipts. Data and license are unchanged.", "Otomatis (ikut mode)": "Automatic (follows mode)", "Warna ini hanya berlaku di mode yang sedang dibuka. Mode lain tetap memakai warnanya sendiri. Pilih lingkaran pertama untuk kembali ke warna mode.": "This color only applies in the mode currently open. Other modes keep their own color. Pick the first circle to return to the mode color.", "Halaman awal": "Start screen", "Trip masih berjalan. Ketuk panah kembali untuk melanjutkan.": "A trip is still in progress. Tap the back arrow to continue.", "Kembali ke trip": "Back to trip"});
@@ -3318,7 +3329,7 @@ function pdToggle() { PD.play = !PD.play; $('pdpl').textContent = PD.play ? '⏸
 
 /* ===== v3.0.0: tiga mode (Open trip, Tektok, Pendakian bersama), layar awal, rekap semua jenis ===== */
 const MODES = [
-  { id: 'open', nama: 'Open trip', pendek: 'Open trip', dasar: '#a855f7', untung: true, desc: 'Ada porter, guide, dan sweeper. Peserta bayar paket, kamu atur kru dan tagihan.', tags: ['Tamu & tagihan', 'Pembayaran', 'Bagi hasil'], ic: '<circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5.5a3 3 0 0 1 0 5.5M18 14.5c1.8.8 3 2.6 3 5.5"/>' },
+  { id: 'open', nama: 'Open trip', pendek: 'Open trip', dasar: '#a855f7', untung: true, desc: 'Ada porter, guide, dan sweeper. Peserta bayar paket, kamu atur kru dan tagihan.', tags: ['Kuota & grup', 'Kru & upah', 'Bagi hasil'], ic: '<circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5.5a3 3 0 0 1 0 5.5M18 14.5c1.8.8 3 2.6 3 5.5"/>' },
   { id: 'tektok', nama: 'Tektok', pendek: 'Tektok', dasar: '#38bdf8', untung: true, desc: 'Naik dan turun di hari yang sama. Jasa dengan untung, memakai alat yang sama dengan Open trip.', tags: ['Tamu & tagihan', 'Simulasi', 'Bagi hasil'], ic: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>' },
   { id: 'bersama', nama: 'Pendakian bersama', pendek: 'Bersama', dasar: '#22c55e', untung: false, desc: 'Semua beban dan biaya dibagi rata. Tanpa untung dan tanpa bagi hasil.', tags: ['Patungan', 'Simulasi', 'Tanpa untung'], ic: '<circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.3 11l7.4-3.7M8.3 13l7.4 3.7"/>' }
 ];
@@ -3332,7 +3343,7 @@ const arsipFilter = () => DB.arsip.slice().reverse().filter(a => FJ === 'semua' 
 function setFJ(v) { FJ = v; renderTrip(); }
 function chipMode() {
   const b = $('hmode'); if (!b || !DB) return; const m = modeOf(modeAktif());
-  b.innerHTML = `<i style="background:${m.warna}"></i>${esc(m.pendek)}<span>▾</span>`; b.hidden = false; applyWarna();
+  b.innerHTML = `<i style="background:${m.warna}"></i>${esc(m.pendek)}<span>▾</span>`; b.hidden = false; applyWarna(); if (window._nm !== m.id) { window._nm = m.id; buildNav(); navAktif(); }
 }
 function rpc(n) { const a = Math.abs(Number(n) || 0); return a >= 1e6 ? 'Rp ' + (a / 1e6).toFixed(1).replace('.', ',').replace(/,0$/, '') + ' jt' : rp(a); }
 const hasilTxt = (m, n) => !m.untung ? 'Tanpa untung' : n > 0 ? '+ ' + rpc(n) : n < 0 ? '- ' + rpc(n) : 'Impas';
@@ -3491,6 +3502,131 @@ async function mulai() {
   } else { const lama = await kvGet('lic'); await layarAktivasi(lama ? 'Kunci lama tidak berlaku. Minta kunci baru ke penjual dengan kode perangkat ini.' : ''); }
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
 })();
+
+/* ===== v4.1.0: Open trip khusus (kuota, batal, grup, kru, termasuk, bawaan pribadi, ikon) ===== */
+const isOT = () => modeAktif() === 'open';
+const optsOf = f => (f.xo && isOT()) ? f.options.concat(f.xo) : f.options;
+const kuotaN = () => Math.max(0, parseInt(DB.set.kuota, 10) || 0);
+const terimaN = ex => DB.tamu.filter(t => t['Status'] === 'Diterima' && t.id !== ex).length;
+const kuotaPenuh = ex => isOT() && kuotaN() > 0 && terimaN(ex) >= kuotaN();
+const otIni = x => esc(String(x || '?').trim().charAt(0).toUpperCase() || '?');
+const otLines = a => (Array.isArray(a) ? a : []).map(x => String(x).trim()).filter(Boolean);
+const ICO_OT = {
+  dashboard: '<path d="M3 20l6.5-11 4 6 2.5-4L21 20z"/><path d="M9.5 9V4l3.5 1.6L9.5 7.2"/>',
+  simulasi: '<path d="M4 20h16"/><path d="M5 16l4.5-5 3.5 3L19 6"/><circle cx="19" cy="6" r="1.6"/>',
+  more: '<path d="M3 20L12 5l9 15z"/><path d="M12 5v15"/><path d="M8.5 20l3.5-6.5 3.5 6.5"/>',
+  rekap: '<path d="M8 4h8v3H8z"/><path d="M6 6H5v15h14V6h-1"/><path d="M9 12h6M9 16h4"/>',
+  akun: '<circle cx="12" cy="9.5" r="3.4"/><path d="M6.8 7.6h10.4M9 7.6c.2-2 1.4-3 3-3s2.8 1 3 3"/><path d="M5 21c.8-4 3.7-6 7-6s6.2 2 7 6"/>',
+  tamu: '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9.5" r="2.4"/><path d="M3 20c.5-3.5 3-5.5 6-5.5s5.5 2 6 5.5"/><path d="M15.5 14.8c2.8-.3 4.9 1.3 5.5 4.2"/>',
+  kru: '<path d="M12 3l7 3v5c0 5-3 8.5-7 10-4-1.5-7-5-7-10V6z"/><path d="M12 8.5l1.2 2.4 2.6.4-1.9 1.8.5 2.6-2.4-1.3-2.4 1.3.5-2.6-1.9-1.8 2.6-.4z"/>',
+  itinerary: '<circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 18h6a3 3 0 0 0 0-6h-4a3 3 0 0 1 0-6h6"/>',
+  perlengkapan: '<path d="M9 7V5.5a3 3 0 0 1 6 0V7"/><rect x="5" y="7" width="14" height="14" rx="3.5"/><path d="M9 13h6M9 17h6"/>',
+  checklist: '<path d="M9.5 6h11M9.5 12h11M9.5 18h11"/><path d="M3.5 6l1.5 1.5L7.5 5M3.5 12l1.5 1.5 2.5-2.5M3.5 18l1.5 1.5 2.5-2.5"/>',
+  pemasukan: '<path d="M12 3v9M8.5 8.5L12 12l3.5-3.5"/><path d="M4 14v5h16v-5"/>',
+  pengeluaran: '<path d="M12 12V3M8.5 6.5L12 3l3.5 3.5"/><path d="M4 14v5h16v-5"/>',
+  bayar: '<rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10.5h18M7 15h4"/>',
+  trip: '<path d="M4 7h16v4H4z"/><path d="M5.5 11v8h13v-8M10 15h4"/>',
+  bagihasil: '<circle cx="9" cy="12" r="6"/><path d="M15 6.3a6 6 0 0 1 0 11.4"/><path d="M9 9v6M7 11h4"/>',
+  kategori: '<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.3"/>',
+  daftar: '<path d="M5 4h10l4 4v12H5z"/><path d="M15 4v4h4M8.5 13h7M8.5 17h5"/>',
+  kalk: '<rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M8.5 7.5h7M8.5 12h2M13.5 12h2M8.5 16h2M13.5 16h2"/>',
+  panduan: '<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/>'
+};
+const otHi = k => (isOT() && ICO_OT[k] && k !== 'more') ? '<span class="hico"><svg viewBox="0 0 24 24">' + ICO_OT[k] + '</svg></span>' : '';
+function navAktif() { document.querySelectorAll('nav button').forEach(b => b.classList.toggle('active', b.dataset.k === (MAIN.includes(cur) ? cur : cur === 'pengaturan' ? 'akun' : 'more'))); }
+function renderMoreOT() {
+  const T = [['tamu', 'Tamu', 'Peserta, kuota, grup'], ['kru', 'Kru Panitia', 'Panitia & upah'], ['perlengkapan', 'Perlengkapan', 'Kelompok & pribadi'], ['itinerary', 'Itinerary', 'Rundown perjalanan'], ['checklist', 'Checklist', 'Barang bawaan'], ['bayar', 'Pembayaran', 'Tagihan & grup'], ['pemasukan', 'Masuk', 'Catat pemasukan'], ['pengeluaran', 'Keluar', 'Catat pengeluaran'], ['bagihasil', 'Bagi Hasil', 'Untung/rugi & official'], ['trip', 'Trip & Arsip', 'Arsip & cadangan'], ['daftar', 'Pendaftaran', 'Link & pendaftar online'], ['kategori', 'Kategori', 'Kategori & berulang'], ['kalk', 'Kalkulator', 'Hitung, memori, riwayat'], ['panduan', 'Panduan', 'Demo & langkah rinci']];
+  $('main').innerHTML = `<div class="pgh"><h2>Menu</h2></div><div class="tiles">${T.map(t => `<button class="tile" onclick="show('${t[0]}')"><span class="tic"><svg viewBox="0 0 24 24">${ICO_OT[t[0]]}</svg></span>${t[1]}<small>${t[2]}</small></button>`).join('')}</div>`;
+}
+/* --- Tamu: kuota, daftar tunggu, batal + pengembalian --- */
+function otGross(nama) {
+  const n = x => String(x || '').trim().toLowerCase(), names = DB.tamu.map(t => n(t['Nama'])); let tot = 0;
+  DB.pemasukan.forEach(r => { if (r['Kategori'] !== 'Peserta' || !(+r['Biaya'] > 0)) return; const w = matchNama(n(r['Dibayar oleh']) || n(r['Detail pemasukan']), names); if (w === n(nama)) tot += +r['Biaya']; });
+  return tot;
+}
+function otRefund(t) {
+  const B = DB.set.batal || {}, paid = otGross(t['Nama']), pot = Math.round(paid * (Number(B.pot) || 0) / 100), adm = Number(B.adm) || 0;
+  return { paid, pot, adm, kembali: Math.max(0, paid - pot - adm) };
+}
+function tamuCard() {
+  const q = kuotaN(), n = terimaN(), W = DB.tamu.filter(t => t['Status'] === 'Daftar tunggu'), X = DB.tamu.filter(t => t['Status'] === 'Batal'), B = DB.set.batal || {};
+  const row = (t, sub, act) => `<div class="txw"><div class="tx"><div class="av">${otIni(t['Nama'])}</div><div class="tm"><b>${esc(t['Nama'])}</b><small>${sub}</small></div></div><div class="acts">${act}</div></div>`;
+  return `<div class="card"><h3>Kuota dan daftar tunggu</h3>
+  <label>Kuota peserta (kosong = tanpa batas)</label><input id="ot_kuota" type="number" inputmode="numeric" value="${q || ''}">
+  <div style="margin:8px 0">Diterima <b>${n}</b>${q ? ' dari ' + q : ''}${q && n >= q ? ' <span class="badge r">Penuh</span>' : ''}</div>
+  <button class="btn alt" onclick="otSimpanKuota()">Simpan kuota</button>
+  ${W.length ? `<b>Daftar tunggu (${W.length})</b>` + W.map(t => row(t, esc(t['Ponsel'] || '-'), `<button class="edt" onclick="otTerima(${t.id})">Terima</button>`)).join('') : '<small class="mut">Peserta yang melewati kuota masuk daftar tunggu otomatis.</small>'}</div>
+  <div class="card"><h3>Batal dan pengembalian</h3><small class="mut">Ubah status peserta jadi Batal, lalu catat pengembalian di sini. Potongan dihitung dari uang yang sudah dibayar.</small>
+  <label>Potongan (%)</label><input id="ot_pot" type="number" inputmode="decimal" value="${B.pot || ''}"><label>Biaya admin tetap (Rp)</label><input id="ot_adm" type="text" inputmode="numeric" oninput="fmtNum(this)" value="${B.adm ? fmtN(B.adm) : ''}">
+  <button class="btn alt" onclick="otSimpanBatal()">Simpan aturan</button>
+  ${X.length ? X.map(t => { const r = otRefund(t); return row(t, 'Dibayar ' + rp(r.paid) + ' | Dikembalikan ' + rp(t['Pengembalian'] != null ? t['Pengembalian'] : r.kembali), t['Pengembalian'] != null ? '<span class="badge g">Selesai</span>' : (r.kembali > 0 ? `<button class="edt" onclick="otKembali(${t.id})">Catat pengembalian</button>` : '<span class="badge y">Tidak ada</span>')); }).join('') : '<div style="margin-top:8px"><small class="mut">Belum ada peserta batal.</small></div>'}</div>`;
+}
+async function otSimpanKuota() { DB.set.kuota = Math.max(0, parseInt($('ot_kuota').value, 10) || 0); await save(); show('tamu'); toast('Kuota disimpan'); }
+async function otSimpanBatal() { DB.set.batal = { pot: Math.min(100, Math.max(0, Number($('ot_pot').value) || 0)), adm: numVal($('ot_adm').value) || 0 }; await save(); show('tamu'); toast('Aturan batal disimpan'); }
+async function otTerima(id) { if (kuotaPenuh(id)) return toast('Kuota masih penuh'); DB.tamu.find(t => t.id === id)['Status'] = 'Diterima'; await save(); show('tamu'); toast('Peserta diterima'); }
+async function otKembali(id) {
+  if (bukuTutup()) return; const t = DB.tamu.find(x => x.id === id); if (!t) return; const r = otRefund(t); if (r.kembali <= 0) return;
+  if (!confirm('Catat pengembalian ' + rp(r.kembali) + ' untuk ' + t['Nama'] + '? Dicatat sebagai pemasukan bernilai minus.')) return;
+  const nb = { id: DB.seq++, 'Detail pemasukan': 'Pengembalian peserta batal', 'Kategori': 'Peserta', 'Biaya': -r.kembali, 'Tanggal transaksi': today(), 'Dibayar oleh': t['Nama'], 'Catatan': 'Potongan ' + rp(r.pot + r.adm) };
+  DB.pemasukan.push(nb); logAdd('tambah', 'pemasukan', nb, { s: 'batal' }); t['Pengembalian'] = r.kembali; await save(); show('tamu'); toast('Pengembalian dicatat');
+}
+/* --- Perlengkapan pribadi --- */
+const otPriCard = () => `<div class="card"><h3>Daftar bawaan peserta</h3><small class="mut">Barang berjenis Pribadi dibawa dan dibeli peserta sendiri, tidak masuk biaya sewa.</small><div id="otpri" style="margin:8px 0"></div><button class="btn" onclick="otPriPDF()">📄 Unduh PDF daftar bawaan</button><button class="btn" style="background:#25d366" onclick="otPriWA()">💬 Bagikan ke WhatsApp</button></div>`;
+const otPriNames = () => rowsOf('perlengkapan').filter(r => r['Jenis'] === 'Pribadi').map(r => String(r['Perlengkapan']).trim()).filter(Boolean);
+function otPri() { const o = $('otpri'); if (!o) return; const L = otPriNames(); o.innerHTML = L.length ? L.map(x => '• ' + esc(x)).join('<br>') : '<small class="mut">Belum ada barang berjenis Pribadi.</small>'; }
+function otPriWA() { const L = otPriNames(); if (!L.length) return toast('Belum ada barang pribadi'); openWA('*DAFTAR BAWAAN PESERTA*' + (DB.set.destinasi ? ' - ' + DB.set.destinasi : '') + '\nSiapkan dan bawa sendiri:\n' + L.map(x => '- ' + x).join('\n') + '\n\nPerlengkapan kelompok dibawa panitia.'); }
+function otPriPDF() { const L = otPriNames(); if (!L.length) return toast('Belum ada barang pribadi'); printDoc(docWrap('DAFTAR BAWAAN PESERTA', 'Destinasi: ' + (DB.set.destinasi || '-'), pT(['No', 'Barang yang dibawa sendiri'], L.map((x, i) => [String(i + 1), x])))); }
+/* --- Kru panitia --- */
+const kruCard = () => `<div class="card"><h3>Ringkasan upah</h3><div id="otkru"></div><button class="btn" onclick="otPushUpah()">➡️ Masukkan Total Upah ke Pengeluaran</button><div id="otkmsg" class="msg"></div></div>`;
+const kruTotal = () => sum(rowsOf('kru'), r => +r['Upah'] || 0);
+function otKru() { const o = $('otkru'); if (!o) return; o.innerHTML = `<div>${DB.kru.length} orang kru</div><b>Total upah: ${rp(kruTotal())}</b>`; }
+function otEnsureKat() { const a = katList('pengeluaran'); if (a.indexOf('Upah Kru') < 0) { DB.kat.pengeluaran = a.slice().concat('Upah Kru'); applyKat(); } }
+async function otPushUpah() {
+  if (bukuTutup()) return; const total = kruTotal();
+  if (total <= 0) return setMsg('otkmsg', 'Belum ada upah kru.', 0);
+  if (!confirm('Masukkan total upah kru ke Pengeluaran (kategori Upah Kru)? Jika baris "Upah kru" sudah ada, nilainya diperbarui.')) return;
+  otEnsureKat(); const label = 'Upah kru', ex = DB.pengeluaran.find(r => r['Detail pengeluaran'] === label);
+  if (ex) { const b0 = JSON.parse(JSON.stringify(ex)); ex['Anggaran'] = total; ex['Biaya'] = total; ex['Quantity'] = 1; const d = logDiff('pengeluaran', b0, ex); if (d.length) logAdd('ubah', 'pengeluaran', ex, { s: 'upah', d }); }
+  else { const nr = { id: DB.seq++, 'Detail pengeluaran': label, 'Kategori': 'Upah Kru', 'Anggaran': total, 'Biaya': total, 'Quantity': 1, 'Tanggal transaksi': today(), 'Dibayar oleh': '', 'Catatan': 'Otomatis dari tab Kru Panitia' }; DB.pengeluaran.push(nr); logAdd('tambah', 'pengeluaran', nr, { s: 'upah' }); }
+  await save(); setMsg('otkmsg', ex ? 'Baris diperbarui menjadi ' + rp(total) : 'Ditambahkan ke Pengeluaran: ' + rp(total), 1);
+}
+const otSimBtn = () => !isOT() ? '' : '<button class="btn alt" onclick="otSimUpah()">+ Upah kru dari tab Kru Panitia</button>';
+function otSimUpah() {
+  const total = kruTotal(); if (total <= 0) return toast('Belum ada upah kru'); otEnsureKat();
+  const per = Math.ceil(total / Math.max(1, +SIM.peserta || 1)), it = SIM.items.find(x => x.n === 'Upah kru');
+  if (it) { it.sim = total; it.std = per; it.t = 'grup'; it.kat = 'Upah Kru'; } else SIM.items.push({ n: 'Upah kru', t: 'grup', std: per, sim: total, kap: 4, stok: 0, kat: 'Upah Kru' });
+  drawItems(); drawSim(); toast('Upah kru masuk ke komponen biaya');
+}
+/* --- Pembayaran: grup + termasuk/belum termasuk --- */
+function otIncTeks() { if (!isOT()) return ''; const a = otLines(DB.set.inc), b = otLines(DB.set.exc); return (a.length ? '\n\n*Sudah termasuk:*\n' + a.map(x => '- ' + x).join('\n') : '') + (b.length ? '\n\n*Belum termasuk:*\n' + b.map(x => '- ' + x).join('\n') : ''); }
+function otIncCard() { return `<div class="card"><h3>Sudah termasuk / belum termasuk</h3><small class="mut">Satu baris satu butir. Ikut di pesan tagihan peserta.</small><label>Sudah termasuk</label><textarea id="ot_inc" rows="4" placeholder="Transport PP&#10;Simaksi&#10;Guide dan porter">${esc(otLines(DB.set.inc).join('\n'))}</textarea><label>Belum termasuk</label><textarea id="ot_exc" rows="4" placeholder="Konsumsi pribadi&#10;Perlengkapan pribadi">${esc(otLines(DB.set.exc).join('\n'))}</textarea><button class="btn" onclick="otSimpanInc()">Simpan</button></div>`; }
+async function otSimpanInc() { DB.set.inc = $('ot_inc').value.split('\n').map(x => x.trim()).filter(Boolean); DB.set.exc = $('ot_exc').value.split('\n').map(x => x.trim()).filter(Boolean); await save(); toast('Disimpan'); }
+function otGrupCard() {
+  const b = bayarData(), base = bayarBase(), G = {};
+  b.ps.forEach(p => { const g = String(p.grup || '').trim(); if (g) (G[g] = G[g] || []).push(p); });
+  const ks = Object.keys(G); window._otG = ks.map(k => ({ g: k, m: G[k] }));
+  return `<div class="card"><h3>Tagihan per grup</h3>` + (ks.length ? ks.map((k, i) => { const m = G[k], tot = base * m.length, by = sum(m, p => p.dibayar), s = tot - by; return `<div class="txw"><div class="tx"><div class="av ${s <= 0 && base > 0 ? 'in' : ''}">${otIni(k)}</div><div class="tm"><b>${esc(k)}</b><small>${m.length} orang | tagihan ${rp(tot)} | bayar ${rp(by)}</small><div style="margin-top:4px">${s <= 0 && base > 0 ? '<span class="badge g">Lunas</span>' : '<span class="badge r">Sisa ' + rp(Math.max(0, s)) + '</span>'}</div></div></div>${s > 0 && base > 0 ? `<div class="acts"><button class="edt" onclick="otTagihGrup(${i})">💬 Tagih grup</button></div>` : ''}</div>`; }).join('') : '<small class="mut">Isi kolom Grup di tab Tamu (misalnya nama rombongan) untuk melihat tagihan per grup.</small>') + '</div>';
+}
+function otTagihGrup(i) {
+  const o = window._otG && window._otG[i]; if (!o) return; const base = bayarBase(), d = DB.set, m = o.m, tot = base * m.length, by = sum(m, p => p.dibayar), s = tot - by, k = m.find(p => p.ponsel) || m[0];
+  const t = 'Halo, tagihan grup ' + o.g + (d.destinasi ? ' (trip ' + d.destinasi + ')' : '') + ':\nJumlah: ' + m.length + ' orang\nTotal tagihan: ' + rp(tot) + '\nSudah dibayar: ' + rp(by) + '\n*Sisa: ' + rp(s) + '*' + (d.tenggat ? '\nTenggat: ' + fmtDate(d.tenggat) : '') + otIncTeks() + (caraText(d) ? '\n\nTransfer ke:\n' + caraText(d) : '') + '\n\nMohon kirim bukti transfer. Terima kasih 🙏';
+  openWA(t, waDigits(k.ponsel));
+}
+/* --- Terjemahan English untuk teks baru --- */
+Object.assign(EN, {
+  'Kru Panitia': 'Crew', 'Panitia & upah': 'Crew & wages', 'Peserta, kuota, grup': 'Participants, quota, groups', 'Kelompok & pribadi': 'Group & personal', 'Tagihan & grup': 'Bills & groups', 'Untung/rugi & official': 'Profit/loss & officials',
+  'Kuota & grup': 'Quota & groups', 'Kru & upah': 'Crew & wages', 'Daftar tunggu': 'Waiting list', 'Batal': 'Cancelled', 'Grup': 'Group', 'Jenis': 'Type', 'Kelompok': 'Group', 'Pribadi': 'Personal', 'Peran': 'Role', 'Upah': 'Wage',
+  'Leader': 'Leader', 'Guide': 'Guide', 'Porter': 'Porter', 'Sweeper': 'Sweeper', 'Chef': 'Chef', 'Dokumentasi': 'Documentation', 'Medis': 'Medic', 'Lainnya': 'Other', 'Upah Kru': 'Crew wages',
+  'Kuota dan daftar tunggu': 'Quota and waiting list', 'Kuota peserta (kosong = tanpa batas)': 'Participant quota (empty = no limit)', 'Simpan kuota': 'Save quota', 'Penuh': 'Full', 'Terima': 'Accept',
+  'Peserta yang melewati kuota masuk daftar tunggu otomatis.': 'Participants over the quota go to the waiting list automatically.',
+  'Batal dan pengembalian': 'Cancellation and refund', 'Ubah status peserta jadi Batal, lalu catat pengembalian di sini. Potongan dihitung dari uang yang sudah dibayar.': 'Set the participant status to Cancelled, then record the refund here. The deduction is calculated from the money already paid.',
+  'Potongan (%)': 'Deduction (%)', 'Biaya admin tetap (Rp)': 'Fixed admin fee (Rp)', 'Simpan aturan': 'Save rules', 'Catat pengembalian': 'Record refund', 'Selesai': 'Done', 'Tidak ada': 'None', 'Belum ada peserta batal.': 'No cancelled participants yet.',
+  'Daftar bawaan peserta': 'Participant packing list', 'Barang berjenis Pribadi dibawa dan dibeli peserta sendiri, tidak masuk biaya sewa.': 'Items of type Personal are brought or bought by participants themselves and are not part of the rental cost.',
+  '📄 Unduh PDF daftar bawaan': '📄 Download packing list PDF', '💬 Bagikan ke WhatsApp': '💬 Share to WhatsApp', 'Belum ada barang berjenis Pribadi.': 'No items of type Personal yet.',
+  'Ringkasan upah': 'Wage summary', '➡️ Masukkan Total Upah ke Pengeluaran': '➡️ Add Total Wages to Expenses', '+ Upah kru dari tab Kru Panitia': '+ Crew wages from the Crew tab',
+  'Tagihan per grup': 'Bills per group', 'Isi kolom Grup di tab Tamu (misalnya nama rombongan) untuk melihat tagihan per grup.': 'Fill the Group column in the Guests tab (for example the party name) to see bills per group.', '💬 Tagih grup': '💬 Bill group',
+  'Sudah termasuk / belum termasuk': 'Included / not included', 'Satu baris satu butir. Ikut di pesan tagihan peserta.': 'One item per line. Included in the participant bill message.', 'Sudah termasuk': 'Included', 'Belum termasuk': 'Not included'
+});
 </script>
 </body>
 </html>
