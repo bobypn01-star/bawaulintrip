@@ -348,6 +348,7 @@ header{grid-template-columns:64px 1fr 64px;align-items:center;column-gap:8px;pad
 .v3 .li{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid rgba(251,191,36,.1);font-size:13px}.v3 .li:last-child{border:0}.v3 .li span{min-width:0;overflow:hidden;text-overflow:ellipsis}
 .v3 .bd{padding:3px 9px;border-radius:999px;font-size:11px;font-weight:700;flex:none}.v3 .bd.g3{background:rgba(34,197,94,.16);color:#86efac}.v3 .bd.y3{background:rgba(251,191,36,.16);color:#fde68a}.v3 .bd.r3{background:rgba(239,68,68,.16);color:#fca5a5}
 .v3 .kb3{height:5px;border-radius:3px;background:rgba(255,255,255,.08);margin-top:5px;overflow:hidden}.v3 .kb3 div{height:100%;background:linear-gradient(90deg,#f97316,#fbbf24)}
+.v3 .imp{width:100%;margin-top:14px;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border-radius:16px;background:rgba(23,23,27,.9);border:1px dashed rgba(251,191,36,.45);color:#fde68a;font-size:14px;font-weight:700;font-family:inherit}
 .v3 .box{margin-top:14px;padding:6px 16px;border-radius:18px;background:rgba(23,23,27,.9);border:1px solid rgba(251,191,36,.18)}
 </style>
 
@@ -388,7 +389,7 @@ const KEYS = Object.keys(CFG);
 
 /* ===== Penyimpanan lokal (IndexedDB) ===== */
 let DB, cur = 'dashboard', editId = null;
-const blank = () => ({ set: { destinasi: '', realisasi: 0 }, tamu: [], pemasukan: [], pengeluaran: [], itinerary: [], perlengkapan: [], checklist: [], arsip: [], sim: [], simAktif: null, pin: null, ganti: {}, kat: {}, ulang: [], seen: {}, trash: [], log: [], pribadi: [], lastBackup: 0, seq: 1, pref: {}, profil: {}, kw: {}, nomor: {} });
+const blank = () => ({ set: { destinasi: '', realisasi: 0 }, tamu: [], pemasukan: [], pengeluaran: [], itinerary: [], perlengkapan: [], checklist: [], arsip: [], sim: [], simAktif: null, pin: null, ganti: {}, kat: {}, ulang: [], seen: {}, trash: [], log: [], pribadi: [], lastBackup: 0, seq: 1, pref: {}, profil: {}, kw: {}, nomor: {}, slot: {} });
 function idb() { return new Promise((ok, no) => { const r = indexedDB.open('budgeting', 1); r.onupgradeneeded = () => r.result.createObjectStore('kv'); r.onsuccess = () => ok(r.result); r.onerror = () => no(r.error); }); }
 async function load() { const d = await idb(); return new Promise(ok => { const q = d.transaction('kv').objectStore('kv').get('db'); q.onsuccess = () => ok(q.result || null); q.onerror = () => ok(null); }); }
 async function save() { const d = await idb(); return new Promise(ok => { const t = d.transaction('kv', 'readwrite'); t.objectStore('kv').put(DB, 'db'); t.oncomplete = ok; t.onerror = ok; }); }
@@ -588,11 +589,66 @@ function drawCl() {
 }
 
 /* ===== Trip baru, arsip & cadangan ===== */
+const ringkasNow = () => { const d = dash(); return 'Pemasukan ' + rp(d.masuk) + '; Pengeluaran ' + rp(d.keluar) + '; Saldo ' + rp(d.saldo) + '; Tamu diterima ' + DB.tamu.filter(t => t['Status'] === 'Diterima').length; };
+function snapData() { const s = JSON.parse(JSON.stringify(DB)); ['arsip', 'pin', 'sim', 'trash', 'pref', 'profil', 'kw', 'nomor', 'slot'].forEach(k => delete s[k]); return s; }
 function snapshot() {
-  const d = dash(), s = JSON.parse(JSON.stringify(DB)); delete s.arsip; delete s.pin; delete s.sim; delete s.trash; delete s.pref; delete s.profil; delete s.kw; delete s.nomor;
-  return { id: DB.seq++, tanggal: new Date().toLocaleString('id-ID'), destinasi: d.destinasi, jenis: modeAktif(),
-    ringkasan: 'Pemasukan ' + rp(d.masuk) + '; Pengeluaran ' + rp(d.keluar) + '; Saldo ' + rp(d.saldo) + '; Tamu diterima ' + DB.tamu.filter(t => t['Status'] === 'Diterima').length, data: s };
+  const d = dash(); ensureUid(); const s = snapData();
+  return { id: DB.seq++, tanggal: new Date().toLocaleString('id-ID'), destinasi: d.destinasi, jenis: modeAktif(), uid: DB.set.uid, ringkasan: ringkasNow(), data: s };
 }
+/* v4.0.0: arsip baru dengan uid sama seperti arsip hasil impor menggantikannya (setelah konfirmasi) */
+function pushArsip(a) {
+  const i = a.uid ? DB.arsip.findIndex(x => x.impor && x.uid === a.uid) : -1;
+  if (i >= 0 && confirm('Ada arsip hasil impor untuk trip yang sama (' + (DB.arsip[i].destinasi || 'tanpa nama') + '). Ganti dengan versi ini?')) { a.id = DB.arsip[i].id; DB.arsip[i] = a; } else DB.arsip.push(a);
+}
+/* v4.0.0: file rekap trip (JSON) untuk dibagikan ke penyelenggara lain, dan impornya */
+async function rekapEkspor(src) {
+  let uid, jenis, destinasi, ringkasan, data;
+  if (src === 'now') {
+    if (!hasData() && !DB.set.destinasi) return toast('Belum ada trip berjalan untuk diekspor');
+    if (!confirm('File rekap berisi nama dan nomor HP peserta. Kirim hanya ke orang yang berhak. Lanjut?')) return;
+    uid = ensureUid(); jenis = modeAktif(); destinasi = DB.set.destinasi || ''; ringkasan = ringkasNow(); data = snapData(); await save();
+  } else {
+    const a = DB.arsip.find(x => x.id === src); if (!a) return;
+    if (!confirm('File rekap berisi nama dan nomor HP peserta. Kirim hanya ke orang yang berhak. Lanjut?')) return;
+    if (!a.uid) { a.uid = (a.data && a.data.set && a.data.set.uid) || newUid(); await save(); }
+    uid = a.uid; jenis = jenisArsip(a); destinasi = a.destinasi || ''; ringkasan = a.ringkasan || ''; data = JSON.parse(JSON.stringify(a.data));
+  }
+  data.set = data.set || {}; data.set.uid = uid; data.set.jenis = jenis; SET_PRIV.forEach(k => delete data.set[k]);
+  const sim = DB.sim.filter(x => x.jenis === jenis).map(x => ({ nama: x.nama, data: x.data, diubah: x.diubah, jenis }));
+  const txt = JSON.stringify({ format: 'bawaulin-rekap', v: 1, uid, jenis, destinasi, diekspor: new Date().toISOString(), dari: namaP(), ringkasan, data, simulasi: sim }, null, 1);
+  const nm = 'rekap-' + jenis + '-' + (destinasi || 'trip').replace(/\W+/g, '-') + '-' + today() + '.json', f = new File([txt], nm, { type: 'application/json' });
+  try {
+    if (navigator.canShare && navigator.canShare({ files: [f] })) await navigator.share({ files: [f], title: 'Rekap trip ' + (destinasi || '') }); else { download(nm, txt); toast('File rekap diunduh'); }
+  } catch (e) { if (!e || e.name !== 'AbortError') { download(nm, txt); toast('File rekap diunduh'); } }
+}
+const bacaTeks = f => new Promise((ok, no) => { const r = new FileReader(); r.onload = () => ok(r.result); r.onerror = () => no(r.error); r.readAsText(f); });
+async function rekapImpor(files) {
+  files = Array.from(files || []); if (!files.length) return;
+  if (kunciOn()) return toast('Impor rekap trip adalah fitur Puncak');
+  const ok = [], gagal = [];
+  for (const f of files) {
+    try {
+      if (f.size > 8e6) throw 0;
+      const j = JSON.parse(await bacaTeks(f)), d = j && j.data;
+      if (!j || j.format !== 'bawaulin-rekap' || !(+j.v >= 1) || +j.v > 1 || typeof j.uid !== 'string' || !j.uid || !MODES.some(m => m.id === j.jenis) || !d || typeof d !== 'object' || !d.set || typeof d.set !== 'object') throw 0;
+      KEYS.concat(['checklist']).forEach(k => { if (!Array.isArray(d[k])) d[k] = []; });
+      ['arsip', 'pin', 'sim', 'trash', 'pref', 'profil', 'kw', 'nomor', 'slot'].forEach(k => delete d[k]); SET_PRIV.forEach(k => delete d.set[k]);
+      d.set.uid = j.uid; d.set.jenis = j.jenis;
+      ok.push({ uid: j.uid, jenis: j.jenis, destinasi: String(j.destinasi || ''), ringkasan: String(j.ringkasan || ''), dari: String(j.dari || ''), diekspor: String(j.diekspor || ''), data: d, sim: Array.isArray(j.simulasi) ? j.simulasi : [], st: tripStat(d, String(j.destinasi || ''), '') });
+    } catch (e) { gagal.push(f.name); }
+  }
+  if (!ok.length) return toast('File rekap tidak valid');
+  if (!confirm('Tambahkan ' + ok.length + ' rekap ke Arsip?\n' + ok.map(x => '• ' + (x.destinasi || '(tanpa nama)') + ' (' + modeOf(x.jenis).nama + ') · ' + x.st.ps + ' peserta · masuk ' + rp(x.st.masuk)).join('\n') + (gagal.length ? '\n\n' + gagal.length + ' file tidak valid dilewati.' : '') + '\n\nData trip berjalan tidak berubah.')) return;
+  let baru = 0, ganti = 0;
+  for (const x of ok) {
+    const i = DB.arsip.findIndex(a => a.uid === x.uid), ent = { id: DB.seq++, tanggal: new Date().toLocaleString('id-ID'), destinasi: x.destinasi, jenis: x.jenis, uid: x.uid, ringkasan: x.ringkasan, data: x.data, impor: true, dari: x.dari, diekspor: x.diekspor };
+    if (i >= 0) { if (!confirm('Rekap ' + (x.destinasi || '(tanpa nama)') + ' sudah ada di Arsip. Ganti dengan versi dari file ini?')) continue; ent.id = DB.arsip[i].id; DB.arsip[i] = ent; ganti++; } else { DB.arsip.push(ent); baru++; }
+    x.sim.forEach(sc => { if (sc && sc.nama && sc.data && typeof sc.data === 'object' && Array.isArray(sc.data.items) && !DB.sim.some(e => String(e.nama).toLowerCase() === String(sc.nama).toLowerCase() && (e.jenis || '') === x.jenis)) DB.sim.push({ id: DB.seq++, nama: String(sc.nama), data: sc.data, diubah: String(sc.diubah || ''), jenis: x.jenis }); });
+  }
+  await save(); if (V3.l) v3Gambar();
+  toast(baru + ' rekap ditambahkan' + (ganti ? ', ' + ganti + ' diganti' : ''));
+}
+const v3Imp = () => `<button class="imp" onclick="$('rimp').click()">⬆️ Impor rekap trip</button><input type="file" id="rimp" accept=".json,application/json" multiple hidden onchange="rekapImpor(this.files);this.value=''">`;
 function arsipUnduh(id) { const a = DB.arsip.find(x => x.id === id); download('arsip-' + (a.destinasi || 'trip').replace(/\W+/g, '-') + '.json', JSON.stringify(a, null, 1)); }
 async function arsipHapus(id) { const i = DB.arsip.findIndex(x => x.id === id); if (i < 0) return; const it = DB.arsip[i]; DB.arsip.splice(i, 1); await save(); renderTrip(); toast('Arsip dihapus', async () => { DB.arsip.splice(Math.min(i, DB.arsip.length), 0, it); await save(); renderTrip(); }); }
 function impor(file) {
@@ -600,9 +656,9 @@ function impor(file) {
   const r = new FileReader();
   r.onload = async () => {
     try {
-      const d = JSON.parse(r.result); if (!d || !d.set || !d.pengeluaran) throw 0;
+      const d = JSON.parse(r.result); if (d && d.format === 'bawaulin-rekap') return setMsg('bmsg', 'Ini file rekap trip, bukan cadangan. Pakai Impor rekap trip di halaman Rekap.', 0); if (!d || !d.set || !d.pengeluaran) throw 0;
       if (!confirm('Data saat ini akan DITIMPA oleh isi cadangan. Lanjut?')) return;
-      DB = Object.assign(blank(), d); if (DB.pin) delete DB.pin.bio; applyKat(); await save(); chipMode(); renderTrip(); setMsg('bmsg', 'Cadangan berhasil dipulihkan.', 1);
+      DB = Object.assign(blank(), d); if (!DB.slot || typeof DB.slot !== 'object') DB.slot = {}; if (DB.pin) delete DB.pin.bio; applyKat(); await save(); chipMode(); renderTrip(); setMsg('bmsg', 'Cadangan berhasil dipulihkan.', 1);
     } catch (e) { setMsg('bmsg', 'File cadangan tidak valid.', 0); }
   };
   r.readAsText(file);
@@ -629,8 +685,9 @@ function simCalc(s, p) {
 function renderSim() {
   if (kunciOn()) { $('main').innerHTML = kunciHtml('Simulasi', 'Simulasi adalah fitur Puncak. Skenario kamu aman dan terbuka lagi di Puncak.', 'Untuk hitung cepat, pakai Menu › Kalkulator › Hitung Trip (tetap gratis).'); return; }
   SIM = SIM || simDef();
-  $('main').innerHTML = `<div class="card"><h3>Skenario Simulasi</h3><select id="ssel"><option value="">-- Pilih skenario tersimpan --</option>${DB.sim.map(x => `<option value="${x.id}">${esc(x.nama)} (${esc(x.diubah)})</option>`).join('')}</select>
+  $('main').innerHTML = `<div class="card"><h3>Skenario Simulasi</h3><select id="ssel"><option value="">-- Pilih skenario tersimpan --</option>${simList().map(x => `<option value="${x.id}">${esc(x.nama)} (${esc(x.diubah)})</option>`).join('')}</select>
   <div class="flt"><button class="btn alt" onclick="simLoad()">Muat</button><button class="btn" onclick="simSave()">Simpan</button><button class="btn alt" onclick="simDel()">Hapus</button><button class="btn alt" onclick="SIM=simDef();renderSim()">Form baru</button></div><div id="smsg" class="msg"></div></div>
+  ${simRekapCard()}
   <div class="card"><h3>Parameter</h3><label>Nama simulasi / destinasi</label><input value="${esc(SIM.nama)}" oninput="SIM.nama=this.value">
   ${[['Jumlah peserta', 'peserta'], ['Jumlah official', 'official'], ['Harga jual per peserta (Rp)', 'harga', 1], ['Target keuntungan per official (Rp)', 'target', 1]].map(([l, k, m]) => `<label>${l}</label>` + (m ? `<input type="text" inputmode="numeric" value="${fmtN(SIM[k])}" oninput="fmtNum(this);SIM.${k}=numVal(this.value);drawSim()">` : `<input type="number" inputmode="decimal" value="${SIM[k]}" oninput="SIM.${k}=+this.value||0;drawSim()">`)).join('')}
   <div style="margin-top:10px"><input type="checkbox" ${SIM.ikut ? 'checked' : ''} onchange="SIM.ikut=this.checked;drawSim()"> Official ikut berangkat (biaya ikut ditanggung)</div></div>
@@ -666,9 +723,19 @@ function drawSim() {
 const tab = (h, rows) => rows.length ? `<div class="tbl"><table><tr>${h.map(x => `<th>${esc(x)}</th>`).join('')}</tr>${rows.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</table></div>` : '<div>Belum ada data.</div>';
 async function simSave() {
   const nm = String(SIM.nama || '').trim(); if (!nm) return setMsg('smsg', 'Isi nama simulasi dulu', 0);
-  const ex = DB.sim.find(x => x.nama.toLowerCase() === nm.toLowerCase()), o = { nama: nm, data: JSON.parse(JSON.stringify(SIM)), diubah: new Date().toLocaleString('id-ID') };
-  if (ex) Object.assign(ex, o); else DB.sim.push(Object.assign({ id: DB.seq++ }, o));
+  const ex = simList().find(x => x.nama.toLowerCase() === nm.toLowerCase()), o = { nama: nm, data: JSON.parse(JSON.stringify(SIM)), diubah: new Date().toLocaleString('id-ID') };
+  if (ex) Object.assign(ex, o); else DB.sim.push(Object.assign({ id: DB.seq++, jenis: modeAktif() }, o));
   await save(); renderSim(); setMsg('smsg', 'Simulasi "' + nm + '" disimpan.', 1);
+}
+/* v4.0.0: skenario tiap mode; skenario lama tanpa jenis tampil di semua mode */
+const simList = () => DB.sim.filter(x => !x.jenis || x.jenis === modeAktif());
+function simMuat(id) { const x = DB.sim.find(v => v.id === id); if (!x) return; SIM = JSON.parse(JSON.stringify(x.data)); renderSim(); window.scrollTo(0, 0); }
+function simRekapCard() {
+  const L = simList(), m = modeOf(modeAktif()), bt = 'display:block;width:100%;text-align:left;padding:10px 0;border:0;border-bottom:1px solid var(--bd);background:none;color:inherit;font:inherit;cursor:pointer';
+  return `<div class="card"><h3>📊 Rekap Simulasi</h3><small class="mut"><span class="badge" style="background:${m.warna}22;color:${m.warna}">${esc(m.nama)}</span></small>` + (L.length ? `<small class="mut" style="display:block;margin-top:6px">Ketuk skenario untuk memuatnya ke form.</small>` + L.map(x => {
+    const d = x.data || {}, p = +d.peserta || 0, r = simCalc(Object.assign(simDef(), d, { items: d.items || [] }), p);
+    return `<button style="${bt}" onclick="simMuat(${x.id})"><b>${esc(x.nama)}</b><span style="float:right;font-weight:700;color:${r.profit >= 0 ? '#16a34a' : '#dc2626'}">${r.profit >= 0 ? '+ ' : '- '}${rp(Math.abs(r.profit))}</span><small class="mut" style="display:block">${p} peserta · harga jual ${rp(d.harga)} · total biaya ${rp(r.total)}</small><small class="mut" style="display:block">per official ${rp(r.perOff)} · diubah ${esc(x.diubah || '-')}</small></button>`;
+  }).join('') : '<div style="margin-top:8px">Belum ada skenario tersimpan di mode ini.</div>') + '</div>';
 }
 function simLoad() { const x = DB.sim.find(s => String(s.id) === $('ssel').value); if (!x) return setMsg('smsg', 'Pilih skenario dulu', 0); SIM = JSON.parse(JSON.stringify(x.data)); renderSim(); }
 async function simDel() { const id = $('ssel').value; if (!id) return setMsg('smsg', 'Pilih skenario dulu', 0); const i = DB.sim.findIndex(s => String(s.id) === id); if (i < 0) return; const it = DB.sim[i]; DB.sim.splice(i, 1); await save(); renderSim(); toast('Skenario dihapus', async () => { DB.sim.splice(Math.min(i, DB.sim.length), 0, it); await save(); renderSim(); }); }
@@ -998,6 +1065,32 @@ function clText() {
 
 /* ===== Trip baru (reset total) & arsip ===== */
 const hasData = () => KEYS.some(k => DB[k].length) || DB.checklist.length;
+/* ===== v4.0.0: tiga trip sekaligus (satu per mode). DB.slot menyimpan trip mode NON-aktif; data tingkat atas = trip mode aktif ===== */
+const TRIP_TOP = KEYS.concat(['checklist', 'simAktif', 'ganti', 'ulang', 'pribadi', 'log']);
+const SET_PER = ['destinasi', 'realisasi', 'tenggat', 'tagihan', 'lunasTf', 'kodeDest', 'tutup', 'jenis', 'uid'];
+const SET_PRIV = ['cara', 'qris', 'rek', 'pencatat', 'daftarUrl', 'daftarKey'];
+const SET_DEF = () => ({ destinasi: '', realisasi: 0, tenggat: '', tagihan: 0, lunasTf: {}, kodeDest: '', tutup: null });
+const TRIP_DEF = k => k === 'simAktif' ? null : k === 'ganti' ? {} : [];
+const kl3 = x => x === undefined ? x : JSON.parse(JSON.stringify(x));
+const newUid = () => 't' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+function ensureUid() { if (!DB.set.uid) DB.set.uid = newUid(); return DB.set.uid; }
+const hasDataT = t => !!t && (KEYS.some(k => (t[k] || []).length) || (t.checklist || []).length > 0);
+const tripIsi = t => !!t && (hasDataT(t) || !!(t.set && (t.set.destinasi || +t.set.realisasi || (t.set.tutup && t.set.tutup.on))));
+const slotAda = id => !!(DB && DB.slot && tripIsi(DB.slot[id]));
+function slotFull(id) { const t = DB.slot[id]; return Object.assign({}, t, { set: Object.assign({}, DB.set, t.set || {}) }); }
+function ambilTrip() { const t = {}; TRIP_TOP.forEach(k => { t[k] = DB[k] === undefined ? TRIP_DEF(k) : kl3(DB[k]); }); t.set = {}; SET_PER.forEach(k => { if (DB.set[k] !== undefined) t.set[k] = kl3(DB.set[k]); }); return t; }
+function kosongTrip(id) { const t = {}; TRIP_TOP.forEach(k => { t[k] = TRIP_DEF(k); }); t.set = Object.assign(SET_DEF(), { jenis: id, uid: newUid() }); return t; }
+function muatTrip(t) {
+  TRIP_TOP.forEach(k => { DB[k] = t[k] === undefined ? TRIP_DEF(k) : kl3(t[k]); });
+  const g = {}; Object.keys(DB.set || {}).forEach(k => { if (SET_PER.indexOf(k) < 0) g[k] = DB.set[k]; });
+  DB.set = Object.assign(g, SET_DEF(), kl3(t.set || {})); SIM = null;
+}
+function tukarMode(id) {
+  const lama = modeAktif(); if (id === lama) return; DB.slot = DB.slot || {};
+  const cur = ambilTrip(); cur.set.jenis = lama; if (tripIsi(cur)) DB.slot[lama] = cur; else delete DB.slot[lama];
+  const nxt = DB.slot[id]; delete DB.slot[id];
+  muatTrip(nxt || kosongTrip(id)); DB.set.jenis = id; DB.mode = id;
+}
 /* v1.5.0: tutup buku trip. Transaksi uang (Pemasukan, Pengeluaran, Catat bayar, Talangan, berulang, impor) dikunci sampai dibuka sengaja */
 const tutupOn = () => !!(DB && DB.set && DB.set.tutup && DB.set.tutup.on);
 const UANG = k => k === 'pemasukan' || k === 'pengeluaran';
@@ -1030,7 +1123,7 @@ function tutupCard() {
 async function tutupBuku() {
   if (tutupOn()) return; if ($('tk').value.trim().toUpperCase() !== 'TUTUP') return setMsg('tkmsg', 'Ketik TUTUP dulu untuk konfirmasi.', 0);
   if (!confirm('Buku trip ditutup dan transaksi uang dikunci. Arsip cadangan dibuat otomatis. ' + PUNCAK_NOTE() + 'Lanjut?')) return;
-  DB.arsip.push(Object.assign(snapshot(), { auto: true })); DB.set.tutup = { on: true, tgl: today(), kali: +(DB.set.tutup && DB.set.tutup.kali) || 0 }; logAdd('tutup', '', null, { n: 'Buku trip ditutup' });
+  pushArsip(Object.assign(snapshot(), { auto: true })); DB.set.tutup = { on: true, tgl: today(), kali: +(DB.set.tutup && DB.set.tutup.kali) || 0 }; logAdd('tutup', '', null, { n: 'Buku trip ditutup' });
   await save(); renderTrip(); setMsg('tkmsg', 'Buku trip ditutup. Arsip cadangan sudah dibuat.', 1); setTimeout(cadangAjak, 700); selLapor();
 }
 function cadangAjak() { if ($('fsheet') || (DB.lastBackup && hariLalu(DB.lastBackup) < 1)) return; sheetOpen(`<h3>Trip selesai</h3><div class="zli">Buku trip sudah ditutup. Cadangkan datanya sekarang supaya aman bila HP hilang atau rusak.</div><button class="btn" onclick="$('fsheet').remove();bagikanCadangan()">📤 Cadangkan sekarang</button><button class="btn alt" onclick="$('fsheet').remove()">Nanti</button>`); }
@@ -1080,7 +1173,8 @@ async function logKosong() {
 function renderTrip() {
   $('main').innerHTML = `${tutupCard()}${logCard()}
   <div class="card"><h3>Arsipkan Trip yang Sudah Selesai</h3><small class="mut">Menyimpan salinan seluruh data trip ini ke daftar arsip. Data yang berjalan tidak berubah.</small>
-    <button class="btn" onclick="arsipkan(false)">🗂️ Arsipkan sekarang</button><div id="tmsg" class="msg"></div></div>
+    <button class="btn" onclick="arsipkan(false)">🗂️ Arsipkan sekarang</button>
+    <button class="btn alt" onclick="rekapEkspor('now')">📤 Ekspor rekap trip berjalan</button><div id="tmsg" class="msg"></div></div>
   <div class="card"><h3>Mulai Trip Baru</h3><div class="warn yellow">Trip yang sedang berjalan diarsipkan otomatis, lalu SEMUA data (tamu, pemasukan, pengeluaran, itinerary, perlengkapan, checklist, simulasi) dikosongkan.</div>
     <label>Destinasi trip baru (opsional)</label><input id="nd">
     <label>Total Realisasi trip baru (Rp, opsional)</label><input id="nr" type="number" inputmode="decimal">
@@ -1093,8 +1187,8 @@ function renderTrip() {
     <button class="btn red" onclick="salinTemplate()">📑 Arsipkan & salin sebagai template</button><div id="t3msg" class="msg"></div></div>`}
   <div class="card"><h3>Daftar Arsip (${DB.arsip.length})</h3>
     <div class="fjr">${[['semua', 'Semua']].concat(MODES.map(m => [m.id, m.pendek])).map(x => `<button class="fj${FJ === x[0] ? ' on3' : ''}" onclick="setFJ('${x[0]}')">${x[1]}</button>`).join('')}</div>
-    ${arsipFilter().length ? arsipFilter().map(a => `<div style="padding:8px 0;border-bottom:1px solid var(--bd)"><b>${esc(a.destinasi || '(tanpa nama)')} - ${esc(a.tanggal)}</b> <span class="badge" style="background:${modeOf(jenisArsip(a)).warna}22;color:${modeOf(jenisArsip(a)).warna}">${esc(modeOf(jenisArsip(a)).nama)}</span>${a.auto ? ' <span class="badge y">backup otomatis</span>' : ''}<div>${esc(a.ringkasan)}</div>
-      <button class="edt" onclick="arsipBuka(${a.id})">Buka</button><button class="edt" onclick="arsipUnduh(${a.id})">Unduh</button><button class="del" onclick="arsipHapus(${a.id})">Hapus</button></div>`).join('') : '<div>Belum ada arsip.</div>'}
+    ${arsipFilter().length ? arsipFilter().map(a => `<div style="padding:8px 0;border-bottom:1px solid var(--bd)"><b>${esc(a.destinasi || '(tanpa nama)')} - ${esc(a.tanggal)}</b> <span class="badge" style="background:${modeOf(jenisArsip(a)).warna}22;color:${modeOf(jenisArsip(a)).warna}">${esc(modeOf(jenisArsip(a)).nama)}</span>${a.auto ? ' <span class="badge y">backup otomatis</span>' : ''}${a.impor ? ' <span class="badge y">Impor</span>' : ''}<div>${esc(a.ringkasan)}</div>
+      <button class="edt" onclick="arsipBuka(${a.id})">${a.impor ? 'Buka & edit' : 'Buka'}</button><button class="edt" onclick="rekapEkspor(${a.id})">Ekspor rekap</button><button class="del" onclick="arsipHapus(${a.id})">Hapus</button></div>`).join('') : '<div>Belum ada arsip.</div>'}
     <small class="mut">"Buka" memuat seluruh isi arsip ke aplikasi. Jika trip yang sedang berjalan berisi data, ia disimpan otomatis sebagai backup di daftar arsip.</small></div>
   ${trashCard()}<div class="card"><h3>🧹 Reset Total</h3><div class="warn red">Menghapus SEMUA data di aplikasi ini (data aktif, arsip, simulasi tersimpan, bukti nota). Tidak bisa dibatalkan. Unduh cadangan dulu jika perlu.</div><label>Ketik HAPUS untuk konfirmasi</label><input id="rst" placeholder="HAPUS"><button class="btn red" onclick="resetTotal()">Kosongkan semua data</button><div id="rmsg" class="msg"></div></div>
   <div class="card"><h3>💾 Cadangan Data</h3><small class="mut">Data tersimpan di HP ini. Unduh cadangan berkala (atau sebelum uninstall / ganti HP), simpan ke Google Drive atau WhatsApp.</small>
@@ -1103,12 +1197,12 @@ function renderTrip() {
     <input type="file" id="imp" accept=".json,application/json" style="display:none" onchange="impor(this.files[0])"><div id="bmsg" class="msg"></div></div>`;
 }
 async function arsipkan(baru) {
-  if (!baru) { DB.arsip.push(snapshot()); await save(); renderTrip(); return setMsg('tmsg', 'Arsip dibuat.', 1); }
+  if (!baru) { pushArsip(snapshot()); await save(); renderTrip(); return setMsg('tmsg', 'Arsip dibuat.', 1); }
   if ($('kf').value.trim().toUpperCase() !== 'BARU') return setMsg('t2msg', 'Ketik BARU dulu untuk konfirmasi.', 0);
   if (!confirm('Trip saat ini diarsipkan, lalu semua data dikosongkan. ' + PUNCAK_NOTE() + 'Lanjut?')) return;
-  if (hasData()) DB.arsip.push(snapshot());
+  if (hasData()) pushArsip(snapshot());
   KEYS.forEach(k => DB[k] = []); DB.checklist = []; DB.simAktif = null; SIM = null;
-  DB.set = Object.assign({}, DB.set, { destinasi: $('nd').value.trim(), realisasi: Number($('nr').value) || 0, tenggat: '', lunasTf: {}, kodeDest: '', tutup: null }); DB.ganti = {}; DB.ulang = []; DB.pribadi = []; DB.log = [];
+  DB.set = Object.assign({}, DB.set, { destinasi: $('nd').value.trim(), realisasi: Number($('nr').value) || 0, tenggat: '', tagihan: 0, lunasTf: {}, kodeDest: '', tutup: null, uid: newUid() }); DB.ganti = {}; DB.ulang = []; DB.pribadi = []; DB.log = [];
   await save(); renderTrip(); setMsg('t2msg', 'Trip baru siap. Semua data sudah kosong; trip lama ada di arsip.', 1); selLapor();
 }
 /* v1.2.0: trip baru dari template (itinerary, checklist, kategori terbawa; peserta dan uang kosong) */
@@ -1125,22 +1219,29 @@ async function salinTemplate() {
   if (kunciOn()) return toast('Salin Trip sebagai Template adalah fitur Puncak');
   if ($('sk').value.trim().toUpperCase() !== 'SALIN') return setMsg('t3msg', 'Ketik SALIN dulu untuk konfirmasi.', 0);
   if (!confirm('Trip saat ini diarsipkan, lalu trip baru dibuat dari itinerary dan checklist-nya. ' + PUNCAK_NOTE() + 'Lanjut?')) return;
-  const diarsip = hasData(); if (diarsip) DB.arsip.push(snapshot());
+  const diarsip = hasData(); if (diarsip) pushArsip(snapshot());
   const itin = templateItin(DB.itinerary, $('st').value), cl = templateCl(DB.checklist);
   KEYS.forEach(k => DB[k] = []); DB.itinerary = itin; DB.checklist = cl; DB.simAktif = null; SIM = null;
-  DB.set = Object.assign({}, DB.set, { destinasi: $('sd').value.trim(), realisasi: 0, tenggat: '', lunasTf: {}, kodeDest: '', tutup: null }); DB.ganti = {}; DB.ulang = []; DB.pribadi = []; DB.log = [];
+  DB.set = Object.assign({}, DB.set, { destinasi: $('sd').value.trim(), realisasi: 0, tenggat: '', tagihan: 0, lunasTf: {}, kodeDest: '', tutup: null, uid: newUid() }); DB.ganti = {}; DB.ulang = []; DB.pribadi = []; DB.log = [];
   await save(); renderTrip(); setMsg('t3msg', 'Trip baru dari template siap: ' + itin.length + ' kegiatan dan ' + cl.length + ' barang checklist.' + (diarsip ? ' Trip lama ada di arsip.' : ''), 1); selLapor();
 }
 async function arsipBuka(id) {
-  const a = DB.arsip.find(x => x.id === id); if (!a || !confirm('Buka arsip ini? Trip yang sedang berjalan (jika berisi data) disimpan otomatis ke daftar arsip.')) return;
-  if (hasData()) DB.arsip.push(Object.assign(snapshot(), { auto: true }));
-  const d = JSON.parse(JSON.stringify(a.data));
-  KEYS.concat(['checklist']).forEach(k => DB[k] = d[k] || []);
-  DB.set = d.set || { destinasi: '', realisasi: 0 }; DB.simAktif = d.simAktif || null; SIM = null; DB.ganti = d.ganti || {}; DB.ulang = d.ulang || []; DB.pribadi = d.pribadi || []; DB.log = d.log || [];
-  DB.set.jenis = jenisArsip(a); DB.mode = DB.set.jenis;
-  DB.seq = Math.max(DB.seq, d.seq || 0); await save(); renderTrip(); chipMode(); setMsg('tmsg', 'Arsip dibuka. Seluruh isinya sekarang menjadi data aktif.', 1);
+  const a = DB.arsip.find(x => x.id === id); if (!a) return;
+  const j = jenisArsip(a), now = modeAktif(), mj = modeOf(j).nama;
+  if (a.impor && (j === now ? hasData() : slotAda(j))) return alert('Mode ' + mj + ' masih berisi trip. Arsipkan dulu trip itu di Trip & Arsip, baru buka rekap impor ini untuk diedit.');
+  if (!a.impor && j !== now && slotAda(j)) return alert('Mode ' + mj + ' sedang punya trip berjalan. Ganti ke mode itu dan arsipkan trip-nya dulu, baru buka arsip ini.');
+  if (!confirm(a.impor ? 'Buka rekap impor ini untuk diedit? Isinya dimuat sebagai trip berjalan di mode ' + mj + '.' : 'Buka arsip ini? Trip yang sedang berjalan (jika berisi data) disimpan otomatis ke daftar arsip.')) return;
+  if (j !== now && !kunciOn()) tukarMode(j);
+  else if (hasData()) DB.arsip.push(Object.assign(snapshot(), { auto: true }));
+  const d = JSON.parse(JSON.stringify(a.data)), t = {};
+  TRIP_TOP.forEach(k => { t[k] = d[k] === undefined ? TRIP_DEF(k) : d[k]; });
+  t.set = {}; SET_PER.forEach(k => { if (d.set && d.set[k] !== undefined) t.set[k] = d.set[k]; });
+  t.set.uid = a.uid || t.set.uid || newUid();
+  muatTrip(t);
+  if (a.impor && !offList().length && d.set && Array.isArray(d.set.officials)) DB.set.officials = d.set.officials;
+  DB.set.jenis = j; DB.mode = j; DB.seq = Math.max(DB.seq, d.seq || 0);
+  await save(); renderTrip(); chipMode(); setMsg('tmsg', 'Arsip dibuka. Seluruh isinya sekarang menjadi data aktif.' + (tutupOn() ? ' Buku trip ini tertutup; buka kuncinya di kartu paling atas bila mau mengedit.' : ''), 1);
 }
-
 /* ===== Tampilan modern: tema, menu bawah, lembar form ===== */
 const MAIN = ['dashboard', 'simulasi', 'rekap', 'akun'];
 const ICO = { dashboard: '<path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>', pemasukan: '<circle cx="12" cy="12" r="9"/><path d="M12 7v10M8 13l4 4 4-4"/>', pengeluaran: '<circle cx="12" cy="12" r="9"/><path d="M12 17V7M8 11l4-4 4 4"/>', rekap: '<path d="M5 3h10l4 4v14H5z"/><path d="M9 9h2M9 13h6M9 17h6"/>', simulasi: '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h2M12 12h2M8 16h2M12 16h2"/>', akun: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>', more: '<rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/>' };
@@ -1544,7 +1645,7 @@ function tripStat(d, nama, tgl) {
   return { nama, tgl, ps, masuk, keluar, untung: masuk - keluar, per: ps ? keluar / ps : 0, margin: masuk ? (masuk - keluar) / masuk * 100 : 0, kat };
 }
 function statData() {
-  const seen = {}, L = DB.arsip.map(a => tripStat(a.data, (a.destinasi || '(tanpa nama)') + (a.auto ? ' (backup)' : ''), a.tanggal)).concat([tripStat(DB, (DB.set.destinasi || '(tanpa nama)') + ' (berjalan)', 'Sekarang')])
+  const seen = {}, L = DB.arsip.map(a => tripStat(a.data, (a.destinasi || '(tanpa nama)') + (a.auto ? ' (backup)' : ''), a.tanggal)).concat([tripStat(DB, (DB.set.destinasi || '(tanpa nama)') + ' (berjalan)', 'Sekarang')]).concat(MODES.filter(m => m.id !== modeAktif() && slotAda(m.id)).map(m => { const t = slotFull(m.id); return tripStat(t, (t.set.destinasi || '(tanpa nama)') + ' (berjalan)', 'Sekarang'); }))
     .filter(x => { const k = [x.nama.replace(/ \(.*\)$/, ''), x.ps, x.masuk, x.keluar].join('|'); if ((!x.ps && !x.masuk && !x.keluar) || seen[k]) return false; return seen[k] = 1; });
   const cat = {}; L.forEach(x => Object.keys(x.kat).forEach(k => cat[k] = (cat[k] || 0) + x.kat[k]));
   const tk = Object.keys(cat).sort((a, b) => cat[b] - cat[a]), tot = sum(L, x => x.keluar), u = sum(L, x => x.untung), lines = [];
@@ -2433,6 +2534,16 @@ Object.entries({
 "Paket Rintis: setelah trip pertama selesai, beberapa fitur Puncak terkunci. Data kamu tetap aman.": "Rintis plan: after your first trip ends, some Puncak features are locked. Your data stays safe."
 }).forEach(([k, v]) => { if (!(k in EN)) EN[k] = v; });
 const EN_PAT = [
+  [/^Berjalan: (.+) · (\d+) peserta$/, (m) => 'In progress: ' + m[1] + ' · ' + m[2] + (m[2] === '1' ? ' participant' : ' participants')],
+  [/^(\d+) trip di riwayat$/, (m) => m[1] + (m[1] === '1' ? ' trip' : ' trips') + ' in history'],
+  [/^Skenario simulasi: (\d+)$/, (m) => 'Simulation scenarios: ' + m[1]],
+  [/^(\d+) rekap ditambahkan(?:, (\d+) diganti)?$/, (m) => m[1] + (m[1] === '1' ? ' recap' : ' recaps') + ' added' + (m[2] ? ', ' + m[2] + ' replaced' : '')],
+  [/^(\d+) peserta · harga jual (.+) · total biaya (.+)$/, (m) => m[1] + ' participants · selling price ' + m[2] + ' · total cost ' + m[3]],
+  [/^per official (.+) · diubah (.+)$/, (m) => 'per official ' + m[1] + ' · changed ' + m[2]],
+  [/^Mode (.+) masih berisi trip\. Arsipkan dulu trip itu di Trip & Arsip, baru buka rekap impor ini untuk diedit\.$/, (m) => 'The ' + m[1] + ' mode still has a trip. Archive that trip first in Trip & Archive, then open this imported recap to edit.'],
+  [/^Mode (.+) sedang punya trip berjalan\. Ganti ke mode itu dan arsipkan trip-nya dulu, baru buka arsip ini\.$/, (m) => 'The ' + m[1] + ' mode has a trip in progress. Switch to that mode and archive its trip first, then open this archive.'],
+  [/^Buka rekap impor ini untuk diedit\? Isinya dimuat sebagai trip berjalan di mode (.+)\.$/, (m) => 'Open this imported recap for editing? Its contents are loaded as the trip in progress in ' + m[1] + ' mode.'],
+  [/^Tambahkan (\d+) rekap ke Arsip\?/, (m) => 'Add ' + m[1] + ' recap(s) to the Archive? (details below, in Indonesian)'],
   [/^Fase trip pertama berakhir (\d+) hari lagi\. Setelah itu fitur Puncak terkunci\. Data aman\. Cadangkan sekarang\?$/, (m) => 'Your first-trip period ends in ' + m[1] + (m[1] === '1' ? ' day' : ' days') + '. After that, Puncak features are locked. Your data is safe. Back up now?'],
   [/^Latihan · sisa (\d+) hari$/, (m) => 'Practice · ' + m[1] + (m[1] === '1' ? ' day' : ' days') + ' left'],
   [/^Trip pertama · sisa (\d+) hari$/, (m) => 'First trip · ' + m[1] + (m[1] === '1' ? ' day' : ' days') + ' left'],
@@ -2610,7 +2721,7 @@ window.confirm = s => _cf(tr(s)); window.alert = s => _al(tr(s));
 document.documentElement.lang = LANG;
 if (LANG === 'en') { if (document.body) i18nRun(); }
 
-const APP_V = 'v3.1.1';
+const APP_V = 'v4.0.0';
 const CR = Object.freeze({ nama: 'bawaulin.trip', tag: 'Lieur gawe, Bawa ulin', ig: 'https://www.instagram.com/bawaulin.trip?srtk=d29rcmh1YXVrajVz', igh: '@bawaulin.trip', wa: 'https://wa.me/6289618805100', wah: '+62 896-1880-5100' });
 const CR_H = 'bdaae993647f576cf92a364af7443befdce2ceefffe6c926d596f7e52a001b37', LOGO_H = '3763dd402cc104c4f9cebcce4a37a936cf2e0606bb1dd2d261e030f0a6ccc9bb';
 let CR_OK = null, LOCKED = false, hiddenAt = 0, PRIV_OBS = null;
@@ -2807,10 +2918,10 @@ async function cekUpdate() {
 }
 
 /* v1.9.0: tanda Offline + pembaruan otomatis */
-const APP_NOTE_OLD = ["Warna aplikasi kini ikut mode: ungu (Open trip), biru (Tektok), hijau (Pendakian bersama).", "Ketuk logo di bagian atas untuk kembali ke halaman awal dan Rekap.", "Data dan lisensi kamu tidak berubah."];
-const APP_NOTE = ["Kartu di halaman Mode kini ikut warna pilihanmu untuk mode itu.", "Header dirapikan: logo lebih besar dan semua bagian sejajar presisi.", "Data dan lisensi kamu tidak berubah."];
-const APP_NOTE_EN_OLD = ["The app color now follows the mode: purple (Open trip), blue (Tektok), green (Group hike).", "Tap the logo at the top to return to the start screen and Recap.", "Your data and license are unchanged."];
-const APP_NOTE_EN = ["Cards on the Mode page now follow the color you chose for that mode.", "Header tidied up: bigger logo and everything precisely aligned.", "Your data and license are unchanged."];
+const APP_NOTE_OLD = ["Kartu di halaman Mode kini ikut warna pilihanmu untuk mode itu.", "Header dirapikan: logo lebih besar dan semua bagian sejajar presisi.", "Data dan lisensi kamu tidak berubah."];
+const APP_NOTE = ["Tiga trip bisa berjalan sekaligus, satu per mode. Ganti mode tanpa kehilangan data.", "Simulasi kini per mode, dengan kartu Rekap Simulasi. Ekspor rekap trip lalu impor di HP lain, bisa diedit kembali.", "Data dan lisensi kamu tidak berubah."];
+const APP_NOTE_EN_OLD = ["Cards on the Mode page now follow the color you chose for that mode.", "Header tidied up: bigger logo and everything precisely aligned.", "Your data and license are unchanged."];
+const APP_NOTE_EN = ["Three trips can now run at once, one per mode. Switch modes without losing data.", "Simulation is now per mode, with a Simulation Recap card. Export a trip recap and import it on another phone, editable again.", "Your data and license are unchanged."];
 let APP_SIAP = false;
 const lsGet = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
 const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
@@ -2893,7 +3004,8 @@ async function laporMasalah() {
   window._lapor = t;
 }
 function laporKirim() { const s = $('fsheet'); if (s) s.remove(); openWA(window._lapor || '', CR.wa.replace(/\D/g, '')); }
-const BARU = ["v3.1.1: kartu di halaman Pilih Mode, chip, dan Rekap kini ikut warna yang Anda pilih untuk mode itu (misalnya merah). Header dirapikan: logo lebih besar dan semua bagian sejajar presisi. Data dan lisensi tidak berubah.", "v3.1.0: warna aplikasi kini ikut mode (Open trip ungu, Tektok biru, Pendakian bersama hijau); warna pilihan sendiri di Pengaturan berlaku per mode, dan Otomatis mengembalikan warna mode. Logo di bagian atas kini tetap logo bawaulin.cash dan bisa diketuk untuk ke halaman awal dan Rekap (tulisan bawaulin.trip di bagian atas dihapus); ganti logo di Akun hanya mengubah logo di Akun, PDF, dan kwitansi. Data dan lisensi tidak berubah.", "v3.0.0: tiga mode dalam satu aplikasi (Open trip, Tektok, Pendakian bersama) dengan layar awal baru: tombol Mode di atas dan Rekap di bawah. Rekap semua jenis bisa diketuk sampai rekap lengkap tiap trip. Arsip kini ditandai jenisnya dan bisa disaring. Trip lama otomatis menjadi Open trip. Data dan lisensi tidak berubah.", "v2.2.2: lencana mini di header (ikon saja; ketuk untuk melihat keuntungan) dan indikator koneksi kini berupa titik hijau (online) atau merah (offline). Data dan lisensi tidak berubah. v2.2.1: ketuk lencana di Akun untuk melihat keuntungannya (VIP kini juga dapat akses awal fitur baru); pasal pengembalian uang di Syarat & Ketentuan (dokumen versi 1.2); pengecek gelar untuk akses awal fitur (belum ada fitur yang disembunyikan). Data dan lisensi tidak berubah.", "v2.1.0: lencana baru di Akun: tampilan khusus untuk Developer, VVIP, VIP, Puncak, dan Rintis. Lencana hanya penanda, tidak mengubah fitur. Data dan lisensi tidak berubah.", "v2.0.0: logo dan tagline \"Lieur ngitung, bawa santai\" bawaulin.cash tampil di layar aktivasi dan layar sambutan, dan ikon aplikasi diganti. Data dan lisensi tidak berubah.", 'v1.14.6: Info Umum kini menjelaskan paket Rintis dan Puncak (Syarat & Ketentuan dan Kebijakan Privasi dokumen versi 1.1), dan Panduan punya topik Paket Rintis dan Puncak.', 'v1.14.5: tanda air bawaulin.cash di PDF paket Rintis dikembalikan ke tampilan besar yang jelas terlihat.', 'v1.14.0: paket Rintis: setelah trip pertama selesai, fitur Puncak terkunci (Simulasi, Bagi Hasil, Pendaftaran online, Salin Template, Statistik Antar-Trip, dan PDF tanpa tanda bawaulin.cash). Data tetap aman dan terbuka lagi di Puncak. Ada peringatan sebelum masa trip pertama habis.', 'v1.13.0: lencana status paket di Akun (Latihan, Trip pertama, Rintis, atau Puncak). Belum ada fitur yang dikunci.', 'v1.12.0: halaman Info Umum berisi Syarat & Ketentuan dan Kebijakan Privasi (Pengaturan › Bantuan).', 'v1.11.1: Panduan disesuaikan dengan tombol Batalkan, layar sambutan, dan ajakan cadangkan.', 'v1.11.0: hapus kini bisa dibatalkan (tombol Batalkan 7 detik) tanpa konfirmasi; layar sambutan 3 langkah untuk pengguna baru (Pengaturan > Bantuan > Lihat panduan awal); ajakan mencadangkan data setelah buku trip ditutup.', 'v1.10.1: indikator Online (titik hijau) dan Offline (titik merah) kini selalu tampil di pojok kanan atas, menggantikan tombol tema yang sudah ada di Pengaturan.', 'v1.10.0: Pengaturan dirapikan. Perilaku Input dan Pengingat dihapus (selalu aktif), pembulatan harga jual pindah ke Kalkulator, Tentang dan Bantuan dipisah.', 'v1.9.0: tanda Offline saat tidak ada internet, dan pembaruan aplikasi kini muncul otomatis.', 'v1.8.11: pemeriksaan lisensi dipindah ke server baru.', 'v1.8.10: Hitung Trip (kalkulator), banner, dan label kecil kini tersedia dalam English.', 'v1.8.9: pesan kosong, galat, layar kunci dan lisensi kini tersedia dalam English.', 'v1.8.8: kalimat privasi di Pengaturan disederhanakan dan judul topik Panduan kini tersedia dalam English.', 'v1.8.7: Trip & Arsip, Riwayat Perubahan, dan Bagi Hasil kini tersedia dalam English.', 'v1.8.6: Simulasi, Statistik Antar-Trip, kolom pencarian, dan penjelasan Patungan Otomatis kini tersedia dalam English.', 'v1.8.5: daftar Yang baru, pesan hapus/impor, dan sisa teks halaman diterjemahkan ke English.', 'v1.8.4: langkah rinci dan tips Panduan kini tersedia dalam English.', 'v1.8.3: tanggal mengikuti bahasa dan demo Panduan diterjemahkan ke English. Langkah rinci Panduan menyusul.', 'v1.8.2: terjemahan English diperluas ke Pengaturan, lembar, layar aktivasi dan kunci. Pesan WhatsApp tetap Indonesia.', 'v1.8.1: terjemahan English diperluas ke semua tab utama, toast, dan pesan konfirmasi. Panduan dan Yang baru menyusul.', 'Baru: pilihan Bahasa (Pengaturan › Tampilan): Indonesia atau English. Tahap awal: menu, tab, Pengaturan, tombol, dan pesan utama sudah berbahasa Inggris; teks yang belum diterjemahkan tetap Indonesia. Pesan WhatsApp, kwitansi, dan PDF untuk peserta tetap Indonesia. Panduan dan daftar Yang baru menyusul.', 'Baru: tombol Matikan semua kunci (Pengaturan › Keamanan) mematikan PIN, pola, dan sidik jari sekaligus setelah konfirmasi PIN. Baru juga panduan Keamanan buka aplikasi (Menu › Panduan).', 'Layar kunci didesain ulang: tanpa header, dengan logo besar bercahaya, kartu kaca, pola dan sidik jari lebih jelas, serta tombol pindah cara buka berbentuk pil. Cara kerjanya tidak berubah.', 'Baru: Cara buka aplikasi (Pengaturan › Keamanan). Selain PIN, buka dengan pola 3x3 atau sidik jari. PIN tetap jadi cadangan dan dipakai untuk mengatur. Pola salah 5 kali menunggu 30 detik. Sidik jari bergantung HP dan belum tentu jalan di semua perangkat; bila tidak didukung, opsinya tidak muncul. Cadangan membawa pola, sidik jari didaftarkan ulang.', 'Baru: Riwayat perubahan (Menu › Trip & Arsip, di bawah kartu Tutup Buku). Setiap transaksi uang yang ditambah, diubah (nilai sebelum dan sesudah), dihapus, atau dipulihkan dicatat dengan waktunya, begitu juga saat buku trip ditutup dan dibuka. Isi Nama pencatat bila beberapa panitia memakai HP yang sama. Bisa difilter dan diunduh sebagai CSV. Perubahan sebelum v1.6.0 tidak punya riwayat.', 'Baru: Tutup buku trip (Menu › Trip & Arsip). Setelah trip selesai, transaksi uang dikunci: Pemasukan, Pengeluaran, Catat bayar, penggantian Talangan, transaksi berulang, simulasi dan sewa yang masuk ke Pengeluaran. Arsip cadangan dibuat otomatis, dan kunci hanya bisa dibuka dengan mengetik BUKA. Tamu, Itinerary, Checklist, kwitansi, PDF, dan Rekap tetap bebas.', 'Tab Pembayaran dirombak. Paling atas ringkasan (terkumpul dari target, jumlah Lunas/Sebagian/Belum bayar/Telat, tenggat), lalu daftar peserta dengan pencarian dan filter. Tombol ＋ Catat bayar di tiap peserta mengisi sisa tagihan otomatis dan menyimpannya sebagai Pemasukan kategori Peserta. Tombol Tagih berikutnya membuka WhatsApp peserta yang belum ditagih satu per satu. Pengaturan cara bayar dan tagihan dilipat di bawah. Data lama aman.', 'Cara bayar kini berupa daftar: beberapa rekening bank dan e-wallet (DANA, SeaBank, ShopeePay, GoPay, OVO, LinkAja, atau nama lain), tombol Salin nomor, serta sakelar aktif. Semua yang aktif ikut di pesan tagihan WhatsApp, kwitansi, dan kata kunci {rekening}. Teks rekening lama tetap dipakai sebagai catatan.', 'Baru: Kartu cara bayar (PDF) dan Cara bayar ke grup WhatsApp, berisi semua rekening, e-wallet, QRIS, dan tenggat. Dasar hitung tagihan disederhanakan jadi satu baris (ketuk Ubah); aturan hitungnya tidak berubah.', 'Formulir pendaftaran online disederhanakan: Nama, Nomor WhatsApp, Meeting point, Alergi makanan (Ya/Tidak), dan Catatan. Golongan darah, riwayat penyakit, dan kontak darurat tidak lagi diminta. Pendaftar dengan alergi ditandai "Alergi makanan: Ya" di Catatan tamu. Data tamu lama tidak diubah. Pasang ulang skrip Apps Script pendaftaran yang baru.', 'Baru: Menu › Trip & Arsip › Salin Trip sebagai Template. Trip baru langsung berisi itinerary, checklist (belum siap, tanpa pembawa), dan kategori dari trip sebelumnya; tamu dan uang kosong. Tanggal itinerary bisa digeser otomatis.', 'Baru: Pengaturan › Tentang & Bantuan › Lapor masalah. Membuka WhatsApp penjual dengan info teknis siap kirim (versi, kode perangkat, status lisensi, perangkat), tanpa data trip, peserta, atau uang. Terkirim hanya bila Anda menekan kirim di WhatsApp.', 'Baru: panduan Pindah ke HP baru (Menu › Panduan).', 'Kartu Ringkasan di Akun dihapus.', 'Perbaikan: angka 0 di depan nomor WhatsApp tidak lagi hilang (tagihan WA, daftar Tamu, dan impor pendaftar online). Data lama tidak diubah.', 'Penomoran versi dimulai ulang dari v1.0.0. Tidak ada perubahan fitur.', 'Keamanan lisensi: aplikasi memeriksa status lisensi ke server (otomatis maks. tiap 1 jam, atau kapan saja lewat Pengaturan › Periksa status lisensi sekarang; tidak menahan aplikasi). Tanpa internet tetap jalan sampai 30 hari sejak pemeriksaan terakhir. Lisensi dicabut, versi terlalu lama, atau jam HP dimundurkan akan mengunci aplikasi. Kunci aktivasi lama diganti kunci baru.', 'Ikon Pengaturan (gerigi) pindah ke kanan judul Akun, di bawah tombol terang/gelap. Kartu Pengaturan di Akun dihapus.', 'Kalkulator pindah ke Menu › Kalkulator: tampilan seperti kalkulator HP, memori, riwayat, tombol ÷ Peserta dan Bulat, plus 7 rumus Hitung Trip.', 'Akun: kartu profil dan tombol Pengaturan menyatu, serta ada Data & Cadangan.', 'Tentang pembuat: tombol Instagram dan WhatsApp saja, tanpa tulisan nama atau nomor.', 'Pengaturan baru: pesan tagihan WhatsApp bisa diubah, pembulatan harga jual, dan Cek pembaruan aplikasi.', 'Panduan singkat kini berisi demo bergerak dan langkah rinci untuk semua fitur (Menu › Panduan).'];
+const BARU = ["v4.0.0: tiga trip bisa berjalan sekaligus, satu per mode (Open trip, Tektok, Pendakian bersama); ganti mode tanpa mengarsipkan dan tanpa kehilangan data. Simulasi kini per mode dengan kartu Rekap Simulasi, dan Rekap menampilkan trip berjalan di semua mode. Ekspor rekap trip (gratis) dan Impor rekap trip (Puncak): file rekap bisa dikirim ke HP lain, masuk ke Arsip, dan bisa dibuka kembali untuk diedit sesuai hasil nyata. Catatan: cadangan dari v4 yang dipulihkan di aplikasi versi lama hanya membawa trip mode yang sedang aktif. Data dan lisensi tidak berubah.", "v3.1.1: kartu di halaman Pilih Mode, chip, dan Rekap kini ikut warna yang Anda pilih untuk mode itu (misalnya merah). Header dirapikan: logo lebih besar dan semua bagian sejajar presisi. Data dan lisensi tidak berubah.", "v3.1.0: warna aplikasi kini ikut mode (Open trip ungu, Tektok biru, Pendakian bersama hijau); warna pilihan sendiri di Pengaturan berlaku per mode, dan Otomatis mengembalikan warna mode. Logo di bagian atas kini tetap logo bawaulin.cash dan bisa diketuk untuk ke halaman awal dan Rekap (tulisan bawaulin.trip di bagian atas dihapus); ganti logo di Akun hanya mengubah logo di Akun, PDF, dan kwitansi. Data dan lisensi tidak berubah.", "v3.0.0: tiga mode dalam satu aplikasi (Open trip, Tektok, Pendakian bersama) dengan layar awal baru: tombol Mode di atas dan Rekap di bawah. Rekap semua jenis bisa diketuk sampai rekap lengkap tiap trip. Arsip kini ditandai jenisnya dan bisa disaring. Trip lama otomatis menjadi Open trip. Data dan lisensi tidak berubah.", "v2.2.2: lencana mini di header (ikon saja; ketuk untuk melihat keuntungan) dan indikator koneksi kini berupa titik hijau (online) atau merah (offline). Data dan lisensi tidak berubah. v2.2.1: ketuk lencana di Akun untuk melihat keuntungannya (VIP kini juga dapat akses awal fitur baru); pasal pengembalian uang di Syarat & Ketentuan (dokumen versi 1.2); pengecek gelar untuk akses awal fitur (belum ada fitur yang disembunyikan). Data dan lisensi tidak berubah.", "v2.1.0: lencana baru di Akun: tampilan khusus untuk Developer, VVIP, VIP, Puncak, dan Rintis. Lencana hanya penanda, tidak mengubah fitur. Data dan lisensi tidak berubah.", "v2.0.0: logo dan tagline \"Lieur ngitung, bawa santai\" bawaulin.cash tampil di layar aktivasi dan layar sambutan, dan ikon aplikasi diganti. Data dan lisensi tidak berubah.", 'v1.14.6: Info Umum kini menjelaskan paket Rintis dan Puncak (Syarat & Ketentuan dan Kebijakan Privasi dokumen versi 1.1), dan Panduan punya topik Paket Rintis dan Puncak.', 'v1.14.5: tanda air bawaulin.cash di PDF paket Rintis dikembalikan ke tampilan besar yang jelas terlihat.', 'v1.14.0: paket Rintis: setelah trip pertama selesai, fitur Puncak terkunci (Simulasi, Bagi Hasil, Pendaftaran online, Salin Template, Statistik Antar-Trip, dan PDF tanpa tanda bawaulin.cash). Data tetap aman dan terbuka lagi di Puncak. Ada peringatan sebelum masa trip pertama habis.', 'v1.13.0: lencana status paket di Akun (Latihan, Trip pertama, Rintis, atau Puncak). Belum ada fitur yang dikunci.', 'v1.12.0: halaman Info Umum berisi Syarat & Ketentuan dan Kebijakan Privasi (Pengaturan › Bantuan).', 'v1.11.1: Panduan disesuaikan dengan tombol Batalkan, layar sambutan, dan ajakan cadangkan.', 'v1.11.0: hapus kini bisa dibatalkan (tombol Batalkan 7 detik) tanpa konfirmasi; layar sambutan 3 langkah untuk pengguna baru (Pengaturan > Bantuan > Lihat panduan awal); ajakan mencadangkan data setelah buku trip ditutup.', 'v1.10.1: indikator Online (titik hijau) dan Offline (titik merah) kini selalu tampil di pojok kanan atas, menggantikan tombol tema yang sudah ada di Pengaturan.', 'v1.10.0: Pengaturan dirapikan. Perilaku Input dan Pengingat dihapus (selalu aktif), pembulatan harga jual pindah ke Kalkulator, Tentang dan Bantuan dipisah.', 'v1.9.0: tanda Offline saat tidak ada internet, dan pembaruan aplikasi kini muncul otomatis.', 'v1.8.11: pemeriksaan lisensi dipindah ke server baru.', 'v1.8.10: Hitung Trip (kalkulator), banner, dan label kecil kini tersedia dalam English.', 'v1.8.9: pesan kosong, galat, layar kunci dan lisensi kini tersedia dalam English.', 'v1.8.8: kalimat privasi di Pengaturan disederhanakan dan judul topik Panduan kini tersedia dalam English.', 'v1.8.7: Trip & Arsip, Riwayat Perubahan, dan Bagi Hasil kini tersedia dalam English.', 'v1.8.6: Simulasi, Statistik Antar-Trip, kolom pencarian, dan penjelasan Patungan Otomatis kini tersedia dalam English.', 'v1.8.5: daftar Yang baru, pesan hapus/impor, dan sisa teks halaman diterjemahkan ke English.', 'v1.8.4: langkah rinci dan tips Panduan kini tersedia dalam English.', 'v1.8.3: tanggal mengikuti bahasa dan demo Panduan diterjemahkan ke English. Langkah rinci Panduan menyusul.', 'v1.8.2: terjemahan English diperluas ke Pengaturan, lembar, layar aktivasi dan kunci. Pesan WhatsApp tetap Indonesia.', 'v1.8.1: terjemahan English diperluas ke semua tab utama, toast, dan pesan konfirmasi. Panduan dan Yang baru menyusul.', 'Baru: pilihan Bahasa (Pengaturan › Tampilan): Indonesia atau English. Tahap awal: menu, tab, Pengaturan, tombol, dan pesan utama sudah berbahasa Inggris; teks yang belum diterjemahkan tetap Indonesia. Pesan WhatsApp, kwitansi, dan PDF untuk peserta tetap Indonesia. Panduan dan daftar Yang baru menyusul.', 'Baru: tombol Matikan semua kunci (Pengaturan › Keamanan) mematikan PIN, pola, dan sidik jari sekaligus setelah konfirmasi PIN. Baru juga panduan Keamanan buka aplikasi (Menu › Panduan).', 'Layar kunci didesain ulang: tanpa header, dengan logo besar bercahaya, kartu kaca, pola dan sidik jari lebih jelas, serta tombol pindah cara buka berbentuk pil. Cara kerjanya tidak berubah.', 'Baru: Cara buka aplikasi (Pengaturan › Keamanan). Selain PIN, buka dengan pola 3x3 atau sidik jari. PIN tetap jadi cadangan dan dipakai untuk mengatur. Pola salah 5 kali menunggu 30 detik. Sidik jari bergantung HP dan belum tentu jalan di semua perangkat; bila tidak didukung, opsinya tidak muncul. Cadangan membawa pola, sidik jari didaftarkan ulang.', 'Baru: Riwayat perubahan (Menu › Trip & Arsip, di bawah kartu Tutup Buku). Setiap transaksi uang yang ditambah, diubah (nilai sebelum dan sesudah), dihapus, atau dipulihkan dicatat dengan waktunya, begitu juga saat buku trip ditutup dan dibuka. Isi Nama pencatat bila beberapa panitia memakai HP yang sama. Bisa difilter dan diunduh sebagai CSV. Perubahan sebelum v1.6.0 tidak punya riwayat.', 'Baru: Tutup buku trip (Menu › Trip & Arsip). Setelah trip selesai, transaksi uang dikunci: Pemasukan, Pengeluaran, Catat bayar, penggantian Talangan, transaksi berulang, simulasi dan sewa yang masuk ke Pengeluaran. Arsip cadangan dibuat otomatis, dan kunci hanya bisa dibuka dengan mengetik BUKA. Tamu, Itinerary, Checklist, kwitansi, PDF, dan Rekap tetap bebas.', 'Tab Pembayaran dirombak. Paling atas ringkasan (terkumpul dari target, jumlah Lunas/Sebagian/Belum bayar/Telat, tenggat), lalu daftar peserta dengan pencarian dan filter. Tombol ＋ Catat bayar di tiap peserta mengisi sisa tagihan otomatis dan menyimpannya sebagai Pemasukan kategori Peserta. Tombol Tagih berikutnya membuka WhatsApp peserta yang belum ditagih satu per satu. Pengaturan cara bayar dan tagihan dilipat di bawah. Data lama aman.', 'Cara bayar kini berupa daftar: beberapa rekening bank dan e-wallet (DANA, SeaBank, ShopeePay, GoPay, OVO, LinkAja, atau nama lain), tombol Salin nomor, serta sakelar aktif. Semua yang aktif ikut di pesan tagihan WhatsApp, kwitansi, dan kata kunci {rekening}. Teks rekening lama tetap dipakai sebagai catatan.', 'Baru: Kartu cara bayar (PDF) dan Cara bayar ke grup WhatsApp, berisi semua rekening, e-wallet, QRIS, dan tenggat. Dasar hitung tagihan disederhanakan jadi satu baris (ketuk Ubah); aturan hitungnya tidak berubah.', 'Formulir pendaftaran online disederhanakan: Nama, Nomor WhatsApp, Meeting point, Alergi makanan (Ya/Tidak), dan Catatan. Golongan darah, riwayat penyakit, dan kontak darurat tidak lagi diminta. Pendaftar dengan alergi ditandai "Alergi makanan: Ya" di Catatan tamu. Data tamu lama tidak diubah. Pasang ulang skrip Apps Script pendaftaran yang baru.', 'Baru: Menu › Trip & Arsip › Salin Trip sebagai Template. Trip baru langsung berisi itinerary, checklist (belum siap, tanpa pembawa), dan kategori dari trip sebelumnya; tamu dan uang kosong. Tanggal itinerary bisa digeser otomatis.', 'Baru: Pengaturan › Tentang & Bantuan › Lapor masalah. Membuka WhatsApp penjual dengan info teknis siap kirim (versi, kode perangkat, status lisensi, perangkat), tanpa data trip, peserta, atau uang. Terkirim hanya bila Anda menekan kirim di WhatsApp.', 'Baru: panduan Pindah ke HP baru (Menu › Panduan).', 'Kartu Ringkasan di Akun dihapus.', 'Perbaikan: angka 0 di depan nomor WhatsApp tidak lagi hilang (tagihan WA, daftar Tamu, dan impor pendaftar online). Data lama tidak diubah.', 'Penomoran versi dimulai ulang dari v1.0.0. Tidak ada perubahan fitur.', 'Keamanan lisensi: aplikasi memeriksa status lisensi ke server (otomatis maks. tiap 1 jam, atau kapan saja lewat Pengaturan › Periksa status lisensi sekarang; tidak menahan aplikasi). Tanpa internet tetap jalan sampai 30 hari sejak pemeriksaan terakhir. Lisensi dicabut, versi terlalu lama, atau jam HP dimundurkan akan mengunci aplikasi. Kunci aktivasi lama diganti kunci baru.', 'Ikon Pengaturan (gerigi) pindah ke kanan judul Akun, di bawah tombol terang/gelap. Kartu Pengaturan di Akun dihapus.', 'Kalkulator pindah ke Menu › Kalkulator: tampilan seperti kalkulator HP, memori, riwayat, tombol ÷ Peserta dan Bulat, plus 7 rumus Hitung Trip.', 'Akun: kartu profil dan tombol Pengaturan menyatu, serta ada Data & Cadangan.', 'Tentang pembuat: tombol Instagram dan WhatsApp saja, tanpa tulisan nama atau nomor.', 'Pengaturan baru: pesan tagihan WhatsApp bisa diubah, pembulatan harga jual, dan Cek pembaruan aplikasi.', 'Panduan singkat kini berisi demo bergerak dan langkah rinci untuk semua fitur (Menu › Panduan).'];
+Object.assign(EN, {"v4.0.0: tiga trip bisa berjalan sekaligus, satu per mode (Open trip, Tektok, Pendakian bersama); ganti mode tanpa mengarsipkan dan tanpa kehilangan data. Simulasi kini per mode dengan kartu Rekap Simulasi, dan Rekap menampilkan trip berjalan di semua mode. Ekspor rekap trip (gratis) dan Impor rekap trip (Puncak): file rekap bisa dikirim ke HP lain, masuk ke Arsip, dan bisa dibuka kembali untuk diedit sesuai hasil nyata. Catatan: cadangan dari v4 yang dipulihkan di aplikasi versi lama hanya membawa trip mode yang sedang aktif. Data dan lisensi tidak berubah.": "v4.0.0: three trips can now run at once, one per mode (Open trip, Tektok, Group hike); switch modes without archiving and without losing data. Simulation is now per mode with a Simulation Recap card, and Recap shows trips in progress across all modes. Export trip recap (free) and Import trip recap (Puncak): a recap file can be sent to another phone, added to the Archive, and reopened for editing to match actual results. Note: a v4 backup restored in an older app version only brings the trip of the active mode. Your data and license are unchanged."});
 Object.assign(EN, {"v3.1.1: kartu di halaman Pilih Mode, chip, dan Rekap kini ikut warna yang Anda pilih untuk mode itu (misalnya merah). Header dirapikan: logo lebih besar dan semua bagian sejajar presisi. Data dan lisensi tidak berubah.": "v3.1.1: cards on the Choose Mode page, the chip, and Recap now follow the color you chose for that mode (for example red). Header tidied up: bigger logo and everything precisely aligned. Data and license are unchanged."});
 Object.assign(EN, {"v3.1.0: warna aplikasi kini ikut mode (Open trip ungu, Tektok biru, Pendakian bersama hijau); warna pilihan sendiri di Pengaturan berlaku per mode, dan Otomatis mengembalikan warna mode. Logo di bagian atas kini tetap logo bawaulin.cash dan bisa diketuk untuk ke halaman awal dan Rekap (tulisan bawaulin.trip di bagian atas dihapus); ganti logo di Akun hanya mengubah logo di Akun, PDF, dan kwitansi. Data dan lisensi tidak berubah.": "v3.1.0: the app color now follows the mode (Open trip purple, Tektok blue, Group hike green); a custom color chosen in Settings applies per mode, and Automatic restores the mode color. The logo at the top is now always the bawaulin.cash logo and can be tapped to open the start screen and Recap (the bawaulin.trip text at the top was removed); changing the logo in Account only changes the logo in Account, PDFs, and receipts. Data and license are unchanged.", "Otomatis (ikut mode)": "Automatic (follows mode)", "Warna ini hanya berlaku di mode yang sedang dibuka. Mode lain tetap memakai warnanya sendiri. Pilih lingkaran pertama untuk kembali ke warna mode.": "This color only applies in the mode currently open. Other modes keep their own color. Pick the first circle to return to the mode color.", "Halaman awal": "Start screen", "Trip masih berjalan. Ketuk panah kembali untuk melanjutkan.": "A trip is still in progress. Tap the back arrow to continue.", "Kembali ke trip": "Back to trip"});
 const listSheet = (t, a) => sheetOpen(`<h3>${t}</h3>${a.map(x => `<div class="zli">• ${esc(x)}</div>`).join('')}`);
@@ -3236,7 +3348,8 @@ function rekapAll() {
   };
   DB.arsip.forEach(a => add(a.data, a.destinasi || '(tanpa nama)', String(a.tanggal || '').split(/[ ,]/)[0], jenisArsip(a), a.id));
   if (hasData()) add(DB, DB.set.destinasi || '(tanpa nama)', 'Berjalan', modeAktif(), 'now');
-  const per = MODES.map(m => { const t = L.filter(x => x.jenis === m.id); return { m, n: t.length, ps: sum(t, x => x.ps), masuk: sum(t, x => x.masuk), untung: sum(t, x => x.untung) }; });
+  MODES.forEach(m => { if (m.id !== modeAktif() && slotAda(m.id)) { const t = slotFull(m.id); add(t, t.set.destinasi || '(tanpa nama)', 'Berjalan', m.id, 'slot:' + m.id); } });
+  const per = MODES.map(m => { const t = L.filter(x => x.jenis === m.id); return { m, n: t.length, sim: DB.sim.filter(x => !x.jenis || x.jenis === m.id).length, ps: sum(t, x => x.ps), masuk: sum(t, x => x.masuk), untung: sum(t, x => x.untung) }; });
   const tot = { n: L.length, ps: sum(per, p => p.ps), masuk: sum(per, p => p.masuk), untung: sum(per.filter(p => p.m.untung), p => p.untung) };
   return { L, per, tot };
 }
@@ -3264,37 +3377,46 @@ function v3Awal() {
   </div>
   <div class="ft">Dibuat oleh bawaulin.trip · Lieur gawe, bawa ulin</div></div>`;
 }
+function modeStatus(id) {
+  const T = id === modeAktif() ? DB : (slotAda(id) ? slotFull(id) : null);
+  if (!T || !(hasDataT(T) || (T.set && T.set.destinasi))) return 'Belum ada trip';
+  if (T.set.tutup && T.set.tutup.on) return 'Buku ditutup';
+  return 'Berjalan: ' + (T.set.destinasi || '(tanpa nama)') + ' · ' + T.tamu.filter(x => x['Status'] === 'Diterima').length + ' peserta';
+}
 function v3Mode() {
-  const sel = modeOf(V3.sel), now = modeAktif(), run = hasData() && !tutupOn(), blok = run && V3.sel !== now, R = rekapAll();
+  const sel = modeOf(V3.sel), now = modeAktif(), run = hasData() && !tutupOn(), kunci = kunciOn(), blok = kunci && run && V3.sel !== now, R = rekapAll(), riw = id => R.L.filter(x => x.jenis === id && typeof x.id === 'number').length;
   return `<div class="pg"><div class="top"><button class="ib" aria-label="Kembali" onclick="v3Back()">${v3svg(V3IC.back, 20)}</button><div class="ti">Pilih Mode</div></div>
-  <div class="sub">Satu trip aktif dalam satu waktu. Saat mode diganti, seluruh isi aplikasi menyesuaikan.</div>
-  ${run ? `<div class="wn">Trip berjalan (${esc(modeOf(now).nama)}${DB.set.destinasi ? ' · ' + esc(DB.set.destinasi) : ''}) masih berisi data. Mode lain bisa dipilih setelah trip diarsipkan atau ditutup bukunya.</div>` : ''}
+  <div class="sub">${kunci ? 'Satu trip aktif dalam satu waktu. Saat mode diganti, seluruh isi aplikasi menyesuaikan.' : 'Tiap mode punya trip sendiri dan bisa berjalan sekaligus. Saat mode diganti, isi aplikasi menyesuaikan dengan trip mode itu.'}</div>
+  ${kunci && run ? `<div class="wn">Trip berjalan (${esc(modeOf(now).nama)}${DB.set.destinasi ? ' · ' + esc(DB.set.destinasi) : ''}) masih berisi data. Mode lain bisa dipilih setelah trip diarsipkan atau ditutup bukunya.</div>` : ''}
   <div class="ml">${MODES.map(m => { const on = m.id === V3.sel, p = R.per.find(x => x.m.id === m.id);
-    return `<button class="mc3${on ? ' on3' : ''}" style="--c:${m.warna}" aria-pressed="${on}" onclick="v3Pilih('${m.id}')"><div class="r3"><div class="mt">${v3svg(m.ic, 24, null, 2)}</div><div class="mb"><div class="mh3"><div class="mn">${esc(m.nama)}</div><div class="rd">${on ? v3svg(V3IC.ok, 14, '#1a1000', 3.5) : ''}</div></div><div class="md">${esc(m.desc)}</div><div class="tgs">${m.tags.map(t => `<span class="tg">${esc(t)}</span>`).join('')}</div><div class="rw">${p && p.n ? p.n + ' trip tersimpan di riwayat' : 'Belum ada trip'}</div></div></div></button>`; }).join('')}</div>
+    return `<button class="mc3${on ? ' on3' : ''}" style="--c:${m.warna}" aria-pressed="${on}" onclick="v3Pilih('${m.id}')"><div class="r3"><div class="mt">${v3svg(m.ic, 24, null, 2)}</div><div class="mb"><div class="mh3"><div class="mn">${esc(m.nama)}</div><div class="rd">${on ? v3svg(V3IC.ok, 14, '#1a1000', 3.5) : ''}</div></div><div class="md">${esc(m.desc)}</div><div class="tgs">${m.tags.map(t => `<span class="tg">${esc(t)}</span>`).join('')}</div><div class="rw">${esc(modeStatus(m.id))}</div>${riw(m.id) ? `<div class="rw">${riw(m.id)} trip di riwayat</div>` : ''}</div></div></button>`; }).join('')}</div>
   <div class="nt">Fitur khusus Tektok dan Pendakian bersama menyusul di rilis berikutnya. Saat ini ketiga mode memakai alat yang sama; Pendakian bersama tidak memakai Bagi Hasil.</div>
   <div class="bt"><button class="go" style="--c:${blok ? '#fbbf24' : sel.warna}" onclick="v3Masuk()">${blok ? 'Arsipkan trip dulu di Trip & Arsip' : 'Masuk ke mode ' + esc(sel.nama)}</button></div></div>`;
 }
 function v3Rekap() {
   const R = rekapAll(), mx = Math.max.apply(null, R.per.map(p => p.masuk).concat([1]));
   const head = `<div class="top"><button class="ib" aria-label="Kembali" onclick="v3Back()">${v3svg(V3IC.back, 20)}</button><div class="ti">Rekap Semua Jenis</div></div>`;
-  if (!R.L.length) return `<div class="pg">${head}<div class="em"><svg aria-hidden="true" width="150" height="110" viewBox="0 0 150 110" fill="none"><path d="M6 100l40-62 26 34 22-26 44 54z" fill="rgba(251,191,36,.1)" stroke="rgba(251,191,36,.45)" stroke-width="2" stroke-linejoin="round"/><circle cx="112" cy="24" r="9" stroke="#f97316" stroke-width="2"/></svg><div class="h">Belum ada riwayat</div><p>Begitu trip pertamamu ditutup atau diarsipkan, rekap Open trip, Tektok, dan Pendakian bersama muncul di sini.</p><button class="go" onclick="v3Buka('mode','awal')">Pilih mode dan mulai</button></div></div>`;
+  if (!R.L.length) return `<div class="pg">${head}<div class="em"><svg aria-hidden="true" width="150" height="110" viewBox="0 0 150 110" fill="none"><path d="M6 100l40-62 26 34 22-26 44 54z" fill="rgba(251,191,36,.1)" stroke="rgba(251,191,36,.45)" stroke-width="2" stroke-linejoin="round"/><circle cx="112" cy="24" r="9" stroke="#f97316" stroke-width="2"/></svg><div class="h">Belum ada riwayat</div><p>Begitu trip pertamamu ditutup atau diarsipkan, rekap Open trip, Tektok, dan Pendakian bersama muncul di sini.</p><button class="go" onclick="v3Buka('mode','awal')">Pilih mode dan mulai</button><div style="width:100%;max-width:320px">${v3Imp()}</div></div></div>`;
   const rows = R.L.slice().reverse().slice(0, 12);
   return `<div class="pg">${head}
   <div class="hero3"><small>Untung bersih semua jenis</small><div class="big3">${(R.tot.untung < 0 ? '- ' : '') + rpc(R.tot.untung)}</div><div class="row"><div>Trip<b>${R.tot.n}</b></div><div>Peserta<b>${R.tot.ps}</b></div><div>Dana masuk<b>${rpc(R.tot.masuk)}</b></div></div></div>
   <div class="cap">Pendakian bersama tidak dihitung sebagai untung.</div>
   <div class="sec">Per jenis</div>
-  ${R.per.map(p => `<div class="pj"><div class="hd"><div class="nm"><i style="background:${p.m.warna}"></i>${esc(p.m.nama)}</div><span>${p.n} trip</span></div><div class="bb"><div style="width:${Math.round(p.masuk / mx * 100)}%;background:${p.m.warna}"></div></div><div class="cl3"><div>Peserta<b>${p.ps}</b></div><div>${p.m.untung ? 'Dana masuk' : 'Patungan'}<b>${rpc(p.masuk)}</b></div><div>${p.m.untung ? 'Untung' : 'Hasil'}<b class="${hasilCls(p.m, p.untung)}">${p.n ? hasilTxt(p.m, p.untung) : '-'}</b></div></div></div>`).join('')}
+  ${R.per.map(p => `<div class="pj"><div class="hd"><div class="nm"><i style="background:${p.m.warna}"></i>${esc(p.m.nama)}</div><span>${p.n} trip</span></div><div class="bb"><div style="width:${Math.round(p.masuk / mx * 100)}%;background:${p.m.warna}"></div></div><div class="cl3"><div>Peserta<b>${p.ps}</b></div><div>${p.m.untung ? 'Dana masuk' : 'Patungan'}<b>${rpc(p.masuk)}</b></div><div>${p.m.untung ? 'Untung' : 'Hasil'}<b class="${hasilCls(p.m, p.untung)}">${p.n ? hasilTxt(p.m, p.untung) : '-'}</b></div></div><div class="cap" style="margin:8px 0 0;text-align:left">Skenario simulasi: ${p.sim}</div></div>`).join('')}
   <div class="sec">Trip terakhir</div>
   ${rows.map(x => { const m = modeOf(x.jenis); return `<button class="tr" onclick="v3Detail2('${x.id}')"><i style="background:${m.warna}"></i><div class="x3"><b>${esc(x.nama)}</b><small>${esc(m.nama)} · ${esc(x.tgl)}</small></div><div class="h ${hasilCls(m, x.untung)}">${hasilTxt(m, x.untung)}</div>${v3svg(V3IC.next, 16, '#bfae8a')}</button>`; }).join('')}
+  ${v3Imp()}
   ${R.L.length > 12 ? '<div class="cap">Riwayat lengkap ada di Menu › Trip & Arsip.</div>' : ''}</div>`;
 }
 function v3Detail() {
   let d, nama, tgl, jenis;
   if (V3.det === 'now') { d = DB; nama = DB.set.destinasi || '(tanpa nama)'; tgl = 'Berjalan'; jenis = modeAktif(); }
+  else if (String(V3.det).indexOf('slot:') === 0) { const sid = String(V3.det).slice(5); if (!slotAda(sid)) return v3Rekap(); d = slotFull(sid); nama = d.set.destinasi || '(tanpa nama)'; tgl = 'Berjalan'; jenis = sid; }
   else { const a = DB.arsip.find(x => String(x.id) === String(V3.det)); if (!a) return v3Rekap(); d = a.data; nama = a.destinasi || '(tanpa nama)'; tgl = String(a.tanggal || ''); jenis = jenisArsip(a); }
   const m = modeOf(jenis), s = tripStat(d, nama, tgl), tm = (d.tamu || []).filter(t => t['Status'] === 'Diterima');
   let bh = null;
   if (m.untung) { const keep = DB; try { DB = Object.assign(blank(), d); const g = bagiData(); bh = { s: g.s, n: g.n, per: g.per }; } catch (e) { bh = null; } finally { DB = keep; } }
+  let vs = null; if (d.simAktif) { const keep2 = DB; try { DB = Object.assign(blank(), d); vs = vsReal(); } catch (e) { vs = null; } finally { DB = keep2; } }
   const ks = Object.keys(s.kat).sort((a, b) => s.kat[b] - s.kat[a]), kmx = Math.max.apply(null, ks.map(k => s.kat[k]).concat([1]));
   const tg = t => { const v = t['Tagihan'] || ''; return v ? `<span class="bd ${v === 'Lunas' ? 'g3' : v === 'DP' ? 'y3' : 'r3'}">${esc(v)}</span>` : ''; };
   return `<div class="pg"><div class="top"><button class="ib" aria-label="Kembali" onclick="v3Buka('rekap')">${v3svg(V3IC.back, 20)}</button><div class="ti">${esc(nama)}</div></div>
@@ -3303,6 +3425,7 @@ function v3Detail() {
   <div class="w">${m.untung ? (s.untung >= 0 ? 'Untung' : 'Rugi') : 'Sisa saldo'}<b class="${hasilCls(m, s.untung)}">${(m.untung ? '' : s.untung < 0 ? '- ' : '') + rp(Math.abs(s.untung))}</b></div>
   <div>Peserta diterima<b>${s.ps}</b></div><div>Biaya per peserta<b>${rp(s.per)}</b></div></div>
   ${bh && bh.n ? `<div class="box"><div class="li"><span>Bagi hasil: ${bh.s >= 0 ? 'untung' : 'rugi'} setelah setoran panitia</span><b>${rp(Math.abs(bh.s))}</b></div><div class="li"><span>${bh.n} official · per official</span><b>${rp(bh.per)}</b></div></div>` : ''}
+  ${vs ? `<div class="sec">Simulasi vs Realisasi</div><div class="box"><div class="li"><span>Acuan: ${esc(vs.nama)}</span></div><div class="li"><span>Pendapatan: rencana · nyata</span><b>${rpc(vs.rencana.pend)} · ${rpc(vs.nyata.masuk)}</b></div><div class="li"><span>Biaya: rencana · nyata</span><b>${rpc(vs.rencana.biaya)} · ${rpc(vs.nyata.biaya)}</b></div><div class="li"><span>${m.untung ? 'Untung' : 'Hasil'}: rencana · nyata</span><b>${(vs.rencana.profit < 0 ? '- ' : '') + rpc(vs.rencana.profit)} · ${(vs.nyata.profit < 0 ? '- ' : '') + rpc(vs.nyata.profit)}</b></div></div>` : ''}
   <div class="sec">Peserta (${tm.length})</div>
   <div class="box">${tm.length ? tm.slice(0, 30).map(t => `<div class="li"><span>${esc(t['Nama'] || '?')}</span>${tg(t)}</div>`).join('') + (tm.length > 30 ? `<div class="li"><span>dan ${tm.length - 30} lainnya</span></div>` : '') : '<div class="li"><span>Belum ada peserta diterima.</span></div>'}</div>
   <div class="sec">Pengeluaran per kategori</div>
@@ -3324,12 +3447,16 @@ async function v3Paket() {
 }
 async function v3Masuk() {
   const id = V3.sel, now = modeAktif();
-  if (hasData() && id !== now) {
-    if (!tutupOn()) { v3Tutup(); show('trip'); return; }
-    if (!confirm('Buku trip ditutup. Trip ini diarsipkan otomatis (' + modeOf(now).nama + '), lalu mode ' + modeOf(id).nama + ' dimulai dengan trip baru yang kosong. Lanjut?')) return;
-    DB.arsip.push(snapshot());
-    KEYS.forEach(k => DB[k] = []); DB.checklist = []; DB.simAktif = null; SIM = null;
-    DB.set = Object.assign({}, DB.set, { destinasi: '', realisasi: 0, tenggat: '', lunasTf: {}, kodeDest: '', tutup: null }); DB.ganti = {}; DB.ulang = []; DB.pribadi = []; DB.log = [];
+  if (id !== now) {
+    if (kunciOn()) {
+      /* Rintis: tetap satu trip; mode lain hanya bila trip diarsipkan atau ditutup bukunya */
+      if (hasData()) {
+        if (!tutupOn()) { v3Tutup(); show('trip'); return; }
+        if (!confirm('Buku trip ditutup. Trip ini diarsipkan otomatis (' + modeOf(now).nama + '), lalu mode ' + modeOf(id).nama + ' dimulai dengan trip baru yang kosong. Lanjut?')) return;
+        pushArsip(snapshot()); muatTrip(kosongTrip(id));
+      }
+      if (slotAda(id)) { const t = DB.slot[id]; delete DB.slot[id]; muatTrip(t); }
+    } else tukarMode(id);
   }
   DB.mode = id; DB.set = Object.assign({}, DB.set, { jenis: id }); await save();
   v3Tutup(); show('dashboard'); toast('Mode ' + modeOf(id).nama + ' aktif'); setTimeout(onbCek, 900);
@@ -3339,6 +3466,7 @@ function tampilMulai() {
   if (hasData() && !DB.set.jenis) { DB.set = Object.assign({}, DB.set, { jenis: DB.mode }); save(); }
   if (!hasData() || tutupOn()) { chipMode(); v3Buka('awal'); } else show('dashboard');
 }
+Object.assign(EN, { 'Impor rekap trip': 'Import trip recap', 'Ekspor rekap trip berjalan': 'Export current trip recap', 'Ekspor rekap': 'Export recap', 'Buka & edit': 'Open & edit', 'Impor': 'Imported', 'Rekap Simulasi': 'Simulation Recap', 'Ketuk skenario untuk memuatnya ke form.': 'Tap a scenario to load it into the form.', 'Belum ada skenario tersimpan di mode ini.': 'No saved scenarios in this mode yet.', 'Belum ada trip': 'No trip yet', 'Buku ditutup': 'Book closed', 'Simulasi vs Realisasi': 'Simulation vs Actual', 'Tiap mode punya trip sendiri dan bisa berjalan sekaligus. Saat mode diganti, isi aplikasi menyesuaikan dengan trip mode itu.': 'Each mode has its own trip and they can run at the same time. When the mode changes, the app adjusts to the trip of that mode.', 'Pendapatan: rencana · nyata': 'Income: planned · actual', 'Biaya: rencana · nyata': 'Cost: planned · actual', 'Untung: rencana · nyata': 'Profit: planned · actual', 'Hasil: rencana · nyata': 'Result: planned · actual', 'Acuan: ': 'Reference: ', 'Ini file rekap trip, bukan cadangan. Pakai Impor rekap trip di halaman Rekap.': 'This is a trip recap file, not a backup. Use Import trip recap on the Recap page.', 'Belum ada trip berjalan untuk diekspor': 'No trip in progress to export', 'File rekap berisi nama dan nomor HP peserta. Kirim hanya ke orang yang berhak. Lanjut?': 'The recap file contains the names and phone numbers of participants. Send it only to people who should have it. Continue?', 'File rekap diunduh': 'Recap file downloaded', 'File rekap tidak valid': 'Invalid recap file', 'Impor rekap trip adalah fitur Puncak': 'Import trip recap is a Puncak feature', 'Buku trip ini tertutup; buka kuncinya di kartu paling atas bila mau mengedit.': 'This trip book is closed; unlock it in the top card to edit.', });
 Object.assign(EN, {
   'Siap trip berikutnya?': 'Ready for the next trip?', 'Buku trip sudah rapi. Belum ada trip berjalan.': 'Your trip book is tidy. No trip in progress.', 'Buku trip ditutup. Pilih mode untuk melanjutkan.': 'Trip book is closed. Pick a mode to continue.',
   'Mode': 'Mode', 'Rekap': 'Recap', 'Pilih jenis pendakian yang mau dikelola': 'Choose the type of hike to manage', 'Belum ada riwayat. Mulai dari trip pertamamu.': 'No history yet. Start with your first trip.',
@@ -3351,7 +3479,7 @@ Object.assign(EN, { ['v3.0.0: tiga mode dalam satu aplikasi (Open trip, Tektok, 
 
 /* ===== Mulai ===== */
 async function mulai() {
-  DB = Object.assign(blank(), await load() || {}); DB.pref = DB.pref || {}; DB.profil = DB.profil || {}; DB.kw = DB.kw || {}; DB.nomor = DB.nomor || {}; applyKat(); DB.trash = (DB.trash || []).filter(x => Date.now() - x.ts < 30 * 864e5); if (jalankanUlang()) { await save(); setTimeout(() => toast('Transaksi berulang ditambahkan'), 700); }
+  DB = Object.assign(blank(), await load() || {}); if (!DB.slot || typeof DB.slot !== 'object') DB.slot = {}; DB.pref = DB.pref || {}; DB.profil = DB.profil || {}; DB.kw = DB.kw || {}; DB.nomor = DB.nomor || {}; applyKat(); DB.trash = (DB.trash || []).filter(x => Date.now() - x.ts < 30 * 864e5); if (jalankanUlang()) { await save(); setTimeout(() => toast('Transaksi berulang ditambahkan'), 700); }
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
   if (DB.pref.bahasa && DB.pref.bahasa !== LANG) setBahasa(DB.pref.bahasa); applyAll(); cekPembuat().then(ok => { CR_OK = ok; if (!ok && !LOCKED) rerender(); });
   BIO_OK = await bioTersedia();
