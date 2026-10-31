@@ -278,12 +278,84 @@ body.lockon header,body.lockon nav{display:none!important}
 @keyframes lkring{from{transform:scale(.92);opacity:.9}to{transform:scale(1.35);opacity:0}}
 @keyframes lkpulse{50%{box-shadow:0 0 0 12px rgba(249,115,22,.12)}}
 @media(prefers-reduced-motion:reduce){.lk *,.lk *:before,.lk *:after{animation:none!important}}
+
+/* v3.0.0: mode, layar awal, rekap semua jenis */
+header .hm{display:flex;align-items:center;gap:6px;height:24px;margin:5px auto 0;padding:0 10px;border-radius:999px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;flex:none}
+header .hm[hidden]{display:none}header .hm i{width:8px;height:8px;border-radius:50%;display:block}header .hm span{font-size:9px;opacity:.7}
+.fjr{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.fj{padding:6px 11px;border-radius:999px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font-size:12px;font-weight:600;cursor:pointer}.fj.on3{background:var(--pri);color:#fff;border-color:var(--pri)}
+.v3{position:fixed;inset:0;z-index:35;background:#0b0b0d;color:#fff7ed;font-family:'Sora','Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.v3[hidden]{display:none}.v3 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+.v3 button{font-family:inherit;cursor:pointer;color:inherit;text-align:left;margin:0}
+.v3 .pg{position:relative;min-height:100%;max-width:520px;margin:0 auto;display:flex;flex-direction:column;padding:calc(20px + env(safe-area-inset-top)) 22px calc(22px + env(safe-area-inset-bottom));background:radial-gradient(120% 50% at 50% 0%,rgba(251,191,36,.15),rgba(11,11,13,0) 65%);overflow:hidden}
+.v3 .pg>*{position:relative}.v3 .deco{position:absolute!important;pointer-events:none;left:0}
+.v3 .vbar{display:flex;align-items:center;justify-content:space-between;min-height:44px}
+.v3 .pk{display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.35);font-size:12px;font-weight:700;color:#fbbf24}.v3 .pk[hidden]{display:none}
+.v3 .ib{width:44px;height:44px;border-radius:50%;border:1px solid rgba(251,191,36,.22);background:rgba(23,23,27,.8);display:grid;place-items:center;padding:0;color:#fbbf24;flex:none}
+.v3 .logo{display:flex;flex-direction:column;align-items:center;margin-top:8px}
+.v3 .lgw{position:relative;width:108px;height:108px;display:grid;place-items:center}
+.v3 .lgw:before{content:'';position:absolute;inset:-14px;border-radius:50%;background:radial-gradient(circle,rgba(249,115,22,.34),rgba(249,115,22,0) 68%)}
+.v3 .lgw i{position:absolute;inset:0;border-radius:30px;background:#000;border:1px solid rgba(251,191,36,.4);box-shadow:0 14px 40px rgba(249,115,22,.28)}
+.v3 .lgw img{position:relative;width:92px;height:92px;object-fit:contain}
+.v3 .brand{margin-top:16px;font-weight:800;font-size:27px;letter-spacing:-.01em;background:linear-gradient(90deg,#f97316,#fbbf24);-webkit-background-clip:text;background-clip:text;color:transparent}
+.v3 .tag{margin-top:4px;font-size:13.5px;color:#e0cfb0;font-weight:500}
+.v3 .hi3{margin-top:22px}.v3 .hi3 .h{font-weight:700;font-size:20px;letter-spacing:-.01em}
+.v3 .st3{margin-top:8px;display:flex;align-items:center;gap:8px;font-size:12.5px;color:#d9c9a8}
+.v3 .st3 i{width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 4px rgba(34,197,94,.18);flex:none}
+.v3 .cards{display:flex;flex-direction:column;gap:14px;margin-top:16px}
+.v3 .cd{width:100%;padding:18px;border-radius:24px;border:1px solid rgba(251,191,36,.28);background:linear-gradient(160deg,rgba(32,28,22,.95),rgba(20,20,24,.95));box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.v3 .cd .r3{display:flex;align-items:center;gap:14px}
+.v3 .cd .ic{width:54px;height:54px;border-radius:18px;display:grid;place-items:center;flex:none}
+.v3 .ic.g3{background:linear-gradient(135deg,#f97316,#fbbf24);color:#1a1000;box-shadow:0 8px 20px rgba(249,115,22,.35)}
+.v3 .ic.o{background:rgba(251,191,36,.1);border:1.5px solid #fbbf24;color:#fbbf24}
+.v3 .cd .tt{flex:1;min-width:0}.v3 .cd b.n{display:block;font-weight:700;font-size:19px}
+.v3 .cd small{display:block;margin-top:2px;font-size:13px;color:#e0cfb0}
+.v3 .cd .ch{display:flex;align-items:center;gap:8px;margin-top:14px;font-size:12px;color:#e0cfb0;flex-wrap:wrap}
+.v3 .pl{display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;font-weight:700;border:1px solid}
+.v3 .pl i{width:7px;height:7px;border-radius:50%;display:block}.v3 .dts{display:flex;gap:5px}.v3 .dts i{width:9px;height:9px;border-radius:50%;display:block}
+.v3 .sts{display:flex;gap:8px;margin-top:14px}.v3 .sts div{flex:1;padding:8px 10px;border-radius:12px;font-size:11.5px}.v3 .sts b{display:block;font-size:15px;color:#fff7ed}
+.v3 .ft{margin-top:auto;padding-top:18px;text-align:center;font-size:11.5px;color:#bfae8a;letter-spacing:.02em}
+.v3 .top{display:flex;align-items:center;gap:12px;min-height:44px}.v3 .ti{font-weight:700;font-size:19px;min-width:0}
+.v3 .sub{margin-top:12px;font-size:13.5px;line-height:1.5;color:#e0cfb0}
+.v3 .wn{margin-top:12px;padding:12px 14px;border-radius:14px;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.35);font-size:12.5px;line-height:1.5;color:#fde68a}
+.v3 .ml{display:flex;flex-direction:column;gap:12px;margin-top:16px}
+.v3 .mc3{width:100%;padding:14px;border-radius:22px;border:1px solid rgba(251,191,36,.18);background:rgba(23,23,27,.9)}
+.v3 .mc3.on3{border:1.5px solid var(--c);background:linear-gradient(160deg,color-mix(in srgb,var(--c) 15%,transparent),rgba(20,20,24,.95));box-shadow:0 10px 28px color-mix(in srgb,var(--c) 20%,transparent)}
+.v3 .mc3 .r3{display:flex;align-items:flex-start;gap:12px}
+.v3 .mt{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;flex:none;background:color-mix(in srgb,var(--c) 14%,transparent);color:var(--c)}.v3 .mc3.on3 .mt{background:var(--c);color:#1a1000}
+.v3 .mb{flex:1;min-width:0}.v3 .mh3{display:flex;align-items:center;justify-content:space-between;gap:8px}.v3 .mn{color:#fff7ed;font-weight:700;font-size:16.5px}
+.v3 .rd{width:22px;height:22px;border-radius:50%;border:2px solid rgba(224,207,176,.45);display:grid;place-items:center;flex:none}.v3 .mc3.on3 .rd{background:var(--c);border-color:var(--c)}
+.v3 .md{margin-top:4px;font-size:12.5px;line-height:1.45;color:#e0cfb0}
+.v3 .tgs{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.v3 .tg{padding:4px 9px;border-radius:999px;font-size:11px;font-weight:600;background:color-mix(in srgb,var(--c) 12%,transparent);border:1px solid color-mix(in srgb,var(--c) 33%,transparent)}
+.v3 .rw{margin-top:10px;font-size:11.5px;color:#bfae8a}
+.v3 .nt{margin-top:14px;font-size:11.5px;line-height:1.5;color:#bfae8a}
+.v3 .bt{margin-top:auto;padding-top:16px}
+.v3 .go{width:100%;padding:16px;border:0;border-radius:18px;font-weight:800;font-size:16px;text-align:center;color:#1a1000;background:var(--c);box-shadow:0 12px 28px color-mix(in srgb,var(--c) 33%,transparent)}
+.v3 .hero3{margin-top:14px;padding:20px;border-radius:26px;background:linear-gradient(135deg,#f97316,#fbbf24);color:#1a1000;box-shadow:0 14px 34px rgba(249,115,22,.3)}
+.v3 .hero3 small{font-size:12.5px;font-weight:600;opacity:.8}.v3 .hero3 .big3{margin-top:2px;font-weight:800;font-size:32px;letter-spacing:-.02em}
+.v3 .hero3 .row{display:flex;gap:10px;margin-top:14px}.v3 .hero3 .row div{flex:1;padding:10px 12px;border-radius:14px;background:rgba(26,16,0,.12);font-size:11.5px;font-weight:600}.v3 .hero3 .row b{display:block;font-size:16px}
+.v3 .cap{margin-top:8px;font-size:11px;color:#bfae8a}
+.v3 .sec{margin-top:18px;font-weight:700;font-size:15px}
+.v3 .pj{padding:14px 16px;border-radius:20px;background:rgba(23,23,27,.9);border:1px solid rgba(251,191,36,.18);margin-top:10px}
+.v3 .pj .hd{display:flex;align-items:center;justify-content:space-between}.v3 .pj .nm{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14.5px}.v3 .pj .nm i{width:10px;height:10px;border-radius:50%;display:block}.v3 .pj .hd span{font-size:12px;color:#e0cfb0}
+.v3 .pj .bb{margin-top:10px;height:6px;border-radius:4px;background:rgba(255,255,255,.08);overflow:hidden}.v3 .pj .bb div{height:100%;border-radius:4px}
+.v3 .pj .cl3{display:flex;gap:8px;margin-top:12px}.v3 .pj .cl3 div{flex:1;font-size:11px;color:#bfae8a;min-width:0}.v3 .pj .cl3 b{display:block;margin-top:2px;font-size:14px;color:#fff7ed}
+.v3 .tr{width:100%;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;background:rgba(23,23,27,.9);border:1px solid rgba(251,191,36,.14);margin-top:8px}
+.v3 .tr>i{width:10px;height:10px;border-radius:50%;flex:none}.v3 .tr .x3{flex:1;min-width:0}.v3 .tr .x3 b{display:block;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.v3 .tr .x3 small{display:block;font-size:11.5px;color:#bfae8a;margin-top:1px}.v3 .tr .h{font-size:12.5px;font-weight:700;white-space:nowrap}
+.v3 .pos,.v3 b.pos{color:#86efac!important}.v3 .neg,.v3 b.neg{color:#fca5a5!important}
+.v3 .em{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px 18px 60px}.v3 .em .h{margin-top:20px;font-weight:700;font-size:19px}.v3 .em p{margin:8px 0 0;font-size:13.5px;line-height:1.55;color:#e0cfb0}
+.v3 .em .go{width:auto;margin-top:22px;padding:14px 26px;border-radius:16px;font-size:15px;background:linear-gradient(135deg,#f97316,#fbbf24);box-shadow:none}
+.v3 .tl{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.v3 .tl div{padding:12px 14px;border-radius:16px;background:rgba(23,23,27,.9);border:1px solid rgba(251,191,36,.18);font-size:11.5px;color:#bfae8a}.v3 .tl b{display:block;margin-top:3px;font-size:15px;color:#fff7ed}.v3 .tl .w{grid-column:1/-1}
+.v3 .li{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid rgba(251,191,36,.1);font-size:13px}.v3 .li:last-child{border:0}.v3 .li span{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.v3 .bd{padding:3px 9px;border-radius:999px;font-size:11px;font-weight:700;flex:none}.v3 .bd.g3{background:rgba(34,197,94,.16);color:#86efac}.v3 .bd.y3{background:rgba(251,191,36,.16);color:#fde68a}.v3 .bd.r3{background:rgba(239,68,68,.16);color:#fca5a5}
+.v3 .kb3{height:5px;border-radius:3px;background:rgba(255,255,255,.08);margin-top:5px;overflow:hidden}.v3 .kb3 div{height:100%;background:linear-gradient(90deg,#f97316,#fbbf24)}
+.v3 .box{margin-top:14px;padding:6px 16px;border-radius:18px;background:rgba(23,23,27,.9);border:1px solid rgba(251,191,36,.18)}
 </style>
 
 </head>
 <body>
-<header><img id="hlogo" src="logo.png" alt="Logo"><div class="ht"><h1>Budgeting Pendakian</h1><small id="hnama">bawaulin.trip</small></div><div id="net"><button type="button" id="hbdg" class="hb" hidden onclick="lencanaInfo()"></button><button type="button" id="hdot" class="dt" onclick="netToast()" aria-label="Online"></button></div></header>
+<header><img id="hlogo" src="logo.png" alt="Logo"><div class="ht"><h1>Budgeting Pendakian</h1><small id="hnama">bawaulin.trip</small><button type="button" id="hmode" class="hm" hidden onclick="v3Buka('mode','chip')"></button></div><div id="net"><button type="button" id="hbdg" class="hb" hidden onclick="lencanaInfo()"></button><button type="button" id="hdot" class="dt" onclick="netToast()" aria-label="Online"></button></div></header>
 <nav id="nav"></nav>
+<div id="v3" class="v3" hidden></div>
 <main id="main">Memuat...</main>
 <script>
 /* ===== Struktur data (sama dengan sheet di Spreadsheet lama) ===== */
@@ -370,6 +442,7 @@ function show(k) {
   if (k !== 'dashboard' && k !== 'more') { const lb = (TABS.find(t => t[0] === k) || ['', ''])[1]; $('main').insertAdjacentHTML('afterbegin', `<div class="pgh">${MAIN.includes(k) ? '' : k === 'pengaturan' ? '<button class="back" onclick="show(\'akun\')">‹ Akun</button>' : '<button class="back" onclick="show(\'more\')">‹ Menu</button>'}<h2>${lb}</h2>${k === 'akun' ? `<button class="pgear" onclick="show(\'pengaturan\')" aria-label="Buka Pengaturan">${SVG_GEAR}</button>` : ''}</div>`); }
   if (tutupOn() && ['dashboard', 'pemasukan', 'pengeluaran', 'bayar', 'bagihasil'].indexOf(k) >= 0) { const h = $('main').querySelector('.pgh'); if (h) h.insertAdjacentHTML('afterend', tutupBanner()); else $('main').insertAdjacentHTML('afterbegin', tutupBanner()); }
   if (CR_OK === false) $('main').insertAdjacentHTML('afterbegin', '<div class="warn red">Identitas pembuat aplikasi berubah. Fitur PDF dikunci. Pasang ulang aplikasi asli.</div>');
+  chipMode();
   window.scrollTo(0, 0);
 }
 
@@ -517,7 +590,7 @@ function drawCl() {
 /* ===== Trip baru, arsip & cadangan ===== */
 function snapshot() {
   const d = dash(), s = JSON.parse(JSON.stringify(DB)); delete s.arsip; delete s.pin; delete s.sim; delete s.trash; delete s.pref; delete s.profil; delete s.kw; delete s.nomor;
-  return { id: DB.seq++, tanggal: new Date().toLocaleString('id-ID'), destinasi: d.destinasi,
+  return { id: DB.seq++, tanggal: new Date().toLocaleString('id-ID'), destinasi: d.destinasi, jenis: modeAktif(),
     ringkasan: 'Pemasukan ' + rp(d.masuk) + '; Pengeluaran ' + rp(d.keluar) + '; Saldo ' + rp(d.saldo) + '; Tamu diterima ' + DB.tamu.filter(t => t['Status'] === 'Diterima').length, data: s };
 }
 function arsipUnduh(id) { const a = DB.arsip.find(x => x.id === id); download('arsip-' + (a.destinasi || 'trip').replace(/\W+/g, '-') + '.json', JSON.stringify(a, null, 1)); }
@@ -776,7 +849,7 @@ function lock(note, mode) {
   if (LOCK_MODE === 'pola') { polaPad('polaPad', polaCek); polaTick(); }
   if (LOCK_MODE === 'bio' && auto) bioLogin();
 }
-function bukaOk() { LOCKED = false; document.body.classList.remove('lockon'); POLA_SALAH = 0; buildNav(); show('dashboard'); setTimeout(onbCek, 1000); setTimeout(fasePeringatan, 2000); setTimeout(updAuto, 1500); }
+function bukaOk() { LOCKED = false; document.body.classList.remove('lockon'); POLA_SALAH = 0; buildNav(); tampilMulai(); setTimeout(onbCek, 1000); setTimeout(fasePeringatan, 2000); setTimeout(updAuto, 1500); }
 async function unlock() { if (await sha(DB.pin.salt + ':' + $('pin').value) === DB.pin.hash) bukaOk(); else lock('PIN salah', 'pin'); }
 /* pola 3x3 */
 function polaPad(id, done) {
@@ -1019,7 +1092,8 @@ function renderTrip() {
     <label>Ketik SALIN untuk konfirmasi</label><input id="sk" placeholder="SALIN">
     <button class="btn red" onclick="salinTemplate()">📑 Arsipkan & salin sebagai template</button><div id="t3msg" class="msg"></div></div>`}
   <div class="card"><h3>Daftar Arsip (${DB.arsip.length})</h3>
-    ${DB.arsip.length ? DB.arsip.slice().reverse().map(a => `<div style="padding:8px 0;border-bottom:1px solid var(--bd)"><b>${esc(a.destinasi || '(tanpa nama)')} - ${esc(a.tanggal)}</b>${a.auto ? ' <span class="badge y">backup otomatis</span>' : ''}<div>${esc(a.ringkasan)}</div>
+    <div class="fjr">${[['semua', 'Semua']].concat(MODES.map(m => [m.id, m.pendek])).map(x => `<button class="fj${FJ === x[0] ? ' on3' : ''}" onclick="setFJ('${x[0]}')">${x[1]}</button>`).join('')}</div>
+    ${arsipFilter().length ? arsipFilter().map(a => `<div style="padding:8px 0;border-bottom:1px solid var(--bd)"><b>${esc(a.destinasi || '(tanpa nama)')} - ${esc(a.tanggal)}</b> <span class="badge" style="background:${modeOf(jenisArsip(a)).warna}22;color:${modeOf(jenisArsip(a)).warna}">${esc(modeOf(jenisArsip(a)).nama)}</span>${a.auto ? ' <span class="badge y">backup otomatis</span>' : ''}<div>${esc(a.ringkasan)}</div>
       <button class="edt" onclick="arsipBuka(${a.id})">Buka</button><button class="edt" onclick="arsipUnduh(${a.id})">Unduh</button><button class="del" onclick="arsipHapus(${a.id})">Hapus</button></div>`).join('') : '<div>Belum ada arsip.</div>'}
     <small class="mut">"Buka" memuat seluruh isi arsip ke aplikasi. Jika trip yang sedang berjalan berisi data, ia disimpan otomatis sebagai backup di daftar arsip.</small></div>
   ${trashCard()}<div class="card"><h3>🧹 Reset Total</h3><div class="warn red">Menghapus SEMUA data di aplikasi ini (data aktif, arsip, simulasi tersimpan, bukti nota). Tidak bisa dibatalkan. Unduh cadangan dulu jika perlu.</div><label>Ketik HAPUS untuk konfirmasi</label><input id="rst" placeholder="HAPUS"><button class="btn red" onclick="resetTotal()">Kosongkan semua data</button><div id="rmsg" class="msg"></div></div>
@@ -1063,7 +1137,8 @@ async function arsipBuka(id) {
   const d = JSON.parse(JSON.stringify(a.data));
   KEYS.concat(['checklist']).forEach(k => DB[k] = d[k] || []);
   DB.set = d.set || { destinasi: '', realisasi: 0 }; DB.simAktif = d.simAktif || null; SIM = null; DB.ganti = d.ganti || {}; DB.ulang = d.ulang || []; DB.pribadi = d.pribadi || []; DB.log = d.log || [];
-  DB.seq = Math.max(DB.seq, d.seq || 0); await save(); renderTrip(); setMsg('tmsg', 'Arsip dibuka. Seluruh isinya sekarang menjadi data aktif.', 1);
+  DB.set.jenis = jenisArsip(a); DB.mode = DB.set.jenis;
+  DB.seq = Math.max(DB.seq, d.seq || 0); await save(); renderTrip(); chipMode(); setMsg('tmsg', 'Arsip dibuka. Seluruh isinya sekarang menjadi data aktif.', 1);
 }
 
 /* ===== Tampilan modern: tema, menu bawah, lembar form ===== */
@@ -1074,7 +1149,7 @@ function buildNav() {
 }
 function renderMore() {
   const T = [['tamu', '👥', 'Tamu', 'Daftar peserta'], ['itinerary', '🗺️', 'Itinerary', 'Rundown perjalanan'], ['perlengkapan', '🎒', 'Perlengkapan', 'Kebutuhan & sewa'], ['checklist', '✅', 'Checklist', 'Barang bawaan'], ['pemasukan', '⬇️', 'Masuk', 'Catat pemasukan'], ['pengeluaran', '⬆️', 'Keluar', 'Catat pengeluaran'], ['bayar', '💳', 'Pembayaran', 'Patungan peserta'], ['trip', '🗂️', 'Trip & Arsip', 'Arsip & cadangan'], ['bagihasil', '💰', 'Bagi Hasil', 'Untung/rugi & penyelesaian official'], ['kategori', '🏷️', 'Kategori', 'Kategori & berulang'], ['daftar', '📝', 'Pendaftaran', 'Link & pendaftar online'], ['kalk', '🧮', 'Kalkulator', 'Hitung, memori, riwayat'], ['panduan', '📖', 'Panduan', 'Demo & langkah rinci']];
-  $('main').innerHTML = `<div class="pgh"><h2>Menu</h2></div><div class="tiles">${T.map(t => `<button class="tile" onclick="show('${t[0]}')"><span>${t[1]}</span>${t[2]}<small>${t[3]}</small></button>`).join('')}</div>`;
+  $('main').innerHTML = `<div class="pgh"><h2>Menu</h2></div><div class="tiles">${T.filter(t => !(t[0] === 'bagihasil' && modeAktif() === 'bersama')).map(t => `<button class="tile" onclick="show('${t[0]}')"><span>${t[1]}</span>${t[2]}<small>${t[3]}</small></button>`).join('')}</div>`;
 }
 function openSheet() { $('sheet').classList.add('on'); }
 function closeSheet() { const s = $('sheet'); if (s) s.classList.remove('on'); }
@@ -2535,7 +2610,7 @@ window.confirm = s => _cf(tr(s)); window.alert = s => _al(tr(s));
 document.documentElement.lang = LANG;
 if (LANG === 'en') { if (document.body) i18nRun(); }
 
-const APP_V = 'v2.2.2';
+const APP_V = 'v3.0.0';
 const CR = Object.freeze({ nama: 'bawaulin.trip', tag: 'Lieur gawe, Bawa ulin', ig: 'https://www.instagram.com/bawaulin.trip?srtk=d29rcmh1YXVrajVz', igh: '@bawaulin.trip', wa: 'https://wa.me/6289618805100', wah: '+62 896-1880-5100' });
 const CR_H = 'bdaae993647f576cf92a364af7443befdce2ceefffe6c926d596f7e52a001b37', LOGO_H = '3763dd402cc104c4f9cebcce4a37a936cf2e0606bb1dd2d261e030f0a6ccc9bb';
 let CR_OK = null, LOCKED = false, hiddenAt = 0, PRIV_OBS = null;
@@ -2728,8 +2803,10 @@ async function cekUpdate() {
 }
 
 /* v1.9.0: tanda Offline + pembaruan otomatis */
-const APP_NOTE = ["Lencana mini muncul di bagian atas aplikasi; ketuk untuk melihat keuntungannya.", "Status koneksi kini berupa titik hijau (online) atau merah (offline).", "Data dan lisensi kamu tidak berubah."];
-const APP_NOTE_EN = ["A mini badge now appears at the top of the app; tap it to see its benefits.", "Connection status is now a green (online) or red (offline) dot.", "Your data and license are unchanged."];
+const APP_NOTE = ["Layar awal baru dengan tombol Mode dan Rekap.", "Tiga mode: Open trip, Tektok, Pendakian bersama. Ganti mode lewat chip di bagian atas.", "Data dan lisensi kamu tidak berubah."];
+const APP_NOTE_OLD = ["Lencana mini muncul di bagian atas aplikasi; ketuk untuk melihat keuntungannya.", "Status koneksi kini berupa titik hijau (online) atau merah (offline).", "Data dan lisensi kamu tidak berubah."];
+const APP_NOTE_EN = ["New start screen with Mode and Recap buttons.", "Three modes: Open trip, Tektok, Group hike. Switch mode with the chip at the top.", "Your data and license are unchanged."];
+const APP_NOTE_EN_OLD = ["A mini badge now appears at the top of the app; tap it to see its benefits.", "Connection status is now a green (online) or red (offline) dot.", "Your data and license are unchanged."];
 let APP_SIAP = false;
 const lsGet = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
 const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
@@ -2763,7 +2840,7 @@ async function updAuto() {
     sheetOpen(`<h3>Versi baru ${esc(m[1])} tersedia</h3>${nt.length ? `<div class="zli"><b>Apa yang baru</b></div>${nt.map(x => `<div class="zli">• ${esc(x)}</div>`).join('')}` : ''}<div class="zli">Data Anda tidak terhapus.</div><button class="btn" onclick="updPasang()">Perbarui sekarang</button><button class="btn alt" onclick="$('fsheet').remove()">Nanti</button>`);
   } catch (e) {}
 }
-async function onbCek() { try { if (!APP_SIAP || LOCKED || $('fsheet') || hasData() || DB.set.destinasi) return; if (await kvGet('onb')) return; await kvPut('onb', 1); onbBuka(); } catch (e) {} }
+async function onbCek() { try { if (!APP_SIAP || LOCKED || V3.l || $('fsheet') || hasData() || DB.set.destinasi) return; if (await kvGet('onb')) return; await kvPut('onb', 1); onbBuka(); } catch (e) {} }
 const IU_S = ["Syarat & Ketentuan", "Dengan mengaktifkan aplikasi, Anda dianggap telah membaca dan menyetujui syarat ini.", "1. Lisensi: satu lisensi seumur hidup produk untuk satu penyelenggara. Satu kode perangkat (BU-XXXX-XXXX) berlaku untuk satu HP. \"Seumur hidup\" berarti selama aplikasi dan server lisensi masih beroperasi. Bila server lisensi dihentikan, pembeli sah akan mendapat kunci permanen yang bekerja tanpa internet.", "2. Yang dilarang: membagikan aplikasi, tautan, atau kunci aktivasi kepada orang lain; menjual ulang atau menyewakan; menghapus atau mengubah identitas pembuat; mengubah kode aplikasi atau menjalankannya dari alamat lain.", "3. Pemeriksaan lisensi: aplikasi memeriksa status lisensi ke server penjual saat ada internet. Tanpa internet, aplikasi tetap jalan sampai 60 hari sejak pemeriksaan terakhir yang berhasil; setelah itu perlu online sekali. Buka aplikasi dengan internet sebelum berangkat trip. Jam HP yang dimundurkan akan mengunci aplikasi.", "4. Pindah HP: gratis, maksimal 2 kali per tahun, dengan nomor WhatsApp yang cocok dengan data pembelian. HP hilang atau rusak dapat dibantu dengan penjelasan. Setiap HP baru punya kode perangkat baru, jadi pembeli meminta kunci baru ke penjual lewat WhatsApp.", "5. Pencabutan: penjual dapat mencabut lisensi bila syarat dilanggar. Aplikasi yang dicabut terkunci begitu terhubung ke server. Data tetap ada di HP dan aplikasi pulih bila lisensi diaktifkan lagi. Pencabutan karena pelanggaran tidak disertai pengembalian uang.", "6. Data dan cadangan: data trip, keuangan, dan peserta hanya tersimpan di HP Anda. Menghapus data aplikasi atau mencopot aplikasi dapat menghilangkan semuanya, jadi cadangkan secara rutin (Akun › Data & Cadangan). Anda bertanggung jawab atas data peserta yang Anda kumpulkan, termasuk data kesehatan, dan wajib meminta izin peserta.", "7. Batas tanggung jawab: aplikasi adalah alat bantu mencatat dan menghitung. Penjual tidak menanggung kerugian akibat kesalahan input atau hitungan, data yang hilang, atau aplikasi yang tidak bisa dipakai karena lama tanpa internet.", "8. Paket Rintis dan Puncak: Puncak membuka semua fitur tanpa batas waktu. Rintis dimulai dengan 7 hari latihan (semua fitur Puncak terbuka), lalu satu trip penuh dengan semua fitur Puncak. Trip penuh itu berakhir saat Anda memakai Tutup Buku, Mulai Trip Baru, atau Salin Template, atau setelah 60 hari, mana yang lebih dulu. Lama masa ini dihitung dari jam server dan dapat berubah; yang berlaku saat Anda membeli tertera di halaman penjualan.", "9. Setelah masa Rintis selesai: Simulasi, Bagi Hasil, Pendaftaran online, Salin Template, Statistik Antar-Trip, serta logo dan stempel penyelenggara di PDF dan kwitansi terkunci, dan PDF memuat tanda bawaulin.cash. Fitur dasar tetap gratis. Data Anda tidak dihapus dan tidak disandera: melihat, mencadangkan, memulihkan, dan mengunduh data tetap bisa, dan fitur yang terkunci terbuka lagi saat Anda upgrade ke Puncak.", "10. Harga dan pengembalian uang: harga mengikuti yang tertera di halaman penjualan pada saat Anda membeli. Rintis, Puncak, Upgrade, dan VIP adalah produk digital, jadi pembayaran yang sudah diterima tidak dikembalikan. Pengecualian: bila aplikasi gagal diaktifkan karena kesalahan di sisi penjual (misalnya kunci atau paket tidak diterbitkan setelah pembayaran terverifikasi, atau aplikasi tidak bisa diaktifkan akibat kesalahan server atau penjual dan tidak dapat diperbaiki), uang dikembalikan. Pengecualian ini tidak berlaku bila penyebabnya di sisi Anda, misalnya salah mengetik kode, HP tidak cocok, atau berubah pikiran. Pencabutan karena pelanggaran (pasal 5) tetap tanpa pengembalian uang. Untuk mengajukan, hubungi penjual lewat WhatsApp dengan bukti pembayaran.", "Pertanyaan: hubungi penjual lewat WhatsApp (Pengaturan › Lapor masalah)."];
 const IU_P = ["Kebijakan Privasi", "Data trip, peserta, dan keuangan Anda disimpan di HP Anda sendiri dan tidak dikirim ke server penjual.", "Yang dikirim ke server lisensi: kode perangkat, versi aplikasi, token pasang acak, alamat asal aplikasi, dan penanda teknis keaslian kode. Tujuannya hanya memeriksa status lisensi dan menjaga agar satu lisensi dipakai di satu HP.", "Server juga mencatat kejadian teknis (misalnya kode dipakai di dua HP) dan data pembelian yang diisi penjual: nama pembeli, nomor WhatsApp, dan tanggal aktivasi. Data ini dipakai untuk aktivasi, pindah HP, dan bantuan.", "Server juga mencatat paket Anda (Rintis atau Puncak), kapan masa latihan dimulai, dan kapan trip pertama ditandai selesai. Ini hanya penanda waktu; isi trip tidak dikirim.", "Pendaftaran online memakai skrip Google milik Anda sendiri; data pendaftar masuk ke Google Sheet Anda, bukan ke server penjual.", "Lapor masalah hanya mengirim info teknis dan hanya terkirim bila Anda menekan kirim di WhatsApp. Cadangan data berupa berkas yang Anda unduh dan simpan sendiri.", "Aplikasi tidak memakai iklan atau pelacak pihak ketiga. Aplikasi dihosting di GitHub Pages, yang dapat mencatat akses jaringan sesuai kebijakannya sendiri.", "Penjual tidak menjual data Anda. Untuk meminta data pembelian Anda dihapus, hubungi penjual lewat WhatsApp."];
 function infoUmum() { sheetOpen('<h3>Info Umum</h3><div class="card zcard"><div class="zr" onclick="infoDoc(IU_S)"><span class="zk">Syarat & Ketentuan</span><div class="zrt"><span class="zch">›</span></div></div><div class="zr" onclick="infoDoc(IU_P)"><span class="zk">Kebijakan Privasi</span><div class="zrt"><span class="zch">›</span></div></div></div>'); }
@@ -2812,7 +2889,7 @@ async function laporMasalah() {
   window._lapor = t;
 }
 function laporKirim() { const s = $('fsheet'); if (s) s.remove(); openWA(window._lapor || '', CR.wa.replace(/\D/g, '')); }
-const BARU = ["v2.2.2: lencana mini di header (ikon saja; ketuk untuk melihat keuntungan) dan indikator koneksi kini berupa titik hijau (online) atau merah (offline). Data dan lisensi tidak berubah. v2.2.1: ketuk lencana di Akun untuk melihat keuntungannya (VIP kini juga dapat akses awal fitur baru); pasal pengembalian uang di Syarat & Ketentuan (dokumen versi 1.2); pengecek gelar untuk akses awal fitur (belum ada fitur yang disembunyikan). Data dan lisensi tidak berubah.", "v2.1.0: lencana baru di Akun: tampilan khusus untuk Developer, VVIP, VIP, Puncak, dan Rintis. Lencana hanya penanda, tidak mengubah fitur. Data dan lisensi tidak berubah.", "v2.0.0: logo dan tagline \"Lieur ngitung, bawa santai\" bawaulin.cash tampil di layar aktivasi dan layar sambutan, dan ikon aplikasi diganti. Data dan lisensi tidak berubah.", 'v1.14.6: Info Umum kini menjelaskan paket Rintis dan Puncak (Syarat & Ketentuan dan Kebijakan Privasi dokumen versi 1.1), dan Panduan punya topik Paket Rintis dan Puncak.', 'v1.14.5: tanda air bawaulin.cash di PDF paket Rintis dikembalikan ke tampilan besar yang jelas terlihat.', 'v1.14.0: paket Rintis: setelah trip pertama selesai, fitur Puncak terkunci (Simulasi, Bagi Hasil, Pendaftaran online, Salin Template, Statistik Antar-Trip, dan PDF tanpa tanda bawaulin.cash). Data tetap aman dan terbuka lagi di Puncak. Ada peringatan sebelum masa trip pertama habis.', 'v1.13.0: lencana status paket di Akun (Latihan, Trip pertama, Rintis, atau Puncak). Belum ada fitur yang dikunci.', 'v1.12.0: halaman Info Umum berisi Syarat & Ketentuan dan Kebijakan Privasi (Pengaturan › Bantuan).', 'v1.11.1: Panduan disesuaikan dengan tombol Batalkan, layar sambutan, dan ajakan cadangkan.', 'v1.11.0: hapus kini bisa dibatalkan (tombol Batalkan 7 detik) tanpa konfirmasi; layar sambutan 3 langkah untuk pengguna baru (Pengaturan > Bantuan > Lihat panduan awal); ajakan mencadangkan data setelah buku trip ditutup.', 'v1.10.1: indikator Online (titik hijau) dan Offline (titik merah) kini selalu tampil di pojok kanan atas, menggantikan tombol tema yang sudah ada di Pengaturan.', 'v1.10.0: Pengaturan dirapikan. Perilaku Input dan Pengingat dihapus (selalu aktif), pembulatan harga jual pindah ke Kalkulator, Tentang dan Bantuan dipisah.', 'v1.9.0: tanda Offline saat tidak ada internet, dan pembaruan aplikasi kini muncul otomatis.', 'v1.8.11: pemeriksaan lisensi dipindah ke server baru.', 'v1.8.10: Hitung Trip (kalkulator), banner, dan label kecil kini tersedia dalam English.', 'v1.8.9: pesan kosong, galat, layar kunci dan lisensi kini tersedia dalam English.', 'v1.8.8: kalimat privasi di Pengaturan disederhanakan dan judul topik Panduan kini tersedia dalam English.', 'v1.8.7: Trip & Arsip, Riwayat Perubahan, dan Bagi Hasil kini tersedia dalam English.', 'v1.8.6: Simulasi, Statistik Antar-Trip, kolom pencarian, dan penjelasan Patungan Otomatis kini tersedia dalam English.', 'v1.8.5: daftar Yang baru, pesan hapus/impor, dan sisa teks halaman diterjemahkan ke English.', 'v1.8.4: langkah rinci dan tips Panduan kini tersedia dalam English.', 'v1.8.3: tanggal mengikuti bahasa dan demo Panduan diterjemahkan ke English. Langkah rinci Panduan menyusul.', 'v1.8.2: terjemahan English diperluas ke Pengaturan, lembar, layar aktivasi dan kunci. Pesan WhatsApp tetap Indonesia.', 'v1.8.1: terjemahan English diperluas ke semua tab utama, toast, dan pesan konfirmasi. Panduan dan Yang baru menyusul.', 'Baru: pilihan Bahasa (Pengaturan › Tampilan): Indonesia atau English. Tahap awal: menu, tab, Pengaturan, tombol, dan pesan utama sudah berbahasa Inggris; teks yang belum diterjemahkan tetap Indonesia. Pesan WhatsApp, kwitansi, dan PDF untuk peserta tetap Indonesia. Panduan dan daftar Yang baru menyusul.', 'Baru: tombol Matikan semua kunci (Pengaturan › Keamanan) mematikan PIN, pola, dan sidik jari sekaligus setelah konfirmasi PIN. Baru juga panduan Keamanan buka aplikasi (Menu › Panduan).', 'Layar kunci didesain ulang: tanpa header, dengan logo besar bercahaya, kartu kaca, pola dan sidik jari lebih jelas, serta tombol pindah cara buka berbentuk pil. Cara kerjanya tidak berubah.', 'Baru: Cara buka aplikasi (Pengaturan › Keamanan). Selain PIN, buka dengan pola 3x3 atau sidik jari. PIN tetap jadi cadangan dan dipakai untuk mengatur. Pola salah 5 kali menunggu 30 detik. Sidik jari bergantung HP dan belum tentu jalan di semua perangkat; bila tidak didukung, opsinya tidak muncul. Cadangan membawa pola, sidik jari didaftarkan ulang.', 'Baru: Riwayat perubahan (Menu › Trip & Arsip, di bawah kartu Tutup Buku). Setiap transaksi uang yang ditambah, diubah (nilai sebelum dan sesudah), dihapus, atau dipulihkan dicatat dengan waktunya, begitu juga saat buku trip ditutup dan dibuka. Isi Nama pencatat bila beberapa panitia memakai HP yang sama. Bisa difilter dan diunduh sebagai CSV. Perubahan sebelum v1.6.0 tidak punya riwayat.', 'Baru: Tutup buku trip (Menu › Trip & Arsip). Setelah trip selesai, transaksi uang dikunci: Pemasukan, Pengeluaran, Catat bayar, penggantian Talangan, transaksi berulang, simulasi dan sewa yang masuk ke Pengeluaran. Arsip cadangan dibuat otomatis, dan kunci hanya bisa dibuka dengan mengetik BUKA. Tamu, Itinerary, Checklist, kwitansi, PDF, dan Rekap tetap bebas.', 'Tab Pembayaran dirombak. Paling atas ringkasan (terkumpul dari target, jumlah Lunas/Sebagian/Belum bayar/Telat, tenggat), lalu daftar peserta dengan pencarian dan filter. Tombol ＋ Catat bayar di tiap peserta mengisi sisa tagihan otomatis dan menyimpannya sebagai Pemasukan kategori Peserta. Tombol Tagih berikutnya membuka WhatsApp peserta yang belum ditagih satu per satu. Pengaturan cara bayar dan tagihan dilipat di bawah. Data lama aman.', 'Cara bayar kini berupa daftar: beberapa rekening bank dan e-wallet (DANA, SeaBank, ShopeePay, GoPay, OVO, LinkAja, atau nama lain), tombol Salin nomor, serta sakelar aktif. Semua yang aktif ikut di pesan tagihan WhatsApp, kwitansi, dan kata kunci {rekening}. Teks rekening lama tetap dipakai sebagai catatan.', 'Baru: Kartu cara bayar (PDF) dan Cara bayar ke grup WhatsApp, berisi semua rekening, e-wallet, QRIS, dan tenggat. Dasar hitung tagihan disederhanakan jadi satu baris (ketuk Ubah); aturan hitungnya tidak berubah.', 'Formulir pendaftaran online disederhanakan: Nama, Nomor WhatsApp, Meeting point, Alergi makanan (Ya/Tidak), dan Catatan. Golongan darah, riwayat penyakit, dan kontak darurat tidak lagi diminta. Pendaftar dengan alergi ditandai "Alergi makanan: Ya" di Catatan tamu. Data tamu lama tidak diubah. Pasang ulang skrip Apps Script pendaftaran yang baru.', 'Baru: Menu › Trip & Arsip › Salin Trip sebagai Template. Trip baru langsung berisi itinerary, checklist (belum siap, tanpa pembawa), dan kategori dari trip sebelumnya; tamu dan uang kosong. Tanggal itinerary bisa digeser otomatis.', 'Baru: Pengaturan › Tentang & Bantuan › Lapor masalah. Membuka WhatsApp penjual dengan info teknis siap kirim (versi, kode perangkat, status lisensi, perangkat), tanpa data trip, peserta, atau uang. Terkirim hanya bila Anda menekan kirim di WhatsApp.', 'Baru: panduan Pindah ke HP baru (Menu › Panduan).', 'Kartu Ringkasan di Akun dihapus.', 'Perbaikan: angka 0 di depan nomor WhatsApp tidak lagi hilang (tagihan WA, daftar Tamu, dan impor pendaftar online). Data lama tidak diubah.', 'Penomoran versi dimulai ulang dari v1.0.0. Tidak ada perubahan fitur.', 'Keamanan lisensi: aplikasi memeriksa status lisensi ke server (otomatis maks. tiap 1 jam, atau kapan saja lewat Pengaturan › Periksa status lisensi sekarang; tidak menahan aplikasi). Tanpa internet tetap jalan sampai 30 hari sejak pemeriksaan terakhir. Lisensi dicabut, versi terlalu lama, atau jam HP dimundurkan akan mengunci aplikasi. Kunci aktivasi lama diganti kunci baru.', 'Ikon Pengaturan (gerigi) pindah ke kanan judul Akun, di bawah tombol terang/gelap. Kartu Pengaturan di Akun dihapus.', 'Kalkulator pindah ke Menu › Kalkulator: tampilan seperti kalkulator HP, memori, riwayat, tombol ÷ Peserta dan Bulat, plus 7 rumus Hitung Trip.', 'Akun: kartu profil dan tombol Pengaturan menyatu, serta ada Data & Cadangan.', 'Tentang pembuat: tombol Instagram dan WhatsApp saja, tanpa tulisan nama atau nomor.', 'Pengaturan baru: pesan tagihan WhatsApp bisa diubah, pembulatan harga jual, dan Cek pembaruan aplikasi.', 'Panduan singkat kini berisi demo bergerak dan langkah rinci untuk semua fitur (Menu › Panduan).'];
+const BARU = ["v3.0.0: tiga mode dalam satu aplikasi (Open trip, Tektok, Pendakian bersama) dengan layar awal baru: tombol Mode di atas dan Rekap di bawah. Rekap semua jenis bisa diketuk sampai rekap lengkap tiap trip. Arsip kini ditandai jenisnya dan bisa disaring. Trip lama otomatis menjadi Open trip. Data dan lisensi tidak berubah.", "v2.2.2: lencana mini di header (ikon saja; ketuk untuk melihat keuntungan) dan indikator koneksi kini berupa titik hijau (online) atau merah (offline). Data dan lisensi tidak berubah. v2.2.1: ketuk lencana di Akun untuk melihat keuntungannya (VIP kini juga dapat akses awal fitur baru); pasal pengembalian uang di Syarat & Ketentuan (dokumen versi 1.2); pengecek gelar untuk akses awal fitur (belum ada fitur yang disembunyikan). Data dan lisensi tidak berubah.", "v2.1.0: lencana baru di Akun: tampilan khusus untuk Developer, VVIP, VIP, Puncak, dan Rintis. Lencana hanya penanda, tidak mengubah fitur. Data dan lisensi tidak berubah.", "v2.0.0: logo dan tagline \"Lieur ngitung, bawa santai\" bawaulin.cash tampil di layar aktivasi dan layar sambutan, dan ikon aplikasi diganti. Data dan lisensi tidak berubah.", 'v1.14.6: Info Umum kini menjelaskan paket Rintis dan Puncak (Syarat & Ketentuan dan Kebijakan Privasi dokumen versi 1.1), dan Panduan punya topik Paket Rintis dan Puncak.', 'v1.14.5: tanda air bawaulin.cash di PDF paket Rintis dikembalikan ke tampilan besar yang jelas terlihat.', 'v1.14.0: paket Rintis: setelah trip pertama selesai, fitur Puncak terkunci (Simulasi, Bagi Hasil, Pendaftaran online, Salin Template, Statistik Antar-Trip, dan PDF tanpa tanda bawaulin.cash). Data tetap aman dan terbuka lagi di Puncak. Ada peringatan sebelum masa trip pertama habis.', 'v1.13.0: lencana status paket di Akun (Latihan, Trip pertama, Rintis, atau Puncak). Belum ada fitur yang dikunci.', 'v1.12.0: halaman Info Umum berisi Syarat & Ketentuan dan Kebijakan Privasi (Pengaturan › Bantuan).', 'v1.11.1: Panduan disesuaikan dengan tombol Batalkan, layar sambutan, dan ajakan cadangkan.', 'v1.11.0: hapus kini bisa dibatalkan (tombol Batalkan 7 detik) tanpa konfirmasi; layar sambutan 3 langkah untuk pengguna baru (Pengaturan > Bantuan > Lihat panduan awal); ajakan mencadangkan data setelah buku trip ditutup.', 'v1.10.1: indikator Online (titik hijau) dan Offline (titik merah) kini selalu tampil di pojok kanan atas, menggantikan tombol tema yang sudah ada di Pengaturan.', 'v1.10.0: Pengaturan dirapikan. Perilaku Input dan Pengingat dihapus (selalu aktif), pembulatan harga jual pindah ke Kalkulator, Tentang dan Bantuan dipisah.', 'v1.9.0: tanda Offline saat tidak ada internet, dan pembaruan aplikasi kini muncul otomatis.', 'v1.8.11: pemeriksaan lisensi dipindah ke server baru.', 'v1.8.10: Hitung Trip (kalkulator), banner, dan label kecil kini tersedia dalam English.', 'v1.8.9: pesan kosong, galat, layar kunci dan lisensi kini tersedia dalam English.', 'v1.8.8: kalimat privasi di Pengaturan disederhanakan dan judul topik Panduan kini tersedia dalam English.', 'v1.8.7: Trip & Arsip, Riwayat Perubahan, dan Bagi Hasil kini tersedia dalam English.', 'v1.8.6: Simulasi, Statistik Antar-Trip, kolom pencarian, dan penjelasan Patungan Otomatis kini tersedia dalam English.', 'v1.8.5: daftar Yang baru, pesan hapus/impor, dan sisa teks halaman diterjemahkan ke English.', 'v1.8.4: langkah rinci dan tips Panduan kini tersedia dalam English.', 'v1.8.3: tanggal mengikuti bahasa dan demo Panduan diterjemahkan ke English. Langkah rinci Panduan menyusul.', 'v1.8.2: terjemahan English diperluas ke Pengaturan, lembar, layar aktivasi dan kunci. Pesan WhatsApp tetap Indonesia.', 'v1.8.1: terjemahan English diperluas ke semua tab utama, toast, dan pesan konfirmasi. Panduan dan Yang baru menyusul.', 'Baru: pilihan Bahasa (Pengaturan › Tampilan): Indonesia atau English. Tahap awal: menu, tab, Pengaturan, tombol, dan pesan utama sudah berbahasa Inggris; teks yang belum diterjemahkan tetap Indonesia. Pesan WhatsApp, kwitansi, dan PDF untuk peserta tetap Indonesia. Panduan dan daftar Yang baru menyusul.', 'Baru: tombol Matikan semua kunci (Pengaturan › Keamanan) mematikan PIN, pola, dan sidik jari sekaligus setelah konfirmasi PIN. Baru juga panduan Keamanan buka aplikasi (Menu › Panduan).', 'Layar kunci didesain ulang: tanpa header, dengan logo besar bercahaya, kartu kaca, pola dan sidik jari lebih jelas, serta tombol pindah cara buka berbentuk pil. Cara kerjanya tidak berubah.', 'Baru: Cara buka aplikasi (Pengaturan › Keamanan). Selain PIN, buka dengan pola 3x3 atau sidik jari. PIN tetap jadi cadangan dan dipakai untuk mengatur. Pola salah 5 kali menunggu 30 detik. Sidik jari bergantung HP dan belum tentu jalan di semua perangkat; bila tidak didukung, opsinya tidak muncul. Cadangan membawa pola, sidik jari didaftarkan ulang.', 'Baru: Riwayat perubahan (Menu › Trip & Arsip, di bawah kartu Tutup Buku). Setiap transaksi uang yang ditambah, diubah (nilai sebelum dan sesudah), dihapus, atau dipulihkan dicatat dengan waktunya, begitu juga saat buku trip ditutup dan dibuka. Isi Nama pencatat bila beberapa panitia memakai HP yang sama. Bisa difilter dan diunduh sebagai CSV. Perubahan sebelum v1.6.0 tidak punya riwayat.', 'Baru: Tutup buku trip (Menu › Trip & Arsip). Setelah trip selesai, transaksi uang dikunci: Pemasukan, Pengeluaran, Catat bayar, penggantian Talangan, transaksi berulang, simulasi dan sewa yang masuk ke Pengeluaran. Arsip cadangan dibuat otomatis, dan kunci hanya bisa dibuka dengan mengetik BUKA. Tamu, Itinerary, Checklist, kwitansi, PDF, dan Rekap tetap bebas.', 'Tab Pembayaran dirombak. Paling atas ringkasan (terkumpul dari target, jumlah Lunas/Sebagian/Belum bayar/Telat, tenggat), lalu daftar peserta dengan pencarian dan filter. Tombol ＋ Catat bayar di tiap peserta mengisi sisa tagihan otomatis dan menyimpannya sebagai Pemasukan kategori Peserta. Tombol Tagih berikutnya membuka WhatsApp peserta yang belum ditagih satu per satu. Pengaturan cara bayar dan tagihan dilipat di bawah. Data lama aman.', 'Cara bayar kini berupa daftar: beberapa rekening bank dan e-wallet (DANA, SeaBank, ShopeePay, GoPay, OVO, LinkAja, atau nama lain), tombol Salin nomor, serta sakelar aktif. Semua yang aktif ikut di pesan tagihan WhatsApp, kwitansi, dan kata kunci {rekening}. Teks rekening lama tetap dipakai sebagai catatan.', 'Baru: Kartu cara bayar (PDF) dan Cara bayar ke grup WhatsApp, berisi semua rekening, e-wallet, QRIS, dan tenggat. Dasar hitung tagihan disederhanakan jadi satu baris (ketuk Ubah); aturan hitungnya tidak berubah.', 'Formulir pendaftaran online disederhanakan: Nama, Nomor WhatsApp, Meeting point, Alergi makanan (Ya/Tidak), dan Catatan. Golongan darah, riwayat penyakit, dan kontak darurat tidak lagi diminta. Pendaftar dengan alergi ditandai "Alergi makanan: Ya" di Catatan tamu. Data tamu lama tidak diubah. Pasang ulang skrip Apps Script pendaftaran yang baru.', 'Baru: Menu › Trip & Arsip › Salin Trip sebagai Template. Trip baru langsung berisi itinerary, checklist (belum siap, tanpa pembawa), dan kategori dari trip sebelumnya; tamu dan uang kosong. Tanggal itinerary bisa digeser otomatis.', 'Baru: Pengaturan › Tentang & Bantuan › Lapor masalah. Membuka WhatsApp penjual dengan info teknis siap kirim (versi, kode perangkat, status lisensi, perangkat), tanpa data trip, peserta, atau uang. Terkirim hanya bila Anda menekan kirim di WhatsApp.', 'Baru: panduan Pindah ke HP baru (Menu › Panduan).', 'Kartu Ringkasan di Akun dihapus.', 'Perbaikan: angka 0 di depan nomor WhatsApp tidak lagi hilang (tagihan WA, daftar Tamu, dan impor pendaftar online). Data lama tidak diubah.', 'Penomoran versi dimulai ulang dari v1.0.0. Tidak ada perubahan fitur.', 'Keamanan lisensi: aplikasi memeriksa status lisensi ke server (otomatis maks. tiap 1 jam, atau kapan saja lewat Pengaturan › Periksa status lisensi sekarang; tidak menahan aplikasi). Tanpa internet tetap jalan sampai 30 hari sejak pemeriksaan terakhir. Lisensi dicabut, versi terlalu lama, atau jam HP dimundurkan akan mengunci aplikasi. Kunci aktivasi lama diganti kunci baru.', 'Ikon Pengaturan (gerigi) pindah ke kanan judul Akun, di bawah tombol terang/gelap. Kartu Pengaturan di Akun dihapus.', 'Kalkulator pindah ke Menu › Kalkulator: tampilan seperti kalkulator HP, memori, riwayat, tombol ÷ Peserta dan Bulat, plus 7 rumus Hitung Trip.', 'Akun: kartu profil dan tombol Pengaturan menyatu, serta ada Data & Cadangan.', 'Tentang pembuat: tombol Instagram dan WhatsApp saja, tanpa tulisan nama atau nomor.', 'Pengaturan baru: pesan tagihan WhatsApp bisa diubah, pembulatan harga jual, dan Cek pembaruan aplikasi.', 'Panduan singkat kini berisi demo bergerak dan langkah rinci untuk semua fitur (Menu › Panduan).'];
 const listSheet = (t, a) => sheetOpen(`<h3>${t}</h3>${a.map(x => `<div class="zli">• ${esc(x)}</div>`).join('')}`);
 async function resetPref() {
   if (!confirm('Kembalikan semua pengaturan tampilan dan perilaku ke bawaan? Data trip tidak berubah.')) return;
@@ -3119,13 +3196,157 @@ const pdNext = () => { const n = PAN[PD.ch].demo.length; pdShow((PD.f + 1) % n);
 const pdPrev = () => { const n = PAN[PD.ch].demo.length; pdShow((PD.f + n - 1) % n); };
 function pdToggle() { PD.play = !PD.play; $('pdpl').textContent = PD.play ? '⏸ Jeda' : '▶ Putar'; }
 
+
+/* ===== v3.0.0: tiga mode (Open trip, Tektok, Pendakian bersama), layar awal, rekap semua jenis ===== */
+const MODES = [
+  { id: 'open', nama: 'Open trip', pendek: 'Open trip', warna: '#f97316', untung: true, desc: 'Ada porter, guide, dan sweeper. Peserta bayar paket, kamu atur kru dan tagihan.', tags: ['Tamu & tagihan', 'Pembayaran', 'Bagi hasil'], ic: '<circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5.5a3 3 0 0 1 0 5.5M18 14.5c1.8.8 3 2.6 3 5.5"/>' },
+  { id: 'tektok', nama: 'Tektok', pendek: 'Tektok', warna: '#38bdf8', untung: true, desc: 'Naik dan turun di hari yang sama. Jasa dengan untung, memakai alat yang sama dengan Open trip.', tags: ['Tamu & tagihan', 'Simulasi', 'Bagi hasil'], ic: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>' },
+  { id: 'bersama', nama: 'Pendakian bersama', pendek: 'Bersama', warna: '#22c55e', untung: false, desc: 'Semua beban dan biaya dibagi rata. Tanpa untung dan tanpa bagi hasil.', tags: ['Patungan', 'Simulasi', 'Tanpa untung'], ic: '<circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.3 11l7.4-3.7M8.3 13l7.4 3.7"/>' }
+];
+const modeOf = id => MODES.find(m => m.id === id) || MODES[0];
+const modeAktif = () => (DB && hasData() && DB.set && DB.set.jenis) || (DB && DB.mode) || 'open';
+const jenisArsip = a => a.jenis || (a.data && a.data.set && a.data.set.jenis) || 'open';
+let FJ = 'semua';
+const arsipFilter = () => DB.arsip.slice().reverse().filter(a => FJ === 'semua' || jenisArsip(a) === FJ);
+function setFJ(v) { FJ = v; renderTrip(); }
+function chipMode() {
+  const b = $('hmode'); if (!b || !DB) return; const m = modeOf(modeAktif());
+  b.innerHTML = `<i style="background:${m.warna}"></i>${esc(m.pendek)}<span>▾</span>`; b.hidden = false;
+}
+function rpc(n) { const a = Math.abs(Number(n) || 0); return a >= 1e6 ? 'Rp ' + (a / 1e6).toFixed(1).replace('.', ',').replace(/,0$/, '') + ' jt' : rp(a); }
+const hasilTxt = (m, n) => !m.untung ? 'Tanpa untung' : n > 0 ? '+ ' + rpc(n) : n < 0 ? '- ' + rpc(n) : 'Impas';
+const hasilCls = (m, n) => m.untung && n > 0 ? 'pos' : m.untung && n < 0 ? 'neg' : '';
+function rekapAll() {
+  const seen = {}, L = [];
+  const add = (d, nama, tgl, jenis, id) => {
+    try {
+      const x = tripStat(d, nama, tgl); if (!x.ps && !x.masuk && !x.keluar) return;
+      const k = [jenis, nama, x.ps, x.masuk, x.keluar].join('|'); if (seen[k]) return; seen[k] = 1;
+      x.jenis = jenis; x.id = id; L.push(x);
+    } catch (e) {}
+  };
+  DB.arsip.forEach(a => add(a.data, a.destinasi || '(tanpa nama)', String(a.tanggal || '').split(/[ ,]/)[0], jenisArsip(a), a.id));
+  if (hasData()) add(DB, DB.set.destinasi || '(tanpa nama)', 'Berjalan', modeAktif(), 'now');
+  const per = MODES.map(m => { const t = L.filter(x => x.jenis === m.id); return { m, n: t.length, ps: sum(t, x => x.ps), masuk: sum(t, x => x.masuk), untung: sum(t, x => x.untung) }; });
+  const tot = { n: L.length, ps: sum(per, p => p.ps), masuk: sum(per, p => p.masuk), untung: sum(per.filter(p => p.m.untung), p => p.untung) };
+  return { L, per, tot };
+}
+const V3 = { l: null, sel: 'open', dari: 'awal', det: null };
+const V3IC = {
+  gear: '<path d="M4 7h9M19 7h1M4 17h1M11 17h9"/><circle cx="16" cy="7" r="2.5"/><circle cx="8" cy="17" r="2.5"/>',
+  back: '<path d="M15 6l-6 6 6 6"/>', next: '<path d="M9 6l6 6-6 6"/>', swap: '<path d="M6 8h12l-3-3M18 16H6l3 3"/>', bars: '<path d="M5 20V11M12 20V4M19 20v-6"/>', ok: '<path d="M5 12l5 5 9-10"/>',
+  peak: '<path d="M3 18l5-9 4 5 3-4 6 8z"/>'
+};
+const v3svg = (p, w, c, sw) => `<svg aria-hidden="true" width="${w}" height="${w}" viewBox="0 0 24 24" fill="none" stroke="${c || 'currentColor'}" stroke-width="${sw || 2.2}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+function v3Awal() {
+  const R = rekapAll(), m = modeOf(modeAktif()), baru = !R.L.length, tutup = hasData() && tutupOn();
+  const lain = MODES.filter(x => x.id !== m.id);
+  return `<div class="pg">
+  <svg class="deco" style="top:0" aria-hidden="true" width="390" height="340" viewBox="0 0 390 340"><g fill="none" stroke="rgba(251,191,36,.11)" stroke-width="1.2" transform="rotate(-16 330 40)"><ellipse cx="330" cy="40" rx="50" ry="26"/><ellipse cx="330" cy="40" rx="96" ry="52"/><ellipse cx="330" cy="40" rx="142" ry="78"/><ellipse cx="330" cy="40" rx="190" ry="104"/><ellipse cx="330" cy="40" rx="240" ry="130"/><ellipse cx="330" cy="40" rx="292" ry="156"/></g></svg>
+  <svg class="deco" style="bottom:0" aria-hidden="true" width="390" height="230" viewBox="0 0 390 230"><defs><linearGradient id="v3mt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbbf24" stop-opacity=".16"/><stop offset="1" stop-color="#fbbf24" stop-opacity="0"/></linearGradient></defs><path d="M0 230V150l58-38 36 24 78-88 58 70 40-30 70 64 50-28v106z" fill="url(#v3mt)"/><path d="M0 150l58-38 36 24 78-88 58 70 40-30 70 64 50-28" fill="none" stroke="rgba(251,191,36,.22)" stroke-width="1.2"/></svg>
+  <div class="vbar"><div class="pk" id="v3pk" hidden></div><button class="ib" aria-label="Akun dan pengaturan" onclick="v3Tutup();show('akun')">${v3svg(V3IC.gear, 20, null, 1.8)}</button></div>
+  <div class="logo"><div class="lgw"><i></i><img src="logo-cash.png" alt="Logo bawaulin.cash"></div><div class="brand">bawaulin.cash</div><div class="tag">Lieur ngitung, bawa santai</div></div>
+  <div class="hi3"><div class="h">Siap trip berikutnya?</div><div class="st3"><i></i>${tutup ? 'Buku trip ditutup. Pilih mode untuk melanjutkan.' : 'Buku trip sudah rapi. Belum ada trip berjalan.'}</div></div>
+  <div class="cards">
+    <button class="cd" onclick="v3Buka('mode','awal')"><div class="r3"><div class="ic o">${v3svg(V3IC.swap, 26)}</div><div class="tt"><b class="n">Mode</b><small>Pilih jenis pendakian yang mau dikelola</small></div>${v3svg(V3IC.next, 22, '#fbbf24')}</div>
+      <div class="ch"><span class="pl" style="background:${m.warna}29;border-color:${m.warna}80;color:#fff7ed"><i style="background:${m.warna}"></i>Terakhir: ${esc(m.nama)}</span><span class="dts">${lain.map(x => `<i style="background:${x.warna}"></i>`).join('')}</span></div></button>
+    <button class="cd" onclick="v3Buka('rekap')"><div class="r3"><div class="ic g3">${v3svg(V3IC.bars, 26)}</div><div class="tt"><b class="n">Rekap</b><small>${baru ? 'Belum ada riwayat. Mulai dari trip pertamamu.' : 'Semua jenis · ' + R.tot.n + ' trip · ' + R.tot.ps + ' peserta'}</small></div>${v3svg(V3IC.next, 22, '#fbbf24')}</div>
+      ${baru ? '' : `<div class="sts">${R.per.map(p => `<div style="background:${p.m.warna}24;color:${p.m.warna}"><b>${p.n}</b>${esc(p.m.pendek)}</div>`).join('')}</div>`}</button>
+  </div>
+  <div class="ft">Dibuat oleh bawaulin.trip · Lieur gawe, bawa ulin</div></div>`;
+}
+function v3Mode() {
+  const sel = modeOf(V3.sel), now = modeAktif(), run = hasData() && !tutupOn(), blok = run && V3.sel !== now, R = rekapAll();
+  return `<div class="pg"><div class="top"><button class="ib" aria-label="Kembali" onclick="v3Back()">${v3svg(V3IC.back, 20)}</button><div class="ti">Pilih Mode</div></div>
+  <div class="sub">Satu trip aktif dalam satu waktu. Saat mode diganti, seluruh isi aplikasi menyesuaikan.</div>
+  ${run ? `<div class="wn">Trip berjalan (${esc(modeOf(now).nama)}${DB.set.destinasi ? ' · ' + esc(DB.set.destinasi) : ''}) masih berisi data. Mode lain bisa dipilih setelah trip diarsipkan atau ditutup bukunya.</div>` : ''}
+  <div class="ml">${MODES.map(m => { const on = m.id === V3.sel, p = R.per.find(x => x.m.id === m.id);
+    return `<button class="mc3${on ? ' on3' : ''}" style="--c:${m.warna}" aria-pressed="${on}" onclick="v3Pilih('${m.id}')"><div class="r3"><div class="mt">${v3svg(m.ic, 24, null, 2)}</div><div class="mb"><div class="mh3"><div class="mn">${esc(m.nama)}</div><div class="rd">${on ? v3svg(V3IC.ok, 14, '#1a1000', 3.5) : ''}</div></div><div class="md">${esc(m.desc)}</div><div class="tgs">${m.tags.map(t => `<span class="tg">${esc(t)}</span>`).join('')}</div><div class="rw">${p && p.n ? p.n + ' trip tersimpan di riwayat' : 'Belum ada trip'}</div></div></div></button>`; }).join('')}</div>
+  <div class="nt">Fitur khusus Tektok dan Pendakian bersama menyusul di rilis berikutnya. Saat ini ketiga mode memakai alat yang sama; Pendakian bersama tidak memakai Bagi Hasil.</div>
+  <div class="bt"><button class="go" style="--c:${blok ? '#fbbf24' : sel.warna}" onclick="v3Masuk()">${blok ? 'Arsipkan trip dulu di Trip & Arsip' : 'Masuk ke mode ' + esc(sel.nama)}</button></div></div>`;
+}
+function v3Rekap() {
+  const R = rekapAll(), mx = Math.max.apply(null, R.per.map(p => p.masuk).concat([1]));
+  const head = `<div class="top"><button class="ib" aria-label="Kembali" onclick="v3Back()">${v3svg(V3IC.back, 20)}</button><div class="ti">Rekap Semua Jenis</div></div>`;
+  if (!R.L.length) return `<div class="pg">${head}<div class="em"><svg aria-hidden="true" width="150" height="110" viewBox="0 0 150 110" fill="none"><path d="M6 100l40-62 26 34 22-26 44 54z" fill="rgba(251,191,36,.1)" stroke="rgba(251,191,36,.45)" stroke-width="2" stroke-linejoin="round"/><circle cx="112" cy="24" r="9" stroke="#f97316" stroke-width="2"/></svg><div class="h">Belum ada riwayat</div><p>Begitu trip pertamamu ditutup atau diarsipkan, rekap Open trip, Tektok, dan Pendakian bersama muncul di sini.</p><button class="go" onclick="v3Buka('mode','awal')">Pilih mode dan mulai</button></div></div>`;
+  const rows = R.L.slice().reverse().slice(0, 12);
+  return `<div class="pg">${head}
+  <div class="hero3"><small>Untung bersih semua jenis</small><div class="big3">${(R.tot.untung < 0 ? '- ' : '') + rpc(R.tot.untung)}</div><div class="row"><div>Trip<b>${R.tot.n}</b></div><div>Peserta<b>${R.tot.ps}</b></div><div>Dana masuk<b>${rpc(R.tot.masuk)}</b></div></div></div>
+  <div class="cap">Pendakian bersama tidak dihitung sebagai untung.</div>
+  <div class="sec">Per jenis</div>
+  ${R.per.map(p => `<div class="pj"><div class="hd"><div class="nm"><i style="background:${p.m.warna}"></i>${esc(p.m.nama)}</div><span>${p.n} trip</span></div><div class="bb"><div style="width:${Math.round(p.masuk / mx * 100)}%;background:${p.m.warna}"></div></div><div class="cl3"><div>Peserta<b>${p.ps}</b></div><div>${p.m.untung ? 'Dana masuk' : 'Patungan'}<b>${rpc(p.masuk)}</b></div><div>${p.m.untung ? 'Untung' : 'Hasil'}<b class="${hasilCls(p.m, p.untung)}">${p.n ? hasilTxt(p.m, p.untung) : '-'}</b></div></div></div>`).join('')}
+  <div class="sec">Trip terakhir</div>
+  ${rows.map(x => { const m = modeOf(x.jenis); return `<button class="tr" onclick="v3Detail2('${x.id}')"><i style="background:${m.warna}"></i><div class="x3"><b>${esc(x.nama)}</b><small>${esc(m.nama)} · ${esc(x.tgl)}</small></div><div class="h ${hasilCls(m, x.untung)}">${hasilTxt(m, x.untung)}</div>${v3svg(V3IC.next, 16, '#bfae8a')}</button>`; }).join('')}
+  ${R.L.length > 12 ? '<div class="cap">Riwayat lengkap ada di Menu › Trip & Arsip.</div>' : ''}</div>`;
+}
+function v3Detail() {
+  let d, nama, tgl, jenis;
+  if (V3.det === 'now') { d = DB; nama = DB.set.destinasi || '(tanpa nama)'; tgl = 'Berjalan'; jenis = modeAktif(); }
+  else { const a = DB.arsip.find(x => String(x.id) === String(V3.det)); if (!a) return v3Rekap(); d = a.data; nama = a.destinasi || '(tanpa nama)'; tgl = String(a.tanggal || ''); jenis = jenisArsip(a); }
+  const m = modeOf(jenis), s = tripStat(d, nama, tgl), tm = (d.tamu || []).filter(t => t['Status'] === 'Diterima');
+  let bh = null;
+  if (m.untung) { const keep = DB; try { DB = Object.assign(blank(), d); const g = bagiData(); bh = { s: g.s, n: g.n, per: g.per }; } catch (e) { bh = null; } finally { DB = keep; } }
+  const ks = Object.keys(s.kat).sort((a, b) => s.kat[b] - s.kat[a]), kmx = Math.max.apply(null, ks.map(k => s.kat[k]).concat([1]));
+  const tg = t => { const v = t['Tagihan'] || ''; return v ? `<span class="bd ${v === 'Lunas' ? 'g3' : v === 'DP' ? 'y3' : 'r3'}">${esc(v)}</span>` : ''; };
+  return `<div class="pg"><div class="top"><button class="ib" aria-label="Kembali" onclick="v3Buka('rekap')">${v3svg(V3IC.back, 20)}</button><div class="ti">${esc(nama)}</div></div>
+  <div class="cap" style="margin-top:6px"><span class="pl" style="display:inline-flex;background:${m.warna}29;border-color:${m.warna}80;color:#fff7ed"><i style="background:${m.warna}"></i>${esc(m.nama)}</span> &nbsp;${esc(tgl)} · hanya untuk dilihat</div>
+  <div class="tl"><div>Pemasukan<b>${rp(s.masuk)}</b></div><div>Pengeluaran<b>${rp(s.keluar)}</b></div>
+  <div class="w">${m.untung ? (s.untung >= 0 ? 'Untung' : 'Rugi') : 'Sisa saldo'}<b class="${hasilCls(m, s.untung)}">${(m.untung ? '' : s.untung < 0 ? '- ' : '') + rp(Math.abs(s.untung))}</b></div>
+  <div>Peserta diterima<b>${s.ps}</b></div><div>Biaya per peserta<b>${rp(s.per)}</b></div></div>
+  ${bh && bh.n ? `<div class="box"><div class="li"><span>Bagi hasil: ${bh.s >= 0 ? 'untung' : 'rugi'} setelah setoran panitia</span><b>${rp(Math.abs(bh.s))}</b></div><div class="li"><span>${bh.n} official · per official</span><b>${rp(bh.per)}</b></div></div>` : ''}
+  <div class="sec">Peserta (${tm.length})</div>
+  <div class="box">${tm.length ? tm.slice(0, 30).map(t => `<div class="li"><span>${esc(t['Nama'] || '?')}</span>${tg(t)}</div>`).join('') + (tm.length > 30 ? `<div class="li"><span>dan ${tm.length - 30} lainnya</span></div>` : '') : '<div class="li"><span>Belum ada peserta diterima.</span></div>'}</div>
+  <div class="sec">Pengeluaran per kategori</div>
+  <div class="box">${ks.length ? ks.map(k => `<div style="padding:9px 0"><div class="li" style="padding:0;border:0"><span>${esc(k)}</span><b>${rp(s.kat[k])}</b></div><div class="kb3"><div style="width:${Math.round(s.kat[k] / kmx * 100)}%"></div></div></div>`).join('') : '<div class="li"><span>Belum ada pengeluaran.</span></div>'}</div>
+  </div>`;
+}
+function v3Gambar() {
+  const el = $('v3'); if (!el) return;
+  el.innerHTML = V3.l === 'awal' ? v3Awal() : V3.l === 'mode' ? v3Mode() : V3.l === 'rekap' ? v3Rekap() : v3Detail();
+  el.hidden = false; el.scrollTop = 0; if (V3.l === 'awal') v3Paket();
+}
+function v3Buka(l, dari) { V3.l = l; if (l === 'mode') { V3.sel = modeAktif(); V3.dari = dari || 'awal'; } v3Gambar(); }
+function v3Tutup() { V3.l = null; const el = $('v3'); if (el) { el.hidden = true; el.innerHTML = ''; } chipMode(); }
+function v3Back() { if (V3.l === 'detail') return v3Buka('rekap'); if (V3.l === 'mode' && V3.dari !== 'awal') { v3Tutup(); return; } v3Buka('awal'); }
+function v3Pilih(id) { V3.sel = id; v3Gambar(); const el = $('v3'); if (el) el.scrollTop = el.scrollTop; }
+function v3Detail2(id) { V3.det = id; V3.l = 'detail'; v3Gambar(); }
+async function v3Paket() {
+  try { const b = $('v3pk'); if (!b) return; const d = await lencanaData(); if (!d || !d.n) return; b.innerHTML = v3svg(V3IC.peak, 14, null, 2) + ' ' + (d.k === 'Lisensi' ? 'Lisensi aktif' : 'Paket ' + esc(d.k)); b.hidden = false; } catch (e) {}
+}
+async function v3Masuk() {
+  const id = V3.sel, now = modeAktif();
+  if (hasData() && id !== now) {
+    if (!tutupOn()) { v3Tutup(); show('trip'); return; }
+    if (!confirm('Buku trip ditutup. Trip ini diarsipkan otomatis (' + modeOf(now).nama + '), lalu mode ' + modeOf(id).nama + ' dimulai dengan trip baru yang kosong. Lanjut?')) return;
+    DB.arsip.push(snapshot());
+    KEYS.forEach(k => DB[k] = []); DB.checklist = []; DB.simAktif = null; SIM = null;
+    DB.set = Object.assign({}, DB.set, { destinasi: '', realisasi: 0, tenggat: '', lunasTf: {}, kodeDest: '', tutup: null }); DB.ganti = {}; DB.ulang = []; DB.pribadi = []; DB.log = [];
+  }
+  DB.mode = id; DB.set = Object.assign({}, DB.set, { jenis: id }); await save();
+  v3Tutup(); show('dashboard'); toast('Mode ' + modeOf(id).nama + ' aktif'); setTimeout(onbCek, 900);
+}
+function tampilMulai() {
+  if (!DB.mode) DB.mode = 'open';
+  if (hasData() && !DB.set.jenis) { DB.set = Object.assign({}, DB.set, { jenis: DB.mode }); save(); }
+  if (!hasData() || tutupOn()) { chipMode(); v3Buka('awal'); } else show('dashboard');
+}
+Object.assign(EN, {
+  'Siap trip berikutnya?': 'Ready for the next trip?', 'Buku trip sudah rapi. Belum ada trip berjalan.': 'Your trip book is tidy. No trip in progress.', 'Buku trip ditutup. Pilih mode untuk melanjutkan.': 'Trip book is closed. Pick a mode to continue.',
+  'Mode': 'Mode', 'Rekap': 'Recap', 'Pilih jenis pendakian yang mau dikelola': 'Choose the type of hike to manage', 'Belum ada riwayat. Mulai dari trip pertamamu.': 'No history yet. Start with your first trip.',
+  'Pilih Mode': 'Choose Mode', 'Rekap Semua Jenis': 'All-Types Recap', 'Per jenis': 'By type', 'Trip terakhir': 'Latest trips', 'Belum ada riwayat': 'No history yet', 'Pilih mode dan mulai': 'Choose a mode and start',
+  'Untung bersih semua jenis': 'Net profit, all types', 'Dana masuk': 'Funds in', 'Peserta': 'Participants', 'Patungan': 'Pooled funds', 'Tanpa untung': 'No profit', 'Pendakian bersama': 'Group hike',
+  'Satu trip aktif dalam satu waktu. Saat mode diganti, seluruh isi aplikasi menyesuaikan.': 'One active trip at a time. When the mode changes, the whole app adjusts.',
+  'Arsipkan trip dulu di Trip & Arsip': 'Archive the trip first in Trip & Archive', 'Peserta diterima': 'Accepted participants', 'Biaya per peserta': 'Cost per participant', 'Pengeluaran per kategori': 'Spending by category', 'Semua': 'All'
+});
+Object.assign(EN, { ['v3.0.0: tiga mode dalam satu aplikasi (Open trip, Tektok, Pendakian bersama) dengan layar awal baru: tombol Mode di atas dan Rekap di bawah. Rekap semua jenis bisa diketuk sampai rekap lengkap tiap trip. Arsip kini ditandai jenisnya dan bisa disaring. Trip lama otomatis menjadi Open trip. Data dan lisensi tidak berubah.']: 'v3.0.0: three modes in one app (Open trip, Tektok, Group hike) with a new start screen: Mode on top and Recap below. The all-types recap can be tapped down to the full recap of each trip. Archives are now tagged by type and can be filtered. Existing trips automatically become Open trip. Your data and license are unchanged.' });
+
 /* ===== Mulai ===== */
 async function mulai() {
   DB = Object.assign(blank(), await load() || {}); DB.pref = DB.pref || {}; DB.profil = DB.profil || {}; DB.kw = DB.kw || {}; DB.nomor = DB.nomor || {}; applyKat(); DB.trash = (DB.trash || []).filter(x => Date.now() - x.ts < 30 * 864e5); if (jalankanUlang()) { await save(); setTimeout(() => toast('Transaksi berulang ditambahkan'), 700); }
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
   if (DB.pref.bahasa && DB.pref.bahasa !== LANG) setBahasa(DB.pref.bahasa); applyAll(); cekPembuat().then(ok => { CR_OK = ok; if (!ok && !LOCKED) rerender(); });
   BIO_OK = await bioTersedia();
-  if (DB.pin) lock(); else { buildNav(); show('dashboard'); }
+  if (DB.pin) lock(); else { buildNav(); tampilMulai(); }
 }
 (async function () {
   if (await cekLisensi()) {
