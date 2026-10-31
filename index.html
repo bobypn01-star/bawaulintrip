@@ -278,95 +278,20 @@ body.lockon header,body.lockon nav{display:none!important}
 @keyframes lkring{from{transform:scale(.92);opacity:.9}to{transform:scale(1.35);opacity:0}}
 @keyframes lkpulse{50%{box-shadow:0 0 0 12px rgba(249,115,22,.12)}}
 @media(prefers-reduced-motion:reduce){.lk *,.lk *:before,.lk *:after{animation:none!important}}
-
-/* v3.0.0: mode, layar awal, rekap semua jenis */
-header .hm{display:flex;align-items:center;gap:6px;height:24px;margin:5px auto 0;padding:0 10px;border-radius:999px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;flex:none}
-header{grid-template-columns:64px 1fr 64px;align-items:center;column-gap:8px;padding:calc(8px + env(safe-area-inset-top)) 12px 8px;min-height:64px}header .hl{position:relative;display:block;flex:none;justify-self:start;width:50px;height:43px;padding:0;margin:0;border:0;border-radius:0;background:none;box-shadow:none;cursor:pointer;-webkit-tap-highlight-color:transparent}header .hl::before{content:'';position:absolute;inset:-6px -8px}header .hl .lc{display:block;position:relative;width:50px;height:43px;overflow:hidden}header .hl img{position:absolute;display:block;width:72.5px;height:72.5px;max-width:none;left:-11.3px;top:-14.7px}.ht{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0}.ht h1{line-height:1.2;white-space:nowrap}header .hm{margin:4px auto 0}#net{align-items:center;justify-self:end;gap:8px}header .hm[hidden]{display:none}header .hm i{width:8px;height:8px;border-radius:50%;display:block}header .hm span{font-size:9px;opacity:.7}
-.fjr{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.fj{padding:6px 11px;border-radius:999px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font-size:12px;font-weight:600;cursor:pointer}.fj.on3{background:var(--pri);color:#fff;border-color:var(--pri)}
-.v3{position:fixed;inset:0;z-index:35;background:#0b0b0d;color:#fff7ed;font-family:'Sora','Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.v3[hidden]{display:none}.v3 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-.v3 button{font-family:inherit;cursor:pointer;color:inherit;text-align:left;margin:0}
-.v3 .pg{position:relative;min-height:100%;max-width:520px;margin:0 auto;display:flex;flex-direction:column;padding:calc(20px + env(safe-area-inset-top)) 22px calc(22px + env(safe-area-inset-bottom));background:radial-gradient(120% 50% at 50% 0%,rgba(251,191,36,.15),rgba(11,11,13,0) 65%);overflow:hidden}
-.v3 .pg>*{position:relative}.v3 .deco{position:absolute!important;pointer-events:none;left:0}
-.v3 .vbar{display:flex;align-items:center;justify-content:space-between;min-height:44px}
-.v3 .pk{display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.35);font-size:12px;font-weight:700;color:#fbbf24}.v3 .pk[hidden]{display:none}
-.v3 .ib{width:44px;height:44px;border-radius:50%;border:1px solid rgba(251,191,36,.22);background:rgba(23,23,27,.8);display:grid;place-items:center;padding:0;color:#fbbf24;flex:none}
-.v3 .logo{display:flex;flex-direction:column;align-items:center;margin-top:8px}
-.v3 .lgw{position:relative;width:108px;height:108px;display:grid;place-items:center}
-.v3 .lgw:before{content:'';position:absolute;inset:-14px;border-radius:50%;background:radial-gradient(circle,rgba(249,115,22,.34),rgba(249,115,22,0) 68%)}
-.v3 .lgw i{position:absolute;inset:0;border-radius:30px;background:#000;border:1px solid rgba(251,191,36,.4);box-shadow:0 14px 40px rgba(249,115,22,.28)}
-.v3 .lgw img{position:relative;width:92px;height:92px;object-fit:contain}
-.v3 .brand{margin-top:16px;font-weight:800;font-size:27px;letter-spacing:-.01em;background:linear-gradient(90deg,#f97316,#fbbf24);-webkit-background-clip:text;background-clip:text;color:transparent}
-.v3 .tag{margin-top:4px;font-size:13.5px;color:#e0cfb0;font-weight:500}
-.v3 .hi3{margin-top:22px}.v3 .hi3 .h{font-weight:700;font-size:20px;letter-spacing:-.01em}
-.v3 .st3{margin-top:8px;display:flex;align-items:center;gap:8px;font-size:12.5px;color:#d9c9a8}
-.v3 .st3 i{width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 4px rgba(34,197,94,.18);flex:none}
-.v3 .cards{display:flex;flex-direction:column;gap:14px;margin-top:16px}
-.v3 .cd{width:100%;padding:18px;border-radius:24px;border:1px solid rgba(251,191,36,.28);background:linear-gradient(160deg,rgba(32,28,22,.95),rgba(20,20,24,.95));box-shadow:0 10px 30px rgba(0,0,0,.4)}
-.v3 .cd .r3{display:flex;align-items:center;gap:14px}
-.v3 .cd .ic{width:54px;height:54px;border-radius:18px;display:grid;place-items:center;flex:none}
-.v3 .ic.g3{background:linear-gradient(135deg,#f97316,#fbbf24);color:#1a1000;box-shadow:0 8px 20px rgba(249,115,22,.35)}
-.v3 .ic.o{background:rgba(251,191,36,.1);border:1.5px solid #fbbf24;color:#fbbf24}
-.v3 .cd .tt{flex:1;min-width:0}.v3 .cd b.n{display:block;font-weight:700;font-size:19px}
-.v3 .cd small{display:block;margin-top:2px;font-size:13px;color:#e0cfb0}
-.v3 .cd .ch{display:flex;align-items:center;gap:8px;margin-top:14px;font-size:12px;color:#e0cfb0;flex-wrap:wrap}
-.v3 .pl{display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;font-weight:700;border:1px solid}
-.v3 .pl i{width:7px;height:7px;border-radius:50%;display:block}.v3 .dts{display:flex;gap:5px}.v3 .dts i{width:9px;height:9px;border-radius:50%;display:block}
-.v3 .sts{display:flex;gap:8px;margin-top:14px}.v3 .sts div{flex:1;padding:8px 10px;border-radius:12px;font-size:11.5px}.v3 .sts b{display:block;font-size:15px;color:#fff7ed}
-.v3 .ft{margin-top:auto;padding-top:18px;text-align:center;font-size:11.5px;color:#bfae8a;letter-spacing:.02em}
-.v3 .top{display:flex;align-items:center;gap:12px;min-height:44px}.v3 .ti{font-weight:700;font-size:19px;min-width:0}
-.v3 .sub{margin-top:12px;font-size:13.5px;line-height:1.5;color:#e0cfb0}
-.v3 .wn{margin-top:12px;padding:12px 14px;border-radius:14px;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.35);font-size:12.5px;line-height:1.5;color:#fde68a}
-.v3 .ml{display:flex;flex-direction:column;gap:12px;margin-top:16px}
-.v3 .mc3{width:100%;padding:14px;border-radius:22px;border:1px solid rgba(251,191,36,.18);background:rgba(23,23,27,.9)}
-.v3 .mc3.on3{border:1.5px solid var(--c);background:linear-gradient(160deg,color-mix(in srgb,var(--c) 15%,transparent),rgba(20,20,24,.95));box-shadow:0 10px 28px color-mix(in srgb,var(--c) 20%,transparent)}
-.v3 .mc3 .r3{display:flex;align-items:flex-start;gap:12px}
-.v3 .mt{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;flex:none;background:color-mix(in srgb,var(--c) 14%,transparent);color:var(--c)}.v3 .mc3.on3 .mt{background:var(--c);color:#1a1000}
-.v3 .mb{flex:1;min-width:0}.v3 .mh3{display:flex;align-items:center;justify-content:space-between;gap:8px}.v3 .mn{color:#fff7ed;font-weight:700;font-size:16.5px}
-.v3 .rd{width:22px;height:22px;border-radius:50%;border:2px solid rgba(224,207,176,.45);display:grid;place-items:center;flex:none}.v3 .mc3.on3 .rd{background:var(--c);border-color:var(--c)}
-.v3 .md{margin-top:4px;font-size:12.5px;line-height:1.45;color:#e0cfb0}
-.v3 .tgs{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.v3 .tg{padding:4px 9px;border-radius:999px;font-size:11px;font-weight:600;background:color-mix(in srgb,var(--c) 12%,transparent);border:1px solid color-mix(in srgb,var(--c) 33%,transparent)}
-.v3 .rw{margin-top:10px;font-size:11.5px;color:#bfae8a}
-.v3 .nt{margin-top:14px;font-size:11.5px;line-height:1.5;color:#bfae8a}
-.v3 .bt{margin-top:auto;padding-top:16px}
-.v3 .go{width:100%;padding:16px;border:0;border-radius:18px;font-weight:800;font-size:16px;text-align:center;color:#1a1000;background:var(--c);box-shadow:0 12px 28px color-mix(in srgb,var(--c) 33%,transparent)}
-.v3 .hero3{margin-top:14px;padding:20px;border-radius:26px;background:linear-gradient(135deg,#f97316,#fbbf24);color:#1a1000;box-shadow:0 14px 34px rgba(249,115,22,.3)}
-.v3 .hero3 small{font-size:12.5px;font-weight:600;opacity:.8}.v3 .hero3 .big3{margin-top:2px;font-weight:800;font-size:32px;letter-spacing:-.02em}
-.v3 .hero3 .row{display:flex;gap:10px;margin-top:14px}.v3 .hero3 .row div{flex:1;padding:10px 12px;border-radius:14px;background:rgba(26,16,0,.12);font-size:11.5px;font-weight:600}.v3 .hero3 .row b{display:block;font-size:16px}
-.v3 .cap{margin-top:8px;font-size:11px;color:#bfae8a}
-.v3 .sec{margin-top:18px;font-weight:700;font-size:15px}
-.v3 .pj{padding:14px 16px;border-radius:20px;background:rgba(23,23,27,.9);border:1px solid rgba(251,191,36,.18);margin-top:10px}
-.v3 .pj .hd{display:flex;align-items:center;justify-content:space-between}.v3 .pj .nm{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14.5px}.v3 .pj .nm i{width:10px;height:10px;border-radius:50%;display:block}.v3 .pj .hd span{font-size:12px;color:#e0cfb0}
-.v3 .pj .bb{margin-top:10px;height:6px;border-radius:4px;background:rgba(255,255,255,.08);overflow:hidden}.v3 .pj .bb div{height:100%;border-radius:4px}
-.v3 .pj .cl3{display:flex;gap:8px;margin-top:12px}.v3 .pj .cl3 div{flex:1;font-size:11px;color:#bfae8a;min-width:0}.v3 .pj .cl3 b{display:block;margin-top:2px;font-size:14px;color:#fff7ed}
-.v3 .tr{width:100%;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;background:rgba(23,23,27,.9);border:1px solid rgba(251,191,36,.14);margin-top:8px}
-.v3 .tr>i{width:10px;height:10px;border-radius:50%;flex:none}.v3 .tr .x3{flex:1;min-width:0}.v3 .tr .x3 b{display:block;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.v3 .tr .x3 small{display:block;font-size:11.5px;color:#bfae8a;margin-top:1px}.v3 .tr .h{font-size:12.5px;font-weight:700;white-space:nowrap}
-.v3 .pos,.v3 b.pos{color:#86efac!important}.v3 .neg,.v3 b.neg{color:#fca5a5!important}
-.v3 .em{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px 18px 60px}.v3 .em .h{margin-top:20px;font-weight:700;font-size:19px}.v3 .em p{margin:8px 0 0;font-size:13.5px;line-height:1.55;color:#e0cfb0}
-.v3 .em .go{width:auto;margin-top:22px;padding:14px 26px;border-radius:16px;font-size:15px;background:linear-gradient(135deg,#f97316,#fbbf24);box-shadow:none}
-.v3 .tl{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.v3 .tl div{padding:12px 14px;border-radius:16px;background:rgba(23,23,27,.9);border:1px solid rgba(251,191,36,.18);font-size:11.5px;color:#bfae8a}.v3 .tl b{display:block;margin-top:3px;font-size:15px;color:#fff7ed}.v3 .tl .w{grid-column:1/-1}
-.v3 .li{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid rgba(251,191,36,.1);font-size:13px}.v3 .li:last-child{border:0}.v3 .li span{min-width:0;overflow:hidden;text-overflow:ellipsis}
-.v3 .bd{padding:3px 9px;border-radius:999px;font-size:11px;font-weight:700;flex:none}.v3 .bd.g3{background:rgba(34,197,94,.16);color:#86efac}.v3 .bd.y3{background:rgba(251,191,36,.16);color:#fde68a}.v3 .bd.r3{background:rgba(239,68,68,.16);color:#fca5a5}
-.v3 .kb3{height:5px;border-radius:3px;background:rgba(255,255,255,.08);margin-top:5px;overflow:hidden}.v3 .kb3 div{height:100%;background:linear-gradient(90deg,#f97316,#fbbf24)}
-.v3 .imp{width:100%;margin-top:14px;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border-radius:16px;background:rgba(23,23,27,.9);border:1px dashed rgba(251,191,36,.45);color:#fde68a;font-size:14px;font-weight:700;font-family:inherit}
-.v3 .box{margin-top:14px;padding:6px 16px;border-radius:18px;background:rgba(23,23,27,.9);border:1px solid rgba(251,191,36,.18)}
-.tile span.tic{display:block;margin-bottom:10px}.tile span.tic svg{width:32px;height:32px;stroke:var(--pri);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-.hico{display:inline-flex;vertical-align:-5px;margin-right:8px;color:var(--pri)}.hico svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 </style>
 
 </head>
 <body>
-<header><button type="button" id="hlogob" class="hl" aria-label="Halaman awal" onclick="v3Buka('awal')"><span class="lc"><img id="hlogo" src="logo-cash.png" alt="Logo bawaulin.cash"></span></button><div class="ht"><h1>Budgeting Pendakian</h1><button type="button" id="hmode" class="hm" hidden onclick="v3Buka('mode','chip')"></button></div><div id="net"><button type="button" id="hbdg" class="hb" hidden onclick="lencanaInfo()"></button><button type="button" id="hdot" class="dt" onclick="netToast()" aria-label="Online"></button></div></header>
+<header><img id="hlogo" src="logo.png" alt="Logo"><div class="ht"><h1>Budgeting Pendakian</h1><small id="hnama">bawaulin.trip</small></div><div id="net"><button type="button" id="hbdg" class="hb" hidden onclick="lencanaInfo()"></button><button type="button" id="hdot" class="dt" onclick="netToast()" aria-label="Online"></button></div></header>
 <nav id="nav"></nav>
-<div id="v3" class="v3" hidden></div>
 <main id="main">Memuat...</main>
 <script>
 /* ===== Struktur data (sama dengan sheet di Spreadsheet lama) ===== */
 const CFG = {
   tamu: { label: 'Tamu', fields: [
     { h: 'Nama', type: 'text', req: 1 }, { h: 'Meeting Point', type: 'text' }, { h: 'Ponsel', type: 'tel' },
-    { h: 'Status', type: 'select', options: ['Diterima', 'Menunggu respons', 'Ditolak'], xo: ['Daftar tunggu', 'Batal'] }, { h: 'Sesi', type: 'select', options: [], xs: 1, om: 3 },
-    { h: 'Tagihan', type: 'select', options: ['Lunas', 'DP', 'Belum Lunas'] }, { h: 'Grup', type: 'text', om: 2 }, { h: 'Catatan', type: 'textarea' }] },
+    { h: 'Status', type: 'select', options: ['Diterima', 'Menunggu respons', 'Ditolak'] },
+    { h: 'Tagihan', type: 'select', options: ['Lunas', 'DP', 'Belum Lunas'] }, { h: 'Catatan', type: 'textarea' }] },
   pemasukan: { label: 'Pemasukan', fields: [
     { h: 'Detail pemasukan', type: 'text', req: 1 }, { h: 'Kategori', type: 'select', options: ['Peserta', 'Panitia', 'Sponsor'] },
     { h: 'Biaya', type: 'number', rp: 1 }, { h: 'Tanggal transaksi', type: 'date' }, { h: 'Dibayar oleh', type: 'text' }, { h: 'Catatan', type: 'textarea' }] },
@@ -379,26 +304,19 @@ const CFG = {
     { h: 'Tanggal transaksi', type: 'date' }, { h: 'Dibayar oleh', type: 'text' }, { h: 'Catatan', type: 'textarea' }] },
   itinerary: { label: 'Itinerary', fields: [
     { h: 'Aktivitas', type: 'text', req: 1 },
-    { h: 'Jenis aktivitas', type: 'select', options: ['Mepo - BC', 'BC - POS 1', 'POS 1 - POS 2', 'POS 2 - POS 3', 'POS 3 - POS 4', 'POS 4 - POS 5', 'POS 5 - POS 6', 'ISHOMA', 'CAMP GROUND', 'CAMP - BC', 'BC - MEPO', 'SUMMIT'], xt: ['Kumpul & briefing', 'Pendakian naik', 'Puncak & istirahat', 'Turun ke basecamp', 'Bubar'] },
+    { h: 'Jenis aktivitas', type: 'select', options: ['Mepo - BC', 'BC - POS 1', 'POS 1 - POS 2', 'POS 2 - POS 3', 'POS 3 - POS 4', 'POS 4 - POS 5', 'POS 5 - POS 6', 'ISHOMA', 'CAMP GROUND', 'CAMP - BC', 'BC - MEPO', 'SUMMIT'] },
     { h: 'Waktu mulai', type: 'datetime-local' }, { h: 'Waktu berakhir', type: 'datetime-local' }, { h: 'Lokasi', type: 'text' }, { h: 'Catatan', type: 'textarea' }] },
   perlengkapan: { label: 'Perlengkapan', fields: [
-    { h: 'Perlengkapan', type: 'text', req: 1 }, { h: 'Jenis', type: 'select', options: ['Kelompok', 'Pribadi'], om: 1 }, { h: 'Kebutuhan', type: 'number' }, { h: 'Kesediaan', type: 'number' },
-    { h: 'Sewa', ro: 1, f: r => r['Jenis'] === 'Pribadi' ? 0 : Math.max(0, (+r['Kebutuhan'] || 0) - (+r['Kesediaan'] || 0)) },
+    { h: 'Perlengkapan', type: 'text', req: 1 }, { h: 'Kebutuhan', type: 'number' }, { h: 'Kesediaan', type: 'number' },
+    { h: 'Sewa', ro: 1, f: r => Math.max(0, (+r['Kebutuhan'] || 0) - (+r['Kesediaan'] || 0)) },
     { h: 'Harga/Unit', type: 'number', rp: 1 },
-    { h: 'Total Sewa', ro: 1, rp: 1, f: r => r['Jenis'] === 'Pribadi' ? 0 : Math.max(0, (+r['Kebutuhan'] || 0) - (+r['Kesediaan'] || 0)) * (+r['Harga/Unit'] || 0) }] },
-  tiket: { label: 'Tiket & Parkir', fields: [
-    { h: 'Komponen', type: 'select', req: 1, options: ['Tiket masuk', 'Simaksi', 'Asuransi', 'Registrasi / retribusi', 'Parkir motor', 'Parkir mobil', 'Parkir bus', 'Lainnya'] },
-    { h: 'Tarif', type: 'number', rp: 1 }, { h: 'Satuan', type: 'select', options: ['Per orang', 'Per kendaraan', 'Per rombongan'] }, { h: 'Jumlah', type: 'number' },
-    { h: 'Unit', ro: 1, f: r => tkUnit(r) }, { h: 'Total', ro: 1, rp: 1, f: r => (+r['Tarif'] || 0) * tkUnit(r) }, { h: 'Catatan', type: 'textarea' }] },
-  kru: { label: 'Kru Panitia', fields: [
-    { h: 'Nama', type: 'text', req: 1 }, { h: 'Peran', type: 'select', options: ['Leader', 'Guide', 'Porter', 'Sweeper', 'Chef', 'Dokumentasi', 'Medis', 'Lainnya'] },
-    { h: 'Upah', type: 'number', rp: 1 }, { h: 'Catatan', type: 'textarea' }] }
+    { h: 'Total Sewa', ro: 1, rp: 1, f: r => Math.max(0, (+r['Kebutuhan'] || 0) - (+r['Kesediaan'] || 0)) * (+r['Harga/Unit'] || 0) }] }
 };
 const KEYS = Object.keys(CFG);
 
 /* ===== Penyimpanan lokal (IndexedDB) ===== */
 let DB, cur = 'dashboard', editId = null;
-const blank = () => ({ set: { destinasi: '', realisasi: 0 }, tamu: [], pemasukan: [], pengeluaran: [], itinerary: [], perlengkapan: [], kru: [], tiket: [], checklist: [], arsip: [], sim: [], simAktif: null, pin: null, ganti: {}, kat: {}, ulang: [], seen: {}, trash: [], log: [], pribadi: [], lastBackup: 0, seq: 1, pref: {}, profil: {}, kw: {}, nomor: {}, slot: {} });
+const blank = () => ({ set: { destinasi: '', realisasi: 0 }, tamu: [], pemasukan: [], pengeluaran: [], itinerary: [], perlengkapan: [], checklist: [], arsip: [], sim: [], simAktif: null, pin: null, ganti: {}, kat: {}, ulang: [], seen: {}, trash: [], log: [], pribadi: [], lastBackup: 0, seq: 1, pref: {}, profil: {}, kw: {}, nomor: {} });
 function idb() { return new Promise((ok, no) => { const r = indexedDB.open('budgeting', 1); r.onupgradeneeded = () => r.result.createObjectStore('kv'); r.onsuccess = () => ok(r.result); r.onerror = () => no(r.error); }); }
 async function load() { const d = await idb(); return new Promise(ok => { const q = d.transaction('kv').objectStore('kv').get('db'); q.onsuccess = () => ok(q.result || null); q.onerror = () => ok(null); }); }
 async function save() { const d = await idb(); return new Promise(ok => { const t = d.transaction('kv', 'readwrite'); t.objectStore('kv').put(DB, 'db'); t.oncomplete = ok; t.onerror = ok; }); }
@@ -449,10 +367,9 @@ function show(k) {
   cur = k; editId = null;
   document.querySelectorAll('nav button').forEach(b => b.classList.toggle('active', b.dataset.k === (MAIN.includes(k) ? k : k === 'pengaturan' ? 'akun' : 'more')));
   if (k === 'dashboard') renderDash(); else if (k === 'more') renderMore(); else if (k === 'checklist') renderCl(); else if (k === 'trip') renderTrip(); else if (k === 'simulasi') renderSim(); else if (k === 'bayar') renderBayar(); else if (k === 'rekap') renderRekap(); else if (k === 'bagihasil') renderBagiHasil(); else if (k === 'kategori') renderKat(); else if (k === 'daftar') renderDaftar(); else if (k === 'akun') renderAkun(); else if (k === 'pengaturan') renderPeng(); else if (k === 'kalk') renderKalk(); else if (k === 'panduan') { if (!PD.keep) PD.ch = -1; PD.keep = false; renderPanduan(); } else renderSheet(k);
-  if (k !== 'dashboard' && k !== 'more') { const lb = (TABS.find(t => t[0] === k) || ['', ''])[1]; $('main').insertAdjacentHTML('afterbegin', `<div class="pgh">${MAIN.includes(k) ? '' : k === 'pengaturan' ? '<button class="back" onclick="show(\'akun\')">‹ Akun</button>' : '<button class="back" onclick="show(\'more\')">‹ Menu</button>'}<h2>${otHi(k)}${lb}</h2>${k === 'akun' ? `<button class="pgear" onclick="show(\'pengaturan\')" aria-label="Buka Pengaturan">${SVG_GEAR}</button>` : ''}</div>`); }
+  if (k !== 'dashboard' && k !== 'more') { const lb = (TABS.find(t => t[0] === k) || ['', ''])[1]; $('main').insertAdjacentHTML('afterbegin', `<div class="pgh">${MAIN.includes(k) ? '' : k === 'pengaturan' ? '<button class="back" onclick="show(\'akun\')">‹ Akun</button>' : '<button class="back" onclick="show(\'more\')">‹ Menu</button>'}<h2>${lb}</h2>${k === 'akun' ? `<button class="pgear" onclick="show(\'pengaturan\')" aria-label="Buka Pengaturan">${SVG_GEAR}</button>` : ''}</div>`); }
   if (tutupOn() && ['dashboard', 'pemasukan', 'pengeluaran', 'bayar', 'bagihasil'].indexOf(k) >= 0) { const h = $('main').querySelector('.pgh'); if (h) h.insertAdjacentHTML('afterend', tutupBanner()); else $('main').insertAdjacentHTML('afterbegin', tutupBanner()); }
   if (CR_OK === false) $('main').insertAdjacentHTML('afterbegin', '<div class="warn red">Identitas pembuat aplikasi berubah. Fitur PDF dikunci. Pasang ulang aplikasi asli.</div>');
-  chipMode();
   window.scrollTo(0, 0);
 }
 
@@ -482,22 +399,18 @@ async function saveSet() { DB.set.destinasi = $('sDest').value.trim(); DB.set.ko
 function renderSheet(key) {
   const c = CFG[key];
   const inputs = c.fields.map((f, i) => {
-    if (f.ro || !omOK(f)) return '';
+    if (f.ro) return '';
     let inp;
-    if (f.type === 'select') inp = `<select id="f${i}"><option value="">-- Pilih --</option>${optsOf(f).map(o => `<option>${esc(o)}</option>`).join('')}</select>`;
+    if (f.type === 'select') inp = `<select id="f${i}"><option value="">-- Pilih --</option>${f.options.map(o => `<option>${esc(o)}</option>`).join('')}</select>`;
     else if (f.type === 'textarea') inp = `<textarea id="f${i}" rows="2"></textarea>`;
     else inp = `<input id="f${i}" ${f.h === 'Dibayar oleh' ? 'list="dlby" autocomplete="off" ' : ''}type="${f.rp ? 'text' : f.type}" ${f.rp ? 'inputmode="numeric" oninput="fmtNum(this)"' : f.type === 'number' ? 'step="any" inputmode="decimal"' : ''} value="${f.def !== undefined ? f.def : ''}">`;
     return `<label>${esc(f.h)}${f.req ? ' *' : ''}</label>${inp}`;
   }).join('');
-  const filters = c.fields.map((f, i) => f.type === 'select' && omOK(f) ? `<select id="flt${i}" onchange="drawList('${key}')"><option value="">Semua ${esc(f.h)}</option>${optsOf(f).map(o => `<option>${esc(o)}</option>`).join('')}</select>` : '').join('');
+  const filters = c.fields.map((f, i) => f.type === 'select' ? `<select id="flt${i}" onchange="drawList('${key}')"><option value="">Semua ${esc(f.h)}</option>${f.options.map(o => `<option>${esc(o)}</option>`).join('')}</select>` : '').join('');
   const hasDate = c.fields.some(f => f.type === 'date');
   const bukti = (key === 'pemasukan' || key === 'pengeluaran') ? `<label>Bukti nota</label><div class="flt"><button class="btn alt" style="margin:0" onclick="$('bcam').click()">📷 Kamera</button><button class="btn alt" style="margin:0" onclick="$('bfile').click()">📎 Unggah file</button></div><input type="file" id="bcam" accept="image/*" capture="environment" hidden onchange="pickBukti(this)"><input type="file" id="bfile" accept="image/*,application/pdf" hidden onchange="pickBukti(this)"><div id="bprev"></div><datalist id="dlby">${dlOpts()}</datalist><label>Ulangi otomatis</label><select id="frep"><option value="">Tidak berulang</option><option value="7">Tiap 7 hari</option><option value="30">Tiap 30 hari</option></select>` : '';
   let extra = '';
-  if (key === 'tamu' && isJasa()) extra = tamuCard();
-  if (key === 'kru') extra = kruCard();
-  if (key === 'tiket') extra = tkTiketCard();
-  if (key === 'itinerary' && isTK()) extra = tkJadwalCard();
-  if (key === 'perlengkapan') extra = `<div class="card"><h3>Ringkasan Sewa</h3><div id="sewa"></div><button class="btn" onclick="pushSewa()">➡️ Masukkan Total Sewa ke Pengeluaran</button><div id="sewaMsg" class="msg"></div></div>${isJasa() ? otPriCard() : ''}${isTK() ? tkPerlCard() : ''}`;
+  if (key === 'perlengkapan') extra = `<div class="card"><h3>Ringkasan Sewa</h3><div id="sewa"></div><button class="btn" onclick="pushSewa()">➡️ Masukkan Total Sewa ke Pengeluaran</button><div id="sewaMsg" class="msg"></div></div>`;
   $('main').innerHTML = `${extra}
   <button class="fab" onclick="${UANG(key) && tutupOn() ? 'bukuTutup()' : 'openSheet()'}">+</button><div class="sheet" id="sheet" onclick="if(event.target===this)closeSheet()"><div class="sheetin"><button class="x" onclick="closeSheet()">✕</button><h3 id="ftitle">Tambah ${c.label}</h3>${inputs}${bukti}
     <button class="btn" id="fbtn" onclick="submitRow('${key}')">Simpan</button>
@@ -508,7 +421,7 @@ function renderSheet(key) {
     <div id="tblbox"></div></div><div id="rkp"></div>`;
   drawList(key); if (key === 'perlengkapan') drawSewa();
 }
-function drawSewa() { otPri();
+function drawSewa() {
   const rows = rowsOf('perlengkapan'), sw = rows.filter(r => r['Sewa'] > 0);
   $('sewa').innerHTML = `<div>${sw.length} jenis barang perlu disewa (${sum(sw, r => r['Sewa'])} unit)</div><b>Total biaya sewa: ${rp(sum(rows, r => r['Total Sewa']))}</b>`;
 }
@@ -529,10 +442,8 @@ function resetForm(key) {
 async function submitRow(key) {
   if (UANG(key) && bukuTutup()) return;
   const c = CFG[key], data = {};
-  c.fields.forEach((f, i) => { if (!f.ro && $('f' + i)) data[f.h] = $('f' + i).value; });
+  c.fields.forEach((f, i) => { if (!f.ro) data[f.h] = $('f' + i).value; });
   if (!String(data[c.fields[0].h]).trim()) return setMsg('fmsg', c.fields[0].h + ' wajib diisi', 0);
-  if (key === 'kru' && isTK() && !editId && DB.kru.length >= 3) return setMsg('fmsg', 'Kru Tektok maksimal 3 orang.', 0);
-  if (key === 'tamu' && data['Status'] === 'Diterima' && kuotaPenuh(editId, data['Sesi'])) { if (confirm('Kuota ' + (isTK() ? data['Sesi'] + ' ' : '') + kuotaN(data['Sesi']) + ' peserta sudah penuh. Masukkan ' + data['Nama'] + ' ke Daftar tunggu?')) data['Status'] = 'Daftar tunggu'; else return; }
   c.fields.forEach(f => { if (f.type === 'number' && data[f.h] !== '') data[f.h] = Number(f.rp ? String(data[f.h]).replace(/\./g, '') : data[f.h]); });
   if (BUKTI !== null) data['Bukti'] = BUKTI;
   let nrow, before = null;
@@ -551,7 +462,7 @@ function editRow(key, id) {
 }
 function drawList(key) {
   const c = CFG[key], box = $('tblbox'); if (!box) return;
-  const HB = key === 'pemasukan' || key === 'pengeluaran'; if (key === 'itinerary') drawRundown(); if (key === 'kru') otKru(); if (key === 'tiket') tkSum();
+  const HB = key === 'pemasukan' || key === 'pengeluaran'; if (key === 'itinerary') drawRundown();
   const q = ($('q').value || '').toLowerCase().trim(), d1 = $('d1') ? $('d1').value : '', d2 = $('d2') ? $('d2').value : '';
   const di = c.fields.find(f => f.type === 'date');
   const all = rowsOf(key).reverse();
@@ -604,66 +515,11 @@ function drawCl() {
 }
 
 /* ===== Trip baru, arsip & cadangan ===== */
-const ringkasNow = () => { const d = dash(); return 'Pemasukan ' + rp(d.masuk) + '; Pengeluaran ' + rp(d.keluar) + '; Saldo ' + rp(d.saldo) + '; Tamu diterima ' + DB.tamu.filter(t => t['Status'] === 'Diterima').length; };
-function snapData() { const s = JSON.parse(JSON.stringify(DB)); ['arsip', 'pin', 'sim', 'trash', 'pref', 'profil', 'kw', 'nomor', 'slot'].forEach(k => delete s[k]); return s; }
 function snapshot() {
-  const d = dash(); ensureUid(); const s = snapData();
-  return { id: DB.seq++, tanggal: new Date().toLocaleString('id-ID'), destinasi: d.destinasi, jenis: modeAktif(), uid: DB.set.uid, ringkasan: ringkasNow(), data: s };
+  const d = dash(), s = JSON.parse(JSON.stringify(DB)); delete s.arsip; delete s.pin; delete s.sim; delete s.trash; delete s.pref; delete s.profil; delete s.kw; delete s.nomor;
+  return { id: DB.seq++, tanggal: new Date().toLocaleString('id-ID'), destinasi: d.destinasi,
+    ringkasan: 'Pemasukan ' + rp(d.masuk) + '; Pengeluaran ' + rp(d.keluar) + '; Saldo ' + rp(d.saldo) + '; Tamu diterima ' + DB.tamu.filter(t => t['Status'] === 'Diterima').length, data: s };
 }
-/* v4.0.0: arsip baru dengan uid sama seperti arsip hasil impor menggantikannya (setelah konfirmasi) */
-function pushArsip(a) {
-  const i = a.uid ? DB.arsip.findIndex(x => x.impor && x.uid === a.uid) : -1;
-  if (i >= 0 && confirm('Ada arsip hasil impor untuk trip yang sama (' + (DB.arsip[i].destinasi || 'tanpa nama') + '). Ganti dengan versi ini?')) { a.id = DB.arsip[i].id; DB.arsip[i] = a; } else DB.arsip.push(a);
-}
-/* v4.0.0: file rekap trip (JSON) untuk dibagikan ke penyelenggara lain, dan impornya */
-async function rekapEkspor(src) {
-  let uid, jenis, destinasi, ringkasan, data;
-  if (src === 'now') {
-    if (!hasData() && !DB.set.destinasi) return toast('Belum ada trip berjalan untuk diekspor');
-    if (!confirm('File rekap berisi nama dan nomor HP peserta. Kirim hanya ke orang yang berhak. Lanjut?')) return;
-    uid = ensureUid(); jenis = modeAktif(); destinasi = DB.set.destinasi || ''; ringkasan = ringkasNow(); data = snapData(); await save();
-  } else {
-    const a = DB.arsip.find(x => x.id === src); if (!a) return;
-    if (!confirm('File rekap berisi nama dan nomor HP peserta. Kirim hanya ke orang yang berhak. Lanjut?')) return;
-    if (!a.uid) { a.uid = (a.data && a.data.set && a.data.set.uid) || newUid(); await save(); }
-    uid = a.uid; jenis = jenisArsip(a); destinasi = a.destinasi || ''; ringkasan = a.ringkasan || ''; data = JSON.parse(JSON.stringify(a.data));
-  }
-  data.set = data.set || {}; data.set.uid = uid; data.set.jenis = jenis; SET_PRIV.forEach(k => delete data.set[k]);
-  const sim = DB.sim.filter(x => x.jenis === jenis).map(x => ({ nama: x.nama, data: x.data, diubah: x.diubah, jenis }));
-  const txt = JSON.stringify({ format: 'bawaulin-rekap', v: 1, uid, jenis, destinasi, diekspor: new Date().toISOString(), dari: namaP(), ringkasan, data, simulasi: sim }, null, 1);
-  const nm = 'rekap-' + jenis + '-' + (destinasi || 'trip').replace(/\W+/g, '-') + '-' + today() + '.json', f = new File([txt], nm, { type: 'application/json' });
-  try {
-    if (navigator.canShare && navigator.canShare({ files: [f] })) await navigator.share({ files: [f], title: 'Rekap trip ' + (destinasi || '') }); else { download(nm, txt); toast('File rekap diunduh'); }
-  } catch (e) { if (!e || e.name !== 'AbortError') { download(nm, txt); toast('File rekap diunduh'); } }
-}
-const bacaTeks = f => new Promise((ok, no) => { const r = new FileReader(); r.onload = () => ok(r.result); r.onerror = () => no(r.error); r.readAsText(f); });
-async function rekapImpor(files) {
-  files = Array.from(files || []); if (!files.length) return;
-  if (kunciOn()) return toast('Impor rekap trip adalah fitur Puncak');
-  const ok = [], gagal = [];
-  for (const f of files) {
-    try {
-      if (f.size > 8e6) throw 0;
-      const j = JSON.parse(await bacaTeks(f)), d = j && j.data;
-      if (!j || j.format !== 'bawaulin-rekap' || !(+j.v >= 1) || +j.v > 1 || typeof j.uid !== 'string' || !j.uid || !MODES.some(m => m.id === j.jenis) || !d || typeof d !== 'object' || !d.set || typeof d.set !== 'object') throw 0;
-      KEYS.concat(['checklist']).forEach(k => { if (!Array.isArray(d[k])) d[k] = []; });
-      ['arsip', 'pin', 'sim', 'trash', 'pref', 'profil', 'kw', 'nomor', 'slot'].forEach(k => delete d[k]); SET_PRIV.forEach(k => delete d.set[k]);
-      d.set.uid = j.uid; d.set.jenis = j.jenis;
-      ok.push({ uid: j.uid, jenis: j.jenis, destinasi: String(j.destinasi || ''), ringkasan: String(j.ringkasan || ''), dari: String(j.dari || ''), diekspor: String(j.diekspor || ''), data: d, sim: Array.isArray(j.simulasi) ? j.simulasi : [], st: tripStat(d, String(j.destinasi || ''), '') });
-    } catch (e) { gagal.push(f.name); }
-  }
-  if (!ok.length) return toast('File rekap tidak valid');
-  if (!confirm('Tambahkan ' + ok.length + ' rekap ke Arsip?\n' + ok.map(x => '• ' + (x.destinasi || '(tanpa nama)') + ' (' + modeOf(x.jenis).nama + ') · ' + x.st.ps + ' peserta · masuk ' + rp(x.st.masuk)).join('\n') + (gagal.length ? '\n\n' + gagal.length + ' file tidak valid dilewati.' : '') + '\n\nData trip berjalan tidak berubah.')) return;
-  let baru = 0, ganti = 0;
-  for (const x of ok) {
-    const i = DB.arsip.findIndex(a => a.uid === x.uid), ent = { id: DB.seq++, tanggal: new Date().toLocaleString('id-ID'), destinasi: x.destinasi, jenis: x.jenis, uid: x.uid, ringkasan: x.ringkasan, data: x.data, impor: true, dari: x.dari, diekspor: x.diekspor };
-    if (i >= 0) { if (!confirm('Rekap ' + (x.destinasi || '(tanpa nama)') + ' sudah ada di Arsip. Ganti dengan versi dari file ini?')) continue; ent.id = DB.arsip[i].id; DB.arsip[i] = ent; ganti++; } else { DB.arsip.push(ent); baru++; }
-    x.sim.forEach(sc => { if (sc && sc.nama && sc.data && typeof sc.data === 'object' && Array.isArray(sc.data.items) && !DB.sim.some(e => String(e.nama).toLowerCase() === String(sc.nama).toLowerCase() && (e.jenis || '') === x.jenis)) DB.sim.push({ id: DB.seq++, nama: String(sc.nama), data: sc.data, diubah: String(sc.diubah || ''), jenis: x.jenis }); });
-  }
-  await save(); if (V3.l) v3Gambar();
-  toast(baru + ' rekap ditambahkan' + (ganti ? ', ' + ganti + ' diganti' : ''));
-}
-const v3Imp = () => `<button class="imp" onclick="$('rimp').click()">⬆️ Impor rekap trip</button><input type="file" id="rimp" accept=".json,application/json" multiple hidden onchange="rekapImpor(this.files);this.value=''">`;
 function arsipUnduh(id) { const a = DB.arsip.find(x => x.id === id); download('arsip-' + (a.destinasi || 'trip').replace(/\W+/g, '-') + '.json', JSON.stringify(a, null, 1)); }
 async function arsipHapus(id) { const i = DB.arsip.findIndex(x => x.id === id); if (i < 0) return; const it = DB.arsip[i]; DB.arsip.splice(i, 1); await save(); renderTrip(); toast('Arsip dihapus', async () => { DB.arsip.splice(Math.min(i, DB.arsip.length), 0, it); await save(); renderTrip(); }); }
 function impor(file) {
@@ -671,43 +527,42 @@ function impor(file) {
   const r = new FileReader();
   r.onload = async () => {
     try {
-      const d = JSON.parse(r.result); if (d && d.format === 'bawaulin-rekap') return setMsg('bmsg', 'Ini file rekap trip, bukan cadangan. Pakai Impor rekap trip di halaman Rekap.', 0); if (!d || !d.set || !d.pengeluaran) throw 0;
+      const d = JSON.parse(r.result); if (!d || !d.set || !d.pengeluaran) throw 0;
       if (!confirm('Data saat ini akan DITIMPA oleh isi cadangan. Lanjut?')) return;
-      DB = Object.assign(blank(), d); if (!DB.slot || typeof DB.slot !== 'object') DB.slot = {}; if (DB.pin) delete DB.pin.bio; applyKat(); await save(); chipMode(); renderTrip(); setMsg('bmsg', 'Cadangan berhasil dipulihkan.', 1);
+      DB = Object.assign(blank(), d); if (DB.pin) delete DB.pin.bio; applyKat(); await save(); renderTrip(); setMsg('bmsg', 'Cadangan berhasil dipulihkan.', 1);
     } catch (e) { setMsg('bmsg', 'File cadangan tidak valid.', 0); }
   };
   r.readAsText(file);
 }
 
 /* ===== Simulasi ===== */
-const SIM_T = { orang: 'Per orang', grup: 'Sekali per trip', tenda: 'Tenda (sewa jika stok kurang)', kend: 'Kendaraan / ojek (jumlah dari kapasitas)' };
+const SIM_T = { orang: 'Per orang', grup: 'Sekali per trip', tenda: 'Tenda (sewa jika stok kurang)' };
 const KATS = CFG.pengeluaran.fields[1].options, up5 = x => { const b = (typeof DB !== 'undefined' && DB && DB.pref && Number(DB.pref.bulat)) || 5000; return Math.ceil(x / b) * b; };
 const simDef = () => ({ nama: '', peserta: 0, official: 0, ikut: true, harga: 0, target: 0, items: [] });
 let SIM = null;
 function simCalc(s, p) {
-  const orang = p + (s.ikut ? +s.official || 0 : 0); let total = 0, tendaSewa = 0, kendSewa = 0; const rows = [];
+  const orang = p + (s.ikut ? +s.official || 0 : 0); let total = 0, tendaSewa = 0; const rows = [];
   s.items.forEach(it => {
     const std = +it.std || 0, sim = +it.sim || 0; let cost, qty, sewa = 0, unitStd = std;
     if (it.t === 'orang') { cost = sim * orang; qty = orang; }
     else if (it.t === 'grup') { cost = sim; qty = 1; unitStd = std * p; }
-    else { const need = Math.ceil(orang / Math.max(1, +it.kap || 1)); sewa = Math.max(0, need - (+it.stok || 0)); cost = sewa * sim; qty = sewa; if (it.t === 'kend') kendSewa += sewa; else tendaSewa += sewa; }
+    else { const need = Math.ceil(orang / Math.max(1, +it.kap || 1)); sewa = Math.max(0, need - (+it.stok || 0)); cost = sewa * sim; qty = sewa; tendaSewa += sewa; }
     total += cost; rows.push({ n: String(it.n || ''), t: it.t, kat: it.kat || 'Lainnya', cost, rev: std * p, qty, unitSim: sim, unitStd, sewa });
   });
   const off = +s.official || 0, pend = (+s.harga || 0) * p, profit = pend - total;
-  return { orang, total, rows, tendaSewa, kendSewa, pend, profit, perOff: off ? profit / off : 0, margin: pend ? profit / pend * 100 : 0,
+  return { orang, total, rows, tendaSewa, pend, profit, perOff: off ? profit / off : 0, margin: pend ? profit / pend * 100 : 0,
     be: p ? up5(total / p) : 0, hTarget: p ? up5((total + (+s.target || 0) * off) / p) : 0 };
 }
 function renderSim() {
   if (kunciOn()) { $('main').innerHTML = kunciHtml('Simulasi', 'Simulasi adalah fitur Puncak. Skenario kamu aman dan terbuka lagi di Puncak.', 'Untuk hitung cepat, pakai Menu › Kalkulator › Hitung Trip (tetap gratis).'); return; }
   SIM = SIM || simDef();
-  $('main').innerHTML = `<div class="card"><h3>Skenario Simulasi</h3><select id="ssel"><option value="">-- Pilih skenario tersimpan --</option>${simList().map(x => `<option value="${x.id}">${esc(x.nama)} (${esc(x.diubah)})</option>`).join('')}</select>
+  $('main').innerHTML = `<div class="card"><h3>Skenario Simulasi</h3><select id="ssel"><option value="">-- Pilih skenario tersimpan --</option>${DB.sim.map(x => `<option value="${x.id}">${esc(x.nama)} (${esc(x.diubah)})</option>`).join('')}</select>
   <div class="flt"><button class="btn alt" onclick="simLoad()">Muat</button><button class="btn" onclick="simSave()">Simpan</button><button class="btn alt" onclick="simDel()">Hapus</button><button class="btn alt" onclick="SIM=simDef();renderSim()">Form baru</button></div><div id="smsg" class="msg"></div></div>
-  ${simRekapCard()}
   <div class="card"><h3>Parameter</h3><label>Nama simulasi / destinasi</label><input value="${esc(SIM.nama)}" oninput="SIM.nama=this.value">
   ${[['Jumlah peserta', 'peserta'], ['Jumlah official', 'official'], ['Harga jual per peserta (Rp)', 'harga', 1], ['Target keuntungan per official (Rp)', 'target', 1]].map(([l, k, m]) => `<label>${l}</label>` + (m ? `<input type="text" inputmode="numeric" value="${fmtN(SIM[k])}" oninput="fmtNum(this);SIM.${k}=numVal(this.value);drawSim()">` : `<input type="number" inputmode="decimal" value="${SIM[k]}" oninput="SIM.${k}=+this.value||0;drawSim()">`)).join('')}
   <div style="margin-top:10px"><input type="checkbox" ${SIM.ikut ? 'checked' : ''} onchange="SIM.ikut=this.checked;drawSim()"> Official ikut berangkat (biaya ikut ditanggung)</div></div>
   <div class="card"><h3>Komponen Biaya</h3><small class="mut">Anggaran = bagian harga jual yang dibayar tiap peserta (rencana). Biaya asli = uang yang benar-benar kamu keluarkan ke pihak lain.</small><div id="sitems"></div>
-  <button class="btn alt" onclick="SIM.items.push({n:tr('Komponen baru'),t:'orang',std:0,sim:0,kap:4,stok:0,kat:'Lainnya'});drawItems();drawSim()">+ Tambah komponen</button>${otSimBtn()}</div>
+  <button class="btn alt" onclick="SIM.items.push({n:tr('Komponen baru'),t:'orang',std:0,sim:0,kap:4,stok:0,kat:'Lainnya'});drawItems();drawSim()">+ Tambah komponen</button></div>
   <div class="card"><h3>Terapkan ke Anggaran Pengeluaran</h3><small class="mut">Mengisi tab Pengeluaran dari komponen simulasi. Simulasi yang diterapkan menjadi acuan perbandingan dengan kenyataan.</small>
   <label>Kolom Anggaran diisi dengan</label><select id="ap_d"><option value="sim">Biaya asli (anggaran ditekan)</option><option value="std">Anggaran komponen (bagian harga jual)</option></select>
   <div style="margin-top:10px"><input type="checkbox" id="ap_b"> Isi juga kolom Biaya sesuai biaya simulasi</div>
@@ -720,16 +575,16 @@ function drawItems() {
   $('sitems').innerHTML = SIM.items.map((it, i) => {
     const num = (l, k, m) => `<label>${l}</label>` + (m ? `<input type="text" inputmode="numeric" value="${fmtN(it[k])}" oninput="fmtNum(this);SIM.items[${i}].${k}=numVal(this.value);drawSim()">` : `<input type="number" inputmode="decimal" value="${it[k]}" oninput="SIM.items[${i}].${k}=+this.value||0;drawSim()">`);
     return `<div style="border:1px solid var(--bd);border-radius:10px;padding:10px;margin-top:10px"><label>Nama komponen</label><input value="${esc(it.n)}" oninput="SIM.items[${i}].n=this.value;drawSim()">
-    <label>Jenis biaya</label><select onchange="SIM.items[${i}].t=this.value;drawItems();drawSim()">${Object.keys(SIM_T).filter(k => k !== 'kend' || isTK() || it.t === 'kend').map(k => `<option value="${k}" ${it.t === k ? 'selected' : ''}>${SIM_T[k]}</option>`).join('')}</select>
+    <label>Jenis biaya</label><select onchange="SIM.items[${i}].t=this.value;drawItems();drawSim()">${Object.keys(SIM_T).map(k => `<option value="${k}" ${it.t === k ? 'selected' : ''}>${SIM_T[k]}</option>`).join('')}</select>
     <label>Kategori di Pengeluaran</label><select onchange="SIM.items[${i}].kat=this.value">${KATS.map(k => `<option ${(it.kat || 'Lainnya') === k ? 'selected' : ''}>${k}</option>`).join('')}</select>
-    ${num('Anggaran per peserta (Rp), bagian dari harga jual', 'std', 1)}${num(it.t === 'orang' ? 'Biaya asli per orang (Rp), yang benar-benar dikeluarkan' : it.t === 'grup' ? 'Biaya asli total per trip (Rp)' : it.t === 'kend' ? 'Biaya sewa per kendaraan (Rp)' : 'Biaya sewa per tenda (Rp)', 'sim', 1)}${it.t === 'tenda' ? num('Kapasitas per tenda (orang)', 'kap') + num('Tenda milik sendiri (stok)', 'stok') : ''}${it.t === 'kend' ? num('Kapasitas per kendaraan (orang)', 'kap') + num('Kendaraan milik sendiri (stok)', 'stok') + '<small class="mut">Jumlah kendaraan = orang berangkat dibagi kapasitas, dibulatkan ke atas.</small>' : ''}
+    ${num('Anggaran per peserta (Rp), bagian dari harga jual', 'std', 1)}${num(it.t === 'orang' ? 'Biaya asli per orang (Rp), yang benar-benar dikeluarkan' : it.t === 'grup' ? 'Biaya asli total per trip (Rp)' : 'Biaya sewa per tenda (Rp)', 'sim', 1)}${it.t === 'tenda' ? num('Kapasitas per tenda (orang)', 'kap') + num('Tenda milik sendiri (stok)', 'stok') : ''}
     <button class="del" style="margin-top:10px" onclick="SIM.items.splice(${i},1);drawItems();drawSim()">Hapus komponen</button></div>`;
   }).join('');
 }
 function drawSim() {
   const p = +SIM.peserta || 0, r = simCalc(SIM, p), cnt = Array.from({ length: 20 }, (_, i) => i + 1); if (p > 20) cnt.push(p);
   const kes = r.profit >= 0 ? `Keuntungan ${rp(r.profit)} (${r.margin.toFixed(1)}%). Tiap official mendapat ${rp(r.perOff)}.` : `Rugi ${rp(-r.profit)}. Agar balik modal, harga minimal ${rp(r.be)} per peserta.`;
-  const al = []; if (r.profit < 0) al.push(['red', 'Simulasi ini rugi. Naikkan harga atau tekan biaya.']); if (r.tendaSewa > 0) al.push(['yellow', 'Perlu menyewa ' + r.tendaSewa + ' tenda tambahan.']); if (r.kendSewa > 0) al.push(['yellow', 'Perlu menyewa ' + r.kendSewa + ' kendaraan.']);
+  const al = []; if (r.profit < 0) al.push(['red', 'Simulasi ini rugi. Naikkan harga atau tekan biaya.']); if (r.tendaSewa > 0) al.push(['yellow', 'Perlu menyewa ' + r.tendaSewa + ' tenda tambahan.']);
   $('simres').innerHTML = `<div class="card"><h3>Hasil Simulasi</h3><div class="warn note">${esc(kes)}</div>${al.map(a => `<div class="warn ${a[0]}">${esc(a[1])}</div>`).join('')}
   <div class="grid" style="margin-top:10px">${stat('Orang berangkat', r.orang)}${stat('Total biaya', rp(r.total))}${stat('Pendapatan', rp(r.pend))}${stat('Keuntungan', rp(r.profit))}${stat('Per official', rp(r.perOff))}${stat('Harga min. balik modal', rp(r.be))}${SIM.target > 0 ? stat('Harga min. capai target', rp(r.hTarget)) : ''}</div>
   <h3 style="margin-top:14px">Per komponen</h3>${tab(['Komponen', 'Anggaran', 'Biaya asli', 'Selisih'], r.rows.map(x => [x.n, rp(x.rev), rp(x.cost), rp(x.rev - x.cost)]))}
@@ -738,19 +593,9 @@ function drawSim() {
 const tab = (h, rows) => rows.length ? `<div class="tbl"><table><tr>${h.map(x => `<th>${esc(x)}</th>`).join('')}</tr>${rows.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</table></div>` : '<div>Belum ada data.</div>';
 async function simSave() {
   const nm = String(SIM.nama || '').trim(); if (!nm) return setMsg('smsg', 'Isi nama simulasi dulu', 0);
-  const ex = simList().find(x => x.nama.toLowerCase() === nm.toLowerCase()), o = { nama: nm, data: JSON.parse(JSON.stringify(SIM)), diubah: new Date().toLocaleString('id-ID') };
-  if (ex) Object.assign(ex, o); else DB.sim.push(Object.assign({ id: DB.seq++, jenis: modeAktif() }, o));
+  const ex = DB.sim.find(x => x.nama.toLowerCase() === nm.toLowerCase()), o = { nama: nm, data: JSON.parse(JSON.stringify(SIM)), diubah: new Date().toLocaleString('id-ID') };
+  if (ex) Object.assign(ex, o); else DB.sim.push(Object.assign({ id: DB.seq++ }, o));
   await save(); renderSim(); setMsg('smsg', 'Simulasi "' + nm + '" disimpan.', 1);
-}
-/* v4.0.0: skenario tiap mode; skenario lama tanpa jenis tampil di semua mode */
-const simList = () => DB.sim.filter(x => !x.jenis || x.jenis === modeAktif());
-function simMuat(id) { const x = DB.sim.find(v => v.id === id); if (!x) return; SIM = JSON.parse(JSON.stringify(x.data)); renderSim(); window.scrollTo(0, 0); }
-function simRekapCard() {
-  const L = simList(), m = modeOf(modeAktif()), bt = 'display:block;width:100%;text-align:left;padding:10px 0;border:0;border-bottom:1px solid var(--bd);background:none;color:inherit;font:inherit;cursor:pointer';
-  return `<div class="card"><h3>📊 Rekap Simulasi</h3><small class="mut"><span class="badge" style="background:${m.warna}22;color:${m.warna}">${esc(m.nama)}</span></small>` + (L.length ? `<small class="mut" style="display:block;margin-top:6px">Ketuk skenario untuk memuatnya ke form.</small>` + L.map(x => {
-    const d = x.data || {}, p = +d.peserta || 0, r = simCalc(Object.assign(simDef(), d, { items: d.items || [] }), p);
-    return `<button style="${bt}" onclick="simMuat(${x.id})"><b>${esc(x.nama)}</b><span style="float:right;font-weight:700;color:${r.profit >= 0 ? '#16a34a' : '#dc2626'}">${r.profit >= 0 ? '+ ' : '- '}${rp(Math.abs(r.profit))}</span><small class="mut" style="display:block">${p} peserta · harga jual ${rp(d.harga)} · total biaya ${rp(r.total)}</small><small class="mut" style="display:block">per official ${rp(r.perOff)} · diubah ${esc(x.diubah || '-')}</small></button>`;
-  }).join('') : '<div style="margin-top:8px">Belum ada skenario tersimpan di mode ini.</div>') + '</div>';
 }
 function simLoad() { const x = DB.sim.find(s => String(s.id) === $('ssel').value); if (!x) return setMsg('smsg', 'Pilih skenario dulu', 0); SIM = JSON.parse(JSON.stringify(x.data)); renderSim(); }
 async function simDel() { const id = $('ssel').value; if (!id) return setMsg('smsg', 'Pilih skenario dulu', 0); const i = DB.sim.findIndex(s => String(s.id) === id); if (i < 0) return; const it = DB.sim[i]; DB.sim.splice(i, 1); await save(); renderSim(); toast('Skenario dihapus', async () => { DB.sim.splice(Math.min(i, DB.sim.length), 0, it); await save(); renderSim(); }); }
@@ -761,7 +606,7 @@ async function simApply() {
   if (!confirm('Terapkan simulasi ini ke tab Pengeluaran? Baris dari simulasi dengan nama sama akan diperbarui.')) return;
   plan.rows.forEach(x => {
     let a, q;
-    if (x.t === 'tenda' || x.t === 'kend') { if (std) { a = x.unitStd; q = p; } else if (x.sewa <= 0) return; else { a = x.unitSim; q = x.sewa; } }
+    if (x.t === 'tenda') { if (std) { a = x.unitStd; q = p; } else if (x.sewa <= 0) return; else { a = x.unitSim; q = x.sewa; } }
     else if (x.t === 'grup') { a = std ? x.unitStd : x.unitSim; q = 1; } else { a = std ? x.unitStd : x.unitSim; q = x.qty; }
     const b = $('ap_b').checked ? Math.round(q > 0 ? x.cost / q : 0) : '';
     const f = DB.pengeluaran.find(r => String(r['Detail pengeluaran']).trim().toLowerCase() === x.n.trim().toLowerCase() && String(r['Catatan'] || '').indexOf('Simulasi:') === 0);
@@ -813,7 +658,7 @@ function bayarData() {
   const n = x => String(x || '').trim().toLowerCase(), paid = {};
   DB.pemasukan.forEach(r => { if (r['Kategori'] !== 'Peserta') return; const w0 = n(r['Dibayar oleh']) || n(r['Detail pemasukan']), w = matchNama(w0, DB.tamu.filter(t => t['Status'] === 'Diterima').map(t => n(t['Nama']))); paid[w] = (paid[w] || 0) + (+r['Biaya'] || 0); });
   const pr = rowsOf('pengeluaran'), ang = sum(pr, r => r['Total Anggaran']), bi = sum(pr, r => r['Total Biaya']);
-  const ps = DB.tamu.filter(t => t['Status'] === 'Diterima').map(t => ({ nama: t['Nama'], tagihan: t['Tagihan'] || '', dibayar: paidFor(paid, n(t['Nama'])), ponsel: t['Ponsel'], grup: t['Grup'] || '' })), k = ps.length;
+  const ps = DB.tamu.filter(t => t['Status'] === 'Diterima').map(t => ({ nama: t['Nama'], tagihan: t['Tagihan'] || '', dibayar: paidFor(paid, n(t['Nama'])), ponsel: t['Ponsel'] })), k = ps.length;
   const tg = { 'Lunas': 0, 'DP': 0, 'Belum Lunas': 0, 'Belum diisi': 0 }; ps.forEach(p => tg[tg[p.tagihan] !== undefined ? p.tagihan : 'Belum diisi']++);
   return { k, ang, bi, perA: k ? Math.ceil(ang / k) : 0, perB: k ? Math.ceil(bi / k) : 0, plan: k && (+DB.set.realisasi) > 0 ? Math.ceil(DB.set.realisasi / k) : 0, harga: DB.simAktif ? +DB.simAktif.harga || 0 : 0, tg, ps, iuran: Object.values(paid).reduce((a, b) => a + b, 0) };
 }
@@ -845,7 +690,7 @@ function renderBayar() {
   <div class="card"><h3>Peserta</h3><input id="bq" placeholder="🔎 Cari nama peserta" oninput="drawBayar()"><div class="fchips" id="bchips"></div><div id="bbox"></div>
   <button class="btn" id="bnext" style="background:#25d366" onclick="bayarNext()">💬 Tagih berikutnya</button></div>
   <div class="card"><h3>Bagikan</h3><button class="btn" onclick="caraKartu()">🧾 Kartu cara bayar (PDF)</button><button class="btn" style="background:#25d366" onclick="openWA(caraTeks())">💬 Cara bayar ke grup WhatsApp</button><button class="btn" style="background:#25d366" onclick="waBayar()">💬 Status pembayaran ke WhatsApp</button></div>
-  ${caraCard()}${tagCard()}${isOT() ? otGrupCard() : ''}${isJasa() ? otIncCard() : ''}
+  ${caraCard()}${tagCard()}
   <details class="card fold" id="dpat"${bOpen('dpat')} ontoggle="bTog('dpat',this.open)"><summary>📊 Patungan Otomatis</summary><small class="mut">${DB.set.tagihan > 0 ? 'Tagihan memakai tagihan tetap (manual).' : b.harga > 0 ? 'Tagihan memakai harga jual dari simulasi yang diterapkan.' : b.plan > 0 ? 'Tagihan memakai rencana patungan (Total Realisasi dibagi peserta Diterima). Biaya yang melebihi rencana tidak ditagihkan ke peserta.' : 'Tagihan belum ditetapkan: isi Total Realisasi di Beranda, isi tagihan tetap, atau terapkan simulasi. Biaya yang melebihi rencana tidak ditagihkan ke peserta.'}</small>
   <div class="grid" style="margin-top:10px">${stat('Peserta Diterima', b.k + ' orang')}${stat('Total Pengeluaran', rp(b.bi))}${stat('Total Anggaran', rp(b.ang))}${stat('Iuran terkumpul', rp(b.iuran))}${stat('Per orang (realisasi)', rp(b.perB))}${stat('Per orang (anggaran)', rp(b.perA))}</div></details>`;
   drawBayar();
@@ -931,7 +776,7 @@ function lock(note, mode) {
   if (LOCK_MODE === 'pola') { polaPad('polaPad', polaCek); polaTick(); }
   if (LOCK_MODE === 'bio' && auto) bioLogin();
 }
-function bukaOk() { LOCKED = false; document.body.classList.remove('lockon'); POLA_SALAH = 0; buildNav(); tampilMulai(); setTimeout(onbCek, 1000); setTimeout(fasePeringatan, 2000); setTimeout(updAuto, 1500); }
+function bukaOk() { LOCKED = false; document.body.classList.remove('lockon'); POLA_SALAH = 0; buildNav(); show('dashboard'); setTimeout(onbCek, 1000); setTimeout(fasePeringatan, 2000); setTimeout(updAuto, 1500); }
 async function unlock() { if (await sha(DB.pin.salt + ':' + $('pin').value) === DB.pin.hash) bukaOk(); else lock('PIN salah', 'pin'); }
 /* pola 3x3 */
 function polaPad(id, done) {
@@ -1080,32 +925,6 @@ function clText() {
 
 /* ===== Trip baru (reset total) & arsip ===== */
 const hasData = () => KEYS.some(k => DB[k].length) || DB.checklist.length;
-/* ===== v4.0.0: tiga trip sekaligus (satu per mode). DB.slot menyimpan trip mode NON-aktif; data tingkat atas = trip mode aktif ===== */
-const TRIP_TOP = KEYS.concat(['checklist', 'simAktif', 'ganti', 'ulang', 'pribadi', 'log']);
-const SET_PER = ['destinasi', 'realisasi', 'tenggat', 'tagihan', 'lunasTf', 'kodeDest', 'tutup', 'jenis', 'uid', 'kuota', 'batal', 'inc', 'exc', 'izin', 'tk', 'sesi'];
-const SET_PRIV = ['cara', 'qris', 'rek', 'pencatat', 'daftarUrl', 'daftarKey'];
-const SET_DEF = () => ({ destinasi: '', realisasi: 0, tenggat: '', tagihan: 0, lunasTf: {}, kodeDest: '', tutup: null });
-const TRIP_DEF = k => k === 'simAktif' ? null : k === 'ganti' ? {} : [];
-const kl3 = x => x === undefined ? x : JSON.parse(JSON.stringify(x));
-const newUid = () => 't' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
-function ensureUid() { if (!DB.set.uid) DB.set.uid = newUid(); return DB.set.uid; }
-const hasDataT = t => !!t && (KEYS.some(k => (t[k] || []).length) || (t.checklist || []).length > 0);
-const tripIsi = t => !!t && (hasDataT(t) || !!(t.set && (t.set.destinasi || +t.set.realisasi || (t.set.tutup && t.set.tutup.on))));
-const slotAda = id => !!(DB && DB.slot && tripIsi(DB.slot[id]));
-function slotFull(id) { const t = DB.slot[id]; return Object.assign({}, t, { set: Object.assign({}, DB.set, t.set || {}) }); }
-function ambilTrip() { const t = {}; TRIP_TOP.forEach(k => { t[k] = DB[k] === undefined ? TRIP_DEF(k) : kl3(DB[k]); }); t.set = {}; SET_PER.forEach(k => { if (DB.set[k] !== undefined) t.set[k] = kl3(DB.set[k]); }); return t; }
-function kosongTrip(id) { const t = {}; TRIP_TOP.forEach(k => { t[k] = TRIP_DEF(k); }); t.set = Object.assign(SET_DEF(), { jenis: id, uid: newUid() }); return t; }
-function muatTrip(t) {
-  TRIP_TOP.forEach(k => { DB[k] = t[k] === undefined ? TRIP_DEF(k) : kl3(t[k]); });
-  const g = {}; Object.keys(DB.set || {}).forEach(k => { if (SET_PER.indexOf(k) < 0) g[k] = DB.set[k]; });
-  DB.set = Object.assign(g, SET_DEF(), kl3(t.set || {})); SIM = null;
-}
-function tukarMode(id) {
-  const lama = modeAktif(); if (id === lama) return; DB.slot = DB.slot || {};
-  const cur = ambilTrip(); cur.set.jenis = lama; if (tripIsi(cur)) DB.slot[lama] = cur; else delete DB.slot[lama];
-  const nxt = DB.slot[id]; delete DB.slot[id];
-  muatTrip(nxt || kosongTrip(id)); DB.set.jenis = id; DB.mode = id;
-}
 /* v1.5.0: tutup buku trip. Transaksi uang (Pemasukan, Pengeluaran, Catat bayar, Talangan, berulang, impor) dikunci sampai dibuka sengaja */
 const tutupOn = () => !!(DB && DB.set && DB.set.tutup && DB.set.tutup.on);
 const UANG = k => k === 'pemasukan' || k === 'pengeluaran';
@@ -1138,7 +957,7 @@ function tutupCard() {
 async function tutupBuku() {
   if (tutupOn()) return; if ($('tk').value.trim().toUpperCase() !== 'TUTUP') return setMsg('tkmsg', 'Ketik TUTUP dulu untuk konfirmasi.', 0);
   if (!confirm('Buku trip ditutup dan transaksi uang dikunci. Arsip cadangan dibuat otomatis. ' + PUNCAK_NOTE() + 'Lanjut?')) return;
-  pushArsip(Object.assign(snapshot(), { auto: true })); DB.set.tutup = { on: true, tgl: today(), kali: +(DB.set.tutup && DB.set.tutup.kali) || 0 }; logAdd('tutup', '', null, { n: 'Buku trip ditutup' });
+  DB.arsip.push(Object.assign(snapshot(), { auto: true })); DB.set.tutup = { on: true, tgl: today(), kali: +(DB.set.tutup && DB.set.tutup.kali) || 0 }; logAdd('tutup', '', null, { n: 'Buku trip ditutup' });
   await save(); renderTrip(); setMsg('tkmsg', 'Buku trip ditutup. Arsip cadangan sudah dibuat.', 1); setTimeout(cadangAjak, 700); selLapor();
 }
 function cadangAjak() { if ($('fsheet') || (DB.lastBackup && hariLalu(DB.lastBackup) < 1)) return; sheetOpen(`<h3>Trip selesai</h3><div class="zli">Buku trip sudah ditutup. Cadangkan datanya sekarang supaya aman bila HP hilang atau rusak.</div><button class="btn" onclick="$('fsheet').remove();bagikanCadangan()">📤 Cadangkan sekarang</button><button class="btn alt" onclick="$('fsheet').remove()">Nanti</button>`); }
@@ -1188,8 +1007,7 @@ async function logKosong() {
 function renderTrip() {
   $('main').innerHTML = `${tutupCard()}${logCard()}
   <div class="card"><h3>Arsipkan Trip yang Sudah Selesai</h3><small class="mut">Menyimpan salinan seluruh data trip ini ke daftar arsip. Data yang berjalan tidak berubah.</small>
-    <button class="btn" onclick="arsipkan(false)">🗂️ Arsipkan sekarang</button>
-    <button class="btn alt" onclick="rekapEkspor('now')">📤 Ekspor rekap trip berjalan</button><div id="tmsg" class="msg"></div></div>
+    <button class="btn" onclick="arsipkan(false)">🗂️ Arsipkan sekarang</button><div id="tmsg" class="msg"></div></div>
   <div class="card"><h3>Mulai Trip Baru</h3><div class="warn yellow">Trip yang sedang berjalan diarsipkan otomatis, lalu SEMUA data (tamu, pemasukan, pengeluaran, itinerary, perlengkapan, checklist, simulasi) dikosongkan.</div>
     <label>Destinasi trip baru (opsional)</label><input id="nd">
     <label>Total Realisasi trip baru (Rp, opsional)</label><input id="nr" type="number" inputmode="decimal">
@@ -1201,9 +1019,8 @@ function renderTrip() {
     <label>Ketik SALIN untuk konfirmasi</label><input id="sk" placeholder="SALIN">
     <button class="btn red" onclick="salinTemplate()">📑 Arsipkan & salin sebagai template</button><div id="t3msg" class="msg"></div></div>`}
   <div class="card"><h3>Daftar Arsip (${DB.arsip.length})</h3>
-    <div class="fjr">${[['semua', 'Semua']].concat(MODES.map(m => [m.id, m.pendek])).map(x => `<button class="fj${FJ === x[0] ? ' on3' : ''}" onclick="setFJ('${x[0]}')">${x[1]}</button>`).join('')}</div>
-    ${arsipFilter().length ? arsipFilter().map(a => `<div style="padding:8px 0;border-bottom:1px solid var(--bd)"><b>${esc(a.destinasi || '(tanpa nama)')} - ${esc(a.tanggal)}</b> <span class="badge" style="background:${modeOf(jenisArsip(a)).warna}22;color:${modeOf(jenisArsip(a)).warna}">${esc(modeOf(jenisArsip(a)).nama)}</span>${a.auto ? ' <span class="badge y">backup otomatis</span>' : ''}${a.impor ? ' <span class="badge y">Impor</span>' : ''}<div>${esc(a.ringkasan)}</div>
-      <button class="edt" onclick="arsipBuka(${a.id})">${a.impor ? 'Buka & edit' : 'Buka'}</button><button class="edt" onclick="rekapEkspor(${a.id})">Ekspor rekap</button><button class="del" onclick="arsipHapus(${a.id})">Hapus</button></div>`).join('') : '<div>Belum ada arsip.</div>'}
+    ${DB.arsip.length ? DB.arsip.slice().reverse().map(a => `<div style="padding:8px 0;border-bottom:1px solid var(--bd)"><b>${esc(a.destinasi || '(tanpa nama)')} - ${esc(a.tanggal)}</b>${a.auto ? ' <span class="badge y">backup otomatis</span>' : ''}<div>${esc(a.ringkasan)}</div>
+      <button class="edt" onclick="arsipBuka(${a.id})">Buka</button><button class="edt" onclick="arsipUnduh(${a.id})">Unduh</button><button class="del" onclick="arsipHapus(${a.id})">Hapus</button></div>`).join('') : '<div>Belum ada arsip.</div>'}
     <small class="mut">"Buka" memuat seluruh isi arsip ke aplikasi. Jika trip yang sedang berjalan berisi data, ia disimpan otomatis sebagai backup di daftar arsip.</small></div>
   ${trashCard()}<div class="card"><h3>🧹 Reset Total</h3><div class="warn red">Menghapus SEMUA data di aplikasi ini (data aktif, arsip, simulasi tersimpan, bukti nota). Tidak bisa dibatalkan. Unduh cadangan dulu jika perlu.</div><label>Ketik HAPUS untuk konfirmasi</label><input id="rst" placeholder="HAPUS"><button class="btn red" onclick="resetTotal()">Kosongkan semua data</button><div id="rmsg" class="msg"></div></div>
   <div class="card"><h3>💾 Cadangan Data</h3><small class="mut">Data tersimpan di HP ini. Unduh cadangan berkala (atau sebelum uninstall / ganti HP), simpan ke Google Drive atau WhatsApp.</small>
@@ -1212,12 +1029,12 @@ function renderTrip() {
     <input type="file" id="imp" accept=".json,application/json" style="display:none" onchange="impor(this.files[0])"><div id="bmsg" class="msg"></div></div>`;
 }
 async function arsipkan(baru) {
-  if (!baru) { pushArsip(snapshot()); await save(); renderTrip(); return setMsg('tmsg', 'Arsip dibuat.', 1); }
+  if (!baru) { DB.arsip.push(snapshot()); await save(); renderTrip(); return setMsg('tmsg', 'Arsip dibuat.', 1); }
   if ($('kf').value.trim().toUpperCase() !== 'BARU') return setMsg('t2msg', 'Ketik BARU dulu untuk konfirmasi.', 0);
   if (!confirm('Trip saat ini diarsipkan, lalu semua data dikosongkan. ' + PUNCAK_NOTE() + 'Lanjut?')) return;
-  if (hasData()) pushArsip(snapshot());
+  if (hasData()) DB.arsip.push(snapshot());
   KEYS.forEach(k => DB[k] = []); DB.checklist = []; DB.simAktif = null; SIM = null;
-  DB.set = Object.assign({}, DB.set, { destinasi: $('nd').value.trim(), realisasi: Number($('nr').value) || 0, tenggat: '', tagihan: 0, lunasTf: {}, kodeDest: '', tutup: null, uid: newUid() }); DB.ganti = {}; DB.ulang = []; DB.pribadi = []; DB.log = [];
+  DB.set = Object.assign({}, DB.set, { destinasi: $('nd').value.trim(), realisasi: Number($('nr').value) || 0, tenggat: '', lunasTf: {}, kodeDest: '', tutup: null }); DB.ganti = {}; DB.ulang = []; DB.pribadi = []; DB.log = [];
   await save(); renderTrip(); setMsg('t2msg', 'Trip baru siap. Semua data sudah kosong; trip lama ada di arsip.', 1); selLapor();
 }
 /* v1.2.0: trip baru dari template (itinerary, checklist, kategori terbawa; peserta dan uang kosong) */
@@ -1234,40 +1051,30 @@ async function salinTemplate() {
   if (kunciOn()) return toast('Salin Trip sebagai Template adalah fitur Puncak');
   if ($('sk').value.trim().toUpperCase() !== 'SALIN') return setMsg('t3msg', 'Ketik SALIN dulu untuk konfirmasi.', 0);
   if (!confirm('Trip saat ini diarsipkan, lalu trip baru dibuat dari itinerary dan checklist-nya. ' + PUNCAK_NOTE() + 'Lanjut?')) return;
-  const diarsip = hasData(); if (diarsip) pushArsip(snapshot());
+  const diarsip = hasData(); if (diarsip) DB.arsip.push(snapshot());
   const itin = templateItin(DB.itinerary, $('st').value), cl = templateCl(DB.checklist);
   KEYS.forEach(k => DB[k] = []); DB.itinerary = itin; DB.checklist = cl; DB.simAktif = null; SIM = null;
-  DB.set = Object.assign({}, DB.set, { destinasi: $('sd').value.trim(), realisasi: 0, tenggat: '', tagihan: 0, lunasTf: {}, kodeDest: '', tutup: null, uid: newUid() }); DB.ganti = {}; DB.ulang = []; DB.pribadi = []; DB.log = [];
+  DB.set = Object.assign({}, DB.set, { destinasi: $('sd').value.trim(), realisasi: 0, tenggat: '', lunasTf: {}, kodeDest: '', tutup: null }); DB.ganti = {}; DB.ulang = []; DB.pribadi = []; DB.log = [];
   await save(); renderTrip(); setMsg('t3msg', 'Trip baru dari template siap: ' + itin.length + ' kegiatan dan ' + cl.length + ' barang checklist.' + (diarsip ? ' Trip lama ada di arsip.' : ''), 1); selLapor();
 }
 async function arsipBuka(id) {
-  const a = DB.arsip.find(x => x.id === id); if (!a) return;
-  const j = jenisArsip(a), now = modeAktif(), mj = modeOf(j).nama;
-  if (a.impor && (j === now ? hasData() : slotAda(j))) return alert('Mode ' + mj + ' masih berisi trip. Arsipkan dulu trip itu di Trip & Arsip, baru buka rekap impor ini untuk diedit.');
-  if (!a.impor && j !== now && slotAda(j)) return alert('Mode ' + mj + ' sedang punya trip berjalan. Ganti ke mode itu dan arsipkan trip-nya dulu, baru buka arsip ini.');
-  if (!confirm(a.impor ? 'Buka rekap impor ini untuk diedit? Isinya dimuat sebagai trip berjalan di mode ' + mj + '.' : 'Buka arsip ini? Trip yang sedang berjalan (jika berisi data) disimpan otomatis ke daftar arsip.')) return;
-  if (j !== now && !kunciOn()) tukarMode(j);
-  else if (hasData()) DB.arsip.push(Object.assign(snapshot(), { auto: true }));
-  const d = JSON.parse(JSON.stringify(a.data)), t = {};
-  TRIP_TOP.forEach(k => { t[k] = d[k] === undefined ? TRIP_DEF(k) : d[k]; });
-  t.set = {}; SET_PER.forEach(k => { if (d.set && d.set[k] !== undefined) t.set[k] = d.set[k]; });
-  t.set.uid = a.uid || t.set.uid || newUid();
-  muatTrip(t);
-  if (a.impor && !offList().length && d.set && Array.isArray(d.set.officials)) DB.set.officials = d.set.officials;
-  DB.set.jenis = j; DB.mode = j; DB.seq = Math.max(DB.seq, d.seq || 0);
-  await save(); renderTrip(); chipMode(); setMsg('tmsg', 'Arsip dibuka. Seluruh isinya sekarang menjadi data aktif.' + (tutupOn() ? ' Buku trip ini tertutup; buka kuncinya di kartu paling atas bila mau mengedit.' : ''), 1);
+  const a = DB.arsip.find(x => x.id === id); if (!a || !confirm('Buka arsip ini? Trip yang sedang berjalan (jika berisi data) disimpan otomatis ke daftar arsip.')) return;
+  if (hasData()) DB.arsip.push(Object.assign(snapshot(), { auto: true }));
+  const d = JSON.parse(JSON.stringify(a.data));
+  KEYS.concat(['checklist']).forEach(k => DB[k] = d[k] || []);
+  DB.set = d.set || { destinasi: '', realisasi: 0 }; DB.simAktif = d.simAktif || null; SIM = null; DB.ganti = d.ganti || {}; DB.ulang = d.ulang || []; DB.pribadi = d.pribadi || []; DB.log = d.log || [];
+  DB.seq = Math.max(DB.seq, d.seq || 0); await save(); renderTrip(); setMsg('tmsg', 'Arsip dibuka. Seluruh isinya sekarang menjadi data aktif.', 1);
 }
+
 /* ===== Tampilan modern: tema, menu bawah, lembar form ===== */
 const MAIN = ['dashboard', 'simulasi', 'rekap', 'akun'];
 const ICO = { dashboard: '<path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>', pemasukan: '<circle cx="12" cy="12" r="9"/><path d="M12 7v10M8 13l4 4 4-4"/>', pengeluaran: '<circle cx="12" cy="12" r="9"/><path d="M12 17V7M8 11l4-4 4 4"/>', rekap: '<path d="M5 3h10l4 4v14H5z"/><path d="M9 9h2M9 13h6M9 17h6"/>', simulasi: '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h2M12 12h2M8 16h2M12 16h2"/>', akun: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>', more: '<rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/>' };
 function buildNav() {
-  $('nav').innerHTML = [['dashboard', 'Beranda'], ['simulasi', 'Simulasi'], ['more', 'Menu'], ['rekap', 'Rekap'], ['akun', 'Akun']].map(([k, l]) => k === 'more' ? `<button class="mid" data-k="more" onclick="show('more')"><span class="mic"><svg viewBox="0 0 24 24">${icoSet().more}</svg></span>${l}</button>` : `<button data-k="${k}" onclick="show('${k}')"><svg viewBox="0 0 24 24">${icoSet()[k]}</svg>${l}</button>`).join('');
+  $('nav').innerHTML = [['dashboard', 'Beranda'], ['simulasi', 'Simulasi'], ['more', 'Menu'], ['rekap', 'Rekap'], ['akun', 'Akun']].map(([k, l]) => k === 'more' ? `<button class="mid" data-k="more" onclick="show('more')"><span class="mic"><svg viewBox="0 0 24 24">${ICO.more}</svg></span>${l}</button>` : `<button data-k="${k}" onclick="show('${k}')"><svg viewBox="0 0 24 24">${ICO[k]}</svg>${l}</button>`).join('');
 }
 function renderMore() {
-  if (isOT()) return renderMoreOT();
-  if (isTK()) return renderMoreTK();
   const T = [['tamu', '👥', 'Tamu', 'Daftar peserta'], ['itinerary', '🗺️', 'Itinerary', 'Rundown perjalanan'], ['perlengkapan', '🎒', 'Perlengkapan', 'Kebutuhan & sewa'], ['checklist', '✅', 'Checklist', 'Barang bawaan'], ['pemasukan', '⬇️', 'Masuk', 'Catat pemasukan'], ['pengeluaran', '⬆️', 'Keluar', 'Catat pengeluaran'], ['bayar', '💳', 'Pembayaran', 'Patungan peserta'], ['trip', '🗂️', 'Trip & Arsip', 'Arsip & cadangan'], ['bagihasil', '💰', 'Bagi Hasil', 'Untung/rugi & penyelesaian official'], ['kategori', '🏷️', 'Kategori', 'Kategori & berulang'], ['daftar', '📝', 'Pendaftaran', 'Link & pendaftar online'], ['kalk', '🧮', 'Kalkulator', 'Hitung, memori, riwayat'], ['panduan', '📖', 'Panduan', 'Demo & langkah rinci']];
-  $('main').innerHTML = `<div class="pgh"><h2>Menu</h2></div><div class="tiles">${T.filter(t => !(t[0] === 'bagihasil' && modeAktif() === 'bersama')).map(t => `<button class="tile" onclick="show('${t[0]}')"><span>${t[1]}</span>${t[2]}<small>${t[3]}</small></button>`).join('')}</div>`;
+  $('main').innerHTML = `<div class="pgh"><h2>Menu</h2></div><div class="tiles">${T.map(t => `<button class="tile" onclick="show('${t[0]}')"><span>${t[1]}</span>${t[2]}<small>${t[3]}</small></button>`).join('')}</div>`;
 }
 function openSheet() { $('sheet').classList.add('on'); }
 function closeSheet() { const s = $('sheet'); if (s) s.classList.remove('on'); }
@@ -1275,10 +1082,8 @@ function txRow(key, r) {
   const c = CFG[key], title = r[c.fields[0].h] || '?'; let amt = '', cls = '', sub = [], badges = '';
   if (key === 'pemasukan') { amt = '+ ' + rp(r['Biaya']); cls = 'in'; sub = [r['Kategori'], fmtDate(r['Tanggal transaksi']), r['Dibayar oleh']]; }
   else if (key === 'pengeluaran') { amt = '- ' + rp(r['Total Biaya']); cls = 'out'; sub = [r['Kategori'], r['Quantity'] + ' x ' + rp(r['Biaya']), fmtDate(r['Tanggal transaksi']), r['Dibayar oleh'], r.Bukti ? '' : '🧾 tanpa nota']; }
-  else if (key === 'tamu') { sub = [isTK() ? r['Sesi'] : '', r['Meeting Point'], normHP(r['Ponsel'])]; badges = badge(r['Status'] || '') + badge(r['Tagihan'] || ''); }
+  else if (key === 'tamu') { sub = [r['Meeting Point'], normHP(r['Ponsel'])]; badges = badge(r['Status'] || '') + badge(r['Tagihan'] || ''); }
   else if (key === 'itinerary') sub = [r['Jenis aktivitas'], fmtDate(r['Waktu mulai']) + (r['Waktu berakhir'] ? ' - ' + fmtDate(r['Waktu berakhir']).slice(-5) : ''), r['Lokasi']];
-  else if (key === 'kru' && isTK()) { sub = [r['Peran'], r['Catatan']]; amt = rp(r['Upah']); }
-  else if (key === 'tiket') { sub = [(+r['Tarif'] ? rp(r['Tarif']) : 'Tarif belum diisi') + ' ' + (r['Satuan'] || 'Per orang').toLowerCase(), r['Unit'] + ' unit', r['Catatan']]; amt = rp(r['Total']); }
   else { sub = ['Butuh ' + r['Kebutuhan'] + ', punya ' + r['Kesediaan'] + ', sewa ' + r['Sewa']]; amt = rp(r['Total Sewa']); }
   const bk = (key === 'pemasukan' || key === 'pengeluaran') && r.Bukti ? `<button class="edt" onclick="viewBukti(${r.id},'${key}')">📎 Bukti</button>` : '';
   return `<div class="txw"><div class="tx"><div class="av ${cls}">${esc(String(title).charAt(0).toUpperCase())}</div><div class="tm"><b>${esc(title)}</b><small>${sub.filter(Boolean).map(esc).join(' | ')}</small>${badges ? `<div style="margin-top:4px">${badges}</div>` : ''}</div><div class="ta ${cls}">${amt}</div></div>
@@ -1384,7 +1189,7 @@ const normN = x => String(x || '').trim().toLowerCase();
 function pesertaInfo(i) { const b = bayarData(), base = bayarBase(), p = b.ps[i]; return { base, p, s: base - p.dibayar }; }
 function tagihWA(i) {
   const { base, p, s } = pesertaInfo(i), d = DB.set, late = s > 0 && d.tenggat && today() > d.tenggat;
-  const t = tagihTpl(p, base, s, d, late) || 'Halo ' + p.nama + ', tagihan trip' + (d.destinasi ? ' ' + d.destinasi : '') + ':\nTotal tagihan: ' + rp(base) + '\nSudah dibayar: ' + rp(p.dibayar) + '\n*Sisa: ' + rp(s) + '*' + (d.tenggat ? '\nTenggat: ' + fmtDate(d.tenggat) + (late ? ' (sudah lewat)' : '') : '') + otIncTeks() + (caraText(d) ? '\n\nTransfer ke:\n' + caraText(d) : '') + (d.qris ? '\n(atau scan QRIS yang dikirim terpisah)' : '') + '\n\nMohon kirim bukti transfer. Terima kasih 🙏';
+  const t = tagihTpl(p, base, s, d, late) || 'Halo ' + p.nama + ', tagihan trip' + (d.destinasi ? ' ' + d.destinasi : '') + ':\nTotal tagihan: ' + rp(base) + '\nSudah dibayar: ' + rp(p.dibayar) + '\n*Sisa: ' + rp(s) + '*' + (d.tenggat ? '\nTenggat: ' + fmtDate(d.tenggat) + (late ? ' (sudah lewat)' : '') : '') + (caraText(d) ? '\n\nTransfer ke:\n' + caraText(d) : '') + (d.qris ? '\n(atau scan QRIS yang dikirim terpisah)' : '') + '\n\nMohon kirim bukti transfer. Terima kasih 🙏';
   window._tg = window._tg || {}; window._tg[p.nama] = 1; openWA(t, waDigits(p.ponsel)); if ($('bbox')) drawBayar();
 }
 function terbilang(n) {
@@ -1488,7 +1293,7 @@ function renderDaftar() {
   <div class="acts"><button class="edt" onclick="setStatusTamu(${t.id},'Diterima')">Terima</button><button class="del" onclick="setStatusTamu(${t.id},'Ditolak')">Tolak</button><button class="edt" onclick="openWA('Halo ${esc(t['Nama'])}, terima kasih sudah mendaftar.','${noWA(t['Ponsel'])}')">💬 WA</button></div></div>`).join('') : '<div>Tidak ada yang menunggu.</div>'}</div>`;
 }
 async function simpanDaftar() { DB.set.daftarUrl = $('du').value.trim(); DB.set.daftarKey = $('dk').value.trim(); await save(); renderDaftar(); toast('Tersimpan'); }
-async function setStatusTamu(id, s) { if (s === 'Diterima' && kuotaPenuh(id, sesiTamu(id))) { if (!confirm('Kuota ' + kuotaN(sesiTamu(id)) + ' peserta sudah penuh. Masukkan ke Daftar tunggu?')) return; s = 'Daftar tunggu'; } DB.tamu.find(t => t.id === id)['Status'] = s; await save(); renderDaftar(); }
+async function setStatusTamu(id, s) { DB.tamu.find(t => t.id === id)['Status'] = s; await save(); renderDaftar(); }
 async function ambilDaftar() {
   const d = DB.set; if (!d.daftarUrl || !d.daftarKey) return setMsg('dmsg', 'Isi link Apps Script dan kunci dulu, lalu Simpan.', 0);
   if (!navigator.onLine) return setMsg('dmsg', 'Perlu internet untuk mengambil pendaftar.', 0);
@@ -1664,7 +1469,7 @@ function tripStat(d, nama, tgl) {
   return { nama, tgl, ps, masuk, keluar, untung: masuk - keluar, per: ps ? keluar / ps : 0, margin: masuk ? (masuk - keluar) / masuk * 100 : 0, kat };
 }
 function statData() {
-  const seen = {}, L = DB.arsip.map(a => tripStat(a.data, (a.destinasi || '(tanpa nama)') + (a.auto ? ' (backup)' : ''), a.tanggal)).concat([tripStat(DB, (DB.set.destinasi || '(tanpa nama)') + ' (berjalan)', 'Sekarang')]).concat(MODES.filter(m => m.id !== modeAktif() && slotAda(m.id)).map(m => { const t = slotFull(m.id); return tripStat(t, (t.set.destinasi || '(tanpa nama)') + ' (berjalan)', 'Sekarang'); }))
+  const seen = {}, L = DB.arsip.map(a => tripStat(a.data, (a.destinasi || '(tanpa nama)') + (a.auto ? ' (backup)' : ''), a.tanggal)).concat([tripStat(DB, (DB.set.destinasi || '(tanpa nama)') + ' (berjalan)', 'Sekarang')])
     .filter(x => { const k = [x.nama.replace(/ \(.*\)$/, ''), x.ps, x.masuk, x.keluar].join('|'); if ((!x.ps && !x.masuk && !x.keluar) || seen[k]) return false; return seen[k] = 1; });
   const cat = {}; L.forEach(x => Object.keys(x.kat).forEach(k => cat[k] = (cat[k] || 0) + x.kat[k]));
   const tk = Object.keys(cat).sort((a, b) => cat[b] - cat[a]), tot = sum(L, x => x.keluar), u = sum(L, x => x.untung), lines = [];
@@ -2553,16 +2358,6 @@ Object.entries({
 "Paket Rintis: setelah trip pertama selesai, beberapa fitur Puncak terkunci. Data kamu tetap aman.": "Rintis plan: after your first trip ends, some Puncak features are locked. Your data stays safe."
 }).forEach(([k, v]) => { if (!(k in EN)) EN[k] = v; });
 const EN_PAT = [
-  [/^Berjalan: (.+) · (\d+) peserta$/, (m) => 'In progress: ' + m[1] + ' · ' + m[2] + (m[2] === '1' ? ' participant' : ' participants')],
-  [/^(\d+) trip di riwayat$/, (m) => m[1] + (m[1] === '1' ? ' trip' : ' trips') + ' in history'],
-  [/^Skenario simulasi: (\d+)$/, (m) => 'Simulation scenarios: ' + m[1]],
-  [/^(\d+) rekap ditambahkan(?:, (\d+) diganti)?$/, (m) => m[1] + (m[1] === '1' ? ' recap' : ' recaps') + ' added' + (m[2] ? ', ' + m[2] + ' replaced' : '')],
-  [/^(\d+) peserta · harga jual (.+) · total biaya (.+)$/, (m) => m[1] + ' participants · selling price ' + m[2] + ' · total cost ' + m[3]],
-  [/^per official (.+) · diubah (.+)$/, (m) => 'per official ' + m[1] + ' · changed ' + m[2]],
-  [/^Mode (.+) masih berisi trip\. Arsipkan dulu trip itu di Trip & Arsip, baru buka rekap impor ini untuk diedit\.$/, (m) => 'The ' + m[1] + ' mode still has a trip. Archive that trip first in Trip & Archive, then open this imported recap to edit.'],
-  [/^Mode (.+) sedang punya trip berjalan\. Ganti ke mode itu dan arsipkan trip-nya dulu, baru buka arsip ini\.$/, (m) => 'The ' + m[1] + ' mode has a trip in progress. Switch to that mode and archive its trip first, then open this archive.'],
-  [/^Buka rekap impor ini untuk diedit\? Isinya dimuat sebagai trip berjalan di mode (.+)\.$/, (m) => 'Open this imported recap for editing? Its contents are loaded as the trip in progress in ' + m[1] + ' mode.'],
-  [/^Tambahkan (\d+) rekap ke Arsip\?/, (m) => 'Add ' + m[1] + ' recap(s) to the Archive? (details below, in Indonesian)'],
   [/^Fase trip pertama berakhir (\d+) hari lagi\. Setelah itu fitur Puncak terkunci\. Data aman\. Cadangkan sekarang\?$/, (m) => 'Your first-trip period ends in ' + m[1] + (m[1] === '1' ? ' day' : ' days') + '. After that, Puncak features are locked. Your data is safe. Back up now?'],
   [/^Latihan · sisa (\d+) hari$/, (m) => 'Practice · ' + m[1] + (m[1] === '1' ? ' day' : ' days') + ' left'],
   [/^Trip pertama · sisa (\d+) hari$/, (m) => 'First trip · ' + m[1] + (m[1] === '1' ? ' day' : ' days') + ' left'],
@@ -2740,7 +2535,7 @@ window.confirm = s => _cf(tr(s)); window.alert = s => _al(tr(s));
 document.documentElement.lang = LANG;
 if (LANG === 'en') { if (document.body) i18nRun(); }
 
-const APP_V = 'v4.2.0';
+const APP_V = 'v2.2.2';
 const CR = Object.freeze({ nama: 'bawaulin.trip', tag: 'Lieur gawe, Bawa ulin', ig: 'https://www.instagram.com/bawaulin.trip?srtk=d29rcmh1YXVrajVz', igh: '@bawaulin.trip', wa: 'https://wa.me/6289618805100', wah: '+62 896-1880-5100' });
 const CR_H = 'bdaae993647f576cf92a364af7443befdce2ceefffe6c926d596f7e52a001b37', LOGO_H = '3763dd402cc104c4f9cebcce4a37a936cf2e0606bb1dd2d261e030f0a6ccc9bb';
 let CR_OK = null, LOCKED = false, hiddenAt = 0, PRIV_OBS = null;
@@ -2772,20 +2567,16 @@ function pembuatHtml() {
 const relL = h => { const n = parseInt(h.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255].map(v => { v /= 255; return v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4); }).reduce((s, v, i) => s + v * [.2126, .7152, .0722][i], 0); };
 const onColor = h => (relL(h) + .05) / .0559 >= 1.05 / (relL(h) + .05) ? '#1a1000' : '#ffffff';
 const mixHex = (a, b, t) => { const x = parseInt(a.slice(1), 16), y = parseInt(b.slice(1), 16), c = [16, 8, 0].map(s => Math.round((x >> s & 255) * (1 - t) + (y >> s & 255) * t)); return '#' + c.map(v => ('0' + v.toString(16)).slice(-2)).join(''); };
-const PRESET = [['Otomatis (ikut mode)', null, null], ['Oranye', '#f97316', '#fbbf24'], ['Biru', '#2563eb', '#38bdf8'], ['Hijau', '#16a34a', '#a3e635'], ['Ungu', '#7c3aed', '#c084fc'], ['Merah', '#e11d48', '#fb7185'], ['Tosca', '#0d9488', '#5eead4']];
-/* v3.1.0: warna UI ikut mode; warna kustom disimpan per mode (DB.pref.warnaMode[id]; false = Otomatis). pref.warna lama = kustom Open trip */
-const modeWarna = id => { const a = modeOf(id).dasar; return { a, b: mixHex(a, '#ffffff', .38) }; };
-const warnaKustom = id => { const wm = pref('warnaMode', null); if (wm && wm[id] !== undefined) return wm[id] || null; if (id === 'open') { const o = pref('warna', null); if (o && /^#[0-9a-f]{6}$/i.test(o.a)) return o; } return null; };
+const PRESET = [['Oranye', null, null], ['Biru', '#2563eb', '#38bdf8'], ['Hijau', '#16a34a', '#a3e635'], ['Ungu', '#7c3aed', '#c084fc'], ['Merah', '#e11d48', '#fb7185'], ['Tosca', '#0d9488', '#5eead4']];
 function applyWarna() {
-  const s = document.documentElement.style; let w = null;
-  try { const id = modeAktif(); w = warnaKustom(id) || modeWarna(id); } catch (e) {}
+  const s = document.documentElement.style, w = pref('warna', null);
   if (!w || !/^#[0-9a-f]{6}$/i.test(w.a)) { ['--pri', '--pri2', '--onpri', '--h'].forEach(p => s.removeProperty(p)); return; }
   const light = document.documentElement.dataset.t === 'light';
   s.setProperty('--pri', w.a); s.setProperty('--pri2', w.b); s.setProperty('--onpri', onColor(w.a)); s.setProperty('--h', light ? mixHex(w.a, '#000000', .3) : w.b);
 }
 function applyFz() { document.documentElement.dataset.fz = pref('fz', 'm'); }
 function applyLatar() { const s = document.documentElement.style, l = pref('latar', ''); if (l) s.setProperty('--bgimg', 'url(' + l + ')'); else s.removeProperty('--bgimg'); }
-function applyProfil() { /* v3.1.0: logo header tetap logo-cash.png (tidak bisa diganti); logo profil hanya untuk Akun, layar kunci, PDF, dan kwitansi */ }
+function applyProfil() { const i = $('hlogo'), n = $('hnama'); if (i) i.src = logoP(); if (n) n.textContent = namaP(); }
 function maskRp(root) {
   const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT), L = []; let n;
   while ((n = w.nextNode())) if (/Rp\s?-?[\d.,]+/.test(n.nodeValue)) L.push(n);
@@ -2885,7 +2676,7 @@ async function ttdHapus() { delete prof().ttd; await save(); $('fsheet').remove(
 /* ===== v19: Akun (kartu identitas + Pengaturan menyatu) ===== */
 const TEMA_N = { dark: 'Gelap', light: 'Terang', auto: 'Ikuti HP' };
 const temaNow = () => { try { return localStorage.getItem('t') || 'dark'; } catch (e) { return 'dark'; } };
-const warnaNama = () => { const w = warnaKustom(modeAktif()); if (!w) return 'Otomatis (ikut mode)'; const p = PRESET.find(x => x[1] === w.a); return p ? p[0] : 'Kustom'; };
+const warnaNama = () => { const w = pref('warna', null); if (!w) return 'Oranye'; const p = PRESET.find(x => x[1] === w.a); return p ? p[0] : 'Kustom'; };
 function renderAkun() {
   const p = prof();
   $('main').innerHTML = `
@@ -2909,11 +2700,11 @@ function renderAkun() {
 /* Pesan tagihan WhatsApp yang bisa diatur */
 const TPL_DEF = 'Halo {nama}, tagihan trip {destinasi}:\nTotal tagihan: {total}\nSudah dibayar: {dibayar}\n*Sisa: {sisa}*\nTenggat: {tenggat}\n\nTransfer ke:\n{rekening}\n\nMohon kirim bukti transfer. Terima kasih 🙏';
 function tplIsi(tpl, o) {
-  return String(tpl).replace(/\{(nama|destinasi|total|dibayar|sisa|tenggat|rekening|termasuk|belum_termasuk)\}/g, (m, k) => o[k] === undefined ? '' : o[k]).replace(/ {2,}/g, ' ').replace(/ :/g, ':');
+  return String(tpl).replace(/\{(nama|destinasi|total|dibayar|sisa|tenggat|rekening)\}/g, (m, k) => o[k]).replace(/ {2,}/g, ' ').replace(/ :/g, ':');
 }
 function tagihTpl(p, base, s, d, late) {
   const t = pref('tplTagih', ''); if (!String(t).trim()) return '';
-  return tplIsi(t, { nama: p.nama, destinasi: d.destinasi || '', total: rp(base), dibayar: rp(p.dibayar), sisa: rp(s), tenggat: d.tenggat ? fmtDate(d.tenggat) + (late ? ' (sudah lewat)' : '') : '-', rekening: caraText(d) || '-', termasuk: otLines(d.inc).join('\n'), belum_termasuk: otLines(d.exc).join('\n') });
+  return tplIsi(t, { nama: p.nama, destinasi: d.destinasi || '', total: rp(base), dibayar: rp(p.dibayar), sisa: rp(s), tenggat: d.tenggat ? fmtDate(d.tenggat) + (late ? ' (sudah lewat)' : '') : '-', rekening: caraText(d) || '-' });
 }
 function tplPrev() { const e = $('tplx'), o = $('tplp'); if (e && o) o.textContent = tplIsi(e.value, { nama: 'Budi', destinasi: DB.set.destinasi || 'Semeru', total: rp(750000), dibayar: rp(250000), sisa: rp(500000), tenggat: '30/11/2026', rekening: caraText(DB.set) || 'BCA 1234567890 a.n. Nama' }); }
 function tplIns(k) { const e = $('tplx'), a = e.selectionStart || 0, b = e.selectionEnd || 0; e.value = e.value.slice(0, a) + k + e.value.slice(b); e.focus(); e.selectionStart = e.selectionEnd = a + k.length; tplPrev(); }
@@ -2937,14 +2728,8 @@ async function cekUpdate() {
 }
 
 /* v1.9.0: tanda Offline + pembaruan otomatis */
-const APP_NOTE_OLD = ["Kartu di halaman Mode kini ikut warna pilihanmu untuk mode itu.", "Header dirapikan: logo lebih besar dan semua bagian sejajar presisi.", "Data dan lisensi kamu tidak berubah."];
-const APP_NOTE = ["Tektok kini punya isi sendiri: Tiket & Parkir, daftar Izin dan registrasi, Jadwal naik-turun yang jadi Itinerary, kuota per sesi dengan daftar tunggu per sesi, sewa kendaraan/ojek di Simulasi, Kru Panitia (maks 3), serta Sudah termasuk / Belum termasuk.", "Menu dan navigasi Tektok memakai ikon baru yang berbeda dari Open trip. Open trip tidak berubah.", "Data dan lisensi kamu tidak berubah."];
-const APP_NOTE_EN = ["Tektok now has its own content: Tickets & Parking, a Permits and registration list, a Hike schedule that builds the Itinerary, quota per session with per-session waiting lists, vehicle / motorbike taxi rental in Simulation, Crew (max 3), and Included / Not included.", "Tektok menu and navigation use new icons, different from Open trip. Open trip is unchanged.", "Your data and license are unchanged."];
-const APP_NOTE_V410 = ["Open trip kini punya isi sendiri: perlengkapan Kelompok dan Pribadi, Kru Panitia dengan upah, kuota dan daftar tunggu, peserta batal dengan pengembalian, tagihan per grup, serta Sudah termasuk / Belum termasuk.", "Menu dan navigasi Open trip memakai ikon baru. Mode lain tidak berubah.", "Data dan lisensi kamu tidak berubah."];
-const APP_NOTE_V400 = ["Tiga trip bisa berjalan sekaligus, satu per mode. Ganti mode tanpa kehilangan data.", "Simulasi kini per mode, dengan kartu Rekap Simulasi. Ekspor rekap trip lalu impor di HP lain, bisa diedit kembali.", "Data dan lisensi kamu tidak berubah."];
-const APP_NOTE_EN_OLD = ["Cards on the Mode page now follow the color you chose for that mode.", "Header tidied up: bigger logo and everything precisely aligned.", "Your data and license are unchanged."];
-const APP_NOTE_EN_V410 = ["Open trip now has its own content: Group and Personal gear, Crew with wages, quota and waiting list, cancelled participants with refunds, per-group billing, and Included / Not included.", "Open trip menu and navigation use new icons. Other modes are unchanged.", "Your data and license are unchanged."];
-const APP_NOTE_EN_V400 = ["Three trips can now run at once, one per mode. Switch modes without losing data.", "Simulation is now per mode, with a Simulation Recap card. Export a trip recap and import it on another phone, editable again.", "Your data and license are unchanged."];
+const APP_NOTE = ["Lencana mini muncul di bagian atas aplikasi; ketuk untuk melihat keuntungannya.", "Status koneksi kini berupa titik hijau (online) atau merah (offline).", "Data dan lisensi kamu tidak berubah."];
+const APP_NOTE_EN = ["A mini badge now appears at the top of the app; tap it to see its benefits.", "Connection status is now a green (online) or red (offline) dot.", "Your data and license are unchanged."];
 let APP_SIAP = false;
 const lsGet = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
 const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
@@ -2978,7 +2763,7 @@ async function updAuto() {
     sheetOpen(`<h3>Versi baru ${esc(m[1])} tersedia</h3>${nt.length ? `<div class="zli"><b>Apa yang baru</b></div>${nt.map(x => `<div class="zli">• ${esc(x)}</div>`).join('')}` : ''}<div class="zli">Data Anda tidak terhapus.</div><button class="btn" onclick="updPasang()">Perbarui sekarang</button><button class="btn alt" onclick="$('fsheet').remove()">Nanti</button>`);
   } catch (e) {}
 }
-async function onbCek() { try { if (!APP_SIAP || LOCKED || V3.l || $('fsheet') || hasData() || DB.set.destinasi) return; if (await kvGet('onb')) return; await kvPut('onb', 1); onbBuka(); } catch (e) {} }
+async function onbCek() { try { if (!APP_SIAP || LOCKED || $('fsheet') || hasData() || DB.set.destinasi) return; if (await kvGet('onb')) return; await kvPut('onb', 1); onbBuka(); } catch (e) {} }
 const IU_S = ["Syarat & Ketentuan", "Dengan mengaktifkan aplikasi, Anda dianggap telah membaca dan menyetujui syarat ini.", "1. Lisensi: satu lisensi seumur hidup produk untuk satu penyelenggara. Satu kode perangkat (BU-XXXX-XXXX) berlaku untuk satu HP. \"Seumur hidup\" berarti selama aplikasi dan server lisensi masih beroperasi. Bila server lisensi dihentikan, pembeli sah akan mendapat kunci permanen yang bekerja tanpa internet.", "2. Yang dilarang: membagikan aplikasi, tautan, atau kunci aktivasi kepada orang lain; menjual ulang atau menyewakan; menghapus atau mengubah identitas pembuat; mengubah kode aplikasi atau menjalankannya dari alamat lain.", "3. Pemeriksaan lisensi: aplikasi memeriksa status lisensi ke server penjual saat ada internet. Tanpa internet, aplikasi tetap jalan sampai 60 hari sejak pemeriksaan terakhir yang berhasil; setelah itu perlu online sekali. Buka aplikasi dengan internet sebelum berangkat trip. Jam HP yang dimundurkan akan mengunci aplikasi.", "4. Pindah HP: gratis, maksimal 2 kali per tahun, dengan nomor WhatsApp yang cocok dengan data pembelian. HP hilang atau rusak dapat dibantu dengan penjelasan. Setiap HP baru punya kode perangkat baru, jadi pembeli meminta kunci baru ke penjual lewat WhatsApp.", "5. Pencabutan: penjual dapat mencabut lisensi bila syarat dilanggar. Aplikasi yang dicabut terkunci begitu terhubung ke server. Data tetap ada di HP dan aplikasi pulih bila lisensi diaktifkan lagi. Pencabutan karena pelanggaran tidak disertai pengembalian uang.", "6. Data dan cadangan: data trip, keuangan, dan peserta hanya tersimpan di HP Anda. Menghapus data aplikasi atau mencopot aplikasi dapat menghilangkan semuanya, jadi cadangkan secara rutin (Akun › Data & Cadangan). Anda bertanggung jawab atas data peserta yang Anda kumpulkan, termasuk data kesehatan, dan wajib meminta izin peserta.", "7. Batas tanggung jawab: aplikasi adalah alat bantu mencatat dan menghitung. Penjual tidak menanggung kerugian akibat kesalahan input atau hitungan, data yang hilang, atau aplikasi yang tidak bisa dipakai karena lama tanpa internet.", "8. Paket Rintis dan Puncak: Puncak membuka semua fitur tanpa batas waktu. Rintis dimulai dengan 7 hari latihan (semua fitur Puncak terbuka), lalu satu trip penuh dengan semua fitur Puncak. Trip penuh itu berakhir saat Anda memakai Tutup Buku, Mulai Trip Baru, atau Salin Template, atau setelah 60 hari, mana yang lebih dulu. Lama masa ini dihitung dari jam server dan dapat berubah; yang berlaku saat Anda membeli tertera di halaman penjualan.", "9. Setelah masa Rintis selesai: Simulasi, Bagi Hasil, Pendaftaran online, Salin Template, Statistik Antar-Trip, serta logo dan stempel penyelenggara di PDF dan kwitansi terkunci, dan PDF memuat tanda bawaulin.cash. Fitur dasar tetap gratis. Data Anda tidak dihapus dan tidak disandera: melihat, mencadangkan, memulihkan, dan mengunduh data tetap bisa, dan fitur yang terkunci terbuka lagi saat Anda upgrade ke Puncak.", "10. Harga dan pengembalian uang: harga mengikuti yang tertera di halaman penjualan pada saat Anda membeli. Rintis, Puncak, Upgrade, dan VIP adalah produk digital, jadi pembayaran yang sudah diterima tidak dikembalikan. Pengecualian: bila aplikasi gagal diaktifkan karena kesalahan di sisi penjual (misalnya kunci atau paket tidak diterbitkan setelah pembayaran terverifikasi, atau aplikasi tidak bisa diaktifkan akibat kesalahan server atau penjual dan tidak dapat diperbaiki), uang dikembalikan. Pengecualian ini tidak berlaku bila penyebabnya di sisi Anda, misalnya salah mengetik kode, HP tidak cocok, atau berubah pikiran. Pencabutan karena pelanggaran (pasal 5) tetap tanpa pengembalian uang. Untuk mengajukan, hubungi penjual lewat WhatsApp dengan bukti pembayaran.", "Pertanyaan: hubungi penjual lewat WhatsApp (Pengaturan › Lapor masalah)."];
 const IU_P = ["Kebijakan Privasi", "Data trip, peserta, dan keuangan Anda disimpan di HP Anda sendiri dan tidak dikirim ke server penjual.", "Yang dikirim ke server lisensi: kode perangkat, versi aplikasi, token pasang acak, alamat asal aplikasi, dan penanda teknis keaslian kode. Tujuannya hanya memeriksa status lisensi dan menjaga agar satu lisensi dipakai di satu HP.", "Server juga mencatat kejadian teknis (misalnya kode dipakai di dua HP) dan data pembelian yang diisi penjual: nama pembeli, nomor WhatsApp, dan tanggal aktivasi. Data ini dipakai untuk aktivasi, pindah HP, dan bantuan.", "Server juga mencatat paket Anda (Rintis atau Puncak), kapan masa latihan dimulai, dan kapan trip pertama ditandai selesai. Ini hanya penanda waktu; isi trip tidak dikirim.", "Pendaftaran online memakai skrip Google milik Anda sendiri; data pendaftar masuk ke Google Sheet Anda, bukan ke server penjual.", "Lapor masalah hanya mengirim info teknis dan hanya terkirim bila Anda menekan kirim di WhatsApp. Cadangan data berupa berkas yang Anda unduh dan simpan sendiri.", "Aplikasi tidak memakai iklan atau pelacak pihak ketiga. Aplikasi dihosting di GitHub Pages, yang dapat mencatat akses jaringan sesuai kebijakannya sendiri.", "Penjual tidak menjual data Anda. Untuk meminta data pembelian Anda dihapus, hubungi penjual lewat WhatsApp."];
 function infoUmum() { sheetOpen('<h3>Info Umum</h3><div class="card zcard"><div class="zr" onclick="infoDoc(IU_S)"><span class="zk">Syarat & Ketentuan</span><div class="zrt"><span class="zch">›</span></div></div><div class="zr" onclick="infoDoc(IU_P)"><span class="zk">Kebijakan Privasi</span><div class="zrt"><span class="zch">›</span></div></div></div>'); }
@@ -3008,8 +2793,8 @@ async function segTap(g, v) {
   if (g === 'bhs') { await setPref('bahasa', v); setBahasa(v); } else if (g === 'tema') setTema(v); else { await setPref('fz', v); try { localStorage.setItem('fz', v); } catch (e) {} applyFz(); }
   rerender();
 }
-async function warnaPilih(i) { const p = PRESET[i], wm = Object.assign({}, pref('warnaMode', null) || {}); wm[modeAktif()] = p[1] ? { a: p[1], b: p[2] } : false; await setPref('warnaMode', wm); applyWarna(); rerender(); }
-function warnaLive(v) { DB.pref = DB.pref || {}; const wm = Object.assign({}, DB.pref.warnaMode || {}); wm[modeAktif()] = { a: v, b: mixHex(v, '#ffffff', .38) }; DB.pref.warnaMode = wm; applyWarna(); }
+async function warnaPilih(i) { const p = PRESET[i]; await setPref('warna', p[1] ? { a: p[1], b: p[2] } : null); applyWarna(); rerender(); }
+function warnaLive(v) { DB.pref = DB.pref || {}; DB.pref.warna = { a: v, b: mixHex(v, '#ffffff', .38) }; applyWarna(); }
 async function warnaSimpan() { await save(); rerender(); }
 async function latarReset() { await setPref('latar', ''); applyLatar(); rerender(); }
 async function infoStorage() { try { const e = await navigator.storage.estimate(), p = navigator.storage.persisted ? await navigator.storage.persisted() : false; return { used: e.usage || 0, p }; } catch (x) { return { used: 0, p: false }; } }
@@ -3027,10 +2812,7 @@ async function laporMasalah() {
   window._lapor = t;
 }
 function laporKirim() { const s = $('fsheet'); if (s) s.remove(); openWA(window._lapor || '', CR.wa.replace(/\D/g, '')); }
-const BARU = ["v4.2.0: mode Tektok kini punya isi sendiri. Tab baru Tiket & Parkir (tiket masuk, Simaksi, asuransi, parkir per kendaraan) yang bisa masuk ke Pengeluaran dan Simulasi, daftar Izin dan registrasi, Jadwal naik-turun yang membuat Itinerary otomatis dan bisa dibagikan ke WhatsApp, template perlengkapan tektok, serta Sesi per hari dengan kuota dan daftar tunggu per sesi, sewa kendaraan/ojek di Simulasi (jumlah dari kapasitas), batal, Kru Panitia maksimal 3 orang, dan Sudah termasuk / Belum termasuk. Menu, navigasi bawah, dan judul halaman Tektok memakai ikon baru yang berbeda dari Open trip. Mode lain tidak berubah. Data dan lisensi tidak berubah.", "v4.1.0: mode Open trip kini punya isi sendiri. Perlengkapan dibagi Kelompok (panitia, masuk biaya) dan Pribadi (dibawa peserta, daftar bisa dibagikan lewat WhatsApp atau PDF). Tab baru Kru Panitia dengan upah per orang yang bisa masuk ke Pengeluaran dan Simulasi. Kuota peserta dengan daftar tunggu otomatis, status Batal dengan hitungan pengembalian, tagihan per grup, dan kartu Sudah termasuk / Belum termasuk di pesan tagihan. Menu, navigasi bawah, dan judul halaman Open trip memakai ikon baru bertema pendakian. Mode lain tidak berubah. Data dan lisensi tidak berubah.", "v4.0.0: tiga trip bisa berjalan sekaligus, satu per mode (Open trip, Tektok, Pendakian bersama); ganti mode tanpa mengarsipkan dan tanpa kehilangan data. Simulasi kini per mode dengan kartu Rekap Simulasi, dan Rekap menampilkan trip berjalan di semua mode. Ekspor rekap trip (gratis) dan Impor rekap trip (Puncak): file rekap bisa dikirim ke HP lain, masuk ke Arsip, dan bisa dibuka kembali untuk diedit sesuai hasil nyata. Catatan: cadangan dari v4 yang dipulihkan di aplikasi versi lama hanya membawa trip mode yang sedang aktif. Data dan lisensi tidak berubah.", "v3.1.1: kartu di halaman Pilih Mode, chip, dan Rekap kini ikut warna yang Anda pilih untuk mode itu (misalnya merah). Header dirapikan: logo lebih besar dan semua bagian sejajar presisi. Data dan lisensi tidak berubah.", "v3.1.0: warna aplikasi kini ikut mode (Open trip ungu, Tektok biru, Pendakian bersama hijau); warna pilihan sendiri di Pengaturan berlaku per mode, dan Otomatis mengembalikan warna mode. Logo di bagian atas kini tetap logo bawaulin.cash dan bisa diketuk untuk ke halaman awal dan Rekap (tulisan bawaulin.trip di bagian atas dihapus); ganti logo di Akun hanya mengubah logo di Akun, PDF, dan kwitansi. Data dan lisensi tidak berubah.", "v3.0.0: tiga mode dalam satu aplikasi (Open trip, Tektok, Pendakian bersama) dengan layar awal baru: tombol Mode di atas dan Rekap di bawah. Rekap semua jenis bisa diketuk sampai rekap lengkap tiap trip. Arsip kini ditandai jenisnya dan bisa disaring. Trip lama otomatis menjadi Open trip. Data dan lisensi tidak berubah.", "v2.2.2: lencana mini di header (ikon saja; ketuk untuk melihat keuntungan) dan indikator koneksi kini berupa titik hijau (online) atau merah (offline). Data dan lisensi tidak berubah. v2.2.1: ketuk lencana di Akun untuk melihat keuntungannya (VIP kini juga dapat akses awal fitur baru); pasal pengembalian uang di Syarat & Ketentuan (dokumen versi 1.2); pengecek gelar untuk akses awal fitur (belum ada fitur yang disembunyikan). Data dan lisensi tidak berubah.", "v2.1.0: lencana baru di Akun: tampilan khusus untuk Developer, VVIP, VIP, Puncak, dan Rintis. Lencana hanya penanda, tidak mengubah fitur. Data dan lisensi tidak berubah.", "v2.0.0: logo dan tagline \"Lieur ngitung, bawa santai\" bawaulin.cash tampil di layar aktivasi dan layar sambutan, dan ikon aplikasi diganti. Data dan lisensi tidak berubah.", 'v1.14.6: Info Umum kini menjelaskan paket Rintis dan Puncak (Syarat & Ketentuan dan Kebijakan Privasi dokumen versi 1.1), dan Panduan punya topik Paket Rintis dan Puncak.', 'v1.14.5: tanda air bawaulin.cash di PDF paket Rintis dikembalikan ke tampilan besar yang jelas terlihat.', 'v1.14.0: paket Rintis: setelah trip pertama selesai, fitur Puncak terkunci (Simulasi, Bagi Hasil, Pendaftaran online, Salin Template, Statistik Antar-Trip, dan PDF tanpa tanda bawaulin.cash). Data tetap aman dan terbuka lagi di Puncak. Ada peringatan sebelum masa trip pertama habis.', 'v1.13.0: lencana status paket di Akun (Latihan, Trip pertama, Rintis, atau Puncak). Belum ada fitur yang dikunci.', 'v1.12.0: halaman Info Umum berisi Syarat & Ketentuan dan Kebijakan Privasi (Pengaturan › Bantuan).', 'v1.11.1: Panduan disesuaikan dengan tombol Batalkan, layar sambutan, dan ajakan cadangkan.', 'v1.11.0: hapus kini bisa dibatalkan (tombol Batalkan 7 detik) tanpa konfirmasi; layar sambutan 3 langkah untuk pengguna baru (Pengaturan > Bantuan > Lihat panduan awal); ajakan mencadangkan data setelah buku trip ditutup.', 'v1.10.1: indikator Online (titik hijau) dan Offline (titik merah) kini selalu tampil di pojok kanan atas, menggantikan tombol tema yang sudah ada di Pengaturan.', 'v1.10.0: Pengaturan dirapikan. Perilaku Input dan Pengingat dihapus (selalu aktif), pembulatan harga jual pindah ke Kalkulator, Tentang dan Bantuan dipisah.', 'v1.9.0: tanda Offline saat tidak ada internet, dan pembaruan aplikasi kini muncul otomatis.', 'v1.8.11: pemeriksaan lisensi dipindah ke server baru.', 'v1.8.10: Hitung Trip (kalkulator), banner, dan label kecil kini tersedia dalam English.', 'v1.8.9: pesan kosong, galat, layar kunci dan lisensi kini tersedia dalam English.', 'v1.8.8: kalimat privasi di Pengaturan disederhanakan dan judul topik Panduan kini tersedia dalam English.', 'v1.8.7: Trip & Arsip, Riwayat Perubahan, dan Bagi Hasil kini tersedia dalam English.', 'v1.8.6: Simulasi, Statistik Antar-Trip, kolom pencarian, dan penjelasan Patungan Otomatis kini tersedia dalam English.', 'v1.8.5: daftar Yang baru, pesan hapus/impor, dan sisa teks halaman diterjemahkan ke English.', 'v1.8.4: langkah rinci dan tips Panduan kini tersedia dalam English.', 'v1.8.3: tanggal mengikuti bahasa dan demo Panduan diterjemahkan ke English. Langkah rinci Panduan menyusul.', 'v1.8.2: terjemahan English diperluas ke Pengaturan, lembar, layar aktivasi dan kunci. Pesan WhatsApp tetap Indonesia.', 'v1.8.1: terjemahan English diperluas ke semua tab utama, toast, dan pesan konfirmasi. Panduan dan Yang baru menyusul.', 'Baru: pilihan Bahasa (Pengaturan › Tampilan): Indonesia atau English. Tahap awal: menu, tab, Pengaturan, tombol, dan pesan utama sudah berbahasa Inggris; teks yang belum diterjemahkan tetap Indonesia. Pesan WhatsApp, kwitansi, dan PDF untuk peserta tetap Indonesia. Panduan dan daftar Yang baru menyusul.', 'Baru: tombol Matikan semua kunci (Pengaturan › Keamanan) mematikan PIN, pola, dan sidik jari sekaligus setelah konfirmasi PIN. Baru juga panduan Keamanan buka aplikasi (Menu › Panduan).', 'Layar kunci didesain ulang: tanpa header, dengan logo besar bercahaya, kartu kaca, pola dan sidik jari lebih jelas, serta tombol pindah cara buka berbentuk pil. Cara kerjanya tidak berubah.', 'Baru: Cara buka aplikasi (Pengaturan › Keamanan). Selain PIN, buka dengan pola 3x3 atau sidik jari. PIN tetap jadi cadangan dan dipakai untuk mengatur. Pola salah 5 kali menunggu 30 detik. Sidik jari bergantung HP dan belum tentu jalan di semua perangkat; bila tidak didukung, opsinya tidak muncul. Cadangan membawa pola, sidik jari didaftarkan ulang.', 'Baru: Riwayat perubahan (Menu › Trip & Arsip, di bawah kartu Tutup Buku). Setiap transaksi uang yang ditambah, diubah (nilai sebelum dan sesudah), dihapus, atau dipulihkan dicatat dengan waktunya, begitu juga saat buku trip ditutup dan dibuka. Isi Nama pencatat bila beberapa panitia memakai HP yang sama. Bisa difilter dan diunduh sebagai CSV. Perubahan sebelum v1.6.0 tidak punya riwayat.', 'Baru: Tutup buku trip (Menu › Trip & Arsip). Setelah trip selesai, transaksi uang dikunci: Pemasukan, Pengeluaran, Catat bayar, penggantian Talangan, transaksi berulang, simulasi dan sewa yang masuk ke Pengeluaran. Arsip cadangan dibuat otomatis, dan kunci hanya bisa dibuka dengan mengetik BUKA. Tamu, Itinerary, Checklist, kwitansi, PDF, dan Rekap tetap bebas.', 'Tab Pembayaran dirombak. Paling atas ringkasan (terkumpul dari target, jumlah Lunas/Sebagian/Belum bayar/Telat, tenggat), lalu daftar peserta dengan pencarian dan filter. Tombol ＋ Catat bayar di tiap peserta mengisi sisa tagihan otomatis dan menyimpannya sebagai Pemasukan kategori Peserta. Tombol Tagih berikutnya membuka WhatsApp peserta yang belum ditagih satu per satu. Pengaturan cara bayar dan tagihan dilipat di bawah. Data lama aman.', 'Cara bayar kini berupa daftar: beberapa rekening bank dan e-wallet (DANA, SeaBank, ShopeePay, GoPay, OVO, LinkAja, atau nama lain), tombol Salin nomor, serta sakelar aktif. Semua yang aktif ikut di pesan tagihan WhatsApp, kwitansi, dan kata kunci {rekening}. Teks rekening lama tetap dipakai sebagai catatan.', 'Baru: Kartu cara bayar (PDF) dan Cara bayar ke grup WhatsApp, berisi semua rekening, e-wallet, QRIS, dan tenggat. Dasar hitung tagihan disederhanakan jadi satu baris (ketuk Ubah); aturan hitungnya tidak berubah.', 'Formulir pendaftaran online disederhanakan: Nama, Nomor WhatsApp, Meeting point, Alergi makanan (Ya/Tidak), dan Catatan. Golongan darah, riwayat penyakit, dan kontak darurat tidak lagi diminta. Pendaftar dengan alergi ditandai "Alergi makanan: Ya" di Catatan tamu. Data tamu lama tidak diubah. Pasang ulang skrip Apps Script pendaftaran yang baru.', 'Baru: Menu › Trip & Arsip › Salin Trip sebagai Template. Trip baru langsung berisi itinerary, checklist (belum siap, tanpa pembawa), dan kategori dari trip sebelumnya; tamu dan uang kosong. Tanggal itinerary bisa digeser otomatis.', 'Baru: Pengaturan › Tentang & Bantuan › Lapor masalah. Membuka WhatsApp penjual dengan info teknis siap kirim (versi, kode perangkat, status lisensi, perangkat), tanpa data trip, peserta, atau uang. Terkirim hanya bila Anda menekan kirim di WhatsApp.', 'Baru: panduan Pindah ke HP baru (Menu › Panduan).', 'Kartu Ringkasan di Akun dihapus.', 'Perbaikan: angka 0 di depan nomor WhatsApp tidak lagi hilang (tagihan WA, daftar Tamu, dan impor pendaftar online). Data lama tidak diubah.', 'Penomoran versi dimulai ulang dari v1.0.0. Tidak ada perubahan fitur.', 'Keamanan lisensi: aplikasi memeriksa status lisensi ke server (otomatis maks. tiap 1 jam, atau kapan saja lewat Pengaturan › Periksa status lisensi sekarang; tidak menahan aplikasi). Tanpa internet tetap jalan sampai 30 hari sejak pemeriksaan terakhir. Lisensi dicabut, versi terlalu lama, atau jam HP dimundurkan akan mengunci aplikasi. Kunci aktivasi lama diganti kunci baru.', 'Ikon Pengaturan (gerigi) pindah ke kanan judul Akun, di bawah tombol terang/gelap. Kartu Pengaturan di Akun dihapus.', 'Kalkulator pindah ke Menu › Kalkulator: tampilan seperti kalkulator HP, memori, riwayat, tombol ÷ Peserta dan Bulat, plus 7 rumus Hitung Trip.', 'Akun: kartu profil dan tombol Pengaturan menyatu, serta ada Data & Cadangan.', 'Tentang pembuat: tombol Instagram dan WhatsApp saja, tanpa tulisan nama atau nomor.', 'Pengaturan baru: pesan tagihan WhatsApp bisa diubah, pembulatan harga jual, dan Cek pembaruan aplikasi.', 'Panduan singkat kini berisi demo bergerak dan langkah rinci untuk semua fitur (Menu › Panduan).'];
-Object.assign(EN, {"v4.0.0: tiga trip bisa berjalan sekaligus, satu per mode (Open trip, Tektok, Pendakian bersama); ganti mode tanpa mengarsipkan dan tanpa kehilangan data. Simulasi kini per mode dengan kartu Rekap Simulasi, dan Rekap menampilkan trip berjalan di semua mode. Ekspor rekap trip (gratis) dan Impor rekap trip (Puncak): file rekap bisa dikirim ke HP lain, masuk ke Arsip, dan bisa dibuka kembali untuk diedit sesuai hasil nyata. Catatan: cadangan dari v4 yang dipulihkan di aplikasi versi lama hanya membawa trip mode yang sedang aktif. Data dan lisensi tidak berubah.": "v4.0.0: three trips can now run at once, one per mode (Open trip, Tektok, Group hike); switch modes without archiving and without losing data. Simulation is now per mode with a Simulation Recap card, and Recap shows trips in progress across all modes. Export trip recap (free) and Import trip recap (Puncak): a recap file can be sent to another phone, added to the Archive, and reopened for editing to match actual results. Note: a v4 backup restored in an older app version only brings the trip of the active mode. Your data and license are unchanged."});
-Object.assign(EN, {"v3.1.1: kartu di halaman Pilih Mode, chip, dan Rekap kini ikut warna yang Anda pilih untuk mode itu (misalnya merah). Header dirapikan: logo lebih besar dan semua bagian sejajar presisi. Data dan lisensi tidak berubah.": "v3.1.1: cards on the Choose Mode page, the chip, and Recap now follow the color you chose for that mode (for example red). Header tidied up: bigger logo and everything precisely aligned. Data and license are unchanged."});
-Object.assign(EN, {"v3.1.0: warna aplikasi kini ikut mode (Open trip ungu, Tektok biru, Pendakian bersama hijau); warna pilihan sendiri di Pengaturan berlaku per mode, dan Otomatis mengembalikan warna mode. Logo di bagian atas kini tetap logo bawaulin.cash dan bisa diketuk untuk ke halaman awal dan Rekap (tulisan bawaulin.trip di bagian atas dihapus); ganti logo di Akun hanya mengubah logo di Akun, PDF, dan kwitansi. Data dan lisensi tidak berubah.": "v3.1.0: the app color now follows the mode (Open trip purple, Tektok blue, Group hike green); a custom color chosen in Settings applies per mode, and Automatic restores the mode color. The logo at the top is now always the bawaulin.cash logo and can be tapped to open the start screen and Recap (the bawaulin.trip text at the top was removed); changing the logo in Account only changes the logo in Account, PDFs, and receipts. Data and license are unchanged.", "Otomatis (ikut mode)": "Automatic (follows mode)", "Warna ini hanya berlaku di mode yang sedang dibuka. Mode lain tetap memakai warnanya sendiri. Pilih lingkaran pertama untuk kembali ke warna mode.": "This color only applies in the mode currently open. Other modes keep their own color. Pick the first circle to return to the mode color.", "Halaman awal": "Start screen", "Trip masih berjalan. Ketuk panah kembali untuk melanjutkan.": "A trip is still in progress. Tap the back arrow to continue.", "Kembali ke trip": "Back to trip"});
+const BARU = ["v2.2.2: lencana mini di header (ikon saja; ketuk untuk melihat keuntungan) dan indikator koneksi kini berupa titik hijau (online) atau merah (offline). Data dan lisensi tidak berubah. v2.2.1: ketuk lencana di Akun untuk melihat keuntungannya (VIP kini juga dapat akses awal fitur baru); pasal pengembalian uang di Syarat & Ketentuan (dokumen versi 1.2); pengecek gelar untuk akses awal fitur (belum ada fitur yang disembunyikan). Data dan lisensi tidak berubah.", "v2.1.0: lencana baru di Akun: tampilan khusus untuk Developer, VVIP, VIP, Puncak, dan Rintis. Lencana hanya penanda, tidak mengubah fitur. Data dan lisensi tidak berubah.", "v2.0.0: logo dan tagline \"Lieur ngitung, bawa santai\" bawaulin.cash tampil di layar aktivasi dan layar sambutan, dan ikon aplikasi diganti. Data dan lisensi tidak berubah.", 'v1.14.6: Info Umum kini menjelaskan paket Rintis dan Puncak (Syarat & Ketentuan dan Kebijakan Privasi dokumen versi 1.1), dan Panduan punya topik Paket Rintis dan Puncak.', 'v1.14.5: tanda air bawaulin.cash di PDF paket Rintis dikembalikan ke tampilan besar yang jelas terlihat.', 'v1.14.0: paket Rintis: setelah trip pertama selesai, fitur Puncak terkunci (Simulasi, Bagi Hasil, Pendaftaran online, Salin Template, Statistik Antar-Trip, dan PDF tanpa tanda bawaulin.cash). Data tetap aman dan terbuka lagi di Puncak. Ada peringatan sebelum masa trip pertama habis.', 'v1.13.0: lencana status paket di Akun (Latihan, Trip pertama, Rintis, atau Puncak). Belum ada fitur yang dikunci.', 'v1.12.0: halaman Info Umum berisi Syarat & Ketentuan dan Kebijakan Privasi (Pengaturan › Bantuan).', 'v1.11.1: Panduan disesuaikan dengan tombol Batalkan, layar sambutan, dan ajakan cadangkan.', 'v1.11.0: hapus kini bisa dibatalkan (tombol Batalkan 7 detik) tanpa konfirmasi; layar sambutan 3 langkah untuk pengguna baru (Pengaturan > Bantuan > Lihat panduan awal); ajakan mencadangkan data setelah buku trip ditutup.', 'v1.10.1: indikator Online (titik hijau) dan Offline (titik merah) kini selalu tampil di pojok kanan atas, menggantikan tombol tema yang sudah ada di Pengaturan.', 'v1.10.0: Pengaturan dirapikan. Perilaku Input dan Pengingat dihapus (selalu aktif), pembulatan harga jual pindah ke Kalkulator, Tentang dan Bantuan dipisah.', 'v1.9.0: tanda Offline saat tidak ada internet, dan pembaruan aplikasi kini muncul otomatis.', 'v1.8.11: pemeriksaan lisensi dipindah ke server baru.', 'v1.8.10: Hitung Trip (kalkulator), banner, dan label kecil kini tersedia dalam English.', 'v1.8.9: pesan kosong, galat, layar kunci dan lisensi kini tersedia dalam English.', 'v1.8.8: kalimat privasi di Pengaturan disederhanakan dan judul topik Panduan kini tersedia dalam English.', 'v1.8.7: Trip & Arsip, Riwayat Perubahan, dan Bagi Hasil kini tersedia dalam English.', 'v1.8.6: Simulasi, Statistik Antar-Trip, kolom pencarian, dan penjelasan Patungan Otomatis kini tersedia dalam English.', 'v1.8.5: daftar Yang baru, pesan hapus/impor, dan sisa teks halaman diterjemahkan ke English.', 'v1.8.4: langkah rinci dan tips Panduan kini tersedia dalam English.', 'v1.8.3: tanggal mengikuti bahasa dan demo Panduan diterjemahkan ke English. Langkah rinci Panduan menyusul.', 'v1.8.2: terjemahan English diperluas ke Pengaturan, lembar, layar aktivasi dan kunci. Pesan WhatsApp tetap Indonesia.', 'v1.8.1: terjemahan English diperluas ke semua tab utama, toast, dan pesan konfirmasi. Panduan dan Yang baru menyusul.', 'Baru: pilihan Bahasa (Pengaturan › Tampilan): Indonesia atau English. Tahap awal: menu, tab, Pengaturan, tombol, dan pesan utama sudah berbahasa Inggris; teks yang belum diterjemahkan tetap Indonesia. Pesan WhatsApp, kwitansi, dan PDF untuk peserta tetap Indonesia. Panduan dan daftar Yang baru menyusul.', 'Baru: tombol Matikan semua kunci (Pengaturan › Keamanan) mematikan PIN, pola, dan sidik jari sekaligus setelah konfirmasi PIN. Baru juga panduan Keamanan buka aplikasi (Menu › Panduan).', 'Layar kunci didesain ulang: tanpa header, dengan logo besar bercahaya, kartu kaca, pola dan sidik jari lebih jelas, serta tombol pindah cara buka berbentuk pil. Cara kerjanya tidak berubah.', 'Baru: Cara buka aplikasi (Pengaturan › Keamanan). Selain PIN, buka dengan pola 3x3 atau sidik jari. PIN tetap jadi cadangan dan dipakai untuk mengatur. Pola salah 5 kali menunggu 30 detik. Sidik jari bergantung HP dan belum tentu jalan di semua perangkat; bila tidak didukung, opsinya tidak muncul. Cadangan membawa pola, sidik jari didaftarkan ulang.', 'Baru: Riwayat perubahan (Menu › Trip & Arsip, di bawah kartu Tutup Buku). Setiap transaksi uang yang ditambah, diubah (nilai sebelum dan sesudah), dihapus, atau dipulihkan dicatat dengan waktunya, begitu juga saat buku trip ditutup dan dibuka. Isi Nama pencatat bila beberapa panitia memakai HP yang sama. Bisa difilter dan diunduh sebagai CSV. Perubahan sebelum v1.6.0 tidak punya riwayat.', 'Baru: Tutup buku trip (Menu › Trip & Arsip). Setelah trip selesai, transaksi uang dikunci: Pemasukan, Pengeluaran, Catat bayar, penggantian Talangan, transaksi berulang, simulasi dan sewa yang masuk ke Pengeluaran. Arsip cadangan dibuat otomatis, dan kunci hanya bisa dibuka dengan mengetik BUKA. Tamu, Itinerary, Checklist, kwitansi, PDF, dan Rekap tetap bebas.', 'Tab Pembayaran dirombak. Paling atas ringkasan (terkumpul dari target, jumlah Lunas/Sebagian/Belum bayar/Telat, tenggat), lalu daftar peserta dengan pencarian dan filter. Tombol ＋ Catat bayar di tiap peserta mengisi sisa tagihan otomatis dan menyimpannya sebagai Pemasukan kategori Peserta. Tombol Tagih berikutnya membuka WhatsApp peserta yang belum ditagih satu per satu. Pengaturan cara bayar dan tagihan dilipat di bawah. Data lama aman.', 'Cara bayar kini berupa daftar: beberapa rekening bank dan e-wallet (DANA, SeaBank, ShopeePay, GoPay, OVO, LinkAja, atau nama lain), tombol Salin nomor, serta sakelar aktif. Semua yang aktif ikut di pesan tagihan WhatsApp, kwitansi, dan kata kunci {rekening}. Teks rekening lama tetap dipakai sebagai catatan.', 'Baru: Kartu cara bayar (PDF) dan Cara bayar ke grup WhatsApp, berisi semua rekening, e-wallet, QRIS, dan tenggat. Dasar hitung tagihan disederhanakan jadi satu baris (ketuk Ubah); aturan hitungnya tidak berubah.', 'Formulir pendaftaran online disederhanakan: Nama, Nomor WhatsApp, Meeting point, Alergi makanan (Ya/Tidak), dan Catatan. Golongan darah, riwayat penyakit, dan kontak darurat tidak lagi diminta. Pendaftar dengan alergi ditandai "Alergi makanan: Ya" di Catatan tamu. Data tamu lama tidak diubah. Pasang ulang skrip Apps Script pendaftaran yang baru.', 'Baru: Menu › Trip & Arsip › Salin Trip sebagai Template. Trip baru langsung berisi itinerary, checklist (belum siap, tanpa pembawa), dan kategori dari trip sebelumnya; tamu dan uang kosong. Tanggal itinerary bisa digeser otomatis.', 'Baru: Pengaturan › Tentang & Bantuan › Lapor masalah. Membuka WhatsApp penjual dengan info teknis siap kirim (versi, kode perangkat, status lisensi, perangkat), tanpa data trip, peserta, atau uang. Terkirim hanya bila Anda menekan kirim di WhatsApp.', 'Baru: panduan Pindah ke HP baru (Menu › Panduan).', 'Kartu Ringkasan di Akun dihapus.', 'Perbaikan: angka 0 di depan nomor WhatsApp tidak lagi hilang (tagihan WA, daftar Tamu, dan impor pendaftar online). Data lama tidak diubah.', 'Penomoran versi dimulai ulang dari v1.0.0. Tidak ada perubahan fitur.', 'Keamanan lisensi: aplikasi memeriksa status lisensi ke server (otomatis maks. tiap 1 jam, atau kapan saja lewat Pengaturan › Periksa status lisensi sekarang; tidak menahan aplikasi). Tanpa internet tetap jalan sampai 30 hari sejak pemeriksaan terakhir. Lisensi dicabut, versi terlalu lama, atau jam HP dimundurkan akan mengunci aplikasi. Kunci aktivasi lama diganti kunci baru.', 'Ikon Pengaturan (gerigi) pindah ke kanan judul Akun, di bawah tombol terang/gelap. Kartu Pengaturan di Akun dihapus.', 'Kalkulator pindah ke Menu › Kalkulator: tampilan seperti kalkulator HP, memori, riwayat, tombol ÷ Peserta dan Bulat, plus 7 rumus Hitung Trip.', 'Akun: kartu profil dan tombol Pengaturan menyatu, serta ada Data & Cadangan.', 'Tentang pembuat: tombol Instagram dan WhatsApp saja, tanpa tulisan nama atau nomor.', 'Pengaturan baru: pesan tagihan WhatsApp bisa diubah, pembulatan harga jual, dan Cek pembaruan aplikasi.', 'Panduan singkat kini berisi demo bergerak dan langkah rinci untuk semua fitur (Menu › Panduan).'];
 const listSheet = (t, a) => sheetOpen(`<h3>${t}</h3>${a.map(x => `<div class="zli">• ${esc(x)}</div>`).join('')}`);
 async function resetPref() {
   if (!confirm('Kembalikan semua pengaturan tampilan dan perilaku ke bawaan? Data trip tidak berubah.')) return;
@@ -3104,8 +2886,8 @@ async function pulihPin() {
   DB.pin = null; await save(); LOCKED = false; document.body.classList.remove('lockon'); buildNav(); show('dashboard'); toast('PIN dimatikan. Atur PIN baru di Pengaturan.');
 }
 function renderPeng() {
-  const tema = (() => { try { return localStorage.getItem('t') || 'dark'; } catch (e) { return 'dark'; } })(), mid = modeAktif(), w = warnaKustom(mid), mw = modeWarna(mid);
-  const sw = PRESET.map((p, i) => { const on = p[1] ? (w && w.a === p[1]) : !w; return `<button class="zsat${on ? ' on' : ''}" style="background:linear-gradient(135deg,${p[1] || mw.a},${p[2] || mw.b})" aria-label="Warna ${p[0]}" aria-pressed="${!!on}" onclick="warnaPilih(${i})"></button>`; }).join('');
+  const tema = (() => { try { return localStorage.getItem('t') || 'dark'; } catch (e) { return 'dark'; } })(), w = pref('warna', null);
+  const sw = PRESET.map((p, i) => { const on = p[1] ? (w && w.a === p[1]) : !w; return `<button class="zsat${on ? ' on' : ''}" style="background:linear-gradient(135deg,${p[1] || '#f97316'},${p[2] || '#fbbf24'})" aria-label="Warna ${p[0]}" aria-pressed="${!!on}" onclick="warnaPilih(${i})"></button>`; }).join('');
   const custom = w && !PRESET.some(p => p[1] === w.a);
   $('main').innerHTML = `
   <div class="zh">KEAMANAN</div><div class="card zcard">
@@ -3122,8 +2904,7 @@ function renderPeng() {
     <div class="zr"><span class="zk">Latar foto</span><div class="zrt"><span class="zv zph">${pref('latar', '') ? 'Kustom' : 'Bawaan'}</span><button class="zmini" onclick="$('platar').click()">Ganti</button>${pref('latar', '') ? '<button class="zmini" onclick="latarReset()">Bawaan</button>' : ''}</div></div><input type="file" id="platar" accept="image/*" hidden onchange="pickImg(this,'latar')">
     ${zseg('Ukuran huruf', 'fz', [['s', 'S'], ['m', 'M'], ['l', 'L']], pref('fz', 'm'))}
     <div class="zr zwr"><span class="zk">Warna aplikasi</span><div class="zrt"><div class="zsats">${sw}</div></div></div>
-    <div class="zli" style="padding:2px 16px 10px;font-size:12px;opacity:.75">Warna ini hanya berlaku di mode yang sedang dibuka. Mode lain tetap memakai warnanya sendiri. Pilih lingkaran pertama untuk kembali ke warna mode.</div>
-    <div class="zr"><span class="zk">Warna sendiri</span><div class="zrt"><input type="color" class="zcol" id="zcol" value="${w ? w.a : mw.a}" oninput="warnaLive(this.value)" onchange="warnaSimpan()" aria-label="Pilih warna sendiri">${custom ? '<span class="zv zmono">' + esc(w.a.toUpperCase()) + '</span>' : ''}</div></div>
+    <div class="zr"><span class="zk">Warna sendiri</span><div class="zrt"><input type="color" class="zcol" id="zcol" value="${w ? w.a : '#f97316'}" oninput="warnaLive(this.value)" onchange="warnaSimpan()" aria-label="Pilih warna sendiri">${custom ? '<span class="zv zmono">' + esc(w.a.toUpperCase()) + '</span>' : ''}</div></div>
     <div class="zhint">Warna dipakai di tombol, sakelar, dan judul. PDF tetap tema terang.</div></div>
   <div class="zh">PESAN WHATSAPP</div><div class="card zcard">
     <div class="zr" onclick="tplTagihEdit()"><span class="zk">Pesan tagihan peserta</span><div class="zrt"><span class="zv ${pref('tplTagih', '') ? '' : 'zph'}">${pref('tplTagih', '') ? 'Kustom' : 'Bawaan'}</span><span class="zch">›</span></div></div></div>
@@ -3338,175 +3119,13 @@ const pdNext = () => { const n = PAN[PD.ch].demo.length; pdShow((PD.f + 1) % n);
 const pdPrev = () => { const n = PAN[PD.ch].demo.length; pdShow((PD.f + n - 1) % n); };
 function pdToggle() { PD.play = !PD.play; $('pdpl').textContent = PD.play ? '⏸ Jeda' : '▶ Putar'; }
 
-
-/* ===== v3.0.0: tiga mode (Open trip, Tektok, Pendakian bersama), layar awal, rekap semua jenis ===== */
-const MODES = [
-  { id: 'open', nama: 'Open trip', pendek: 'Open trip', dasar: '#a855f7', untung: true, desc: 'Ada porter, guide, dan sweeper. Peserta bayar paket, kamu atur kru dan tagihan.', tags: ['Kuota & grup', 'Kru & upah', 'Bagi hasil'], ic: '<circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5.5a3 3 0 0 1 0 5.5M18 14.5c1.8.8 3 2.6 3 5.5"/>' },
-  { id: 'tektok', nama: 'Tektok', pendek: 'Tektok', dasar: '#38bdf8', untung: true, desc: 'Naik dan turun di hari yang sama, tanpa camp. Jasa dengan untung: atur tiket, izin, jadwal, dan tagihan.', tags: ['Tiket & izin', 'Jadwal naik-turun', 'Bagi hasil'], ic: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>' },
-  { id: 'bersama', nama: 'Pendakian bersama', pendek: 'Bersama', dasar: '#22c55e', untung: false, desc: 'Semua beban dan biaya dibagi rata. Tanpa untung dan tanpa bagi hasil.', tags: ['Patungan', 'Simulasi', 'Tanpa untung'], ic: '<circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.3 11l7.4-3.7M8.3 13l7.4 3.7"/>' }
-];
-/* v3.1.1: m.warna = warna kustom mode itu bila ada, kalau tidak warna dasar mode (kartu Mode, chip, Rekap, badge ikut warna pilihan) */
-MODES.forEach(m => Object.defineProperty(m, 'warna', { get() { try { const w = warnaKustom(this.id); return w ? w.a : this.dasar; } catch (e) { return this.dasar; } } }));
-const modeOf = id => MODES.find(m => m.id === id) || MODES[0];
-const modeAktif = () => (DB && hasData() && DB.set && DB.set.jenis) || (DB && DB.mode) || 'open';
-const jenisArsip = a => a.jenis || (a.data && a.data.set && a.data.set.jenis) || 'open';
-let FJ = 'semua';
-const arsipFilter = () => DB.arsip.slice().reverse().filter(a => FJ === 'semua' || jenisArsip(a) === FJ);
-function setFJ(v) { FJ = v; renderTrip(); }
-function chipMode() {
-  const b = $('hmode'); if (!b || !DB) return; const m = modeOf(modeAktif());
-  b.innerHTML = `<i style="background:${m.warna}"></i>${esc(m.pendek)}<span>▾</span>`; b.hidden = false; applyWarna(); if (window._nm !== m.id) { window._nm = m.id; buildNav(); navAktif(); }
-}
-function rpc(n) { const a = Math.abs(Number(n) || 0); return a >= 1e6 ? 'Rp ' + (a / 1e6).toFixed(1).replace('.', ',').replace(/,0$/, '') + ' jt' : rp(a); }
-const hasilTxt = (m, n) => !m.untung ? 'Tanpa untung' : n > 0 ? '+ ' + rpc(n) : n < 0 ? '- ' + rpc(n) : 'Impas';
-const hasilCls = (m, n) => m.untung && n > 0 ? 'pos' : m.untung && n < 0 ? 'neg' : '';
-function rekapAll() {
-  const seen = {}, L = [];
-  const add = (d, nama, tgl, jenis, id) => {
-    try {
-      const x = tripStat(d, nama, tgl); if (!x.ps && !x.masuk && !x.keluar) return;
-      const k = [jenis, nama, x.ps, x.masuk, x.keluar].join('|'); if (seen[k]) return; seen[k] = 1;
-      x.jenis = jenis; x.id = id; L.push(x);
-    } catch (e) {}
-  };
-  DB.arsip.forEach(a => add(a.data, a.destinasi || '(tanpa nama)', String(a.tanggal || '').split(/[ ,]/)[0], jenisArsip(a), a.id));
-  if (hasData()) add(DB, DB.set.destinasi || '(tanpa nama)', 'Berjalan', modeAktif(), 'now');
-  MODES.forEach(m => { if (m.id !== modeAktif() && slotAda(m.id)) { const t = slotFull(m.id); add(t, t.set.destinasi || '(tanpa nama)', 'Berjalan', m.id, 'slot:' + m.id); } });
-  const per = MODES.map(m => { const t = L.filter(x => x.jenis === m.id); return { m, n: t.length, sim: DB.sim.filter(x => !x.jenis || x.jenis === m.id).length, ps: sum(t, x => x.ps), masuk: sum(t, x => x.masuk), untung: sum(t, x => x.untung) }; });
-  const tot = { n: L.length, ps: sum(per, p => p.ps), masuk: sum(per, p => p.masuk), untung: sum(per.filter(p => p.m.untung), p => p.untung) };
-  return { L, per, tot };
-}
-const V3 = { l: null, sel: 'open', dari: 'awal', det: null };
-const V3IC = {
-  gear: '<path d="M4 7h9M19 7h1M4 17h1M11 17h9"/><circle cx="16" cy="7" r="2.5"/><circle cx="8" cy="17" r="2.5"/>',
-  back: '<path d="M15 6l-6 6 6 6"/>', next: '<path d="M9 6l6 6-6 6"/>', swap: '<path d="M6 8h12l-3-3M18 16H6l3 3"/>', bars: '<path d="M5 20V11M12 20V4M19 20v-6"/>', ok: '<path d="M5 12l5 5 9-10"/>',
-  peak: '<path d="M3 18l5-9 4 5 3-4 6 8z"/>'
-};
-const v3svg = (p, w, c, sw) => `<svg aria-hidden="true" width="${w}" height="${w}" viewBox="0 0 24 24" fill="none" stroke="${c || 'currentColor'}" stroke-width="${sw || 2.2}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
-function v3Awal() {
-  const R = rekapAll(), m = modeOf(modeAktif()), baru = !R.L.length, tutup = hasData() && tutupOn(), jalan = hasData() && !tutup;
-  const lain = MODES.filter(x => x.id !== m.id);
-  return `<div class="pg">
-  <svg class="deco" style="top:0" aria-hidden="true" width="390" height="340" viewBox="0 0 390 340"><g fill="none" stroke="rgba(251,191,36,.11)" stroke-width="1.2" transform="rotate(-16 330 40)"><ellipse cx="330" cy="40" rx="50" ry="26"/><ellipse cx="330" cy="40" rx="96" ry="52"/><ellipse cx="330" cy="40" rx="142" ry="78"/><ellipse cx="330" cy="40" rx="190" ry="104"/><ellipse cx="330" cy="40" rx="240" ry="130"/><ellipse cx="330" cy="40" rx="292" ry="156"/></g></svg>
-  <svg class="deco" style="bottom:0" aria-hidden="true" width="390" height="230" viewBox="0 0 390 230"><defs><linearGradient id="v3mt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbbf24" stop-opacity=".16"/><stop offset="1" stop-color="#fbbf24" stop-opacity="0"/></linearGradient></defs><path d="M0 230V150l58-38 36 24 78-88 58 70 40-30 70 64 50-28v106z" fill="url(#v3mt)"/><path d="M0 150l58-38 36 24 78-88 58 70 40-30 70 64 50-28" fill="none" stroke="rgba(251,191,36,.22)" stroke-width="1.2"/></svg>
-  <div class="vbar">${jalan ? `<button class="ib" aria-label="Kembali ke trip" onclick="v3Tutup()">${v3svg(V3IC.back, 20)}</button>` : ''}<div class="pk" id="v3pk" hidden></div><button class="ib" aria-label="Akun dan pengaturan" onclick="v3Tutup();show('akun')">${v3svg(V3IC.gear, 20, null, 1.8)}</button></div>
-  <div class="logo"><div class="lgw"><i></i><img src="logo-cash.png" alt="Logo bawaulin.cash"></div><div class="brand">bawaulin.cash</div><div class="tag">Lieur ngitung, bawa santai</div></div>
-  <div class="hi3"><div class="h">${jalan ? 'Halaman awal' : 'Siap trip berikutnya?'}</div><div class="st3"><i></i>${jalan ? 'Trip masih berjalan. Ketuk panah kembali untuk melanjutkan.' : tutup ? 'Buku trip ditutup. Pilih mode untuk melanjutkan.' : 'Buku trip sudah rapi. Belum ada trip berjalan.'}</div></div>
-  <div class="cards">
-    <button class="cd" onclick="v3Buka('mode','awal')"><div class="r3"><div class="ic o">${v3svg(V3IC.swap, 26)}</div><div class="tt"><b class="n">Mode</b><small>Pilih jenis pendakian yang mau dikelola</small></div>${v3svg(V3IC.next, 22, '#fbbf24')}</div>
-      <div class="ch"><span class="pl" style="background:${m.warna}29;border-color:${m.warna}80;color:#fff7ed"><i style="background:${m.warna}"></i>Terakhir: ${esc(m.nama)}</span><span class="dts">${lain.map(x => `<i style="background:${x.warna}"></i>`).join('')}</span></div></button>
-    <button class="cd" onclick="v3Buka('rekap')"><div class="r3"><div class="ic g3">${v3svg(V3IC.bars, 26)}</div><div class="tt"><b class="n">Rekap</b><small>${baru ? 'Belum ada riwayat. Mulai dari trip pertamamu.' : 'Semua jenis · ' + R.tot.n + ' trip · ' + R.tot.ps + ' peserta'}</small></div>${v3svg(V3IC.next, 22, '#fbbf24')}</div>
-      ${baru ? '' : `<div class="sts">${R.per.map(p => `<div style="background:${p.m.warna}24;color:${p.m.warna}"><b>${p.n}</b>${esc(p.m.pendek)}</div>`).join('')}</div>`}</button>
-  </div>
-  <div class="ft">Dibuat oleh bawaulin.trip · Lieur gawe, bawa ulin</div></div>`;
-}
-function modeStatus(id) {
-  const T = id === modeAktif() ? DB : (slotAda(id) ? slotFull(id) : null);
-  if (!T || !(hasDataT(T) || (T.set && T.set.destinasi))) return 'Belum ada trip';
-  if (T.set.tutup && T.set.tutup.on) return 'Buku ditutup';
-  return 'Berjalan: ' + (T.set.destinasi || '(tanpa nama)') + ' · ' + T.tamu.filter(x => x['Status'] === 'Diterima').length + ' peserta';
-}
-function v3Mode() {
-  const sel = modeOf(V3.sel), now = modeAktif(), run = hasData() && !tutupOn(), kunci = kunciOn(), blok = kunci && run && V3.sel !== now, R = rekapAll(), riw = id => R.L.filter(x => x.jenis === id && typeof x.id === 'number').length;
-  return `<div class="pg"><div class="top"><button class="ib" aria-label="Kembali" onclick="v3Back()">${v3svg(V3IC.back, 20)}</button><div class="ti">Pilih Mode</div></div>
-  <div class="sub">${kunci ? 'Satu trip aktif dalam satu waktu. Saat mode diganti, seluruh isi aplikasi menyesuaikan.' : 'Tiap mode punya trip sendiri dan bisa berjalan sekaligus. Saat mode diganti, isi aplikasi menyesuaikan dengan trip mode itu.'}</div>
-  ${kunci && run ? `<div class="wn">Trip berjalan (${esc(modeOf(now).nama)}${DB.set.destinasi ? ' · ' + esc(DB.set.destinasi) : ''}) masih berisi data. Mode lain bisa dipilih setelah trip diarsipkan atau ditutup bukunya.</div>` : ''}
-  <div class="ml">${MODES.map(m => { const on = m.id === V3.sel, p = R.per.find(x => x.m.id === m.id);
-    return `<button class="mc3${on ? ' on3' : ''}" style="--c:${m.warna}" aria-pressed="${on}" onclick="v3Pilih('${m.id}')"><div class="r3"><div class="mt">${v3svg(m.ic, 24, null, 2)}</div><div class="mb"><div class="mh3"><div class="mn">${esc(m.nama)}</div><div class="rd">${on ? v3svg(V3IC.ok, 14, '#1a1000', 3.5) : ''}</div></div><div class="md">${esc(m.desc)}</div><div class="tgs">${m.tags.map(t => `<span class="tg">${esc(t)}</span>`).join('')}</div><div class="rw">${esc(modeStatus(m.id))}</div>${riw(m.id) ? `<div class="rw">${riw(m.id)} trip di riwayat</div>` : ''}</div></div></button>`; }).join('')}</div>
-  <div class="nt">Fitur khusus Tektok dan Pendakian bersama menyusul di rilis berikutnya. Saat ini ketiga mode memakai alat yang sama; Pendakian bersama tidak memakai Bagi Hasil.</div>
-  <div class="bt"><button class="go" style="--c:${blok ? '#fbbf24' : sel.warna}" onclick="v3Masuk()">${blok ? 'Arsipkan trip dulu di Trip & Arsip' : 'Masuk ke mode ' + esc(sel.nama)}</button></div></div>`;
-}
-function v3Rekap() {
-  const R = rekapAll(), mx = Math.max.apply(null, R.per.map(p => p.masuk).concat([1]));
-  const head = `<div class="top"><button class="ib" aria-label="Kembali" onclick="v3Back()">${v3svg(V3IC.back, 20)}</button><div class="ti">Rekap Semua Jenis</div></div>`;
-  if (!R.L.length) return `<div class="pg">${head}<div class="em"><svg aria-hidden="true" width="150" height="110" viewBox="0 0 150 110" fill="none"><path d="M6 100l40-62 26 34 22-26 44 54z" fill="rgba(251,191,36,.1)" stroke="rgba(251,191,36,.45)" stroke-width="2" stroke-linejoin="round"/><circle cx="112" cy="24" r="9" stroke="#f97316" stroke-width="2"/></svg><div class="h">Belum ada riwayat</div><p>Begitu trip pertamamu ditutup atau diarsipkan, rekap Open trip, Tektok, dan Pendakian bersama muncul di sini.</p><button class="go" onclick="v3Buka('mode','awal')">Pilih mode dan mulai</button><div style="width:100%;max-width:320px">${v3Imp()}</div></div></div>`;
-  const rows = R.L.slice().reverse().slice(0, 12);
-  return `<div class="pg">${head}
-  <div class="hero3"><small>Untung bersih semua jenis</small><div class="big3">${(R.tot.untung < 0 ? '- ' : '') + rpc(R.tot.untung)}</div><div class="row"><div>Trip<b>${R.tot.n}</b></div><div>Peserta<b>${R.tot.ps}</b></div><div>Dana masuk<b>${rpc(R.tot.masuk)}</b></div></div></div>
-  <div class="cap">Pendakian bersama tidak dihitung sebagai untung.</div>
-  <div class="sec">Per jenis</div>
-  ${R.per.map(p => `<div class="pj"><div class="hd"><div class="nm"><i style="background:${p.m.warna}"></i>${esc(p.m.nama)}</div><span>${p.n} trip</span></div><div class="bb"><div style="width:${Math.round(p.masuk / mx * 100)}%;background:${p.m.warna}"></div></div><div class="cl3"><div>Peserta<b>${p.ps}</b></div><div>${p.m.untung ? 'Dana masuk' : 'Patungan'}<b>${rpc(p.masuk)}</b></div><div>${p.m.untung ? 'Untung' : 'Hasil'}<b class="${hasilCls(p.m, p.untung)}">${p.n ? hasilTxt(p.m, p.untung) : '-'}</b></div></div><div class="cap" style="margin:8px 0 0;text-align:left">Skenario simulasi: ${p.sim}</div></div>`).join('')}
-  <div class="sec">Trip terakhir</div>
-  ${rows.map(x => { const m = modeOf(x.jenis); return `<button class="tr" onclick="v3Detail2('${x.id}')"><i style="background:${m.warna}"></i><div class="x3"><b>${esc(x.nama)}</b><small>${esc(m.nama)} · ${esc(x.tgl)}</small></div><div class="h ${hasilCls(m, x.untung)}">${hasilTxt(m, x.untung)}</div>${v3svg(V3IC.next, 16, '#bfae8a')}</button>`; }).join('')}
-  ${v3Imp()}
-  ${R.L.length > 12 ? '<div class="cap">Riwayat lengkap ada di Menu › Trip & Arsip.</div>' : ''}</div>`;
-}
-function v3Detail() {
-  let d, nama, tgl, jenis;
-  if (V3.det === 'now') { d = DB; nama = DB.set.destinasi || '(tanpa nama)'; tgl = 'Berjalan'; jenis = modeAktif(); }
-  else if (String(V3.det).indexOf('slot:') === 0) { const sid = String(V3.det).slice(5); if (!slotAda(sid)) return v3Rekap(); d = slotFull(sid); nama = d.set.destinasi || '(tanpa nama)'; tgl = 'Berjalan'; jenis = sid; }
-  else { const a = DB.arsip.find(x => String(x.id) === String(V3.det)); if (!a) return v3Rekap(); d = a.data; nama = a.destinasi || '(tanpa nama)'; tgl = String(a.tanggal || ''); jenis = jenisArsip(a); }
-  const m = modeOf(jenis), s = tripStat(d, nama, tgl), tm = (d.tamu || []).filter(t => t['Status'] === 'Diterima');
-  let bh = null;
-  if (m.untung) { const keep = DB; try { DB = Object.assign(blank(), d); const g = bagiData(); bh = { s: g.s, n: g.n, per: g.per }; } catch (e) { bh = null; } finally { DB = keep; } }
-  let vs = null; if (d.simAktif) { const keep2 = DB; try { DB = Object.assign(blank(), d); vs = vsReal(); } catch (e) { vs = null; } finally { DB = keep2; } }
-  const ks = Object.keys(s.kat).sort((a, b) => s.kat[b] - s.kat[a]), kmx = Math.max.apply(null, ks.map(k => s.kat[k]).concat([1]));
-  const tg = t => { const v = t['Tagihan'] || ''; return v ? `<span class="bd ${v === 'Lunas' ? 'g3' : v === 'DP' ? 'y3' : 'r3'}">${esc(v)}</span>` : ''; };
-  return `<div class="pg"><div class="top"><button class="ib" aria-label="Kembali" onclick="v3Buka('rekap')">${v3svg(V3IC.back, 20)}</button><div class="ti">${esc(nama)}</div></div>
-  <div class="cap" style="margin-top:6px"><span class="pl" style="display:inline-flex;background:${m.warna}29;border-color:${m.warna}80;color:#fff7ed"><i style="background:${m.warna}"></i>${esc(m.nama)}</span> &nbsp;${esc(tgl)} · hanya untuk dilihat</div>
-  <div class="tl"><div>Pemasukan<b>${rp(s.masuk)}</b></div><div>Pengeluaran<b>${rp(s.keluar)}</b></div>
-  <div class="w">${m.untung ? (s.untung >= 0 ? 'Untung' : 'Rugi') : 'Sisa saldo'}<b class="${hasilCls(m, s.untung)}">${(m.untung ? '' : s.untung < 0 ? '- ' : '') + rp(Math.abs(s.untung))}</b></div>
-  <div>Peserta diterima<b>${s.ps}</b></div><div>Biaya per peserta<b>${rp(s.per)}</b></div></div>
-  ${bh && bh.n ? `<div class="box"><div class="li"><span>Bagi hasil: ${bh.s >= 0 ? 'untung' : 'rugi'} setelah setoran panitia</span><b>${rp(Math.abs(bh.s))}</b></div><div class="li"><span>${bh.n} official · per official</span><b>${rp(bh.per)}</b></div></div>` : ''}
-  ${vs ? `<div class="sec">Simulasi vs Realisasi</div><div class="box"><div class="li"><span>Acuan: ${esc(vs.nama)}</span></div><div class="li"><span>Pendapatan: rencana · nyata</span><b>${rpc(vs.rencana.pend)} · ${rpc(vs.nyata.masuk)}</b></div><div class="li"><span>Biaya: rencana · nyata</span><b>${rpc(vs.rencana.biaya)} · ${rpc(vs.nyata.biaya)}</b></div><div class="li"><span>${m.untung ? 'Untung' : 'Hasil'}: rencana · nyata</span><b>${(vs.rencana.profit < 0 ? '- ' : '') + rpc(vs.rencana.profit)} · ${(vs.nyata.profit < 0 ? '- ' : '') + rpc(vs.nyata.profit)}</b></div></div>` : ''}
-  <div class="sec">Peserta (${tm.length})</div>
-  <div class="box">${tm.length ? tm.slice(0, 30).map(t => `<div class="li"><span>${esc(t['Nama'] || '?')}</span>${tg(t)}</div>`).join('') + (tm.length > 30 ? `<div class="li"><span>dan ${tm.length - 30} lainnya</span></div>` : '') : '<div class="li"><span>Belum ada peserta diterima.</span></div>'}</div>
-  <div class="sec">Pengeluaran per kategori</div>
-  <div class="box">${ks.length ? ks.map(k => `<div style="padding:9px 0"><div class="li" style="padding:0;border:0"><span>${esc(k)}</span><b>${rp(s.kat[k])}</b></div><div class="kb3"><div style="width:${Math.round(s.kat[k] / kmx * 100)}%"></div></div></div>`).join('') : '<div class="li"><span>Belum ada pengeluaran.</span></div>'}</div>
-  </div>`;
-}
-function v3Gambar() {
-  const el = $('v3'); if (!el) return;
-  el.innerHTML = V3.l === 'awal' ? v3Awal() : V3.l === 'mode' ? v3Mode() : V3.l === 'rekap' ? v3Rekap() : v3Detail();
-  el.hidden = false; el.scrollTop = 0; if (V3.l === 'awal') v3Paket();
-}
-function v3Buka(l, dari) { V3.l = l; if (l === 'mode') { V3.sel = modeAktif(); V3.dari = dari || 'awal'; } v3Gambar(); }
-function v3Tutup() { V3.l = null; const el = $('v3'); if (el) { el.hidden = true; el.innerHTML = ''; } chipMode(); }
-function v3Back() { if (V3.l === 'detail') return v3Buka('rekap'); if (V3.l === 'mode' && V3.dari !== 'awal') { v3Tutup(); return; } v3Buka('awal'); }
-function v3Pilih(id) { V3.sel = id; v3Gambar(); const el = $('v3'); if (el) el.scrollTop = el.scrollTop; }
-function v3Detail2(id) { V3.det = id; V3.l = 'detail'; v3Gambar(); }
-async function v3Paket() {
-  try { const b = $('v3pk'); if (!b) return; const d = await lencanaData(); if (!d || !d.n) return; b.innerHTML = v3svg(V3IC.peak, 14, null, 2) + ' ' + (d.k === 'Lisensi' ? 'Lisensi aktif' : 'Paket ' + esc(d.k)); b.hidden = false; } catch (e) {}
-}
-async function v3Masuk() {
-  const id = V3.sel, now = modeAktif();
-  if (id !== now) {
-    if (kunciOn()) {
-      /* Rintis: tetap satu trip; mode lain hanya bila trip diarsipkan atau ditutup bukunya */
-      if (hasData()) {
-        if (!tutupOn()) { v3Tutup(); show('trip'); return; }
-        if (!confirm('Buku trip ditutup. Trip ini diarsipkan otomatis (' + modeOf(now).nama + '), lalu mode ' + modeOf(id).nama + ' dimulai dengan trip baru yang kosong. Lanjut?')) return;
-        pushArsip(snapshot()); muatTrip(kosongTrip(id));
-      }
-      if (slotAda(id)) { const t = DB.slot[id]; delete DB.slot[id]; muatTrip(t); }
-    } else tukarMode(id);
-  }
-  DB.mode = id; DB.set = Object.assign({}, DB.set, { jenis: id }); await save();
-  v3Tutup(); show('dashboard'); toast('Mode ' + modeOf(id).nama + ' aktif'); setTimeout(onbCek, 900);
-}
-function tampilMulai() {
-  if (!DB.mode) DB.mode = 'open';
-  if (hasData() && !DB.set.jenis) { DB.set = Object.assign({}, DB.set, { jenis: DB.mode }); save(); }
-  if (!hasData() || tutupOn()) { chipMode(); v3Buka('awal'); } else show('dashboard');
-}
-Object.assign(EN, { 'Impor rekap trip': 'Import trip recap', 'Ekspor rekap trip berjalan': 'Export current trip recap', 'Ekspor rekap': 'Export recap', 'Buka & edit': 'Open & edit', 'Impor': 'Imported', 'Rekap Simulasi': 'Simulation Recap', 'Ketuk skenario untuk memuatnya ke form.': 'Tap a scenario to load it into the form.', 'Belum ada skenario tersimpan di mode ini.': 'No saved scenarios in this mode yet.', 'Belum ada trip': 'No trip yet', 'Buku ditutup': 'Book closed', 'Simulasi vs Realisasi': 'Simulation vs Actual', 'Tiap mode punya trip sendiri dan bisa berjalan sekaligus. Saat mode diganti, isi aplikasi menyesuaikan dengan trip mode itu.': 'Each mode has its own trip and they can run at the same time. When the mode changes, the app adjusts to the trip of that mode.', 'Pendapatan: rencana · nyata': 'Income: planned · actual', 'Biaya: rencana · nyata': 'Cost: planned · actual', 'Untung: rencana · nyata': 'Profit: planned · actual', 'Hasil: rencana · nyata': 'Result: planned · actual', 'Acuan: ': 'Reference: ', 'Ini file rekap trip, bukan cadangan. Pakai Impor rekap trip di halaman Rekap.': 'This is a trip recap file, not a backup. Use Import trip recap on the Recap page.', 'Belum ada trip berjalan untuk diekspor': 'No trip in progress to export', 'File rekap berisi nama dan nomor HP peserta. Kirim hanya ke orang yang berhak. Lanjut?': 'The recap file contains the names and phone numbers of participants. Send it only to people who should have it. Continue?', 'File rekap diunduh': 'Recap file downloaded', 'File rekap tidak valid': 'Invalid recap file', 'Impor rekap trip adalah fitur Puncak': 'Import trip recap is a Puncak feature', 'Buku trip ini tertutup; buka kuncinya di kartu paling atas bila mau mengedit.': 'This trip book is closed; unlock it in the top card to edit.', });
-Object.assign(EN, {
-  'Siap trip berikutnya?': 'Ready for the next trip?', 'Buku trip sudah rapi. Belum ada trip berjalan.': 'Your trip book is tidy. No trip in progress.', 'Buku trip ditutup. Pilih mode untuk melanjutkan.': 'Trip book is closed. Pick a mode to continue.',
-  'Mode': 'Mode', 'Rekap': 'Recap', 'Pilih jenis pendakian yang mau dikelola': 'Choose the type of hike to manage', 'Belum ada riwayat. Mulai dari trip pertamamu.': 'No history yet. Start with your first trip.',
-  'Pilih Mode': 'Choose Mode', 'Rekap Semua Jenis': 'All-Types Recap', 'Per jenis': 'By type', 'Trip terakhir': 'Latest trips', 'Belum ada riwayat': 'No history yet', 'Pilih mode dan mulai': 'Choose a mode and start',
-  'Untung bersih semua jenis': 'Net profit, all types', 'Dana masuk': 'Funds in', 'Peserta': 'Participants', 'Patungan': 'Pooled funds', 'Tanpa untung': 'No profit', 'Pendakian bersama': 'Group hike',
-  'Satu trip aktif dalam satu waktu. Saat mode diganti, seluruh isi aplikasi menyesuaikan.': 'One active trip at a time. When the mode changes, the whole app adjusts.',
-  'Arsipkan trip dulu di Trip & Arsip': 'Archive the trip first in Trip & Archive', 'Peserta diterima': 'Accepted participants', 'Biaya per peserta': 'Cost per participant', 'Pengeluaran per kategori': 'Spending by category', 'Semua': 'All'
-});
-Object.assign(EN, { ['v3.0.0: tiga mode dalam satu aplikasi (Open trip, Tektok, Pendakian bersama) dengan layar awal baru: tombol Mode di atas dan Rekap di bawah. Rekap semua jenis bisa diketuk sampai rekap lengkap tiap trip. Arsip kini ditandai jenisnya dan bisa disaring. Trip lama otomatis menjadi Open trip. Data dan lisensi tidak berubah.']: 'v3.0.0: three modes in one app (Open trip, Tektok, Group hike) with a new start screen: Mode on top and Recap below. The all-types recap can be tapped down to the full recap of each trip. Archives are now tagged by type and can be filtered. Existing trips automatically become Open trip. Your data and license are unchanged.' });
-
 /* ===== Mulai ===== */
 async function mulai() {
-  DB = Object.assign(blank(), await load() || {}); if (!DB.slot || typeof DB.slot !== 'object') DB.slot = {}; DB.pref = DB.pref || {}; DB.profil = DB.profil || {}; DB.kw = DB.kw || {}; DB.nomor = DB.nomor || {}; applyKat(); DB.trash = (DB.trash || []).filter(x => Date.now() - x.ts < 30 * 864e5); if (jalankanUlang()) { await save(); setTimeout(() => toast('Transaksi berulang ditambahkan'), 700); }
+  DB = Object.assign(blank(), await load() || {}); DB.pref = DB.pref || {}; DB.profil = DB.profil || {}; DB.kw = DB.kw || {}; DB.nomor = DB.nomor || {}; applyKat(); DB.trash = (DB.trash || []).filter(x => Date.now() - x.ts < 30 * 864e5); if (jalankanUlang()) { await save(); setTimeout(() => toast('Transaksi berulang ditambahkan'), 700); }
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
   if (DB.pref.bahasa && DB.pref.bahasa !== LANG) setBahasa(DB.pref.bahasa); applyAll(); cekPembuat().then(ok => { CR_OK = ok; if (!ok && !LOCKED) rerender(); });
   BIO_OK = await bioTersedia();
-  if (DB.pin) lock(); else { buildNav(); tampilMulai(); }
+  if (DB.pin) lock(); else { buildNav(); show('dashboard'); }
 }
 (async function () {
   if (await cekLisensi()) {
@@ -3514,308 +3133,6 @@ async function mulai() {
   } else { const lama = await kvGet('lic'); await layarAktivasi(lama ? 'Kunci lama tidak berlaku. Minta kunci baru ke penjual dengan kode perangkat ini.' : ''); }
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
 })();
-
-/* ===== v4.1.0: Open trip khusus (kuota, batal, grup, kru, termasuk, bawaan pribadi, ikon) ===== */
-const isOT = () => modeAktif() === 'open';
-const optsOf = f => { let o = f.options; if (f.xo && isJasa()) o = o.concat(f.xo); if (f.xt && isTK()) o = o.concat(f.xt); if (f.xs && isTK()) o = o.concat(sesiList().map(x => x.nama)); return o; };
-const sesiList = () => Array.isArray(DB.set.sesi) ? DB.set.sesi : [];
-const sesiOf = nm => sesiList().find(x => x.nama === nm);
-const kuotaN = sesi => isTK() ? Math.max(0, parseInt((sesiOf(sesi) || {}).kuota, 10) || 0) : Math.max(0, parseInt(DB.set.kuota, 10) || 0);
-const terimaN = (ex, sesi) => DB.tamu.filter(t => t['Status'] === 'Diterima' && t.id !== ex && (sesi === undefined || t['Sesi'] === sesi)).length;
-const sesiTamu = id => { const t = DB.tamu.find(x => x.id === id); return t ? t['Sesi'] || '' : ''; };
-const kuotaPenuh = (ex, sesi) => { if (isTK()) { if (!sesi) return false; return kuotaN(sesi) > 0 && terimaN(ex, sesi) >= kuotaN(sesi); } return isOT() && kuotaN() > 0 && terimaN(ex) >= kuotaN(); };
-const otIni = x => esc(String(x || '?').trim().charAt(0).toUpperCase() || '?');
-const otLines = a => (Array.isArray(a) ? a : []).map(x => String(x).trim()).filter(Boolean);
-const ICO_OT = {
-  dashboard: '<path d="M3 20l6.5-11 4 6 2.5-4L21 20z"/><path d="M9.5 9V4l3.5 1.6L9.5 7.2"/>',
-  simulasi: '<path d="M4 20h16"/><path d="M5 16l4.5-5 3.5 3L19 6"/><circle cx="19" cy="6" r="1.6"/>',
-  more: '<path d="M3 20L12 5l9 15z"/><path d="M12 5v15"/><path d="M8.5 20l3.5-6.5 3.5 6.5"/>',
-  rekap: '<path d="M8 4h8v3H8z"/><path d="M6 6H5v15h14V6h-1"/><path d="M9 12h6M9 16h4"/>',
-  akun: '<circle cx="12" cy="9.5" r="3.4"/><path d="M6.8 7.6h10.4M9 7.6c.2-2 1.4-3 3-3s2.8 1 3 3"/><path d="M5 21c.8-4 3.7-6 7-6s6.2 2 7 6"/>',
-  tamu: '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9.5" r="2.4"/><path d="M3 20c.5-3.5 3-5.5 6-5.5s5.5 2 6 5.5"/><path d="M15.5 14.8c2.8-.3 4.9 1.3 5.5 4.2"/>',
-  kru: '<path d="M12 3l7 3v5c0 5-3 8.5-7 10-4-1.5-7-5-7-10V6z"/><path d="M12 8.5l1.2 2.4 2.6.4-1.9 1.8.5 2.6-2.4-1.3-2.4 1.3.5-2.6-1.9-1.8 2.6-.4z"/>',
-  itinerary: '<circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 18h6a3 3 0 0 0 0-6h-4a3 3 0 0 1 0-6h6"/>',
-  perlengkapan: '<path d="M9 7V5.5a3 3 0 0 1 6 0V7"/><rect x="5" y="7" width="14" height="14" rx="3.5"/><path d="M9 13h6M9 17h6"/>',
-  checklist: '<path d="M9.5 6h11M9.5 12h11M9.5 18h11"/><path d="M3.5 6l1.5 1.5L7.5 5M3.5 12l1.5 1.5 2.5-2.5M3.5 18l1.5 1.5 2.5-2.5"/>',
-  pemasukan: '<path d="M12 3v9M8.5 8.5L12 12l3.5-3.5"/><path d="M4 14v5h16v-5"/>',
-  pengeluaran: '<path d="M12 12V3M8.5 6.5L12 3l3.5 3.5"/><path d="M4 14v5h16v-5"/>',
-  bayar: '<rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10.5h18M7 15h4"/>',
-  trip: '<path d="M4 7h16v4H4z"/><path d="M5.5 11v8h13v-8M10 15h4"/>',
-  bagihasil: '<circle cx="9" cy="12" r="6"/><path d="M15 6.3a6 6 0 0 1 0 11.4"/><path d="M9 9v6M7 11h4"/>',
-  kategori: '<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.3"/>',
-  daftar: '<path d="M5 4h10l4 4v12H5z"/><path d="M15 4v4h4M8.5 13h7M8.5 17h5"/>',
-  kalk: '<rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M8.5 7.5h7M8.5 12h2M13.5 12h2M8.5 16h2M13.5 16h2"/>',
-  panduan: '<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/>'
-};
-const otHi = k => { const S = isOT() ? ICO_OT : isTK() ? ICO_TK : null; return (S && S[k] && k !== 'more') ? '<span class="hico"><svg viewBox="0 0 24 24">' + S[k] + '</svg></span>' : ''; };
-function navAktif() { document.querySelectorAll('nav button').forEach(b => b.classList.toggle('active', b.dataset.k === (MAIN.includes(cur) ? cur : cur === 'pengaturan' ? 'akun' : 'more'))); }
-function renderMoreOT() {
-  const T = [['tamu', 'Tamu', 'Peserta, kuota, grup'], ['kru', 'Kru Panitia', 'Panitia & upah'], ['perlengkapan', 'Perlengkapan', 'Kelompok & pribadi'], ['itinerary', 'Itinerary', 'Rundown perjalanan'], ['checklist', 'Checklist', 'Barang bawaan'], ['bayar', 'Pembayaran', 'Tagihan & grup'], ['pemasukan', 'Masuk', 'Catat pemasukan'], ['pengeluaran', 'Keluar', 'Catat pengeluaran'], ['bagihasil', 'Bagi Hasil', 'Untung/rugi & official'], ['trip', 'Trip & Arsip', 'Arsip & cadangan'], ['daftar', 'Pendaftaran', 'Link & pendaftar online'], ['kategori', 'Kategori', 'Kategori & berulang'], ['kalk', 'Kalkulator', 'Hitung, memori, riwayat'], ['panduan', 'Panduan', 'Demo & langkah rinci']];
-  $('main').innerHTML = `<div class="pgh"><h2>Menu</h2></div><div class="tiles">${T.map(t => `<button class="tile" onclick="show('${t[0]}')"><span class="tic"><svg viewBox="0 0 24 24">${ICO_OT[t[0]]}</svg></span>${t[1]}<small>${t[2]}</small></button>`).join('')}</div>`;
-}
-/* --- Tamu: kuota, daftar tunggu, batal + pengembalian --- */
-function otGross(nama) {
-  const n = x => String(x || '').trim().toLowerCase(), names = DB.tamu.map(t => n(t['Nama'])); let tot = 0;
-  DB.pemasukan.forEach(r => { if (r['Kategori'] !== 'Peserta' || !(+r['Biaya'] > 0)) return; const w = matchNama(n(r['Dibayar oleh']) || n(r['Detail pemasukan']), names); if (w === n(nama)) tot += +r['Biaya']; });
-  return tot;
-}
-function otRefund(t) {
-  const B = DB.set.batal || {}, paid = otGross(t['Nama']), pot = Math.round(paid * (Number(B.pot) || 0) / 100), adm = Number(B.adm) || 0;
-  return { paid, pot, adm, kembali: Math.max(0, paid - pot - adm) };
-}
-function tamuCard() {
-  const q = kuotaN(), n = terimaN(), W = DB.tamu.filter(t => t['Status'] === 'Daftar tunggu'), X = DB.tamu.filter(t => t['Status'] === 'Batal'), B = DB.set.batal || {};
-  const row = (t, sub, act) => `<div class="txw"><div class="tx"><div class="av">${otIni(t['Nama'])}</div><div class="tm"><b>${esc(t['Nama'])}</b><small>${sub}</small></div></div><div class="acts">${act}</div></div>`;
-  return (isTK() ? tkSesiCard() : `<div class="card"><h3>Kuota dan daftar tunggu</h3>
-  <label>Kuota peserta (kosong = tanpa batas)</label><input id="ot_kuota" type="number" inputmode="numeric" value="${q || ''}">
-  <div style="margin:8px 0">Diterima <b>${n}</b>${q ? ' dari ' + q : ''}${q && n >= q ? ' <span class="badge r">Penuh</span>' : ''}</div>
-  <button class="btn alt" onclick="otSimpanKuota()">Simpan kuota</button>
-  ${W.length ? `<b>Daftar tunggu (${W.length})</b>` + W.map(t => row(t, esc(t['Ponsel'] || '-'), `<button class="edt" onclick="otTerima(${t.id})">Terima</button>`)).join('') : '<small class="mut">Peserta yang melewati kuota masuk daftar tunggu otomatis.</small>'}</div>`) + `
-  <div class="card"><h3>Batal dan pengembalian</h3><small class="mut">Ubah status peserta jadi Batal, lalu catat pengembalian di sini. Potongan dihitung dari uang yang sudah dibayar.</small>
-  <label>Potongan (%)</label><input id="ot_pot" type="number" inputmode="decimal" value="${B.pot || ''}"><label>Biaya admin tetap (Rp)</label><input id="ot_adm" type="text" inputmode="numeric" oninput="fmtNum(this)" value="${B.adm ? fmtN(B.adm) : ''}">
-  <button class="btn alt" onclick="otSimpanBatal()">Simpan aturan</button>
-  ${X.length ? X.map(t => { const r = otRefund(t); return row(t, 'Dibayar ' + rp(r.paid) + ' | Dikembalikan ' + rp(t['Pengembalian'] != null ? t['Pengembalian'] : r.kembali), t['Pengembalian'] != null ? '<span class="badge g">Selesai</span>' : (r.kembali > 0 ? `<button class="edt" onclick="otKembali(${t.id})">Catat pengembalian</button>` : '<span class="badge y">Tidak ada</span>')); }).join('') : '<div style="margin-top:8px"><small class="mut">Belum ada peserta batal.</small></div>'}</div>`;
-}
-async function otSimpanKuota() { DB.set.kuota = Math.max(0, parseInt($('ot_kuota').value, 10) || 0); await save(); show('tamu'); toast('Kuota disimpan'); }
-async function otSimpanBatal() { DB.set.batal = { pot: Math.min(100, Math.max(0, Number($('ot_pot').value) || 0)), adm: numVal($('ot_adm').value) || 0 }; await save(); show('tamu'); toast('Aturan batal disimpan'); }
-async function otTerima(id) { if (kuotaPenuh(id, sesiTamu(id))) return toast('Kuota masih penuh'); DB.tamu.find(t => t.id === id)['Status'] = 'Diterima'; await save(); show('tamu'); toast('Peserta diterima'); }
-async function otKembali(id) {
-  if (bukuTutup()) return; const t = DB.tamu.find(x => x.id === id); if (!t) return; const r = otRefund(t); if (r.kembali <= 0) return;
-  if (!confirm('Catat pengembalian ' + rp(r.kembali) + ' untuk ' + t['Nama'] + '? Dicatat sebagai pemasukan bernilai minus.')) return;
-  const nb = { id: DB.seq++, 'Detail pemasukan': 'Pengembalian peserta batal', 'Kategori': 'Peserta', 'Biaya': -r.kembali, 'Tanggal transaksi': today(), 'Dibayar oleh': t['Nama'], 'Catatan': 'Potongan ' + rp(r.pot + r.adm) };
-  DB.pemasukan.push(nb); logAdd('tambah', 'pemasukan', nb, { s: 'batal' }); t['Pengembalian'] = r.kembali; await save(); show('tamu'); toast('Pengembalian dicatat');
-}
-/* --- Perlengkapan pribadi --- */
-const otPriCard = () => `<div class="card"><h3>Daftar bawaan peserta</h3><small class="mut">Barang berjenis Pribadi dibawa dan dibeli peserta sendiri, tidak masuk biaya sewa.</small><div id="otpri" style="margin:8px 0"></div><button class="btn" onclick="otPriPDF()">📄 Unduh PDF daftar bawaan</button><button class="btn" style="background:#25d366" onclick="otPriWA()">💬 Bagikan ke WhatsApp</button></div>`;
-const otPriNames = () => rowsOf('perlengkapan').filter(r => r['Jenis'] === 'Pribadi').map(r => String(r['Perlengkapan']).trim()).filter(Boolean);
-function otPri() { const o = $('otpri'); if (!o) return; const L = otPriNames(); o.innerHTML = L.length ? L.map(x => '• ' + esc(x)).join('<br>') : '<small class="mut">Belum ada barang berjenis Pribadi.</small>'; }
-function otPriWA() { const L = otPriNames(); if (!L.length) return toast('Belum ada barang pribadi'); openWA('*DAFTAR BAWAAN PESERTA*' + (DB.set.destinasi ? ' - ' + DB.set.destinasi : '') + '\nSiapkan dan bawa sendiri:\n' + L.map(x => '- ' + x).join('\n') + '\n\nPerlengkapan kelompok dibawa panitia.'); }
-function otPriPDF() { const L = otPriNames(); if (!L.length) return toast('Belum ada barang pribadi'); printDoc(docWrap('DAFTAR BAWAAN PESERTA', 'Destinasi: ' + (DB.set.destinasi || '-'), pT(['No', 'Barang yang dibawa sendiri'], L.map((x, i) => [String(i + 1), x])))); }
-/* --- Kru panitia --- */
-const kruCard = () => `<div class="card"><h3>Ringkasan upah</h3>${isTK() ? '<small class="mut">Tektok: kru maksimal 3 orang.</small>' : ''}<div id="otkru"></div><button class="btn" onclick="otPushUpah()">➡️ Masukkan Total Upah ke Pengeluaran</button><div id="otkmsg" class="msg"></div></div>`;
-const kruTotal = () => sum(rowsOf('kru'), r => +r['Upah'] || 0);
-function otKru() { const o = $('otkru'); if (!o) return; o.innerHTML = `<div>${DB.kru.length} orang kru</div><b>Total upah: ${rp(kruTotal())}</b>`; }
-function otEnsureKat() { const a = katList('pengeluaran'); if (a.indexOf('Upah Kru') < 0) { DB.kat.pengeluaran = a.slice().concat('Upah Kru'); applyKat(); } }
-async function otPushUpah() {
-  if (bukuTutup()) return; const total = kruTotal();
-  if (total <= 0) return setMsg('otkmsg', 'Belum ada upah kru.', 0);
-  if (!confirm('Masukkan total upah kru ke Pengeluaran (kategori Upah Kru)? Jika baris "Upah kru" sudah ada, nilainya diperbarui.')) return;
-  otEnsureKat(); const label = 'Upah kru', ex = DB.pengeluaran.find(r => r['Detail pengeluaran'] === label);
-  if (ex) { const b0 = JSON.parse(JSON.stringify(ex)); ex['Anggaran'] = total; ex['Biaya'] = total; ex['Quantity'] = 1; const d = logDiff('pengeluaran', b0, ex); if (d.length) logAdd('ubah', 'pengeluaran', ex, { s: 'upah', d }); }
-  else { const nr = { id: DB.seq++, 'Detail pengeluaran': label, 'Kategori': 'Upah Kru', 'Anggaran': total, 'Biaya': total, 'Quantity': 1, 'Tanggal transaksi': today(), 'Dibayar oleh': '', 'Catatan': 'Otomatis dari tab Kru Panitia' }; DB.pengeluaran.push(nr); logAdd('tambah', 'pengeluaran', nr, { s: 'upah' }); }
-  await save(); setMsg('otkmsg', ex ? 'Baris diperbarui menjadi ' + rp(total) : 'Ditambahkan ke Pengeluaran: ' + rp(total), 1);
-}
-const otSimBtn = () => !isJasa() ? '' : '<button class="btn alt" onclick="otSimUpah()">+ Upah kru dari tab Kru Panitia</button>' + (isTK() ? '<button class="btn alt" onclick="tkSimTiket()">+ Tiket dan parkir dari tab Tiket & Parkir</button><button class="btn alt" onclick="tkSimKend()">+ Sewa kendaraan / ojek</button>' : '');
-function otSimUpah() {
-  const total = kruTotal(); if (total <= 0) return toast('Belum ada upah kru'); otEnsureKat();
-  const per = Math.ceil(total / Math.max(1, +SIM.peserta || 1)), it = SIM.items.find(x => x.n === 'Upah kru');
-  if (it) { it.sim = total; it.std = per; it.t = 'grup'; it.kat = 'Upah Kru'; } else SIM.items.push({ n: 'Upah kru', t: 'grup', std: per, sim: total, kap: 4, stok: 0, kat: 'Upah Kru' });
-  drawItems(); drawSim(); toast('Upah kru masuk ke komponen biaya');
-}
-/* --- Pembayaran: grup + termasuk/belum termasuk --- */
-function otIncTeks() { if (!isJasa()) return ''; const a = otLines(DB.set.inc), b = otLines(DB.set.exc); return (a.length ? '\n\n*Sudah termasuk:*\n' + a.map(x => '- ' + x).join('\n') : '') + (b.length ? '\n\n*Belum termasuk:*\n' + b.map(x => '- ' + x).join('\n') : ''); }
-function otIncCard() { return `<div class="card"><h3>Sudah termasuk / belum termasuk</h3><small class="mut">Satu baris satu butir. Ikut di pesan tagihan peserta.</small><label>Sudah termasuk</label><textarea id="ot_inc" rows="4" placeholder="Transport PP&#10;Simaksi&#10;Guide dan porter">${esc(otLines(DB.set.inc).join('\n'))}</textarea><label>Belum termasuk</label><textarea id="ot_exc" rows="4" placeholder="Konsumsi pribadi&#10;Perlengkapan pribadi">${esc(otLines(DB.set.exc).join('\n'))}</textarea><button class="btn" onclick="otSimpanInc()">Simpan</button></div>`; }
-async function otSimpanInc() { DB.set.inc = $('ot_inc').value.split('\n').map(x => x.trim()).filter(Boolean); DB.set.exc = $('ot_exc').value.split('\n').map(x => x.trim()).filter(Boolean); await save(); toast('Disimpan'); }
-function otGrupCard() {
-  const b = bayarData(), base = bayarBase(), G = {};
-  b.ps.forEach(p => { const g = String(p.grup || '').trim(); if (g) (G[g] = G[g] || []).push(p); });
-  const ks = Object.keys(G); window._otG = ks.map(k => ({ g: k, m: G[k] }));
-  return `<div class="card"><h3>Tagihan per grup</h3>` + (ks.length ? ks.map((k, i) => { const m = G[k], tot = base * m.length, by = sum(m, p => p.dibayar), s = tot - by; return `<div class="txw"><div class="tx"><div class="av ${s <= 0 && base > 0 ? 'in' : ''}">${otIni(k)}</div><div class="tm"><b>${esc(k)}</b><small>${m.length} orang | tagihan ${rp(tot)} | bayar ${rp(by)}</small><div style="margin-top:4px">${s <= 0 && base > 0 ? '<span class="badge g">Lunas</span>' : '<span class="badge r">Sisa ' + rp(Math.max(0, s)) + '</span>'}</div></div></div>${s > 0 && base > 0 ? `<div class="acts"><button class="edt" onclick="otTagihGrup(${i})">💬 Tagih grup</button></div>` : ''}</div>`; }).join('') : '<small class="mut">Isi kolom Grup di tab Tamu (misalnya nama rombongan) untuk melihat tagihan per grup.</small>') + '</div>';
-}
-function otTagihGrup(i) {
-  const o = window._otG && window._otG[i]; if (!o) return; const base = bayarBase(), d = DB.set, m = o.m, tot = base * m.length, by = sum(m, p => p.dibayar), s = tot - by, k = m.find(p => p.ponsel) || m[0];
-  const t = 'Halo, tagihan grup ' + o.g + (d.destinasi ? ' (trip ' + d.destinasi + ')' : '') + ':\nJumlah: ' + m.length + ' orang\nTotal tagihan: ' + rp(tot) + '\nSudah dibayar: ' + rp(by) + '\n*Sisa: ' + rp(s) + '*' + (d.tenggat ? '\nTenggat: ' + fmtDate(d.tenggat) : '') + otIncTeks() + (caraText(d) ? '\n\nTransfer ke:\n' + caraText(d) : '') + '\n\nMohon kirim bukti transfer. Terima kasih 🙏';
-  openWA(t, waDigits(k.ponsel));
-}
-/* --- Terjemahan English untuk teks baru --- */
-Object.assign(EN, {
-  'Kru Panitia': 'Crew', 'Panitia & upah': 'Crew & wages', 'Peserta, kuota, grup': 'Participants, quota, groups', 'Kelompok & pribadi': 'Group & personal', 'Tagihan & grup': 'Bills & groups', 'Untung/rugi & official': 'Profit/loss & officials',
-  'Kuota & grup': 'Quota & groups', 'Kru & upah': 'Crew & wages', 'Daftar tunggu': 'Waiting list', 'Batal': 'Cancelled', 'Grup': 'Group', 'Jenis': 'Type', 'Kelompok': 'Group', 'Pribadi': 'Personal', 'Peran': 'Role', 'Upah': 'Wage',
-  'Leader': 'Leader', 'Guide': 'Guide', 'Porter': 'Porter', 'Sweeper': 'Sweeper', 'Chef': 'Chef', 'Dokumentasi': 'Documentation', 'Medis': 'Medic', 'Lainnya': 'Other', 'Upah Kru': 'Crew wages',
-  'Kuota dan daftar tunggu': 'Quota and waiting list', 'Kuota peserta (kosong = tanpa batas)': 'Participant quota (empty = no limit)', 'Simpan kuota': 'Save quota', 'Penuh': 'Full', 'Terima': 'Accept',
-  'Peserta yang melewati kuota masuk daftar tunggu otomatis.': 'Participants over the quota go to the waiting list automatically.',
-  'Batal dan pengembalian': 'Cancellation and refund', 'Ubah status peserta jadi Batal, lalu catat pengembalian di sini. Potongan dihitung dari uang yang sudah dibayar.': 'Set the participant status to Cancelled, then record the refund here. The deduction is calculated from the money already paid.',
-  'Potongan (%)': 'Deduction (%)', 'Biaya admin tetap (Rp)': 'Fixed admin fee (Rp)', 'Simpan aturan': 'Save rules', 'Catat pengembalian': 'Record refund', 'Selesai': 'Done', 'Tidak ada': 'None', 'Belum ada peserta batal.': 'No cancelled participants yet.',
-  'Daftar bawaan peserta': 'Participant packing list', 'Barang berjenis Pribadi dibawa dan dibeli peserta sendiri, tidak masuk biaya sewa.': 'Items of type Personal are brought or bought by participants themselves and are not part of the rental cost.',
-  '📄 Unduh PDF daftar bawaan': '📄 Download packing list PDF', '💬 Bagikan ke WhatsApp': '💬 Share to WhatsApp', 'Belum ada barang berjenis Pribadi.': 'No items of type Personal yet.',
-  'Ringkasan upah': 'Wage summary', '➡️ Masukkan Total Upah ke Pengeluaran': '➡️ Add Total Wages to Expenses', '+ Upah kru dari tab Kru Panitia': '+ Crew wages from the Crew tab',
-  'Tagihan per grup': 'Bills per group', 'Isi kolom Grup di tab Tamu (misalnya nama rombongan) untuk melihat tagihan per grup.': 'Fill the Group column in the Guests tab (for example the party name) to see bills per group.', '💬 Tagih grup': '💬 Bill group',
-  'Sudah termasuk / belum termasuk': 'Included / not included', 'Satu baris satu butir. Ikut di pesan tagihan peserta.': 'One item per line. Included in the participant bill message.', 'Sudah termasuk': 'Included', 'Belum termasuk': 'Not included'
-});
-/* ===== v4.2.0: Tektok khusus (tiket & parkir, izin, jadwal naik-turun, template perlengkapan, ikon) ===== */
-const isTK = () => modeAktif() === 'tektok';
-const isJasa = () => isOT() || isTK();
-function omOK(f) { return !f.om || (f.om === 3 ? isTK() : f.om === 2 ? isOT() : isJasa()); }
-const icoSet = () => isOT() ? ICO_OT : isTK() ? ICO_TK : ICO;
-const F_ = 'style="fill:var(--pri);fill-opacity:.22"';
-const ICO_TK = {
-  dashboard: '<path d="M3 19h18"/><path d="M6.5 19a5.5 5.5 0 0 1 11 0z" ' + F_ + '/><path d="M12 5v3M5.2 9.2l2 2M18.8 9.2l-2 2"/>',
-  simulasi: '<ellipse cx="12" cy="7" rx="7" ry="3" ' + F_ + '/><path d="M5 7v5c0 1.7 3.1 3 7 3s7-1.3 7-3V7M5 12v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"/>',
-  more: '<path d="M12 3l9 4.5-9 4.5-9-4.5z" ' + F_ + '/><path d="M3 12l9 4.5 9-4.5M3 16.5L12 21l9-4.5"/>',
-  rekap: '<rect x="4" y="12" width="4" height="8" rx="1" ' + F_ + '/><rect x="10" y="5" width="4" height="15" rx="1"/><rect x="16" y="9" width="4" height="11" rx="1" ' + F_ + '/>',
-  akun: '<circle cx="12" cy="8" r="4" ' + F_ + '/><path d="M4 21c1-4 4-6 8-6s7 2 8 6z" ' + F_ + '/>',
-  tamu: '<circle cx="12" cy="7" r="3" ' + F_ + '/><circle cx="5.5" cy="10" r="2.2"/><circle cx="18.5" cy="10" r="2.2"/><path d="M7 20c0-3 2.2-5 5-5s5 2 5 5z" ' + F_ + '/>',
-  tiket: '<path d="M4 7h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4z" ' + F_ + '/><path d="M14 8v2M14 12v0M14 14v2"/>',
-  kru: '<path d="M6 21V4"/><path d="M6 4h12l-3 4 3 4H6z" ' + F_ + '/>',
-  itinerary: '<circle cx="12" cy="12" r="9" ' + F_ + '/><path d="M12 7v5l3.5 2"/>',
-  perlengkapan: '<path d="M8 7a4 4 0 0 1 8 0"/><path d="M6 8h12v13H6z" ' + F_ + '/><path d="M9 14h6v4H9z"/>',
-  checklist: '<rect x="5" y="4" width="14" height="17" rx="2" ' + F_ + '/><path d="M9 3h6v3H9z"/><path d="M8.5 13l2.5 2.5 4.5-5"/>',
-  pemasukan: '<circle cx="12" cy="12" r="9" ' + F_ + '/><path d="M12 7v9M8.5 12.5L12 16l3.5-3.5"/>',
-  pengeluaran: '<circle cx="12" cy="12" r="9" ' + F_ + '/><path d="M12 17V8M8.5 11.5L12 8l3.5 3.5"/>',
-  bayar: '<path d="M4 7h14a2 2 0 0 1 2 2v10H4z" ' + F_ + '/><path d="M4 7l11-3v3"/><circle cx="16" cy="14" r="1.2"/>',
-  trip: '<path d="M3 6h7l2 2h9v11H3z" ' + F_ + '/>',
-  bagihasil: '<circle cx="12" cy="12" r="9" ' + F_ + '/><path d="M12 3v9h9"/>',
-  kategori: '<rect x="4" y="4" width="7" height="7" rx="1.5" ' + F_ + '/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5" ' + F_ + '/>',
-  daftar: '<path d="M6 3h9l4 4v14H6z" ' + F_ + '/><path d="M9 12h7M9 16h5"/>',
-  kalk: '<rect x="5" y="3" width="14" height="18" rx="2" ' + F_ + '/><rect x="8" y="6" width="8" height="3"/><path d="M9 13h.01M12 13h.01M15 13h.01M9 17h.01M12 17h.01M15 17h.01"/>',
-  panduan: '<path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z" ' + F_ + '/><path d="M9 9h6M9 13h4"/>'
-};
-function renderMoreTK() {
-  const T = [['tamu', 'Tamu', 'Peserta, sesi, batal'], ['tiket', 'Tiket & Parkir', 'Biaya masuk & izin'], ['itinerary', 'Itinerary', 'Jadwal naik-turun'], ['perlengkapan', 'Perlengkapan', 'Kelompok & pribadi'], ['checklist', 'Checklist', 'Barang bawaan'], ['kru', 'Kru Panitia', 'Panitia & upah'], ['bayar', 'Pembayaran', 'Tagihan peserta'], ['pemasukan', 'Masuk', 'Catat pemasukan'], ['pengeluaran', 'Keluar', 'Catat pengeluaran'], ['bagihasil', 'Bagi Hasil', 'Untung/rugi & official'], ['trip', 'Trip & Arsip', 'Arsip & cadangan'], ['daftar', 'Pendaftaran', 'Link & pendaftar online'], ['kategori', 'Kategori', 'Kategori & berulang'], ['kalk', 'Kalkulator', 'Hitung, memori, riwayat'], ['panduan', 'Panduan', 'Demo & langkah rinci']];
-  $('main').innerHTML = `<div class="pgh"><h2>Menu</h2></div><div class="tiles">${T.map(t => `<button class="tile" onclick="show('${t[0]}')"><span class="tic"><svg viewBox="0 0 24 24">${ICO_TK[t[0]]}</svg></span>${t[1]}<small>${t[2]}</small></button>`).join('')}</div>`;
-}
-/* --- Sesi (kuota per sesi) --- */
-function tkSesiCard() {
-  const S = sesiList(), tanpa = DB.tamu.filter(t => (t['Status'] === 'Diterima' || t['Status'] === 'Daftar tunggu') && !t['Sesi']).length;
-  const row = (t, act) => `<div class="txw"><div class="tx"><div class="av">${otIni(t['Nama'])}</div><div class="tm"><b>${esc(t['Nama'])}</b><small>${esc(t['Ponsel'] || '-')}</small></div></div><div class="acts">${act}</div></div>`;
-  return `<div class="card"><h3>Sesi dan kuota</h3><small class="mut">Satu trip bisa punya beberapa sesi dalam sehari. Kuota dihitung per sesi, dan peserta yang melewati kuota sesinya masuk daftar tunggu sesi itu. Pilih sesi di kolom Sesi tiap peserta.</small>
-  ${S.length ? S.map(x => { const n = terimaN(undefined, x.nama), q = +x.kuota || 0, W = DB.tamu.filter(t => t['Status'] === 'Daftar tunggu' && t['Sesi'] === x.nama); return `<div style="border:1px solid var(--bd);border-radius:10px;padding:10px;margin-top:10px"><b>${esc(x.nama)}</b> ${q && n >= q ? '<span class="badge r">Penuh</span>' : ''}
-  <div style="margin:6px 0">Diterima <b>${n}</b>${q ? ' dari ' + q : ' (tanpa batas)'}</div>
-  <label>Kuota sesi (kosong = tanpa batas)</label><input id="tks_q${x.id}" type="number" inputmode="numeric" value="${q || ''}">
-  <button class="btn alt" onclick="tkSesiKuota(${x.id})">Simpan kuota</button><button class="del" style="margin-top:8px" onclick="tkSesiDel(${x.id})">Hapus sesi</button>
-  ${W.length ? `<div style="margin-top:8px"><b>Daftar tunggu (${W.length})</b></div>` + W.map(t => row(t, `<button class="edt" onclick="otTerima(${t.id})">Terima</button>`)).join('') : ''}</div>`; }).join('') : '<div style="margin-top:8px"><small class="mut">Belum ada sesi. Tambah sesi di bawah, misalnya Sesi 1 (04.00).</small></div>'}
-  ${tanpa ? `<div class="warn yellow" style="margin-top:10px">${tanpa} peserta belum dipilihkan sesi.</div>` : ''}
-  <label style="margin-top:12px">Nama sesi baru</label><input id="tks_n" placeholder="Contoh: Sesi 1 (04.00)"><label>Kuota sesi (kosong = tanpa batas)</label><input id="tks_nq" type="number" inputmode="numeric">
-  <button class="btn" onclick="tkSesiAdd()">+ Tambah sesi</button></div>`;
-}
-async function tkSesiAdd() {
-  const n = $('tks_n').value.trim(), q = Math.max(0, parseInt($('tks_nq').value, 10) || 0); if (!n) return toast('Isi nama sesi');
-  if (sesiList().some(x => x.nama.toLowerCase() === n.toLowerCase())) return toast('Nama sesi sudah ada');
-  DB.set.sesi = sesiList().concat({ id: DB.seq++, nama: n, kuota: q }); await save(); show('tamu'); toast('Sesi ditambahkan');
-}
-async function tkSesiKuota(id) { const x = sesiList().find(y => y.id === id); if (!x) return; x.kuota = Math.max(0, parseInt($('tks_q' + id).value, 10) || 0); await save(); show('tamu'); toast('Kuota disimpan'); }
-async function tkSesiDel(id) {
-  const x = sesiList().find(y => y.id === id); if (!x) return; const n = DB.tamu.filter(t => t['Sesi'] === x.nama).length;
-  if (!confirm('Hapus ' + x.nama + '?' + (n ? ' ' + n + ' peserta di sesi ini tetap tercatat, tetapi sesinya perlu dipilih ulang.' : ''))) return;
-  DB.tamu.forEach(t => { if (t['Sesi'] === x.nama) t['Sesi'] = ''; }); DB.set.sesi = sesiList().filter(y => y.id !== id); await save(); show('tamu'); toast('Sesi dihapus');
-}
-/* --- Sewa kendaraan/ojek (Simulasi) --- */
-function tkSimKend() { SIM.items.push({ n: 'Sewa ojek', t: 'kend', std: 0, sim: 0, kap: 2, stok: 0, kat: 'Transport' }); drawItems(); drawSim(); toast('Komponen kendaraan ditambahkan'); }
-/* --- Tiket & Parkir --- */
-const tkOrang = () => terimaN() + (DB.kru || []).length;
-function tkUnit(r) { const s = r['Satuan'], j = +r['Jumlah'] || 0; if (s === 'Per rombongan') return 1; if (s === 'Per kendaraan') return j || 1; return j || tkOrang(); }
-const tkTotal = () => sum(rowsOf('tiket'), r => r['Total']);
-const tkKat = k => /^Parkir/.test(k) ? 'Parkir' : k === 'Lainnya' ? 'Lainnya' : 'Simaksi';
-function tkEnsureKat() { const a = katList('pengeluaran'); if (a.indexOf('Parkir') < 0) { DB.kat.pengeluaran = a.slice().concat('Parkir'); applyKat(); } }
-const TK_IZIN = [['simaksi', 'Simaksi / izin masuk kawasan sudah diurus'], ['kuota', 'Kuota atau tiket jalur untuk tanggal naik sudah dipesan'], ['registrasi', 'Registrasi di pos atau basecamp sudah disiapkan'], ['nama', 'Daftar nama peserta sudah dikirim ke pengelola'], ['asuransi', 'Asuransi peserta sudah dicek']];
-function tkTiketCard() {
-  const Z = DB.set.izin || {}, ok = TK_IZIN.filter(x => Z[x[0]]).length;
-  return `<div class="card"><h3>Ringkasan biaya masuk</h3><div id="tksum"></div><button class="btn" onclick="tkPush()">➡️ Masukkan ke Pengeluaran</button><div id="tkmsg" class="msg"></div></div>
-  <div class="card"><h3>Izin dan registrasi ${ok === TK_IZIN.length ? '<span class="badge g">Siap</span>' : '<span class="badge y">' + ok + ' dari ' + TK_IZIN.length + '</span>'}</h3><small class="mut">Aturan tiap gunung berbeda, jadi tanyakan ke pengelola atau basecamp. Rombongan tanpa Simaksi atau registrasi resmi pernah diminta turun di jalur dan bahkan dilarang mendaki lagi.</small>
-  ${TK_IZIN.map(x => `<label style="display:flex;align-items:center;gap:10px;margin:10px 0"><input type="checkbox" style="width:auto;margin:0" ${Z[x[0]] ? 'checked' : ''} onchange="tkIzin('${x[0]}',this.checked)"><span>${x[1]}</span></label>`).join('')}
-  <label>Kuota jalur per hari (catatan, boleh kosong)</label><input id="tk_kj" value="${esc(Z.kj || '')}" onchange="tkIzinTxt(this.value)" placeholder="Contoh: 300 orang per hari"></div>`;
-}
-async function tkIzin(k, v) { DB.set.izin = Object.assign({}, DB.set.izin || {}, { [k]: !!v }); await save(); show('tiket'); }
-async function tkIzinTxt(v) { DB.set.izin = Object.assign({}, DB.set.izin || {}, { kj: String(v || '').trim() }); await save(); toast('Disimpan'); }
-function tkSum() {
-  const o = $('tksum'); if (!o) return; const t = tkTotal(), n = terimaN();
-  o.innerHTML = `<div>${tkOrang()} orang dihitung (peserta Diterima ${n} + kru ${DB.kru.length})</div><b>Total tiket dan parkir: ${rp(t)}</b>${n > 0 && t > 0 ? `<div><small class="mut">Sekitar ${rp(Math.ceil(t / n))} per peserta Diterima</small></div>` : ''}<small class="mut">Baris dengan komponen sama dijumlahkan. Kolom Jumlah kosong: Per orang memakai jumlah orang di atas, Per kendaraan dihitung 1.</small>`;
-}
-function tkGroup() {
-  const G = {}; rowsOf('tiket').forEach(r => { const k = r['Komponen'] || 'Lainnya'; (G[k] = G[k] || []).push(r); });
-  return Object.keys(G).map(k => ({ k, rows: G[k], total: sum(G[k], r => r['Total']) })).filter(g => g.total > 0);
-}
-async function tkPush() {
-  if (bukuTutup()) return; const G = tkGroup(); if (!G.length) return setMsg('tkmsg', 'Belum ada tiket atau parkir bertarif.', 0);
-  if (!confirm('Masukkan ' + G.length + ' baris ke Pengeluaran? Baris dengan nama yang sama diperbarui.')) return;
-  tkEnsureKat(); let baru = 0, ubah = 0;
-  G.forEach(g => {
-    const label = 'Tiket & parkir: ' + g.k, ex = DB.pengeluaran.find(r => r['Detail pengeluaran'] === label);
-    if (ex) { const b0 = JSON.parse(JSON.stringify(ex)); ex['Anggaran'] = g.total; ex['Biaya'] = g.total; ex['Quantity'] = 1; const d = logDiff('pengeluaran', b0, ex); if (d.length) logAdd('ubah', 'pengeluaran', ex, { s: 'tiket', d }); ubah++; }
-    else { const nr = { id: DB.seq++, 'Detail pengeluaran': label, 'Kategori': tkKat(g.k), 'Anggaran': g.total, 'Biaya': g.total, 'Quantity': 1, 'Tanggal transaksi': today(), 'Dibayar oleh': '', 'Catatan': 'Otomatis dari tab Tiket & Parkir' }; DB.pengeluaran.push(nr); logAdd('tambah', 'pengeluaran', nr, { s: 'tiket' }); baru++; }
-  });
-  await save(); setMsg('tkmsg', baru + ' baris ditambahkan, ' + ubah + ' diperbarui. Total ' + rp(tkTotal()), 1);
-}
-function tkSimTiket() {
-  const G = tkGroup(); if (!G.length) return toast('Belum ada tiket atau parkir bertarif'); tkEnsureKat(); const p = Math.max(1, +SIM.peserta || 1);
-  G.forEach(g => {
-    const n = 'Tiket & parkir: ' + g.k, orang = g.rows.every(r => (r['Satuan'] || 'Per orang') === 'Per orang'), it = SIM.items.find(x => x.n === n);
-    let o;
-    if (orang) { const tarif = sum(g.rows, r => +r['Tarif'] || 0); o = { n, t: 'orang', std: tarif, sim: tarif, kap: 4, stok: 0, kat: tkKat(g.k) }; }
-    else o = { n, t: 'grup', std: Math.ceil(g.total / p), sim: g.total, kap: 4, stok: 0, kat: tkKat(g.k) };
-    if (it) Object.assign(it, o); else SIM.items.push(o);
-  });
-  drawItems(); drawSim(); toast('Tiket dan parkir masuk ke komponen biaya');
-}
-/* --- Jadwal naik-turun --- */
-const TKJ = [['kumpul', 'Kumpul di meeting point'], ['naik', 'Mulai naik'], ['puncak', 'Target sampai puncak'], ['turun', 'Batas mulai turun'], ['bubar', 'Perkiraan tiba kembali']];
-function tkJadwalCard() {
-  const J = DB.set.tk || {};
-  return `<div class="card"><h3>Jadwal naik-turun</h3><small class="mut">Tektok = naik dan turun di hari yang sama, jadi batas jam turun penting. Isi jam, lalu buat itinerary otomatis.</small>
-  <label>Tanggal naik</label><input id="tk_tgl" type="date" value="${esc(J.tgl || '')}">
-  ${TKJ.map(x => `<label>${x[1]}</label><input id="tk_${x[0]}" type="time" value="${esc(J[x[0]] || '')}">`).join('')}
-  <label>Basecamp / meeting point</label><input id="tk_lok" value="${esc(J.lok || '')}">
-  <button class="btn" onclick="tkBuatItin()">🗓️ Simpan dan buat itinerary</button><button class="btn" style="background:#25d366" onclick="tkJadwalWA()">💬 Bagikan jadwal ke WhatsApp</button><div id="tkjmsg" class="msg"></div></div>`;
-}
-function tkBacaJ() { const J = { tgl: $('tk_tgl').value, lok: $('tk_lok').value.trim() }; TKJ.forEach(x => { J[x[0]] = $('tk_' + x[0]).value; }); return J; }
-function tkCekJ(J) {
-  if (!J.tgl) return 'Isi tanggal naik dulu.'; for (const x of TKJ) if (!J[x[0]]) return 'Isi jam: ' + x[1] + '.';
-  for (let i = 1; i < TKJ.length; i++) if (J[TKJ[i][0]] < J[TKJ[i - 1][0]]) return TKJ[i][1] + ' tidak boleh lebih awal dari ' + TKJ[i - 1][1].toLowerCase() + '.';
-  return '';
-}
-async function tkBuatItin() {
-  const J = tkBacaJ(), e = tkCekJ(J); if (e) return setMsg('tkjmsg', e, 0);
-  const T = J.tgl + 'T', old = DB.itinerary.filter(r => r['Catatan'] === 'Jadwal Tektok');
-  if (old.length && !confirm('Itinerary dari jadwal sebelumnya (' + old.length + ' baris) akan diganti. Lanjut?')) return;
-  DB.set.tk = J; DB.itinerary = DB.itinerary.filter(r => r['Catatan'] !== 'Jadwal Tektok');
-  const mk = (a, j, m, b, cat) => DB.itinerary.push({ id: DB.seq++, 'Aktivitas': a, 'Jenis aktivitas': j, 'Waktu mulai': T + m, 'Waktu berakhir': b ? T + b : '', 'Lokasi': J.lok, 'Catatan': 'Jadwal Tektok' });
-  mk('Kumpul dan briefing', 'Kumpul & briefing', J.kumpul, J.naik); mk('Mulai pendakian naik', 'Pendakian naik', J.naik, J.puncak);
-  mk('Puncak dan istirahat', 'Puncak & istirahat', J.puncak, J.turun); mk('Turun ke basecamp (batas mulai turun ' + J.turun + ')', 'Turun ke basecamp', J.turun, J.bubar); mk('Bubar', 'Bubar', J.bubar, '');
-  await save(); show('itinerary'); toast('Itinerary dibuat dari jadwal');
-}
-function tkJadwalWA() {
-  const J = tkBacaJ(), e = tkCekJ(J); if (e) return setMsg('tkjmsg', e, 0); DB.set.tk = J; save();
-  openWA('*JADWAL TEKTOK*' + (DB.set.destinasi ? ' - ' + DB.set.destinasi : '') + '\nTanggal: ' + fmtDate(J.tgl) + (J.lok ? '\nKumpul di: ' + J.lok : '') + '\n\n' + TKJ.map(x => '- ' + x[1] + ': ' + J[x[0]]).join('\n') + '\n\n*Semua peserta harus sudah mulai turun paling lambat jam ' + J.turun + '.*' + otIncTeks());
-}
-/* --- Template perlengkapan tektok --- */
-const tkPerlCard = () => `<div class="card"><h3>Template tektok</h3><small class="mut">Daftar umum untuk pendakian satu hari. Sesuaikan dengan gunung dan cuacanya.</small><button class="btn alt" onclick="tkPerlTemplate()">+ Isi perlengkapan tektok</button></div>`;
-async function tkPerlTemplate() {
-  const K = ['P3K kelompok', 'Radio / HT', 'Tali atau webbing', 'Air minum cadangan', 'Kantong sampah'], P = ['Air minum minimal 1,5 liter', 'Jas hujan atau ponco', 'Headlamp dan baterai cadangan', 'Sepatu atau sandal gunung', 'Snack dan makan siang', 'Obat pribadi'];
-  const ada = new Set(DB.perlengkapan.map(r => String(r['Perlengkapan']).trim().toLowerCase())); let n = 0;
-  K.forEach(x => { if (!ada.has(x.toLowerCase())) { DB.perlengkapan.push({ id: DB.seq++, 'Perlengkapan': x, 'Jenis': 'Kelompok', 'Kebutuhan': 1, 'Kesediaan': 1, 'Harga/Unit': 0 }); n++; } });
-  P.forEach(x => { if (!ada.has(x.toLowerCase())) { DB.perlengkapan.push({ id: DB.seq++, 'Perlengkapan': x, 'Jenis': 'Pribadi', 'Kebutuhan': 1, 'Kesediaan': 0, 'Harga/Unit': 0 }); n++; } });
-  await save(); show('perlengkapan'); toast(n ? n + ' barang ditambahkan' : 'Semua barang sudah ada');
-}
-EN_PAT.push(
-  [/^Perlu menyewa (\d+) kendaraan\.$/, m => 'You need to rent ' + m[1] + ' vehicle' + (m[1] === '1' ? '' : 's') + '.'],
-  [/^(\d+) peserta belum dipilihkan sesi\.$/, m => m[1] + ' participants have no session yet.'],
-  [/^(\d+) orang dihitung \(peserta Diterima (\d+) \+ kru (\d+)\)$/, m => m[1] + ' people counted (Accepted participants ' + m[2] + ' + crew ' + m[3] + ')'],
-  [/^Total tiket dan parkir: (.+)$/, m => 'Total tickets and parking: ' + m[1]],
-  [/^Sekitar (.+) per peserta Diterima$/, m => 'About ' + m[1] + ' per accepted participant'],
-  [/^(\d+) dari (\d+)$/, m => m[1] + ' of ' + m[2]],
-  [/^(.+) per (orang|kendaraan|rombongan)$/, m => m[1] + ' per ' + ({ orang: 'person', kendaraan: 'vehicle', rombongan: 'group' })[m[2]]],
-  [/^(\d+) unit$/, m => m[1] + (m[1] === '1' ? ' unit' : ' units')]
-);
-Object.assign(EN, {
-  'Peserta, sesi, batal': 'Participants, sessions, cancellations', 'Sesi': 'Session', 'Sesi dan kuota': 'Sessions and quota', 'Kuota sesi (kosong = tanpa batas)': 'Session quota (empty = no limit)', 'Nama sesi baru': 'New session name', '+ Tambah sesi': '+ Add session', 'Hapus sesi': 'Delete session', 'Simpan kuota': 'Save quota',
-  'Satu trip bisa punya beberapa sesi dalam sehari. Kuota dihitung per sesi, dan peserta yang melewati kuota sesinya masuk daftar tunggu sesi itu. Pilih sesi di kolom Sesi tiap peserta.': 'One trip can have several sessions per day. Quota is counted per session, and participants over their session quota go to that session\'s waiting list. Choose the session in each participant\'s Session field.',
-  'Belum ada sesi. Tambah sesi di bawah, misalnya Sesi 1 (04.00).': 'No sessions yet. Add one below, for example Session 1 (04.00).',
-  '+ Sewa kendaraan / ojek': '+ Rent vehicle / motorbike taxi', 'Kendaraan / ojek (jumlah dari kapasitas)': 'Vehicle / motorbike taxi (count from capacity)', 'Biaya sewa per kendaraan (Rp)': 'Rental cost per vehicle (Rp)', 'Kapasitas per kendaraan (orang)': 'Capacity per vehicle (people)', 'Kendaraan milik sendiri (stok)': 'Own vehicles (stock)',
-  'Jumlah kendaraan = orang berangkat dibagi kapasitas, dibulatkan ke atas.': 'Number of vehicles = people departing divided by capacity, rounded up.', 'Tektok: kru maksimal 3 orang.': 'Tektok: crew of up to 3 people.',
-  'Tiket & Parkir': 'Tickets & Parking', 'Baris dengan komponen sama dijumlahkan. Kolom Jumlah kosong: Per orang memakai jumlah orang di atas, Per kendaraan dihitung 1.': 'Rows with the same component are added together. If Quantity is empty: Per person uses the people count above, Per vehicle counts as 1.', 'Biaya masuk & izin': 'Entry fees & permits', 'Jadwal naik-turun': 'Hike schedule', 'Tiket & izin': 'Tickets & permits', 'Peserta, kuota, batal': 'Participants, quota, cancellations', 'Tagihan peserta': 'Participant bills',
-  'Komponen': 'Component', 'Tarif': 'Rate', 'Satuan': 'Unit type', 'Jumlah': 'Quantity', 'Per orang': 'Per person', 'Per kendaraan': 'Per vehicle', 'Per rombongan': 'Per group', 'Tiket masuk': 'Entry ticket', 'Asuransi': 'Insurance', 'Registrasi / retribusi': 'Registration / levy', 'Parkir motor': 'Motorbike parking', 'Parkir mobil': 'Car parking', 'Parkir bus': 'Bus parking',
-  'Kumpul & briefing': 'Meet & briefing', 'Pendakian naik': 'Ascent', 'Puncak & istirahat': 'Summit & rest', 'Turun ke basecamp': 'Descent to basecamp', 'Bubar': 'Disband',
-  'Ringkasan biaya masuk': 'Entry cost summary', '➡️ Masukkan ke Pengeluaran': '➡️ Add to Expenses', 'Izin dan registrasi': 'Permits and registration', 'Siap': 'Ready',
-  'Aturan tiap gunung berbeda, jadi tanyakan ke pengelola atau basecamp. Rombongan tanpa Simaksi atau registrasi resmi pernah diminta turun di jalur dan bahkan dilarang mendaki lagi.': 'Rules differ for each mountain, so ask the park manager or basecamp. Groups without a permit or official registration have been sent back from the trail and even banned from climbing again.',
-  'Simaksi / izin masuk kawasan sudah diurus': 'Entry permit (Simaksi) arranged', 'Kuota atau tiket jalur untuk tanggal naik sudah dipesan': 'Trail quota or ticket for the climb date booked', 'Registrasi di pos atau basecamp sudah disiapkan': 'Registration at the post or basecamp prepared', 'Daftar nama peserta sudah dikirim ke pengelola': 'Participant name list sent to the manager', 'Asuransi peserta sudah dicek': 'Participant insurance checked',
-  'Kuota jalur per hari (catatan, boleh kosong)': 'Trail quota per day (note, optional)',
-  'Tektok = naik dan turun di hari yang sama, jadi batas jam turun penting. Isi jam, lalu buat itinerary otomatis.': 'Tektok = up and down on the same day, so the descent cut-off matters. Enter the times, then create the itinerary automatically.',
-  'Tanggal naik': 'Climb date', 'Kumpul di meeting point': 'Meet at the meeting point', 'Mulai naik': 'Start climbing', 'Target sampai puncak': 'Target to reach the summit', 'Batas mulai turun': 'Latest time to start descending', 'Perkiraan tiba kembali': 'Estimated return time', 'Basecamp / meeting point': 'Basecamp / meeting point',
-  '🗓️ Simpan dan buat itinerary': '🗓️ Save and create itinerary', '💬 Bagikan jadwal ke WhatsApp': '💬 Share schedule to WhatsApp',
-  'Template tektok': 'Tektok template', 'Daftar umum untuk pendakian satu hari. Sesuaikan dengan gunung dan cuacanya.': 'A general list for a one-day hike. Adjust it to the mountain and the weather.', '+ Isi perlengkapan tektok': '+ Fill tektok gear',
-  '+ Tiket dan parkir dari tab Tiket & Parkir': '+ Tickets and parking from the Tickets & Parking tab'
-});
-
 </script>
 </body>
 </html>
