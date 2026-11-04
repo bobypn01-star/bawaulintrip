@@ -1693,12 +1693,16 @@ async function arsipHapus(id) { const i = DB.arsip.findIndex(x => x.id === id); 
 function impor(file) {
   if (!file) return; if (tolakBersama()) return;
   const r = new FileReader();
+  r.onerror = () => cadPesan('File tidak bisa dibaca.', 0);
   r.onload = async () => {
     try {
-      const d = JSON.parse(r.result); if (d && d.format === 'bawaulin-rekap') return setMsg('bmsg', 'Ini file rekap trip, bukan cadangan. Pakai Impor rekap trip di halaman Rekap.', 0); if (!d || !d.set || !d.pengeluaran) throw 0;
-      if (!confirm('Data saat ini akan DITIMPA oleh isi cadangan. Lanjut?')) return;
-      DB = Object.assign(blank(), d); if (!DB.slot || typeof DB.slot !== 'object') DB.slot = {}; if (DB.pin) delete DB.pin.bio; applyKat(); await save(); chipMode(); renderTrip(); setMsg('bmsg', 'Cadangan berhasil dipulihkan.', 1);
-    } catch (e) { setMsg('bmsg', 'File cadangan tidak valid.', 0); }
+      let t = String(r.result || '').replace(/^\uFEFF/, '').trim();
+      const d = JSON.parse(t); if (d && d.format === 'bawaulin-rekap') return cadPesan('Ini file rekap trip, bukan cadangan. Pakai Impor rekap trip di halaman Rekap.', 0);
+      if (!d || typeof d !== 'object' || !d.set || !d.pengeluaran) throw 0;
+      const n = k => Array.isArray(d[k]) ? d[k].length : 0;
+      if (!confirm('Data saat ini akan DITIMPA oleh isi cadangan (' + n('pemasukan') + ' pemasukan, ' + n('pengeluaran') + ' pengeluaran, ' + n('tamu') + ' peserta, ' + n('arsip') + ' arsip). Lanjut?')) return;
+      DB = Object.assign(blank(), d); if (!DB.slot || typeof DB.slot !== 'object') DB.slot = {}; if (DB.pin) delete DB.pin.bio; applyKat(); await save(); chipMode(); show(cur === 'akun' ? 'trip' : cur); cadPesan('Cadangan berhasil dipulihkan.', 1);
+    } catch (e) { cadPesan('File cadangan tidak valid.', 0); }
   };
   r.readAsText(file);
 }
@@ -2242,9 +2246,9 @@ function renderTrip() {
     <small class="mut">"Buka" memuat seluruh isi arsip ke aplikasi. Jika trip yang sedang berjalan berisi data, ia disimpan otomatis sebagai backup di daftar arsip.</small></div>
   ${trashCard()}<div class="card"><h3>🧹 Reset Total</h3><div class="warn red">Menghapus SEMUA data di aplikasi ini (data aktif, arsip, simulasi tersimpan, bukti nota). Tidak bisa dibatalkan. Unduh cadangan dulu jika perlu.</div><label>Ketik HAPUS untuk konfirmasi</label><input id="rst" placeholder="HAPUS"><button class="btn red" onclick="resetTotal()">Kosongkan semua data</button><div id="rmsg" class="msg"></div></div>
   <div class="card"><h3>💾 Cadangan Data</h3><small class="mut">Data tersimpan di HP ini. Unduh cadangan berkala (atau sebelum uninstall / ganti HP), simpan ke Google Drive atau WhatsApp.</small>
-    <small class="mut">${infoBackup()}</small><button class="btn" onclick="bagikanCadangan()">📤 Bagikan cadangan (Drive / WhatsApp)</button><button class="btn alt" onclick="ekspor()">⬇️ Unduh cadangan (JSON)</button>
+    <small class="mut">${infoBackup()}</small><button class="btn" onclick="bagikanCadangan()">📤 Bagikan cadangan (Drive / WhatsApp)</button><button class="btn alt" onclick="ekspor()">⬇️ Simpan cadangan ke HP (file)</button>
     <button class="btn alt" onclick="$('imp').click()">⬆️ Pulihkan dari cadangan</button>
-    <input type="file" id="imp" accept=".json,application/json" style="display:none" onchange="impor(this.files[0])"><div id="bmsg" class="msg"></div></div>`;
+    <input type="file" id="imp" accept=".json,.txt,application/json,text/plain" style="display:none" onchange="impor(this.files[0])"><div id="bmsg" class="msg"></div></div>`;
 }
 async function arsipkan(baru) {
   if (tolakBersama()) return;
@@ -2843,13 +2847,38 @@ function pengingatCard() {
   return `<div class="card"><h3>🔔 Pengingat</h3>${L.length ? L.map(x => `<div class="warn ${x[0]}" style="display:flex;justify-content:space-between;gap:8px;align-items:center"><span>${esc(x[1])}</span><button class="edt" onclick="show('${x[2]}')">Buka</button></div>`).join('') : '<div class="warn green">✅ Tidak ada yang perlu ditindaklanjuti.</div>'}${hasData() ? '<button class="btn alt" onclick="bagikanCadangan()">📤 Cadangkan sekarang</button>' : ''}</div>`;
 }
 const infoBackup = () => DB.lastBackup ? 'Cadangan terakhir: ' + new Date(DB.lastBackup).toLocaleString(LOCD()) + ' (' + hariLalu(DB.lastBackup) + ' hari lalu)' : 'Belum pernah dicadangkan.';
-async function ekspor() { download('cadangan-budgeting-' + today() + '.json', JSON.stringify(dbPribadi())); DB.lastBackup = Date.now(); await save(); renderTrip(); setMsg('bmsg', 'Cadangan diunduh.', 1); }
+/* v6.0.4: cadangan. File cadangan = teks JSON dari dbPribadi(). Bagikan berlapis: lembar bagikan (.json) -> lembar bagikan (.txt) -> unduh + petunjuk. */
+function cadTanda() { return 'cadangan-bawaulin-' + today(); }
+function cadPesan(t, ok) { if ($('bmsg')) setMsg('bmsg', t, ok); else toast(t); }
+async function cadCatat() { DB.lastBackup = Date.now(); await save(); if (cur === 'trip') renderTrip(); else if (cur === 'dashboard') renderDash(); else if (cur === 'akun') renderAkun(); }
+async function ekspor() {
+  download(cadTanda() + '.json', JSON.stringify(dbPribadi())); await cadCatat();
+  cadPesan('Cadangan disimpan ke folder Unduhan di HP.', 1);
+}
+function cadPetunjuk(namaFile, galat) {
+  sheetOpen(`<h3>Cadangan sudah disimpan di HP</h3><div class="zli">File <b>${esc(namaFile)}</b> ada di folder <b>Unduhan (Download)</b>. Lembar bagikan tidak bisa dibuka di HP ini${galat ? ' (' + esc(galat) + ')' : ''}, jadi kirim file itu sendiri:</div>
+  <div class="zli"><b>Google Drive:</b> buka aplikasi Drive, ketuk ＋, pilih Upload, lalu pilih file itu.</div>
+  <div class="zli"><b>WhatsApp:</b> buka chat (misal chat ke diri sendiri), ketuk klip, pilih Dokumen, lalu pilih file itu.</div>
+  <div class="zli">Untuk memulihkan: Akun › Pulihkan dari cadangan, lalu pilih file itu.</div>
+  <button class="btn" onclick="$('fsheet').remove()">Mengerti</button>`);
+}
 async function bagikanCadangan() {
-  const txt = JSON.stringify(dbPribadi()), f = new File([txt], 'cadangan-bawaulin-' + today() + '.json', { type: 'application/json' });
-  try {
-    if (navigator.canShare && navigator.canShare({ files: [f] })) await navigator.share({ files: [f], title: 'Cadangan Bawaulin' }); else { download(f.name, txt); toast('File cadangan diunduh, simpan ke Drive'); }
-    DB.lastBackup = Date.now(); await save(); if (cur === 'trip') renderTrip(); else if (cur === 'dashboard') renderDash(); else if (cur === 'akun') renderAkun();
-  } catch (e) { if (!e || e.name !== 'AbortError') toast('Gagal membagikan, coba Unduh cadangan'); }
+  const txt = JSON.stringify(dbPribadi()), nama = cadTanda();
+  const coba = [new File([txt], nama + '.json', { type: 'application/json' }), new File([txt], nama + '.txt', { type: 'text/plain' })];
+  let galat = '';
+  for (const f of coba) {
+    try {
+      if (!(navigator.share && navigator.canShare && navigator.canShare({ files: [f] }))) continue;
+      await navigator.share({ files: [f], title: 'Cadangan Bawaulin' });
+      await cadCatat(); toast('Cadangan dibagikan'); return;
+    } catch (e) { if (e && e.name === 'AbortError') return; galat = (e && e.name) || 'galat'; }
+  }
+  download(nama + '.json', txt); await cadCatat(); cadPetunjuk(nama + '.json', galat);
+}
+function pilihCadangan() {
+  const i = document.createElement('input'); i.type = 'file'; i.accept = '.json,.txt,application/json,text/plain'; i.style.display = 'none';
+  i.onchange = () => { const f = i.files && i.files[0]; i.remove(); if (f) impor(f); };
+  document.body.appendChild(i); i.click();
 }
 /* Tempat sampah */
 function buang(key, row) {
@@ -3493,6 +3522,7 @@ async function cekLisensiSekarang() {
 /* ===== v18: Akun, Pengaturan, warna aplikasi, nomor kwitansi, identitas pembuat ===== */
 /* ===== v1.8.0 Bahasa Indonesia / English: kamus + penerjemah teks (Indonesia = sumber, teks tak dikenal tetap Indonesia) ===== */
 const EN = {
+'Simpan cadangan ke HP (file)':'Save backup to phone (file)','⬇️ Simpan cadangan ke HP (file)':'⬇️ Save backup to phone (file)','Pulihkan dari cadangan':'Restore from backup','Arsip dan trip baru':'Archive and new trip','Cadangan disimpan ke folder Unduhan di HP.':'Backup saved to the Downloads folder.','Cadangan dibagikan':'Backup shared','File tidak bisa dibaca.':'The file could not be read.','Cadangan sudah disimpan di HP':'Backup saved on your phone','Mengerti':'Got it',
 'Tidak tersedia saat membuka trip bersama':'Not available while viewing a shared trip','Rekap hanya untuk trip Anda sendiri. Keluar dari trip bersama dulu.':'Summary is only for your own trips. Leave the shared trip first.','Keluar dari trip bersama':'Leave shared trip','Persiapan sinkron antar-HP':'Device sync preparation','Pembaruan ini memberi nomor internal pada setiap catatan sebagai persiapan fitur sinkron. Isi data Anda tidak berubah dan tampilan sama. Disarankan mencadangkan data dulu.':'This update gives every record an internal number to prepare for sync. Your data is unchanged and the screens look the same. We recommend backing up first.','📤 Cadangkan sekarang':'📤 Back up now','Nanti':'Later',
 'Budgeting Pendakian':'Hiking Budget','Memuat...':'Loading...','Beranda':'Home','Simulasi':'Simulation','Menu':'Menu','Rekap':'Summary','Akun':'Account',
 'Tamu':'Guests','Daftar peserta':'Participant list','Itinerary':'Itinerary','Rundown perjalanan':'Trip rundown','Perlengkapan':'Gear','Kebutuhan & sewa':'Needs & rentals','Checklist':'Checklist','Barang bawaan':'Items to bring',
@@ -4129,7 +4159,7 @@ window.confirm = s => _cf(tr(s)); window.alert = s => _al(tr(s));
 document.documentElement.lang = LANG;
 if (LANG === 'en') { if (document.body) i18nRun(); }
 
-const APP_V = 'v6.0.3';
+const APP_V = 'v6.0.4';
 const CR = Object.freeze({ nama: 'bawaulin.trip', tag: 'Lieur gawe, Bawa ulin', ig: 'https://www.instagram.com/bawaulin.trip?srtk=d29rcmh1YXVrajVz', igh: '@bawaulin.trip', wa: 'https://wa.me/6289618805100', wah: '+62 896-1880-5100' });
 const CR_H = 'bdaae993647f576cf92a364af7443befdce2ceefffe6c926d596f7e52a001b37', LOGO_H = '3763dd402cc104c4f9cebcce4a37a936cf2e0606bb1dd2d261e030f0a6ccc9bb';
 let CR_OK = null, LOCKED = false, hiddenAt = 0, PRIV_OBS = null;
@@ -4301,7 +4331,9 @@ function renderAkun() {
   <div class="zh">DATA &amp; CADANGAN</div><div class="card zcard">
     <div class="zr"><span class="zk">Cadangan terakhir</span><div class="zrt"><span class="zv ${DB.lastBackup && hariLalu(DB.lastBackup) < 7 ? 'ok' : 'zph'}">${DB.lastBackup ? new Date(DB.lastBackup).toLocaleDateString(LOCD()) + ' (' + hariLalu(DB.lastBackup) + ' hari lalu)' : 'Belum pernah'}</span></div></div>
     <div class="zr" onclick="bagikanCadangan()"><span class="zk">Cadangkan sekarang (Drive / WhatsApp)</span><div class="zrt"><span class="zch">›</span></div></div>
-    <div class="zr" onclick="show('trip')"><span class="zk">Pulihkan, arsip, dan trip baru</span><div class="zrt"><span class="zch">›</span></div></div>
+    <div class="zr" onclick="ekspor()"><span class="zk">Simpan cadangan ke HP (file)</span><div class="zrt"><span class="zch">›</span></div></div>
+    <div class="zr" onclick="pilihCadangan()"><span class="zk">Pulihkan dari cadangan</span><div class="zrt"><span class="zch">›</span></div></div>
+    <div class="zr" onclick="show('trip')"><span class="zk">Arsip dan trip baru</span><div class="zrt"><span class="zch">›</span></div></div>
     <div class="zhint">Data hanya ada di HP ini. Cadangkan sebelum ganti HP atau memasang ulang aplikasi.</div></div>
   <div class="zh">NAMA PANGGILAN</div><div class="card zcard"><div class="zr" onclick="nmBuka()"><span class="zk">Nama panggilan (opsional)</span><div class="zrt"><span class="zv">${esc(nmGet() || 'Belum diisi')}</span><span class="zch">›</span></div></div><div class="zhint">Membantu penjual mengenali kamu saat minta bantuan. Boleh dikosongkan.</div></div>
   <div class="zh">AJAK TEMAN</div><div class="card zcard"><div class="zr" onclick="bagikanApp()"><span class="zk">Bagikan aplikasi ke teman</span><div class="zrt"><span class="zch">›</span></div></div><div class="zhint">Tautan berisi kode perangkatmu. Server hanya mencatat jumlah ajakan, bukan data trip.</div></div>
