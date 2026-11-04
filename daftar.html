@@ -11,15 +11,15 @@ button{margin-top:18px;width:100%;padding:14px;border:0;border-radius:14px;backg
 <main><div class="card"><h2 id="tt">Formulir Pendaftaran</h2><div id="sub" style="color:#b8ada0;font-size:14px"></div><div id="f">
 <label>Nama lengkap *</label><input id="nama" autocomplete="name" maxlength="80"><label>Nomor WhatsApp *</label><input id="hp" type="tel" inputmode="tel" placeholder="08xxxxxxxxxx">
 <label>Meeting point / kota asal</label><input id="mp" maxlength="120">
-<label>Alergi makanan *</label><select id="al"><option value="">Pilih</option><option>Ya</option><option>Tidak</option></select><div style="color:#b8ada0;font-size:12px;margin-top:5px">Untuk menyiapkan menu. Jika Ya, tulis jenis alerginya di Catatan.</div>
-<label>Catatan</label><textarea id="ct" rows="2" maxlength="400" placeholder="Opsional (mis. jenis alergi)"></textarea>
+<label>Pantangan makanan (alergi atau tidak suka) *</label><select id="al"><option value="">Pilih</option><option>Ya</option><option>Tidak</option></select><div style="color:#b8ada0;font-size:12px;margin-top:5px">Untuk menyiapkan menu. Jika Ya, tulis makanan apa saja yang dihindari di Catatan.</div>
+<label>Catatan</label><textarea id="ct" rows="2" maxlength="400" placeholder="Opsional (mis. alergi kacang, tidak makan seafood)"></textarea>
 <button id="b" onclick="kirim()">Kirim Pendaftaran</button><div style="color:#b8ada0;font-size:12px;margin-top:10px">Datamu dikirim ke panitia lewat server bawaulin.trip dan dihapus dari server setelah panitia mengambilnya.</div></div><div id="m" class="m"></div></div></main>
 <script>const q=new URLSearchParams(location.search),TID=q.get('t')||'',N=q.get('n')||'',U='https://eqrubezljxejfnjgqigb.supabase.co/functions/v1/hyper-action';const $=i=>document.getElementById(i);
 if(N){$('sub').textContent='Trip: '+N}if(!/^[a-z0-9]{12}$/.test(TID)){$('f').style.display='none';msg('Link pendaftaran tidak valid atau sudah lama. Minta link baru ke panitia.',0)}
 function msg(t,ok){const m=$('m');m.style.display='block';m.className='m '+(ok?'ok':'er');m.textContent=t}
 const ERR={tutup:'Pendaftaran untuk trip ini sudah ditutup. Hubungi panitia.',sibuk:'Server sedang sibuk atau terlalu banyak kiriman. Coba lagi nanti.',penuh:'Pendaftaran sudah penuh. Hubungi panitia.',format:'Periksa nama dan nomor WhatsApp. Nomor hanya boleh berisi angka, +, -, spasi, dan tanda kurung.'};
 async function kirim(){const nama=$('nama').value.trim(),hp=$('hp').value.trim();if(!nama||hp.replace(/\D/g,'').length<9)return msg('Isi nama dan nomor WhatsApp dengan benar.',0);
-if(!$('al').value)return msg('Pilih alergi makanan: Ya atau Tidak.',0);
+if(!$('al').value)return msg('Pilih pantangan makanan: Ya atau Tidak.',0);
 $('b').disabled=true;$('b').textContent='Mengirim...';
 try{const r=await fetch(U,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({a:'dft_kirim',tid:TID,nama,ponsel:hp,mp:$('mp').value.trim(),alergi:$('al').value,catatan:$('ct').value.trim()})});const j=await r.json();
 if(!j.ok){$('b').disabled=false;$('b').textContent='Kirim Pendaftaran';return msg(ERR[j.err]||'Gagal mengirim. Coba lagi nanti.',0)}
