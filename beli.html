@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#FFF8EA">
+<title>Beli lencana – bawaulin.cash</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Sora:wght@700;800&display=swap">
+<style>
+:root{--bg:#FFF8EA;--surf:#fff;--ink:#2B1608;--mut:#6A5644;--line:#EBD6B4;--ora:#CF4A00;--ora-ink:#fff;--ok:#007A35;--bad:#B3261E;color-scheme:light}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;-webkit-text-size-adjust:100%}
+header{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line)}
+header img{height:42px;width:auto}
+header b{font-size:18px;letter-spacing:.2px}
+main{max-width:520px;margin:0 auto;padding:22px 18px 56px}
+h1,h2,.price .big,header b{font-family:Sora,"Plus Jakarta Sans",system-ui,sans-serif}
+h1{font-size:28px;line-height:1.15;margin:6px 0 8px;letter-spacing:-.4px}
+h2{font-size:17px;margin:26px 0 10px}
+p{margin:0 0 12px}
+.mut{color:var(--mut);font-size:14px}
+fieldset{border:0;margin:0;padding:0}
+.rail{position:relative;padding-left:26px}
+.rail:before{content:"";position:absolute;left:7px;top:22px;bottom:22px;width:2px;background:var(--line)}
+.tier{position:relative;display:block;margin:0 0 10px;cursor:pointer}
+.tier input{position:absolute;opacity:0}
+.tier .dot{position:absolute;left:-26px;top:50%;width:16px;height:16px;margin-top:-8px;border-radius:50%;background:var(--bg);border:2px solid var(--line)}
+.tier .row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:14px 16px;border:1.5px solid var(--line);border-radius:12px;background:var(--surf)}
+.tier b{font-size:18px}
+.tier input:checked~.dot{background:var(--ora);border-color:var(--ora)}
+.tier input:checked~.row{border-color:var(--ora);box-shadow:0 0 0 1px var(--ora)}
+.tier input:focus-visible~.row,button:focus-visible,input[type=text]:focus-visible,input[type=email]:focus-visible,input[type=tel]:focus-visible,a:focus-visible{outline:3px solid var(--ora);outline-offset:2px}
+.seg{display:flex;gap:8px;margin-top:4px}
+.seg button{flex:1;margin:0;padding:11px 8px;border:1.5px solid var(--line);border-radius:10px;background:transparent;color:var(--ink);font:inherit;font-weight:600;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.price{margin:18px 0 4px;padding:16px;border-radius:12px;background:linear-gradient(135deg,#B93C00,#F06000);color:#fff}
+.price s{opacity:.65;margin-right:8px}
+.price .big{font-size:34px;font-weight:800;letter-spacing:-.5px;line-height:1.1;font-variant-numeric:tabular-nums}
+.price small{display:block;opacity:.8;margin-top:4px}
+label{display:block;margin:16px 0 6px;font-weight:600;font-size:14px}
+input[type=text],input[type=email],input[type=tel]{width:100%;padding:13px 14px;border:1.5px solid var(--line);border-radius:10px;background:var(--surf);color:var(--ink);font:inherit}
+#kode{font-family:ui-monospace,Menlo,Consolas,monospace;letter-spacing:1px}
+.chk{display:flex;gap:10px;align-items:flex-start;font-weight:400;margin-top:18px}
+.chk input{width:20px;height:20px;margin:3px 0 0;flex:none;accent-color:var(--ora)}
+.btn{display:block;width:100%;margin-top:18px;padding:15px;border:0;border-radius:12px;background:var(--ora);color:var(--ora-ink);font:inherit;font-size:17px;font-weight:700;text-align:center;text-decoration:none;cursor:pointer}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn.alt{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.msg{margin-top:14px;padding:12px 14px;border-radius:10px;font-size:14px}
+.msg.bad{background:rgba(179,38,30,.12);color:var(--bad)}
+.msg.warn{background:rgba(242,106,27,.14)}
+.card{padding:18px;border:1.5px solid var(--line);border-radius:12px;background:var(--surf)}
+.card h2{margin:0 0 8px;font-size:22px}
+.ok{color:var(--ok)}
+a{color:inherit}
+[hidden]{display:none!important}
+@media(prefers-reduced-motion:no-preference){.tier .row{transition:border-color .15s,box-shadow .15s}}
+</style>
+</head>
+<body>
+<header><a href="./" style="display:flex;align-items:center;gap:12px;text-decoration:none"><img src="logo.png" alt="" onerror="this.remove()"><b>bawaulin.cash</b></a></header>
+<main>
+
+<section id="vStatus" hidden aria-live="polite">
+  <h1>Status pesanan</h1>
+  <div class="card" id="stBox">Memeriksa pesanan...</div>
+  <a class="btn alt" href="beli.html" id="stBack">Beli paket lagi</a>
+</section>
+
+<section id="vBeli">
+  <h1>Beli paket bawaulin.cash</h1>
+  <p class="mut">Bayar lewat Midtrans. Paket aktif otomatis di HP kamu setelah pembayaran terverifikasi. Perpanjangan dilakukan manual dengan membeli lagi.</p>
+  <div class="msg warn" id="mSand" hidden>Mode uji: pembayaran ini belum sungguhan.</div>
+
+  <h2>Pilih paket</h2>
+  <fieldset class="rail" id="tiers"><legend class="mut" style="position:absolute;opacity:0">Paket</legend></fieldset>
+  <div class="seg" id="seg" role="group" aria-label="Lama paket"></div>
+
+  <div class="price" id="price" aria-live="polite">Memuat harga...</div>
+
+  <h2>Untuk HP yang mana</h2>
+  <label for="kode">Kode perangkat</label>
+  <input type="text" id="kode" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="BU-ABCD-2345" maxlength="14">
+  <p class="mut" style="margin-top:6px">Salin kode perangkat dari aplikasi bawaulin.cash di HP yang akan memakai paket ini. Satu kode untuk satu HP.</p>
+
+  <h2>Data pembeli</h2>
+  <label for="nm">Nama</label>
+  <input type="text" id="nm" autocomplete="name" maxlength="60" placeholder="nama kamu">
+  <label for="wa">Nomor WhatsApp</label>
+  <input type="tel" id="wa" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="0812xxxxxxxx">
+  <p class="mut" style="margin-top:6px">Dipakai untuk bantuan, bukti pembelian, dan pembukuan. Tidak dibagikan ke pihak lain.</p>
+
+  <label for="em">Email (boleh dikosongkan)</label>
+  <input type="email" id="em" inputmode="email" autocomplete="email" placeholder="untuk bukti pembayaran dari Midtrans">
+
+  <label class="chk"><input type="checkbox" id="sy"><span>Saya setuju dengan <a href="syarat.html" target="_blank" rel="noopener" id="lSy">Syarat dan Ketentuan</a>, <a href="privasi.html#refund" target="_blank" rel="noopener">kebijakan refund</a>, serta <a href="privasi.html" target="_blank" rel="noopener">Kebijakan Privasi</a>.</span></label>
+
+  <div class="msg bad" id="mErr" role="alert" hidden></div>
+  <button class="btn" id="bayar" disabled>Memuat...</button>
+  <p class="mut" style="margin-top:12px">Kami tidak menyimpan data kartu. Data yang tersimpan hanya kode perangkat, nama, nomor WhatsApp, email (bila diisi), dan data transaksi.</p>
+
+  <h2>Sudah membayar?</h2>
+  <label for="no">Nomor pesanan</label>
+  <input type="text" id="no" autocomplete="off" spellcheck="false" placeholder="BT-...">
+  <button class="btn alt" id="cek">Cek pesanan</button>
+  <p class="mut" style="margin-top:14px">Lihat juga <a href="status.html">halaman status pesanan</a>. Butuh bantuan? Buka <a href="bantuan.html">pusat bantuan</a> atau <a href="https://wa.me/6289618805100" target="_blank" rel="noopener">Hubungi penjual lewat WhatsApp</a>.</p>
+</section>
+
+</main>
+<script>
+(function(){
+'use strict';
+var SRV='https://eqrubezljxejfnjgqigb.supabase.co/functions/v1/hyper-action';
+var WA='https://wa.me/6289618805100';
+var RE=/^BU-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}$/;
+var T={sabana:'Sabana',puncak:'Puncak',edelweis:'Edelweis'},P={bulan:'30 hari',tahun:'1 tahun',sekali:'Sekali bayar'};
+var ERR={ditutup:'Pembelian sedang ditutup sementara.',nama:'Nama belum benar (2 sampai 60 huruf).',wa:'Nomor WhatsApp belum benar. Contoh: 081234567890.',identitas:'Isi nama dan nomor WhatsApp dulu.',syarat:'Centang persetujuan dulu.',email:'Email tidak valid.',paket:'Paket tidak dikenal.',gateway:'Pembayaran sedang tidak tersedia. Coba lagi nanti atau hubungi penjual.',sibuk:'Server sibuk. Coba lagi sebentar lagi.',kode:'Kode perangkat ini belum terdaftar. Buka aplikasi dengan internet dulu, lalu salin ulang kodenya.',dicabut:'Lisensi perangkat ini dicabut. Hubungi penjual.',sudah_edelweis:'HP ini sudah memakai Edelweis.',lebih_rendah:'HP ini sudah di paket yang lebih tinggi dari pilihanmu.',banyak:'Ada terlalu banyak pesanan yang masih menunggu. Selesaikan atau tunggu sampai kedaluwarsa.',izin:'Kode ini belum bisa dipakai membeli dari website. Beli lewat tombol Beli di aplikasi atau hubungi penjual.',format:'Data tidak valid.'};
+var S={tier:'sabana',per:'bulan',h:null};
+var $=function(i){return document.getElementById(i)};
+var rp=function(n){return 'Rp'+new Intl.NumberFormat('id-ID').format(n)};
+var ls={g:function(k){try{return localStorage.getItem(k)||''}catch(e){return ''}},s:function(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+
+async function api(a,x){
+  try{
+    var c=new AbortController(),t=setTimeout(function(){c.abort()},12000);
+    var r=await fetch(SRV,{method:'POST',headers:{'Content-Type':'text/plain'},signal:c.signal,body:JSON.stringify(Object.assign({a:a,v:'web'},x||{}))});
+    clearTimeout(t);return await r.json();
+  }catch(e){return null}
+}
+function harga(t,p){var x=S.h&&S.h.harga&&S.h.harga[t+'_'+p];return x&&x.jual?x:null}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function norm(v){
+  var c=String(v).toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(c.length===10&&c.indexOf('BU')===0)c=c.slice(2);
+  c=c.slice(0,8);
+  return c.length>4?'BU-'+c.slice(0,4)+'-'+c.slice(4):(c?'BU-'+c:'');
+}
+function err(m){var e=$('mErr');e.textContent=m||'';e.hidden=!m}
+
+function render(){
+  var box=$('tiers');
+  if(!box.querySelector('label')){
+    ['sabana','puncak','edelweis'].forEach(function(t){
+      var l=document.createElement('label');l.className='tier';
+      l.innerHTML='<input type="radio" name="tier" value="'+t+'"><span class="dot"></span><span class="row"><b>'+T[t]+'</b><span class="mut" data-p="'+t+'"></span></span>';
+      l.querySelector('input').addEventListener('change',function(){S.tier=t;if(t==='edelweis')S.per='sekali';else if(S.per==='sekali')S.per='bulan';render()});
+      box.appendChild(l);
+    });
+  }
+  box.querySelectorAll('input').forEach(function(i){i.checked=(i.value===S.tier)});
+  box.querySelectorAll('[data-p]').forEach(function(s){
+    var t=s.getAttribute('data-p'),p=t==='edelweis'?'sekali':(S.per==='sekali'?'bulan':S.per),h=harga(t,p);
+    s.textContent=h?rp(h.jual)+(t==='edelweis'?'':' / '+P[p]):'';
+  });
+  var seg=$('seg');seg.innerHTML='';
+  if(S.tier==='edelweis'){seg.innerHTML='<button type="button" aria-pressed="true" disabled>Sekali bayar, tanpa tanggal berakhir</button>'}
+  else['bulan','tahun'].forEach(function(p){
+    var b=document.createElement('button');b.type='button';b.textContent=P[p];b.setAttribute('aria-pressed',String(S.per===p));
+    b.addEventListener('click',function(){S.per=p;render()});seg.appendChild(b);
+  });
+  var h=harga(S.tier,S.per),pr=$('price');
+  if(h){pr.innerHTML=(h.normal>h.jual?'<s>'+rp(h.normal)+'</s>':'')+'<div class="big">'+rp(h.jual)+'</div><small>'+T[S.tier]+' · '+P[S.per]+(h.normal>h.jual?' · harga perkenalan':'')+'</small>'}
+  else pr.textContent=S.h?'Harga belum tersedia.':'Memuat harga...';
+  var siap=!!(S.h&&S.h.siap&&h),b=$('bayar');
+  if(!b.dataset.busy){b.disabled=!siap;b.textContent=siap?'Bayar sekarang':(S.h&&S.h.ditutup?'Pembelian ditutup':(S.h?'Pembayaran belum dibuka':'Memuat...'))}
+  if(S.h&&S.h.ditutup){var dn=document.createElement('div');dn.className='mut';dn.style.marginTop='8px';dn.textContent=S.h.pesan||'Pembelian sedang ditutup sementara.';pr.appendChild(dn)}
+  $('mSand').hidden=!(S.h&&S.h.mode==='sandbox');
+}
+
+async function bayar(){
+  err('');
+  var id=norm($('kode').value);$('kode').value=id;
+  if(!RE.test(id))return err('Kode perangkat belum benar. Contoh: BU-ABCD-2345.');
+  var nm=$('nm').value.replace(/\s+/g,' ').trim(),wa=$('wa').value.replace(/[\s().-]/g,'');
+  if(nm.length<2||nm.length>60)return err(ERR.nama);
+  if(!/^\+?\d{9,15}$/.test(wa))return err(ERR.wa);
+  if(!$('sy').checked)return err(ERR.syarat);
+  var b=$('bayar');b.dataset.busy='1';b.disabled=true;b.textContent='Membuat tagihan...';
+  var r=await api('ord_buat',{id:id,tier:S.tier,per:S.per,syarat:1,nama:nm,wa:wa,email:$('em').value.trim()});
+  if(!r||!r.ok||!/^https:\/\//.test(r.url||'')){
+    delete b.dataset.busy;render();
+    return err(r?((r.err==='ditutup'&&r.pesan)?r.pesan:(ERR[r.err]||'Gagal membuat tagihan. Coba lagi.')):'Server tidak terjangkau. Coba lagi nanti.');
+  }
+  ls.s('bc_kode',id);ls.s('bc_oid',r.oid||'');ls.s('bc_nama',nm);ls.s('bc_wa',wa);
+  b.textContent='Mengalihkan ke Midtrans...';
+  location.href=r.url;
+}
+
+function tgl(x){
+  var d=new Date(typeof x==='number'?x:Date.parse(x));
+  return isNaN(d)?'':d.toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
+}
+var poll=0;
+async function status(o,n){
+  $('vBeli').hidden=true;$('vStatus').hidden=false;
+  var box=$('stBox'),no='<p class="mut">Nomor pesanan: <b>'+esc(o)+'</b></p>';
+  if(!n)box.textContent='Memeriksa pesanan...';
+  var r=await api('ord_status',{oid:o,o:o});
+  if(!r)return box.innerHTML='<h2>Server tidak terjangkau</h2><p>Coba lagi sebentar lagi.</p>'+no+'<button class="btn" onclick="location.reload()">Coba lagi</button>';
+  if(!r.ok||r.st==='kosong')return box.innerHTML='<h2>Pesanan tidak ditemukan</h2><p>Periksa lagi nomor pesanannya, atau hubungi penjual.</p>'+no+'<a class="btn alt" href="'+WA+'" target="_blank" rel="noopener">Hubungi penjual</a>';
+  var tr=T[r.tier]||r.tier||'paket',st=r.st;
+  if(st==='lunas'){var e=r.exp?tgl(r.exp):'';
+    return box.innerHTML='<h2 class="ok">Pembayaran berhasil</h2><p>Paket '+esc(tr)+(e?' aktif sampai '+esc(e):' aktif tanpa tanggal berakhir')+'.</p><p class="mut">Buka aplikasi dengan internet. Paket diperbarui otomatis paling lama sekitar 1 jam. Untuk langsung, buka Akun lalu ketuk Cek pembayaran.</p>'+no}
+  if(st==='menunggu'){
+    box.innerHTML='<h2>Menunggu pembayaran</h2><p>Pembayaran '+esc(tr)+' belum kami terima. Halaman ini memeriksa ulang otomatis.</p>'+no+(/^https:\/\//.test(r.url||'')?'<a class="btn" href="'+esc(r.url)+'">Lanjut bayar</a>':'');
+    if(++poll<20)setTimeout(function(){status(o,1)},6000);return}
+  if(st==='tertahan')return box.innerHTML='<h2>Pembayaran diterima, paket belum aktif</h2><p>Pembayaran sudah masuk, tetapi paket belum bisa diterapkan otomatis. Kirim nomor pesanan ini ke penjual. Uang kamu aman dan akan diurus.</p>'+no+'<a class="btn" href="'+WA+'" target="_blank" rel="noopener">Hubungi penjual</a>';
+  if(st==='refund')return box.innerHTML='<h2>Pesanan direfund</h2><p>Pembayaran pesanan ini sudah dikembalikan.</p>'+no;
+  box.innerHTML='<h2>Pembayaran tidak selesai</h2><p>Pesanan gagal atau kedaluwarsa. Kamu bisa membuat pesanan baru.</p>'+no;
+}
+
+async function init(){
+  var q=new URLSearchParams(location.search);
+  var o=(q.get('order_id')||q.get('o')||'').trim();
+  if(o)return status(o);
+  var k=norm(q.get('kode')||ls.g('bc_kode'));if(k)$('kode').value=k;
+  if(ls.g('bc_nama'))$('nm').value=ls.g('bc_nama');if(ls.g('bc_wa'))$('wa').value=ls.g('bc_wa');
+  var last=ls.g('bc_oid');if(last)$('no').value=last;
+  var t=q.get('paket');if(T[t]){S.tier=t;if(t==='edelweis')S.per='sekali'}
+  if(q.get('per')==='tahun'&&S.tier!=='edelweis')S.per='tahun';
+  render();
+  var j=await api('harga_info');S.h=(j&&j.ok)?j:{harga:null,siap:false};render();
+}
+$('bayar').addEventListener('click',bayar);
+$('kode').addEventListener('input',function(){this.value=this.value.toUpperCase()});
+$('kode').addEventListener('blur',function(){this.value=norm(this.value)});
+$('cek').addEventListener('click',function(){var v=$('no').value.trim();if(v){poll=0;status(v)}});
+init();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#FFF8EA"><title>Status pesanan | bawaulin.cash</title><meta name="description" content="Cek status pembayaran dan aktivasi paket bawaulin.cash dengan nomor pesanan.">
+<meta property="og:title" content="Status pesanan | bawaulin.cash"><meta property="og:type" content="website"><link rel="icon" href="favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="style.css"></head><body>
+<header class="nav"><div class="w nv"><a class="brand" href="./"><img src="logo.png" alt="bawaulin.trip" width="53" height="46"><span>bawaulin<b>.cash</b></span></a>
+<nav class="nl" aria-label="Utama"><a href="./#mode">Tiga mode</a><a href="./#fitur">Fitur</a><a href="./#pilih">Yang cocok</a><a href="./#harga">Harga</a><a href="bantuan.html">Bantuan</a><a href="faq.html">Tanya jawab</a></nav>
+<a class="btn sun s" href="https://wa.me/6289618805100?text=Halo%20bawaulin.cash%2C%20saya%20mau%20minta%20akses%20aplikasinya.">Minta akses</a></div></header>
+<main class="doc"><div class="w"><h1>Status pesanan</h1><p class="lead" style="margin-top:12px">Masukkan nomor pesanan (diawali BT-) untuk melihat sampai mana prosesnya.</p><div class="stf"><label for="no">Nomor pesanan</label><input type="text" id="no" autocomplete="off" spellcheck="false" placeholder="BT-..."><button class="btn" id="cek" type="button">Cek pesanan</button></div><div id="stH" hidden aria-live="polite"></div><div class="cards2" style="margin-top:28px"><a class="card" href="bantuan.html"><h3>Pusat bantuan</h3><p>Langkah sesudah bayar dan masalah umum.</p></a><a class="card" href="beli.html"><h3>Beli paket</h3><p>Belum punya pesanan? Mulai dari sini.</p></a></div></main><footer><div class="w"><span>bawaulin.cash, produk bawaulin.trip. Lieur ngitung, bawa santai.</span>
+<nav aria-label="Dokumen"><a href="syarat.html">Syarat &amp; Ketentuan</a><a href="privasi.html">Privasi &amp; Refund</a><a href="bantuan.html">Bantuan</a><a href="status.html">Status pesanan</a><a href="faq.html">FAQ</a><a href="beli.html">Beli</a></nav></div></footer><script>(function(){var SRV="https://eqrubezljxejfnjgqigb.supabase.co/functions/v1/hyper-action",WA="https://wa.me/6289618805100",T={sabana:"Sabana",puncak:"Puncak",edelweis:"Edelweis"},$=function(i){return document.getElementById(i)},poll=0,tm=0;
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function tgl(x){var d=new Date(typeof x==="number"?x:Date.parse(x));return isNaN(d)?"":d.toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"})}
+async function api(a,x){try{var c=new AbortController(),t=setTimeout(function(){c.abort()},12000);var r=await fetch(SRV,{method:"POST",headers:{"Content-Type":"text/plain"},signal:c.signal,body:JSON.stringify(Object.assign({a:a,v:"web"},x||{}))});clearTimeout(t);return await r.json()}catch(e){return null}}
+function wl(o,t){return WA+"?text="+encodeURIComponent(t+" Nomor pesanan: "+o)}
+function steps(a,b,c){var L=["Pesanan dibuat","Pembayaran diterima","Paket aktif"];return'<ol class="tl">'+[a,b,c].map(function(s,i){return'<li class="'+s+'"><i aria-hidden="true">'+(s==="done"?"\u2713":s==="bad"?"!":i+1)+"</i><span>"+L[i]+"</span></li>"}).join("")+"</ol>"}
+function show(h){var e=$("stH");e.hidden=false;e.innerHTML='<div class="card">'+h+"</div>"}
+async function status(o,n){clearTimeout(tm);var no='<p class="mut">Nomor pesanan: <b>'+esc(o)+"</b></p>";if(!n)show("Memeriksa pesanan...");
+var r=await api("ord_status",{oid:o,o:o});
+if(!r)return show("<h2>Server tidak terjangkau</h2><p>Coba lagi sebentar lagi.</p>"+no);
+if(!r.ok||r.st==="kosong")return show("<h2>Pesanan tidak ditemukan</h2><p>Periksa lagi nomor pesanannya (diawali BT-). Bila yakin benar, hubungi kami.</p>"+no+'<a class="btn alt" href="'+wl(o,"Halo bawaulin.cash, pesanan saya tidak ditemukan.")+'" target="_blank" rel="noopener">Hubungi penjual</a>');
+var tr=T[r.tier]||r.tier||"paket",st=r.st,h;
+if(st==="lunas"){var e=r.exp?tgl(r.exp):"";h=steps("done","done","done")+'<h2 class="ok">Pembayaran berhasil</h2><p>Paket '+esc(tr)+(e?" aktif sampai "+esc(e):" aktif tanpa tanggal berakhir")+'.</p><h3>Langkah berikutnya</h3><ol class="nx"><li>Buka aplikasi dengan internet.</li><li>Paket diperbarui otomatis, paling lama sekitar 1 jam.</li><li>Ingin langsung? Buka Akun lalu ketuk Cek pembayaran.</li></ol>'+no;show(h);ls(o);return}
+if(st==="menunggu"){h=steps("done","cur","todo")+"<h2>Menunggu pembayaran</h2><p>Pembayaran "+esc(tr)+" belum kami terima. Halaman ini memeriksa ulang otomatis.</p>"+no+(/^https:\/\//.test(r.url||"")?'<a class="btn" href="'+esc(r.url)+'">Lanjut bayar</a>':"");show(h);if(++poll<20)tm=setTimeout(function(){status(o,1)},6000);return}
+if(st==="tertahan"){h=steps("done","done","bad")+"<h2>Pembayaran diterima, paket belum aktif</h2><p>Pembayaran sudah masuk, tetapi paket belum bisa diterapkan otomatis. Uang kamu aman dan akan diurus. Kirim nomor pesanan ini ke kami.</p>"+no+'<a class="btn" href="'+wl(o,"Halo bawaulin.cash, pembayaran saya sudah masuk tetapi paket belum aktif.")+'" target="_blank" rel="noopener">Hubungi penjual</a>';show(h);return}
+if(st==="refund"){show(steps("done","done","bad")+"<h2>Pesanan direfund</h2><p>Pembayaran pesanan ini sudah dikembalikan.</p>"+no);return}
+show(steps("done","bad","todo")+"<h2>Pembayaran tidak selesai</h2><p>Pesanan gagal atau kedaluwarsa. Kamu bisa membuat pesanan baru.</p>"+no+'<a class="btn" href="beli.html">Beli paket</a>')}
+function ls(o){try{localStorage.setItem("bc_oid",o)}catch(e){}}
+function go(){var v=$("no").value.trim();if(v){poll=0;status(v)}}
+$("cek").addEventListener("click",go);$("no").addEventListener("keydown",function(e){if(e.key==="Enter")go()});
+var q;try{q=new URLSearchParams(location.search)}catch(e){}var o=((q&&(q.get("o")||q.get("order_id")))||"").trim();
+if(!o){try{o=localStorage.getItem("bc_oid")||""}catch(e){}}
+if(o){$("no").value=o;status(o)}})();</script></body></html>
