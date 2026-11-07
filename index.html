@@ -590,7 +590,20 @@ let BERSAMA = null; /* {id, rec, pribadi, modeLama} selama trip bersama dibuka; 
 let RID_DEV = '';
 const BAGIAN = () => KEYS.concat(['checklist']);
 const UANG_B = b => b === 'pemasukan' || b === 'pengeluaran';
-const LOKAL_K = { id: 1, _id: 1, _kf: 1 }; /* kolom khusus HP ini: tidak ikut dibandingkan dan tidak dikirim */
+const LOKAL_K = { id: 1, _id: 1, _kf: 1, Bukti: 1 }; /* kolom khusus HP ini: tidak ikut dibandingkan dan tidak dikirim. v6.0.5 (T2): Bukti (foto/PDF nota) ditambahkan, tidak pernah ikut sinkron */
+/* v6.0.5 (T2): bentuk Bukti yang boleh dirender. Selain ini jangan pernah dimasukkan ke atribut HTML */
+const BUKTI_IMG = /^data:image\/(png|jpe?g|webp|gif);base64,[A-Za-z0-9+\/=]+$/, BUKTI_PDF = /^data:application\/pdf;base64,[A-Za-z0-9+\/=]+$/;
+const buktiOk = v => typeof v === 'string' && (BUKTI_IMG.test(v) || BUKTI_PDF.test(v));
+function bersihBuktiT(t) {
+  if (!t || typeof t !== 'object') return;
+  ['pemasukan', 'pengeluaran'].forEach(k => { if (Array.isArray(t[k])) t[k].forEach(r => { if (r && typeof r === 'object' && 'Bukti' in r && !buktiOk(r.Bukti)) delete r.Bukti; }); });
+  if (Array.isArray(t.trash)) t.trash.forEach(x => { if (x && x.row && typeof x.row === 'object' && 'Bukti' in x.row && !buktiOk(x.row.Bukti)) delete x.row.Bukti; });
+}
+function bersihBuktiSemua(d) {
+  bersihBuktiT(d); if (!d || typeof d !== 'object') return;
+  if (d.slot && typeof d.slot === 'object') Object.keys(d.slot).forEach(k => bersihBuktiT(d.slot[k]));
+  if (Array.isArray(d.arsip)) d.arsip.forEach(a => { if (a) bersihBuktiT(a.data); });
+}
 /* v5.16.0 (S4c5): dua bagian milik pemilik. Di server mereka satu catatan tiap trip (id 'set' dan 'bhasil'); di aplikasi isinya diambil dari DB.set.
    pengaturan = SET_PENG; bagihasil = masukan Bagi Hasil dan Penyelesaian (SET_BH). Nilai berupa objek atau larik dikirim sebagai teks JSON di kolom 'j_<nama>' (maks 4000 huruf).
    uid dan jenis (identitas lokal) serta SET_PRIV (data pribadi HP) tidak pernah dikirim. */
@@ -607,12 +620,37 @@ function synSetBaris(set, b) {
   return o;
 }
 /* catatan server menjadi penentu: kolom yang tidak ada di catatan dikembalikan ke nilai awal (atau dihapus) */
+/* v6.0.5 (M1): nilai pengaturan dari server divalidasi bentuknya sebelum dipakai. Kembali undefined = bentuk salah, dianggap tidak ada */
+const tglOk = s => /^\d{4}-\d{2}-\d{2}$/.test(s || '') ? s : '';
+const jamOk = s => /^\d{2}:\d{2}$/.test(s || '') ? s : '';
+const sesiOk = a => Array.isArray(a) ? a.slice(0, 50).filter(x => x && typeof x === 'object' && Number.isInteger(x.id)).map(x => ({ id: x.id, nama: String(x.nama == null ? '' : x.nama).slice(0, 200), kuota: Math.max(0, Math.floor(Number(x.kuota)) || 0) })) : undefined;
+const strK = (v, n) => String(v == null ? '' : v).slice(0, n);
+const angkaK = v => { const n = Number(v); return isFinite(n) ? n : 0; };
+const petaK = v => { if (!v || typeof v !== 'object' || Array.isArray(v)) return undefined; const o = {}; Object.keys(v).slice(0, 200).forEach(k => { if (k !== '__proto__' && k.length <= 200 && v[k]) o[k] = 1; }); return o; };
+function setBersihK(k, v) {
+  switch (k) {
+    case 'tenggat': case 'berangkat': return typeof v === 'string' ? tglOk(v) : undefined;
+    case 'destinasi': return typeof v === 'string' ? strK(v, 4000) : undefined;
+    case 'kodeDest': return typeof v === 'string' ? v.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6) : undefined;
+    case 'realisasi': case 'tagihan': case 'official': return (typeof v === 'number' || typeof v === 'string') ? angkaK(v) : undefined;
+    case 'kuota': return (typeof v === 'number' || typeof v === 'string') ? Math.max(0, Math.floor(angkaK(v))) : undefined;
+    case 'tutup': return (v && typeof v === 'object' && !Array.isArray(v)) ? { on: !!v.on, tgl: tglOk(v.tgl), kali: Math.max(0, Math.floor(angkaK(v.kali))), buka: tglOk(v.buka) } : undefined;
+    case 'batal': return (v && typeof v === 'object' && !Array.isArray(v)) ? { pot: Math.min(100, Math.max(0, angkaK(v.pot))), adm: Math.max(0, angkaK(v.adm)) } : undefined;
+    case 'inc': case 'exc': return Array.isArray(v) ? v.slice(0, 100).map(x => strK(x, 1000)).filter(Boolean) : undefined;
+    case 'officials': return Array.isArray(v) ? v.slice(0, 50).map(x => strK(x, 200)).filter(Boolean) : undefined;
+    case 'izin': { if (!v || typeof v !== 'object' || Array.isArray(v)) return undefined; const o = {}; ['simaksi', 'kuota', 'registrasi', 'nama', 'asuransi'].forEach(x => { if (v[x]) o[x] = true; }); if (typeof v.kj === 'string') o.kj = strK(v.kj, 1000); return o; }
+    case 'tk': { if (!v || typeof v !== 'object' || Array.isArray(v)) return undefined; const o = { tgl: tglOk(v.tgl), lok: strK(v.lok, 500) }; ['kumpul', 'naik', 'puncak', 'turun', 'bubar'].forEach(x => { o[x] = jamOk(v[x]); }); return o; }
+    case 'sesi': return sesiOk(v);
+    case 'lunasTf': case 'selesai': return typeof v === 'boolean' ? v : petaK(v);
+    default: return undefined; /* kunci yang tidak dikenal tidak diterima */
+  }
+}
 function synSetTerap(set, d, b) {
   const ks = b === 'pengaturan' ? SET_PENG : SET_BH, def = SET_DEF(); d = d || {};
   ks.forEach(k => {
     const j = d['j_' + k]; let ok = false;
-    if (typeof j === 'string') { try { set[k] = JSON.parse(j); ok = true; } catch (e) {} }
-    if (!ok && d[k] !== undefined && d[k] !== null) { set[k] = d[k]; ok = true; }
+    if (typeof j === 'string') { try { const v = setBersihK(k, JSON.parse(j)); if (v !== undefined) { set[k] = v; ok = true; } } catch (e) {} }
+    if (!ok && d[k] !== undefined && d[k] !== null) { const v = setBersihK(k, d[k]); if (v !== undefined) { set[k] = v; ok = true; } }
     if (!ok) { if (k in def) set[k] = def[k]; else delete set[k]; }
   });
 }
@@ -1671,7 +1709,7 @@ async function rekapImpor(files) {
       const j = JSON.parse(await bacaTeks(f)), d = j && j.data;
       if (!j || j.format !== 'bawaulin-rekap' || !(+j.v >= 1) || +j.v > 1 || typeof j.uid !== 'string' || !j.uid || !MODES.some(m => m.id === j.jenis) || !d || typeof d !== 'object' || !d.set || typeof d.set !== 'object') throw 0;
       KEYS.concat(['checklist']).forEach(k => { if (!Array.isArray(d[k])) d[k] = []; });
-      ['arsip', 'pin', 'sim', 'trash', 'pref', 'profil', 'kw', 'nomor', 'slot'].forEach(k => delete d[k]); SET_PRIV.forEach(k => delete d.set[k]);
+      ['arsip', 'pin', 'sim', 'trash', 'pref', 'profil', 'kw', 'nomor', 'slot'].forEach(k => delete d[k]); SET_PRIV.forEach(k => delete d.set[k]); bersihBuktiT(d); /* v6.0.5 (T2) */
       d.set.uid = j.uid; d.set.jenis = j.jenis;
       ok.push({ uid: j.uid, jenis: j.jenis, destinasi: String(j.destinasi || ''), ringkasan: String(j.ringkasan || ''), dari: String(j.dari || ''), diekspor: String(j.diekspor || ''), data: d, sim: Array.isArray(j.simulasi) ? j.simulasi : [], st: tripStat(d, String(j.destinasi || ''), '') });
     } catch (e) { gagal.push(f.name); }
@@ -1701,6 +1739,7 @@ function impor(file) {
       if (!d || typeof d !== 'object' || !d.set || !d.pengeluaran) throw 0;
       const n = k => Array.isArray(d[k]) ? d[k].length : 0;
       if (!confirm('Data saat ini akan DITIMPA oleh isi cadangan (' + n('pemasukan') + ' pemasukan, ' + n('pengeluaran') + ' pengeluaran, ' + n('tamu') + ' peserta, ' + n('arsip') + ' arsip). Lanjut?')) return;
+      bersihBuktiSemua(d); /* v6.0.5 (T2) */
       DB = Object.assign(blank(), d); if (!DB.slot || typeof DB.slot !== 'object') DB.slot = {}; if (DB.pin) delete DB.pin.bio; applyKat(); await save(); chipMode(); show(cur === 'akun' ? 'trip' : cur); cadPesan('Cadangan berhasil dipulihkan.', 1);
     } catch (e) { cadPesan('File cadangan tidak valid.', 0); }
   };
@@ -2029,7 +2068,7 @@ async function setPin() {
 let BUKTI = null;
 function showPrev(v) {
   const e = $('bprev'); if (!e) return;
-  e.innerHTML = v ? `<div style="margin-top:8px">${v.indexOf('data:image') === 0 ? `<img src="${v}" style="max-height:120px;border-radius:8px;display:block;margin-bottom:6px">` : '📄 File PDF terlampir '}<button class="del" onclick="BUKTI='';showPrev('')">Hapus bukti</button></div>` : '';
+  e.innerHTML = buktiOk(v) ? `<div style="margin-top:8px">${BUKTI_IMG.test(v) ? `<img src="${v}" style="max-height:120px;border-radius:8px;display:block;margin-bottom:6px">` : '📄 File PDF terlampir '}<button class="del" onclick="BUKTI='';showPrev('')">Hapus bukti</button></div>` : '';
 }
 function pickBukti(inp) {
   const f = inp.files[0]; inp.value = ''; if (!f) return;
@@ -2038,13 +2077,15 @@ function pickBukti(inp) {
     im.onload = () => { const k = Math.min(1, 1000 / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = im.width * k; c.height = im.height * k;
       c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); BUKTI = c.toDataURL('image/jpeg', .72); URL.revokeObjectURL(u); showPrev(BUKTI); };
     im.src = u;
-  } else if (f.size > 2e6) alert('Ukuran file maksimal 2 MB.');
+  } else if (f.type !== 'application/pdf') alert('Bukti nota hanya boleh foto atau file PDF.');
+  else if (f.size > 2e6) alert('Ukuran file maksimal 2 MB.');
   else { const r = new FileReader(); r.onload = () => { BUKTI = r.result; showPrev(BUKTI); }; r.readAsDataURL(f); }
 }
 function viewBukti(id, key) {
-  const v = DB[key].find(x => x.id === id).Bukti, o = document.createElement('div');
+  const r0 = DB[key].find(x => x.id === id), v = r0 && r0.Bukti; if (!buktiOk(v)) return toast('Bukti nota tidak valid');
+  const o = document.createElement('div');
   o.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:99;display:flex;flex-direction:column;align-items:center;padding:14px;overflow:auto';
-  o.innerHTML = (v.indexOf('data:image') === 0 ? `<img src="${v}" style="max-width:100%">` : `<embed src="${v}" type="application/pdf" style="width:100%;height:80vh">`) + '<button class="btn" style="max-width:300px" onclick="this.parentNode.remove()">Tutup</button>';
+  o.innerHTML = (BUKTI_IMG.test(v) ? `<img src="${v}" style="max-width:100%">` : `<embed src="${v}" type="application/pdf" style="width:100%;height:80vh">`) + '<button class="btn" style="max-width:300px" onclick="this.parentNode.remove()">Tutup</button>';
   document.body.appendChild(o);
 }
 
@@ -2057,7 +2098,7 @@ function printDoc(html) {
 function invoiceHtml() {
   const d = dash(), b = bayarData(), v = vsReal(), pm = rowsOf('pemasukan'), pg = rowsOf('pengeluaran'), base = baseTagihan(b);
   const T = (h, rows, tot) => `<table><tr>${h.map(x => `<th>${esc(x)}</th>`).join('')}</tr>${rows.length ? rows.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join('')}</tr>`).join('') : `<tr><td colspan="${h.length}">Tidak ada data</td></tr>`}${tot ? `<tr class="tot">${tot.map(c => `<td>${esc(c)}</td>`).join('')}</tr>` : ''}</table>`;
-  const lamp = pm.map(r => ({ t: 'Pemasukan', n: r['Detail pemasukan'], a: r['Biaya'], v: r.Bukti })).concat(pg.map(r => ({ t: 'Pengeluaran', n: r['Detail pengeluaran'], a: r['Total Biaya'], v: r.Bukti }))).filter(x => x.v && x.v.indexOf('data:image') === 0);
+  const lamp = pm.map(r => ({ t: 'Pemasukan', n: r['Detail pemasukan'], a: r['Biaya'], v: r.Bukti })).concat(pg.map(r => ({ t: 'Pengeluaran', n: r['Detail pengeluaran'], a: r['Total Biaya'], v: r.Bukti }))).filter(x => x.v && BUKTI_IMG.test(x.v));
   const body = `<h2>Ringkasan Keuangan</h2><div class="sum">${[['Total Realisasi', rp(d.real)], ['Total Pemasukan', rp(d.masuk)], ['Total Pengeluaran', rp(d.keluar)], ['Sisa Saldo', rp(d.saldo)], ['Pemakaian Anggaran', (d.persen * 100).toFixed(1) + '%'], ['Peserta Diterima', b.k + ' orang']].map(x => `<div>${x[0]}<b>${x[1]}</b></div>`).join('')}</div>
   <h2>Rincian Pemasukan</h2>${T(['No', 'Tanggal', 'Detail', 'Kategori', 'Dibayar oleh', 'Jumlah'], pm.map((r, i) => [i + 1, fmtDate(r['Tanggal transaksi']), r['Detail pemasukan'], r['Kategori'], r['Dibayar oleh'] || '-', rp(r['Biaya'])]), ['', '', '', '', 'TOTAL PEMASUKAN', rp(d.masuk)])}
   <h2>Rincian Pengeluaran</h2>${T(['No', 'Tanggal', 'Detail', 'Kategori', 'Dibayar oleh', 'Qty', 'Harga satuan', 'Total biaya'], pg.map((r, i) => [i + 1, fmtDate(r['Tanggal transaksi']), r['Detail pengeluaran'], r['Kategori'], r['Dibayar oleh'] || '-', r['Quantity'], rp(r['Biaya']), rp(r['Total Biaya'])]), ['', '', '', '', '', '', 'TOTAL PENGELUARAN', rp(d.keluar)])}
@@ -2384,7 +2425,7 @@ function caraCard() {
 function tagCard() {
   const d = DB.set;
   return `<details class="card fold" id="dtag"${bOpen('dtag')} ontoggle="bTog('dtag',this.open)"><summary>🗓️ Tagihan & tenggat</summary><small class="mut">Tagihan tetap menggantikan hitungan otomatis. Kosongkan untuk memakai simulasi atau rencana patungan.</small>
-  <label>Tenggat pembayaran</label><input type="date" id="tg2" value="${d.tenggat || ''}"><label>Tagihan per peserta (opsional)</label><input id="tgn" inputmode="numeric" oninput="fmtNum(this)" value="${d.tagihan ? fmtN(d.tagihan) : ''}" placeholder="Contoh: 400.000">
+  <label>Tenggat pembayaran</label><input type="date" id="tg2" value="${esc(d.tenggat || '')}"><label>Tagihan per peserta (opsional)</label><input id="tgn" inputmode="numeric" oninput="fmtNum(this)" value="${d.tagihan ? fmtN(d.tagihan) : ''}" placeholder="Contoh: 400.000">
   <button class="btn" onclick="simpanRek()">Simpan</button></details>`;
 }
 async function simpanRek() { if ($('rk')) DB.set.rek = $('rk').value.trim(); if ($('tg2')) DB.set.tenggat = $('tg2').value; if ($('tgn')) DB.set.tagihan = Number(($('tgn').value || '').replace(/\D/g, '')) || 0; await save(); renderBayar(); toast('Tersimpan'); }
@@ -2502,7 +2543,7 @@ function kwitansi(i) {
 }
 function laporanHtml() {
   const d = dash(), b = bayarData(), v = vsReal(), pm = rowsOf('pemasukan'), pg = rowsOf('pengeluaran'), pl = rowsOf('perlengkapan'), tl = talanganData(), it = rundownRows(), cl = DB.checklist, base = baseTagihan(b);
-  const lamp = pm.map(r => ({ t: 'Pemasukan', n: r['Detail pemasukan'], a: r['Biaya'], v: r.Bukti })).concat(pg.map(r => ({ t: 'Pengeluaran', n: r['Detail pengeluaran'], a: r['Total Biaya'], v: r.Bukti }))).filter(x => x.v && x.v.indexOf('data:image') === 0);
+  const lamp = pm.map(r => ({ t: 'Pemasukan', n: r['Detail pemasukan'], a: r['Biaya'], v: r.Bukti })).concat(pg.map(r => ({ t: 'Pengeluaran', n: r['Detail pengeluaran'], a: r['Total Biaya'], v: r.Bukti }))).filter(x => x.v && BUKTI_IMG.test(x.v));
   const sec = (t, h) => `<h2>${t}</h2>${h}`; let o = '';
   o += sec('1. Ringkasan Keuangan', `<div class="sum">${[['Total Realisasi', rp(d.real)], ['Total Anggaran', rp(d.anggaran)], ['Total Pemasukan', rp(d.masuk)], ['Total Pengeluaran', rp(d.keluar)], ['Sisa Saldo', rp(d.saldo)], ['Pemakaian', (d.persen * 100).toFixed(1) + '%']].map(x => `<div>${x[0]}<b>${x[1]}</b></div>`).join('')}</div>` + (d.warnings.length ? d.warnings.map(w => `<div class="pw">${w.level === 'red' ? '⚠️' : '🔔'} ${esc(w.text)}</div>`).join('') : '<div class="pw">✅ Semua kategori sesuai anggaran.</div>'));
   o += sec((isBS() ? '2. Data Anggota (' : '2. Data Tamu (') + DB.tamu.length + ' orang)', pT(['No', 'Nama', 'Meeting Point', 'Ponsel', 'Status', 'Tagihan', 'Catatan / data darurat'], DB.tamu.map((t, i) => [i + 1, t['Nama'], t['Meeting Point'], t['Ponsel'], t['Status'], t['Tagihan'], t['Catatan']])));
@@ -2532,18 +2573,20 @@ async function srvPost(a, x) {
 }
 const DFT_ERR = { paket: 'Pendaftaran online adalah fitur Sabana.', izin: 'Lisensi perangkat ini belum aktif di server. Buka Akun, ketuk Periksa status lisensi, lalu coba lagi.', format: 'Data tidak valid.', sibuk: 'Server sedang sibuk. Coba lagi sebentar lagi.', aksi: 'Server belum mendukung fitur ini.' };
 const dftErr = j => !j ? 'Gagal terhubung. Periksa internet lalu coba lagi.' : (DFT_ERR[j.err] || 'Gagal (' + (j.err || '?') + ')');
+function waTamu(id) { const t = DB.tamu.find(x => x.id === id); if (!t) return; openWA('Halo ' + (t['Nama'] || '') + ', terima kasih sudah mendaftar.', noWA(t['Ponsel'])); } /* v6.0.5 (T1): hanya id angka di atribut, data diambil di sini */
+function waBagiLink() { const l = $('dl'); if (!l) return; openWA('Daftar trip' + (DB.set.destinasi ? ' ' + DB.set.destinasi : '') + ' di sini:\n' + l.value); }
 function daftarLink() { const x = DB.set.daftarTid; return x ? location.href.replace(/[^/]*([?#].*)?$/, '') + 'daftar.html?t=' + encodeURIComponent(x) + '&n=' + encodeURIComponent(DB.set.destinasi || '') : ''; }
 let dftAuto = 0;
 function renderDaftar() {
   if (kunciOn()) { $('main').innerHTML = kunciHtml('Pendaftaran Online', 'Pendaftaran online adalah fitur Sabana. Pendaftar yang sudah masuk tetap ada di daftar Tamu.'); return; }
   const d = DB.set, link = daftarLink(), pend = DB.tamu.filter(t => t['Status'] === 'Menunggu respons'), beda = !!link && (d.daftarDest || '') !== (d.destinasi || '');
   $('main').innerHTML = `<div class="card"><h3>Link Pendaftaran</h3>${link ? `<small class="mut">Destinasi: ${esc(d.destinasi || '(belum diisi di Beranda)')}</small><input id="dl" readonly value="${esc(link)}" onclick="this.select()" style="margin-top:8px">
-  <div class="flt"><button class="btn alt" style="margin:0" onclick="navigator.clipboard&&navigator.clipboard.writeText($('dl').value);toast('Link disalin')">Salin link</button><button class="btn" style="margin:0;background:#25d366" onclick="openWA('Daftar trip${esc(d.destinasi ? ' ' + d.destinasi : '')} di sini:\\n'+$('dl').value)">Bagikan WA</button></div>
+  <div class="flt"><button class="btn alt" style="margin:0" onclick="navigator.clipboard&&navigator.clipboard.writeText($('dl').value);toast('Link disalin')">Salin link</button><button class="btn" style="margin:0;background:#25d366" onclick="waBagiLink()">Bagikan WA</button></div>
   ${beda ? `<small class="mut">Destinasi di Beranda berubah. Perbarui supaya link menampilkan nama yang baru.</small><button class="btn alt" onclick="buatLinkDaftar()">Perbarui destinasi di link</button>` : ''}<button class="btn red" onclick="tutupLinkDaftar()">Tutup pendaftaran</button>` : `<small class="mut">Buat link lalu bagikan ke calon peserta. Formulir mereka dititipkan sementara di server bawaulin.trip, dan kamu mengambilnya ke aplikasi ini. Tidak perlu setup lain.</small><button class="btn" onclick="buatLinkDaftar()">Buat link pendaftaran</button>`}</div>
   <div class="card"><h3>Pendaftar Masuk</h3><button class="btn" onclick="ambilDaftar()">⬇️ Ambil pendaftar baru</button><div id="dmsg" class="msg"></div></div>
   <div class="card"><h3>Notifikasi</h3><small class="mut">${pushOk() ? 'Dapat pemberitahuan di HP ini saat ada yang mendaftar. Di iPhone, tambahkan aplikasi ke Layar Utama dulu.' : 'HP atau peramban ini belum mendukung notifikasi. Pakai tombol Ambil pendaftar baru.'}</small>${pushOk() ? `<button class="btn alt" id="pbtn" onclick="pushToggle()">🔔 Aktifkan notifikasi</button>` : ''}<div id="pmsg" class="msg"></div></div>
   <div class="card"><h3>Menunggu Respons (${pend.length})</h3>${pend.length ? pend.map(t => `<div class="txw"><div class="tx"><div class="av">${esc(String(t['Nama']).charAt(0).toUpperCase())}</div><div class="tm"><b>${esc(t['Nama'])}</b><small>${esc(normHP(t['Ponsel']))}</small><small>${esc(String(t['Catatan'] || '').slice(0, 90))}</small></div></div>
-  <div class="acts"><button class="edt" onclick="setStatusTamu(${t.id},'Diterima')">Terima</button><button class="del" onclick="setStatusTamu(${t.id},'Ditolak')">Tolak</button><button class="edt" onclick="openWA('Halo ${esc(t['Nama'])}, terima kasih sudah mendaftar.','${noWA(t['Ponsel'])}')">💬 WA</button></div></div>`).join('') : '<div>Tidak ada yang menunggu.</div>'}</div>`;
+  <div class="acts"><button class="edt" onclick="setStatusTamu(${t.id},'Diterima')">Terima</button><button class="del" onclick="setStatusTamu(${t.id},'Ditolak')">Tolak</button><button class="edt" onclick="waTamu(${Number(t.id)})">💬 WA</button></div></div>`).join('') : '<div>Tidak ada yang menunggu.</div>'}</div>`;
   if (pushOk()) setTimeout(pushStatus, 0);
   if (link && navigator.onLine && Date.now() - dftAuto > 20000) { dftAuto = Date.now(); setTimeout(() => ambilDaftar('auto'), 300); }
 }
@@ -4159,7 +4202,7 @@ window.confirm = s => _cf(tr(s)); window.alert = s => _al(tr(s));
 document.documentElement.lang = LANG;
 if (LANG === 'en') { if (document.body) i18nRun(); }
 
-const APP_V = 'v6.0.4';
+const APP_V = 'v6.0.5';
 const CR = Object.freeze({ nama: 'bawaulin.trip', tag: 'Lieur gawe, Bawa ulin', ig: 'https://www.instagram.com/bawaulin.trip?srtk=d29rcmh1YXVrajVz', igh: '@bawaulin.trip', wa: 'https://wa.me/6289618805100', wah: '+62 896-1880-5100' });
 const CR_H = 'bdaae993647f576cf92a364af7443befdce2ceefffe6c926d596f7e52a001b37', LOGO_H = '3763dd402cc104c4f9cebcce4a37a936cf2e0606bb1dd2d261e030f0a6ccc9bb';
 let CR_OK = null, LOCKED = false, hiddenAt = 0, PRIV_OBS = null;
@@ -5742,8 +5785,8 @@ function tkSesiCard() {
   return `<div class="card"><h3>Sesi dan kuota</h3><small class="mut">Satu trip bisa punya beberapa sesi dalam sehari. Kuota dihitung per sesi, dan peserta yang melewati kuota sesinya masuk daftar tunggu sesi itu. Pilih sesi di kolom Sesi tiap peserta.</small>
   ${S.length ? S.map(x => { const n = terimaN(undefined, x.nama), q = +x.kuota || 0, W = DB.tamu.filter(t => t['Status'] === 'Daftar tunggu' && t['Sesi'] === x.nama); return `<div style="border:1px solid var(--bd);border-radius:10px;padding:10px;margin-top:10px"><b>${esc(x.nama)}</b> ${q && n >= q ? '<span class="badge r">Penuh</span>' : ''}
   <div style="margin:6px 0">Diterima <b>${n}</b>${q ? ' dari ' + q : ' (tanpa batas)'}</div>
-  <label>Kuota sesi (kosong = tanpa batas)</label><input id="tks_q${x.id}" type="number" inputmode="numeric" value="${q || ''}">
-  <button class="btn alt" onclick="tkSesiKuota(${x.id})">Simpan kuota</button><button class="del" style="margin-top:8px" onclick="tkSesiDel(${x.id})">Hapus sesi</button>
+  <label>Kuota sesi (kosong = tanpa batas)</label><input id="tks_q${Number(x.id)}" type="number" inputmode="numeric" value="${q || ''}">
+  <button class="btn alt" onclick="tkSesiKuota(${Number(x.id)})">Simpan kuota</button><button class="del" style="margin-top:8px" onclick="tkSesiDel(${Number(x.id)})">Hapus sesi</button>
   ${W.length ? `<div style="margin-top:8px"><b>Daftar tunggu (${W.length})</b></div>` + W.map(t => row(t, `<button class="edt" onclick="otTerima(${t.id})">Terima</button>`)).join('') : ''}</div>`; }).join('') : '<div style="margin-top:8px"><small class="mut">Belum ada sesi. Tambah sesi di bawah, misalnya Sesi 1 (04.00).</small></div>'}
   ${tanpa ? `<div class="warn yellow" style="margin-top:10px">${tanpa} peserta belum dipilihkan sesi.</div>` : ''}
   <label style="margin-top:12px">Nama sesi baru</label><input id="tks_n" placeholder="Contoh: Sesi 1 (04.00)"><label>Kuota sesi (kosong = tanpa batas)</label><input id="tks_nq" type="number" inputmode="numeric">
