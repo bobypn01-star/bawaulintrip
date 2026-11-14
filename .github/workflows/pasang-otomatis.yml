@@ -1,0 +1,38 @@
+name: pasang-otomatis
+on:
+  push:
+    branches: ['pasang/**']
+permissions:
+  contents: write
+  pull-requests: write
+  pages: write
+jobs:
+  pasang:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Periksa berkas yang berubah
+        run: |
+          git fetch origin main
+          ubah=$(git diff --name-only origin/main...HEAD)
+          echo "$ubah"
+          [ -n "$ubah" ] || { echo "Tidak ada perubahan"; exit 1; }
+          while IFS= read -r f; do
+            case "$f" in
+              index.html|sw.js|daftar.html|manifest.json) ;;
+              *) echo "Berkas tidak diizinkan: $f"; exit 1 ;;
+            esac
+          done <<< "$ubah"
+      - name: Buka PR dan merge
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr create --base main --head "${GITHUB_REF_NAME}" --title "Pasang otomatis: ${GITHUB_REF_NAME}" --body "Dibuat otomatis oleh pasang-otomatis."
+          gh pr merge "${GITHUB_REF_NAME}" --merge
+      - name: Picu build Pages
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X POST "repos/${GITHUB_REPOSITORY}/pages/builds"
