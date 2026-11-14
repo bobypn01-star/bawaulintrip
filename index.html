@@ -4255,12 +4255,13 @@ window.confirm = s => _cf(tr(s)); window.alert = s => _al(tr(s));
 document.documentElement.lang = LANG;
 if (LANG === 'en') { if (document.body) i18nRun(); }
 
-const APP_V = 'v6.2.0';
+const APP_V = 'v6.2.1';
 /* v6.2.0: pembaruan langsung di dalam APK (Capacitor). Di web semua bagian ini tidak aktif. */
 const APK = (() => { try { return !!(window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function' && window.Capacitor.isNativePlatform()); } catch (e) { return false; } })();
 const UPD_BASE = 'https://eqrubezljxejfnjgqigb.supabase.co/storage/v1/object/public/update/';
 let APK_J = null;
-const updPlugin = () => { try { return window.Capacitor.Plugins.CapacitorUpdater || null; } catch (e) { return null; } };
+const updPlugin = () => { try { const C = window.Capacitor; return C.Plugins.CapacitorUpdater || C.registerPlugin('CapacitorUpdater'); } catch (e) { return null; } };
+async function apkDiag() { try { const P = updPlugin(); if (!P) return ' (plugin tidak ada)'; await P.current(); return ' (plugin OK)'; } catch (e) { return ' (plugin tidak jalan)'; } };
 async function apkCek() {
   let nama = ['versi.json']; try { if (String(await devId()).slice(0, 4) === 'BU-S') nama = ['versi-uji.json', 'versi.json']; } catch (e) {}
   for (const f of nama) {
@@ -4489,7 +4490,7 @@ async function tplBawaan() { await setPref('tplTagih', ''); $('fsheet').remove()
 /* Cek pembaruan */
 async function cekUpdate() {
   if (!navigator.onLine) return toast('Tidak ada internet');
-  if (APK) { try { const j = await apkCek(); if (vLebih(APP_V, j.v)) apkTawar(j); else toast('Sudah versi terbaru (' + APP_V + ')'); } catch (e) { toast('Gagal memeriksa pembaruan'); } return; }
+  if (APK) { try { const j = await apkCek(); if (vLebih(APP_V, j.v)) apkTawar(j); else toast('Sudah versi terbaru (' + APP_V + ')'); } catch (e) { toast('Gagal memeriksa pembaruan' + await apkDiag()); } return; }
   try {
     const r = await fetch('index.html?cek=' + Date.now(), { cache: 'no-store' }), t = await r.text(), m = t.match(/const APP_V = '([^']+)'/);
     if (m && m[1] !== APP_V) { try { const g = await navigator.serviceWorker.getRegistration(); if (g) await g.update(); } catch (e) {} sheetOpen(`<h3>Versi baru ${esc(m[1])} tersedia</h3><div class="zli">Anda memakai ${esc(APP_V)}. Muat ulang untuk memakai versi baru. Data Anda tidak terhapus.</div><button class="btn" onclick="location.reload()">Muat ulang sekarang</button>`); }
