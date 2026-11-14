@@ -4255,7 +4255,7 @@ window.confirm = s => _cf(tr(s)); window.alert = s => _al(tr(s));
 document.documentElement.lang = LANG;
 if (LANG === 'en') { if (document.body) i18nRun(); }
 
-const APP_V = 'v6.2.1';
+const APP_V = 'v6.2.2';
 /* v6.2.0: pembaruan langsung di dalam APK (Capacitor). Di web semua bagian ini tidak aktif. */
 const APK = (() => { try { return !!(window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function' && window.Capacitor.isNativePlatform()); } catch (e) { return false; } })();
 const UPD_BASE = 'https://eqrubezljxejfnjgqigb.supabase.co/storage/v1/object/public/update/';
